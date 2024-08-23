@@ -1,10 +1,11 @@
-package eu.possiblex.participantportal.service;
+package eu.possible_x.backend.business.control;
 
 import eu.possiblex.participantportal.business.control.ConsumerService;
 import eu.possiblex.participantportal.business.control.ConsumerServiceImpl;
 import eu.possiblex.participantportal.business.control.EdcClient;
 import eu.possiblex.participantportal.business.entity.ConsumeOfferRequestBO;
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcess;
+import eu.possiblex.participantportal.service.EdcClientFake;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;

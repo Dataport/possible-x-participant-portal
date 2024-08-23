@@ -11,4 +11,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ConsumeOfferRequestTO {
     private String counterPartyAddress;
+    private String offerId;
 }
