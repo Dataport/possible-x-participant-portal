@@ -32,7 +32,7 @@ export interface ISelectOfferRequestTO {
 }
 
 export interface ITransferDetailsTO {
-    state: string;
+    state: ITransferProcessState;
 }
 
 export interface IDcatDataset {
@@ -102,6 +102,8 @@ export class RestApplicationClient {
 }
 
 export type RestResponse<R> = Promise<R>;
+
+export type ITransferProcessState = "INITIAL" | "PROVISIONING" | "PROVISIONED" | "REQUESTING" | "REQUESTED" | "STARTING" | "STARTED" | "COMPLETED";
 
 function uriEncoding(template: TemplateStringsArray, ...substitutions: any[]): string {
     let result = "";
