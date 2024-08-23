@@ -34,6 +34,7 @@ dependencies {
   implementation(libs.springBootStarterWebflux)
   implementation(libs.openApi)
   compileOnly(libs.lombok)
+  annotationProcessor(libs.lombokMapStructBinding)
   implementation(libs.mapStruct)
   annotationProcessor(libs.mapStructProcessor)
   developmentOnly(libs.springBootDevtools)
