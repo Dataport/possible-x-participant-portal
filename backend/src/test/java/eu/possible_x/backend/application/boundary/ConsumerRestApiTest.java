@@ -5,6 +5,7 @@ import eu.possiblex.participantportal.application.boundary.ConsumerRestApiImpl;
 import eu.possiblex.participantportal.application.control.ConsumerApiMapper;
 import eu.possiblex.participantportal.application.entity.ConsumeOfferRequestTO;
 import eu.possiblex.participantportal.application.entity.SelectOfferRequestTO;
+import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcessState;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import org.mockito.Mockito;
@@ -18,10 +19,11 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ConsumerRestApiImpl.class)
-@ContextConfiguration(classes = { ConsumerRestApiTest.TestConfig.class, ConsumerRestApiImpl.class })
+@ContextConfiguration(classes = { ConsumerRestApiTest.TestConfig.class })
 public class ConsumerRestApiTest {
 
     @TestConfiguration
@@ -56,7 +58,7 @@ public class ConsumerRestApiTest {
         this.mockMvc.perform(post("/consumer/offer/accept")
                 .content(RestApiHelper.asJsonString(new ConsumeOfferRequestTO()))
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print())
-            .andExpect(status().isOk());
+            .andExpect(status().isOk()).andExpect(jsonPath("$.state").value(TransferProcessState.COMPLETED.name()));
     }
 
 }

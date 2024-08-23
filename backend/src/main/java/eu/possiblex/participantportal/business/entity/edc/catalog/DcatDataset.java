@@ -23,12 +23,14 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import eu.possiblex.participantportal.business.entity.edc.EdcConstants;
 import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
 @Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Setter
 public class DcatDataset {
     @JsonProperty("@id")

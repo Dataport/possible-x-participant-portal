@@ -6,6 +6,7 @@ import eu.possiblex.participantportal.business.entity.SelectOfferRequestBE;
 import eu.possiblex.participantportal.business.entity.edc.catalog.DcatDataset;
 import eu.possiblex.participantportal.business.entity.edc.transfer.IonosS3TransferProcess;
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcess;
+import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcessState;
 
 public class ConsumerServiceFake implements ConsumerService {
     @Override
@@ -17,6 +18,9 @@ public class ConsumerServiceFake implements ConsumerService {
     @Override
     public TransferProcess acceptContractOffer(ConsumeOfferRequestBE request) {
 
-        return new IonosS3TransferProcess();
+        return IonosS3TransferProcess
+            .builder()
+            .state(TransferProcessState.COMPLETED)
+            .build();
     }
 }

@@ -17,15 +17,18 @@
  * - Dataport (part of the POSSIBLE project) - 14 August, 2024 - Adjust package names and imports
  */
 
+
 package eu.possiblex.participantportal.business.entity.edc.transfer;
 
 import eu.possiblex.participantportal.business.entity.edc.asset.ionoss3extension.IonosS3DataAddress;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
+@SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 @ToString
 public class IonosS3TransferProcess extends TransferProcess {
     private IonosS3DataAddress dataDestination;
