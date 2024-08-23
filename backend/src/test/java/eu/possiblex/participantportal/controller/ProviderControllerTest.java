@@ -1,6 +1,6 @@
 package eu.possiblex.participantportal.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.possible_x.backend.application.boundary.RestApiHelper;
 import eu.possiblex.participantportal.application.boundary.ProviderRestApi;
 import eu.possiblex.participantportal.application.entity.CreateOfferRequestTO;
 import eu.possiblex.participantportal.business.entity.edc.common.IdResponse;
@@ -31,15 +31,6 @@ class ProviderControllerTest {
     @MockBean
     private ProviderService providerService;
 
-    public static String asJsonString(final Object obj) {
-
-        try {
-            return new ObjectMapper().writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     @BeforeEach
     public void beforeEach() {
 
@@ -53,7 +44,7 @@ class ProviderControllerTest {
     void shouldReturnMessageOnCreateOffer() throws Exception {
         //when
         //then
-        this.mockMvc.perform(post("/provider/offer").content(asJsonString(new CreateOfferRequestTO()))
+        this.mockMvc.perform(post("/provider/offer").content(RestApiHelper.asJsonString(new CreateOfferRequestTO()))
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print())
             .andExpect(status().isOk()).andExpect(jsonPath("$.id").value(CREATE_OFFER_RESPONSE_ID));
     }

@@ -41,7 +41,7 @@ public abstract class TransferProcess {
     @JsonProperty("@type")
     private String type;
 
-    private String state;
+    private TransferProcessState state;
 
     private String stateTimestamp;
 

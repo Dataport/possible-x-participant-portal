@@ -19,7 +19,8 @@ export class ConsumeComponent {
     console.log("'Accept Contract Offer' button pressed");
 
     this.apiService.acceptContractOffer({
-      counterPartyAddress: environment.counter_party_address
+      counterPartyAddress: environment.counter_party_address,
+      offerId: 'dummy' // TODO set to the actual offer id from the selection step
     }).then(response => {
       console.log(response);
       this.acceptOfferStatusMessage.showSuccessMessage("Check console for details.", 20000);

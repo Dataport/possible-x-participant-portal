@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OfferDetailsTO {
-    private DcatDataset edcOffering;
+    private DcatDataset edcOffering; // TODO validate whether we really want to pass the full EDC response to the frontend
 }

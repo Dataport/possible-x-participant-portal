@@ -28,12 +28,15 @@ import eu.possiblex.participantportal.business.entity.edc.common.IdResponse;
 import eu.possiblex.participantportal.business.entity.edc.contractdefinition.ContractDefinitionCreateRequest;
 import eu.possiblex.participantportal.business.entity.edc.negotiation.ContractNegotiation;
 import eu.possiblex.participantportal.business.entity.edc.negotiation.NegotiationInitiateRequest;
+import eu.possiblex.participantportal.business.entity.edc.negotiation.NegotiationState;
 import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyCreateRequest;
 import eu.possiblex.participantportal.business.entity.edc.transfer.DataRequest;
 import eu.possiblex.participantportal.business.entity.edc.transfer.IonosS3TransferProcess;
+import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcessState;
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferRequest;
 import eu.possiblex.participantportal.business.control.EdcClient;
+
 
 import java.util.List;
 
@@ -94,7 +97,7 @@ public class EdcClientFake implements EdcClient {
         negotiation.setType("edc:ContractNegotiationDto");
         negotiation.setId(FAKE_ID);
         negotiation.setContractAgreementId(FAKE_ID + ":" + FAKE_ID + ":" + FAKE_ID);
-        negotiation.setState("FINALIZED");
+        negotiation.setState(NegotiationState.FINALIZED);
         return negotiation;
     }
 
@@ -114,7 +117,7 @@ public class EdcClientFake implements EdcClient {
         process.setId(FAKE_ID);
         process.setType("edc:TransferProcessDto");
         process.setDataRequest(request);
-        process.setState("COMPLETED");
+        process.setState(TransferProcessState.COMPLETED);
         process.setDataDestination(new IonosS3DataDestination());
         return process;
     }

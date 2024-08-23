@@ -1,5 +1,6 @@
 package eu.possible_x.backend.business.control;
 
+import eu.possiblex.participantportal.business.control.ConsumerService;
 import eu.possiblex.participantportal.business.control.ConsumerServiceImpl;
 import eu.possiblex.participantportal.business.control.EdcClient;
 import eu.possiblex.participantportal.business.entity.ConsumeOfferRequestBE;

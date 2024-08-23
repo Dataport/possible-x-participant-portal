@@ -11,8 +11,10 @@ import eu.possiblex.participantportal.business.entity.edc.common.IdResponse;
 import eu.possiblex.participantportal.business.entity.edc.negotiation.ContractNegotiation;
 import eu.possiblex.participantportal.business.entity.edc.negotiation.ContractOffer;
 import eu.possiblex.participantportal.business.entity.edc.negotiation.NegotiationInitiateRequest;
+import eu.possiblex.participantportal.business.entity.edc.negotiation.NegotiationState;
 import eu.possiblex.participantportal.business.entity.edc.transfer.IonosS3TransferProcess;
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcess;
+import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcessState;
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,12 @@ public class ConsumerServiceImpl implements ConsumerService {
         this.edcClient = edcClient;
     }
 
+    /**
+     * Given a request for an offer, select it and return the details of this offer from the EDC catalog.
+     *
+     * @param request request for selecting the offer
+     * @return details of the offer
+     */
     @Override
     public DcatDataset selectContractOffer(SelectOfferRequestBE request) {
         DcatCatalog catalog = queryEdcCatalog(CatalogRequest
@@ -52,6 +60,7 @@ public class ConsumerServiceImpl implements ConsumerService {
     @Override
     public TransferProcess acceptContractOffer(ConsumeOfferRequestBE request) {
 
+        // query catalog
         DcatCatalog catalog = queryEdcCatalog(CatalogRequest
             .builder()
             .counterPartyAddress(request.getCounterPartyAddress())
@@ -91,47 +100,6 @@ public class ConsumerServiceImpl implements ConsumerService {
         return performTransfer(transferRequest);
     }
 
-    private TransferProcess performTransfer(TransferRequest transferRequest) {
-        log.info("Initiate Transfer {}", transferRequest);
-        IdResponse transfer = edcClient.initiateTransfer(transferRequest);
-
-        // wait until COMPLETED
-        IonosS3TransferProcess transferProcess;
-        int transferCheckAttempts = 0;
-        do {
-            delayOneSecond();
-            transferProcess = edcClient.checkTransferStatus(transfer.getId());
-            log.info("Transfer Process {}", transferProcess);
-            transferCheckAttempts += 1;
-            if (transferCheckAttempts >= 15) {
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "failed to transfer");
-            }
-        } while (!transferProcess.getState().equals("COMPLETED"));
-
-        edcClient.deprovisionTransfer(transferProcess.getId());
-
-        return transferProcess;
-    }
-
-    private ContractNegotiation negotiateOffer(NegotiationInitiateRequest negotiationInitiateRequest) {
-        log.info("Initiate Negotiation with Request {}", negotiationInitiateRequest);
-        IdResponse negotiation = edcClient.negotiateOffer(negotiationInitiateRequest);
-
-        // wait until FINALIZED
-        ContractNegotiation contractNegotiation;
-        int negotiationCheckAttempts = 0;
-        do {
-            delayOneSecond();
-            contractNegotiation = edcClient.checkOfferStatus(negotiation.getId());
-            log.info("Negotiation {}", contractNegotiation);
-            negotiationCheckAttempts += 1;
-            if (negotiationCheckAttempts >= 15) {
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "failed to negotiate");
-            }
-        } while (!contractNegotiation.getState().equals("FINALIZED"));
-        return contractNegotiation;
-    }
-
     private DcatCatalog queryEdcCatalog(CatalogRequest catalogRequest) {
         // query catalog
         log.info("Query Catalog with Request {}", catalogRequest);
@@ -149,6 +117,47 @@ public class ConsumerServiceImpl implements ConsumerService {
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Offer with given ID not found or ambiguous.");
         }
+    }
+
+    private ContractNegotiation negotiateOffer(NegotiationInitiateRequest negotiationInitiateRequest) {
+        log.info("Initiate Negotiation with Request {}", negotiationInitiateRequest);
+        IdResponse negotiation = edcClient.negotiateOffer(negotiationInitiateRequest);
+
+        // wait until FINALIZED
+        ContractNegotiation contractNegotiation;
+        int negotiationCheckAttempts = 0;
+        do {
+            delayOneSecond();
+            contractNegotiation = edcClient.checkOfferStatus(negotiation.getId());
+            log.info("Negotiation {}", contractNegotiation);
+            negotiationCheckAttempts += 1;
+            if (negotiationCheckAttempts >= 15) {
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "failed to negotiate");
+            }
+        } while (!contractNegotiation.getState().equals(NegotiationState.FINALIZED));
+        return contractNegotiation;
+    }
+
+    private TransferProcess performTransfer(TransferRequest transferRequest) {
+        log.info("Initiate Transfer {}", transferRequest);
+        IdResponse transfer = edcClient.initiateTransfer(transferRequest);
+
+        // wait until COMPLETED
+        IonosS3TransferProcess transferProcess;
+        int transferCheckAttempts = 0;
+        do {
+            delayOneSecond();
+            transferProcess = edcClient.checkTransferStatus(transfer.getId());
+            log.info("Transfer Process {}", transferProcess);
+            transferCheckAttempts += 1;
+            if (transferCheckAttempts >= 15) {
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "failed to transfer");
+            }
+        } while (!transferProcess.getState().equals(TransferProcessState.COMPLETED));
+
+        edcClient.deprovisionTransfer(transferProcess.getId());
+
+        return transferProcess;
     }
 
     private void delayOneSecond() {

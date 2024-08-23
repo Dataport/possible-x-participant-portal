@@ -1,8 +1,12 @@
 /* tslint:disable */
 /* eslint-disable */
 
+export interface IConsumerRestApi {
+}
+
 export interface IConsumeOfferRequestTO {
     counterPartyAddress: string;
+    offerId: string;
 }
 
 export interface ICreateOfferRequestTO {
@@ -16,6 +20,50 @@ export interface ICreateOfferRequestTO {
 export interface IExceptionTO {
     httpStatusCode: number;
     message: string;
+}
+
+export interface IOfferDetailsTO {
+    edcOffering: IDcatDataset;
+}
+
+export interface ISelectOfferRequestTO {
+    counterPartyAddress: string;
+    offerId: string;
+}
+
+export interface ITransferDetailsTO {
+    state: string;
+}
+
+export interface IDcatDataset {
+    version: string;
+    name: string;
+    description: string;
+    contenttype: string;
+    "@id": string;
+    "@type": string;
+    "odrl:hasPolicy": IPolicy[];
+    "dcat:distribution": IDcatDistribution[];
+    id: string;
+}
+
+export interface IPolicy {
+    "@id": string;
+    "odrl:permission": string[];
+    "odrl:prohibition": string[];
+    "odrl:obligation": string[];
+    "odrl:target": IPolicyTarget;
+    "@type": string;
+}
+
+export interface IDcatDistribution {
+    "@type": string;
+    "dct:format": { [index: string]: string };
+    "dcat:accessService": string;
+}
+
+export interface IPolicyTarget {
+    "@id": string;
 }
 
 export interface HttpClient {
@@ -32,8 +80,16 @@ export class RestApplicationClient {
      * HTTP POST /consumer/acceptContractOffer
      * Java method: eu.possiblex.participantportal.application.boundary.ConsumerRestApi.acceptContractOffer
      */
-    acceptContractOffer(request: IConsumeOfferRequestTO): RestResponse<any> {
-        return this.httpClient.request({ method: "POST", url: uriEncoding`consumer/acceptContractOffer`, data: request });
+    acceptContractOffer(request: IConsumeOfferRequestTO): RestResponse<ITransferDetailsTO> {
+        return this.httpClient.request({ method: "POST", url: uriEncoding`consumer/offer/accept`, data: request });
+    }
+
+    /**
+     * HTTP POST /consumer/offer/select
+     * Java method: eu.possible_x.backend.application.boundary.ConsumerRestApiImpl.selectContractOffer
+     */
+    selectContractOffer(request: ISelectOfferRequestTO): RestResponse<IOfferDetailsTO> {
+        return this.httpClient.request({ method: "POST", url: uriEncoding`consumer/offer/select`, data: request });
     }
 
     /**
