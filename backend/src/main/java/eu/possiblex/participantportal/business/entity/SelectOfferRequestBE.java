@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SelectOfferRequestBO {
+public class SelectOfferRequestBE {
     private String counterPartyAddress;
     private String offerId;
 }

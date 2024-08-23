@@ -1,7 +1,7 @@
 package eu.possiblex.participantportal.business.control;
 
-import eu.possiblex.participantportal.business.entity.ConsumeOfferRequestBO;
-import eu.possiblex.participantportal.business.entity.SelectOfferRequestBO;
+import eu.possiblex.participantportal.business.entity.ConsumeOfferRequestBE;
+import eu.possiblex.participantportal.business.entity.SelectOfferRequestBE;
 import eu.possiblex.participantportal.business.entity.edc.asset.DataAddress;
 import eu.possiblex.participantportal.business.entity.edc.asset.ionoss3extension.IonosS3DataDestination;
 import eu.possiblex.participantportal.business.entity.edc.catalog.CatalogRequest;
@@ -35,7 +35,7 @@ public class ConsumerServiceImpl implements ConsumerService {
     }
 
     @Override
-    public DcatDataset selectContractOffer(SelectOfferRequestBO request) {
+    public DcatDataset selectContractOffer(SelectOfferRequestBE request) {
         DcatCatalog catalog = queryEdcCatalog(CatalogRequest
             .builder()
             .counterPartyAddress(request.getCounterPartyAddress())
@@ -50,7 +50,7 @@ public class ConsumerServiceImpl implements ConsumerService {
      * @return data address in the transfer response (TBR)
      */
     @Override
-    public TransferProcess acceptContractOffer(ConsumeOfferRequestBO request) {
+    public TransferProcess acceptContractOffer(ConsumeOfferRequestBE request) {
 
         DcatCatalog catalog = queryEdcCatalog(CatalogRequest
             .builder()

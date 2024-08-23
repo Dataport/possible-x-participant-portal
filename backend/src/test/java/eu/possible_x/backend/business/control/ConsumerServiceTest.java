@@ -1,9 +1,8 @@
 package eu.possible_x.backend.business.control;
 
-import eu.possiblex.participantportal.business.control.ConsumerService;
 import eu.possiblex.participantportal.business.control.ConsumerServiceImpl;
 import eu.possiblex.participantportal.business.control.EdcClient;
-import eu.possiblex.participantportal.business.entity.ConsumeOfferRequestBO;
+import eu.possiblex.participantportal.business.entity.ConsumeOfferRequestBE;
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcess;
 import eu.possiblex.participantportal.service.EdcClientFake;
 import org.junit.jupiter.api.Test;
@@ -29,7 +28,11 @@ class ConsumerServiceTest {
     void shouldAcceptContractOffer() {
 
         TransferProcess response = consumerService.acceptContractOffer(
-            ConsumeOfferRequestBO.builder().counterPartyAddress("http://example.com").build());
+            ConsumeOfferRequestBE
+                .builder()
+                .counterPartyAddress("http://example.com")
+                .offerId(EdcClientFake.FAKE_ID)
+                .build());
 
         assertNotNull(response);
     }

@@ -6,8 +6,8 @@ import eu.possiblex.participantportal.application.entity.OfferDetailsTO;
 import eu.possiblex.participantportal.application.entity.SelectOfferRequestTO;
 import eu.possiblex.participantportal.application.entity.TransferDetailsTO;
 import eu.possiblex.participantportal.business.control.ConsumerService;
-import eu.possiblex.participantportal.business.entity.ConsumeOfferRequestBO;
-import eu.possiblex.participantportal.business.entity.SelectOfferRequestBO;
+import eu.possiblex.participantportal.business.entity.ConsumeOfferRequestBE;
+import eu.possiblex.participantportal.business.entity.SelectOfferRequestBE;
 import eu.possiblex.participantportal.business.entity.edc.catalog.DcatDataset;
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcess;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ public class ConsumerRestApiImpl implements ConsumerRestApi {
     @Override
     public OfferDetailsTO selectContractOffer(@RequestBody SelectOfferRequestTO request) {
 
-        SelectOfferRequestBO bo = consumerApiMapper.selectOfferRequestTOtoBO(request);
+        SelectOfferRequestBE bo = consumerApiMapper.selectOfferRequestTOtoBO(request);
         DcatDataset dataset = consumerService.selectContractOffer(bo);
         return OfferDetailsTO.builder().edcOffering(dataset).build();
     }
@@ -39,7 +39,7 @@ public class ConsumerRestApiImpl implements ConsumerRestApi {
     @Override
     public TransferDetailsTO acceptContractOffer(@RequestBody ConsumeOfferRequestTO request) {
 
-        ConsumeOfferRequestBO bo = consumerApiMapper.consumeOfferRequestTOtoBO(request);
+        ConsumeOfferRequestBE bo = consumerApiMapper.consumeOfferRequestTOtoBO(request);
         TransferProcess process = consumerService.acceptContractOffer(bo);
         return consumerApiMapper.transferProcessToDetailsTO(process);
     }
