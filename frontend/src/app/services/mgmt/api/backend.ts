@@ -77,8 +77,8 @@ export class RestApplicationClient {
     }
 
     /**
-     * HTTP POST /consumer/acceptContractOffer
-     * Java method: eu.possiblex.participantportal.application.boundary.ConsumerRestApi.acceptContractOffer
+     * HTTP POST /consumer/offer/accept
+     * Java method: eu.possiblex.participantportal.application.boundary.ConsumerRestApiImpl.acceptContractOffer
      */
     acceptContractOffer(request: IConsumeOfferRequestTO): RestResponse<ITransferDetailsTO> {
         return this.httpClient.request({ method: "POST", url: uriEncoding`consumer/offer/accept`, data: request });
@@ -86,7 +86,7 @@ export class RestApplicationClient {
 
     /**
      * HTTP POST /consumer/offer/select
-     * Java method: eu.possible_x.backend.application.boundary.ConsumerRestApiImpl.selectContractOffer
+     * Java method: eu.possiblex.participantportal.application.boundary.ConsumerRestApiImpl.selectContractOffer
      */
     selectContractOffer(request: ISelectOfferRequestTO): RestResponse<IOfferDetailsTO> {
         return this.httpClient.request({ method: "POST", url: uriEncoding`consumer/offer/select`, data: request });
