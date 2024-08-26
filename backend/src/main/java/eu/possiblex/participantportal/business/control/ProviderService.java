@@ -20,7 +20,9 @@ import eu.possiblex.participantportal.business.entity.fh.catalog.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Map;
@@ -68,26 +70,7 @@ public class ProviderService {
 
         // create policy
         String policyId = "policyId_" + UUID.randomUUID();
-
-        Policy policy = null;
-        try {
-            JsonNode policyNode = createEdcOfferBE.getPolicy().get("policy");
-
-            policy = objectMapper.treeToValue(policyNode, Policy.class);
-
-            policy.setId(policyId);
-
-            List<JsonNode> permission = policy.getPermission();
-            permission.forEach(p -> ((ObjectNode) p).put("odrl:target", assetIdResponse.getId()));
-
-            List<JsonNode> prohibition = policy.getProhibition();
-            prohibition.forEach(p -> ((ObjectNode) p).put("odrl:target", assetIdResponse.getId()));
-
-            policy.setTarget(PolicyTarget.builder().id(assetIdResponse.getId()).build());
-        } catch (Exception e) {
-            log.info(e.getMessage());
-        }
-
+        Policy policy = getPolicy(createEdcOfferBE, policyId, assetIdResponse);
         PolicyCreateRequest policyCreateRequest = PolicyCreateRequest.builder().id(policyId).policy(policy).build();
         log.info("Creating Policy {}", policyCreateRequest);
         IdResponse policyIdResponse = edcClient.createPolicy(policyCreateRequest);
@@ -101,6 +84,30 @@ public class ProviderService {
                     .operandRight(assetIdResponse.getId()).build())).build();
         log.info("Creating Contract Definition {}", contractDefinitionCreateRequest);
         return edcClient.createContractDefinition(contractDefinitionCreateRequest);
+    }
+
+    private Policy getPolicy(CreateEdcOfferBE createEdcOfferBE, String policyId, IdResponse assetIdResponse) {
+
+        Policy policy = null;
+        String policyAttibuteString = "policy";
+        String targetAttributeString = "odrl:target";
+        try {
+            JsonNode policyNode = createEdcOfferBE.getPolicy().get(policyAttibuteString);
+            policy = objectMapper.treeToValue(policyNode, Policy.class);
+
+            //set policyId
+            policy.setId(policyId);
+
+            //set target to assetId in permissions and prohibitions
+            policy.getPermission().forEach(p -> ((ObjectNode) p).put(targetAttributeString, assetIdResponse.getId()));
+            policy.getProhibition().forEach(p -> ((ObjectNode) p).put(targetAttributeString, assetIdResponse.getId()));
+
+            //set target with assetId
+            policy.setTarget(PolicyTarget.builder().id(assetIdResponse.getId()).build());
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+        return policy;
     }
 
     private FhIdResponse createDatasetEntryInFhCatalog(CreateDatasetEntryBE createDatasetEntryBE, String cat_name) {
