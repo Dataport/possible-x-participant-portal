@@ -17,6 +17,6 @@ tasks {
 
   val npmBuild by registering(NpmTask::class) {
     dependsOn(npmInstalll)
-    args.set(listOf("run", "build"))
+    args.set(listOf("run", "build", "--", "--configuration", project.findProperty("npmEnv") as String? ?: "consumer-dev"))
   }
 }
