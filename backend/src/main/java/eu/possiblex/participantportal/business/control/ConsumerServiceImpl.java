@@ -136,7 +136,7 @@ public class ConsumerServiceImpl implements ConsumerService {
             contractNegotiation = edcClient.checkOfferStatus(negotiation.getId());
             log.info("Negotiation {}", contractNegotiation);
             negotiationCheckAttempts += 1;
-            if (negotiationCheckAttempts >= 15) {
+            if (negotiationCheckAttempts >= 15 || contractNegotiation.getState().equals(NegotiationState.TERMINATED)) {
                 throw new NegotiationFailedException("Negotiation never reached FINALIZED state.");
             }
         } while (!contractNegotiation.getState().equals(NegotiationState.FINALIZED));
@@ -155,7 +155,7 @@ public class ConsumerServiceImpl implements ConsumerService {
             transferProcess = edcClient.checkTransferStatus(transfer.getId());
             log.info("Transfer Process {}", transferProcess);
             transferCheckAttempts += 1;
-            if (transferCheckAttempts >= 15) {
+            if (transferCheckAttempts >= 15 || transferProcess.getState().equals(TransferProcessState.TERMINATED)) {
                 throw new TransferFailedException("Transfer never reached COMPLETED state.");
             }
         } while (!transferProcess.getState().equals(TransferProcessState.COMPLETED));

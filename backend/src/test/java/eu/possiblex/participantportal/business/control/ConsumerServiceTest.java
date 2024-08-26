@@ -8,6 +8,7 @@ import eu.possiblex.participantportal.business.entity.exception.NegotiationFaile
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
 import eu.possiblex.participantportal.service.EdcClientFake;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ContextConfiguration;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -58,6 +60,18 @@ class ConsumerServiceTest {
     }
 
     @Test
+    @Disabled // TODO enable this once the user actually selects an existing offering
+    void shouldSelectContractOfferNotFound() {
+
+        assertThrows(OfferNotFoundException.class, () -> consumerService.selectContractOffer(
+            SelectOfferRequestBE
+                .builder()
+                .counterPartyAddress("http://example.com")
+                .offerId("someUnknownId")
+                .build()));
+    }
+
+    @Test
     void shouldAcceptContractOffer()
         throws NegotiationFailedException, TransferFailedException, OfferNotFoundException {
 
@@ -73,5 +87,38 @@ class ConsumerServiceTest {
         verify(edcClient).initiateTransfer(any());
 
         assertNotNull(response);
+    }
+
+    @Test
+    void shouldAcceptContractOfferNotFound() {
+
+        assertThrows(OfferNotFoundException.class, () -> consumerService.acceptContractOffer(
+            ConsumeOfferRequestBE
+                .builder()
+                .counterPartyAddress("http://example.com")
+                .offerId("someUnknownId")
+                .build()));
+    }
+
+    @Test
+    void shouldAcceptContractOfferBadNegotiation() {
+
+        assertThrows(NegotiationFailedException.class, () -> consumerService.acceptContractOffer(
+            ConsumeOfferRequestBE
+                .builder()
+                .counterPartyAddress("http://example.com")
+                .offerId(EdcClientFake.BAD_NEGOTIATION_ID)
+                .build()));
+    }
+
+    @Test
+    void shouldAcceptContractOfferBadTransfer() {
+
+        assertThrows(TransferFailedException.class, () -> consumerService.acceptContractOffer(
+            ConsumeOfferRequestBE
+                .builder()
+                .counterPartyAddress("http://example.com")
+                .offerId(EdcClientFake.BAD_TRANSFER_ID)
+                .build()));
     }
 }
