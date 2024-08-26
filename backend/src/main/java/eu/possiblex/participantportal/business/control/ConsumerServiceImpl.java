@@ -16,6 +16,9 @@ import eu.possiblex.participantportal.business.entity.edc.transfer.IonosS3Transf
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcess;
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcessState;
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferRequest;
+import eu.possiblex.participantportal.business.entity.exception.NegotiationFailedException;
+import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
+import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -58,7 +61,8 @@ public class ConsumerServiceImpl implements ConsumerService {
      * @return data address in the transfer response (TBR)
      */
     @Override
-    public TransferProcess acceptContractOffer(ConsumeOfferRequestBE request) {
+    public TransferProcess acceptContractOffer(ConsumeOfferRequestBE request)
+        throws OfferNotFoundException, NegotiationFailedException, TransferFailedException {
 
         // query catalog
         DcatCatalog catalog = queryEdcCatalog(CatalogRequest
@@ -106,7 +110,7 @@ public class ConsumerServiceImpl implements ConsumerService {
         return edcClient.queryCatalog(catalogRequest);
     }
 
-    private DcatDataset getDatasetById(DcatCatalog catalog, String offerId) {
+    private DcatDataset getDatasetById(DcatCatalog catalog, String offerId) throws OfferNotFoundException {
         List<DcatDataset> datasets = catalog.getDataset()
             .stream()
             .filter(d -> d.getAssetId().equals(offerId))
@@ -115,11 +119,12 @@ public class ConsumerServiceImpl implements ConsumerService {
         if (datasets.size() == 1) {
             return datasets.get(0);
         } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Offer with given ID not found or ambiguous.");
+            throw new OfferNotFoundException("Offer with given ID not found or ambiguous.");
         }
     }
 
-    private ContractNegotiation negotiateOffer(NegotiationInitiateRequest negotiationInitiateRequest) {
+    private ContractNegotiation negotiateOffer(NegotiationInitiateRequest negotiationInitiateRequest)
+        throws NegotiationFailedException {
         log.info("Initiate Negotiation with Request {}", negotiationInitiateRequest);
         IdResponse negotiation = edcClient.negotiateOffer(negotiationInitiateRequest);
 
@@ -132,13 +137,13 @@ public class ConsumerServiceImpl implements ConsumerService {
             log.info("Negotiation {}", contractNegotiation);
             negotiationCheckAttempts += 1;
             if (negotiationCheckAttempts >= 15) {
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "failed to negotiate");
+                throw new NegotiationFailedException("Negotiation never reached FINALIZED state.");
             }
         } while (!contractNegotiation.getState().equals(NegotiationState.FINALIZED));
         return contractNegotiation;
     }
 
-    private TransferProcess performTransfer(TransferRequest transferRequest) {
+    private TransferProcess performTransfer(TransferRequest transferRequest) throws TransferFailedException {
         log.info("Initiate Transfer {}", transferRequest);
         IdResponse transfer = edcClient.initiateTransfer(transferRequest);
 
@@ -151,7 +156,7 @@ public class ConsumerServiceImpl implements ConsumerService {
             log.info("Transfer Process {}", transferProcess);
             transferCheckAttempts += 1;
             if (transferCheckAttempts >= 15) {
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "failed to transfer");
+                throw new TransferFailedException("Transfer never reached COMPLETED state.");
             }
         } while (!transferProcess.getState().equals(TransferProcessState.COMPLETED));
 

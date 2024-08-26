@@ -4,6 +4,9 @@ import eu.possiblex.participantportal.business.entity.ConsumeOfferRequestBE;
 import eu.possiblex.participantportal.business.entity.SelectOfferRequestBE;
 import eu.possiblex.participantportal.business.entity.edc.catalog.DcatDataset;
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcess;
+import eu.possiblex.participantportal.business.entity.exception.NegotiationFailedException;
+import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
+import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
 import eu.possiblex.participantportal.service.EdcClientFake;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -15,8 +18,7 @@ import org.springframework.test.context.ContextConfiguration;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ContextConfiguration(classes = { ConsumerServiceTest.TestConfig.class, ConsumerServiceImpl.class })
@@ -39,8 +41,9 @@ class ConsumerServiceTest {
     private EdcClient edcClient;
 
     @Test
-    void shouldSelectContractOffer() {
+    void shouldSelectContractOffer() throws OfferNotFoundException {
 
+        reset(edcClient);
         DcatDataset response = consumerService.selectContractOffer(
             SelectOfferRequestBE
                 .builder()
@@ -55,8 +58,10 @@ class ConsumerServiceTest {
     }
 
     @Test
-    void shouldAcceptContractOffer() {
+    void shouldAcceptContractOffer()
+        throws NegotiationFailedException, TransferFailedException, OfferNotFoundException {
 
+        reset(edcClient);
         TransferProcess response = consumerService.acceptContractOffer(
             ConsumeOfferRequestBE
                 .builder()
