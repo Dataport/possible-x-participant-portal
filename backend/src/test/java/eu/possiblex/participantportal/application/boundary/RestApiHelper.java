@@ -1,4 +1,4 @@
-package eu.possible_x.backend.application.boundary;
+package eu.possiblex.participantportal.application.boundary;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 

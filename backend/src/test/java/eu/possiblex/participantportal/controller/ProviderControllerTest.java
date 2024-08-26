@@ -1,6 +1,6 @@
 package eu.possiblex.participantportal.controller;
 
-import eu.possible_x.backend.application.boundary.RestApiHelper;
+import eu.possiblex.participantportal.application.boundary.RestApiHelper;
 import eu.possiblex.participantportal.application.boundary.ProviderRestApi;
 import eu.possiblex.participantportal.application.entity.CreateOfferRequestTO;
 import eu.possiblex.participantportal.business.entity.edc.common.IdResponse;

@@ -20,6 +20,7 @@
 package eu.possiblex.participantportal.business.entity.edc.policy;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
 import eu.possiblex.participantportal.business.entity.edc.EdcConstants;
 import lombok.*;
 
@@ -39,13 +40,13 @@ public class Policy {
     private String id;
 
     @JsonProperty(EdcConstants.ODRL_PREFIX + "permission")
-    private List<String> permission; // replace this with proper classes once needed
+    private List<JsonNode> permission; // replace this with proper classes once needed
 
     @JsonProperty(EdcConstants.ODRL_PREFIX + "prohibition")
-    private List<String> prohibition; // replace this with proper classes once needed
+    private List<JsonNode> prohibition; // replace this with proper classes once needed
 
     @JsonProperty(EdcConstants.ODRL_PREFIX + "obligation")
-    private List<String> obligation; // replace this with proper classes once needed
+    private List<JsonNode> obligation; // replace this with proper classes once needed
 
     @JsonProperty(EdcConstants.ODRL_PREFIX + "target")
     private PolicyTarget target;

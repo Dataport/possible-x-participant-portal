@@ -1,15 +1,23 @@
 package eu.possiblex.participantportal.application.entity;
 
 import eu.possiblex.participantportal.business.entity.edc.catalog.DcatDataset;
+import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class OfferDetailsTO {
-    private DcatDataset edcOffering; // TODO validate whether we really want to pass the full EDC response to the frontend
+    private String offerId;
+    private String name;
+    private String description;
+    private String contenttype;
+    private String version;
+    private List<Policy> policies;
 }

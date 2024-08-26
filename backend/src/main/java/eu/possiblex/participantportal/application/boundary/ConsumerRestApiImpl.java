@@ -33,7 +33,7 @@ public class ConsumerRestApiImpl implements ConsumerRestApi {
 
         SelectOfferRequestBE bo = consumerApiMapper.selectOfferRequestTOtoBO(request);
         DcatDataset dataset = consumerService.selectContractOffer(bo);
-        return OfferDetailsTO.builder().edcOffering(dataset).build();
+        return consumerApiMapper.dcatDatasetToOfferDetailsTo(dataset);
     }
 
     @Override

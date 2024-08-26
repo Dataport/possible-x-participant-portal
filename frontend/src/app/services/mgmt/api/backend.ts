@@ -23,7 +23,12 @@ export interface IExceptionTO {
 }
 
 export interface IOfferDetailsTO {
-    edcOffering: IDcatDataset;
+    offerId: string;
+    name: string;
+    description: string;
+    contenttype: string;
+    version: string;
+    policies: IPolicy[];
 }
 
 export interface ISelectOfferRequestTO {
@@ -35,31 +40,13 @@ export interface ITransferDetailsTO {
     state: ITransferProcessState;
 }
 
-export interface IDcatDataset {
-    version: string;
-    name: string;
-    description: string;
-    contenttype: string;
-    "@id": string;
-    "@type": string;
-    "odrl:hasPolicy": IPolicy[];
-    "dcat:distribution": IDcatDistribution[];
-    id: string;
-}
-
 export interface IPolicy {
     "@id": string;
-    "odrl:permission": string[];
-    "odrl:prohibition": string[];
-    "odrl:obligation": string[];
+    "odrl:permission": any[];
+    "odrl:prohibition": any[];
+    "odrl:obligation": any[];
     "odrl:target": IPolicyTarget;
     "@type": string;
-}
-
-export interface IDcatDistribution {
-    "@type": string;
-    "dct:format": { [index: string]: string };
-    "dcat:accessService": string;
 }
 
 export interface IPolicyTarget {

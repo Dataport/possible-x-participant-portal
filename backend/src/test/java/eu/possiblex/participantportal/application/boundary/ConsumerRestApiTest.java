@@ -1,7 +1,6 @@
-package eu.possible_x.backend.application.boundary;
+package eu.possiblex.participantportal.application.boundary;
 
-import eu.possible_x.backend.business.control.ConsumerServiceFake;
-import eu.possiblex.participantportal.application.boundary.ConsumerRestApiImpl;
+import eu.possiblex.participantportal.business.control.ConsumerServiceFake;
 import eu.possiblex.participantportal.application.control.ConsumerApiMapper;
 import eu.possiblex.participantportal.application.entity.ConsumeOfferRequestTO;
 import eu.possiblex.participantportal.application.entity.SelectOfferRequestTO;
