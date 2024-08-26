@@ -1,0 +1,73 @@
+<div class="flex flex-col items-center justify-center min-h-screen"> <!-- Full-page flex container -->
+  <div class="text-brand pb-3">
+    Contract and Transfer
+  </div>
+  <div class="p-6 w-full max-w-3xl">
+    <c-container class="flex justify-center">
+      <c-row>
+        <div class="mb-3 flex-1 w-100 bg-white">
+          Data Ressource Name
+        </div>
+      </c-row>
+
+      <c-row>
+        <c-accordion [flush]="true" [alwaysOpen]="true">
+          <c-accordion-item #offeringDetails="cAccordionItem" [visible]="false">
+            <ng-template cTemplateId="accordionHeaderTemplate">
+              <button (click)="offeringDetails.toggleItem()" [collapsed]="!offeringDetails.visible" cAccordionButton>
+                View offering details
+              </button>
+            </ng-template>
+            <ng-template cTemplateId="accordionBodyTemplate">
+              <div class="accordion-body">
+                Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore
+                magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea
+                commodi consequat. Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+                pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit
+                anim id est laborum.
+              </div>
+            </ng-template>
+          </c-accordion-item>
+          <c-accordion-item #contractDetails="cAccordionItem" [visible]="false">
+            <ng-template cTemplateId="accordionHeaderTemplate">
+              <button (click)="contractDetails.toggleItem()" [collapsed]="!contractDetails.visible" cAccordionButton>
+                View contract details
+              </button>
+            </ng-template>
+            <ng-template cTemplateId="accordionBodyTemplate">
+              <div class="accordion-body">
+                Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore
+                magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea
+                commodi consequat. Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+                pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit
+                anim id est laborum.
+              </div>
+            </ng-template>
+          </c-accordion-item>
+        </c-accordion>
+      </c-row>
+
+      <c-row class="justify-content-between">
+        <c-col xs="4">
+          <a cButton color="light" [routerLink]="['/offer/consume']" role="button">
+            Cancel
+          </a>
+        </c-col>
+        <c-col xs="4">
+          <button (click)="acceptContractOffer()" cButton color="primary" shape="rounded-0" type="submit">
+            Accept and transfer
+          </button>
+        </c-col>
+      </c-row>
+
+      <div class="flex justify-right mt-3">
+        <app-status-message
+          #acceptOfferStatusMessage
+          [errorMessage]="'Offer acceptance failed.'"
+          [infoMessage]="'Offer acceptance ongoing.'"
+          [successMessage]="'Offer acceptance successful.'">
+        </app-status-message>
+      </div>
+    </c-container>
+  </div>
+</div>

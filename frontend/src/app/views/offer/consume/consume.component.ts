@@ -10,22 +10,21 @@ import { environment } from '../../../../environments/environment';
   styleUrl: './consume.component.scss'
 })
 export class ConsumeComponent {
-  @ViewChild('acceptOfferStatusMessage') private acceptOfferStatusMessage!: StatusMessageComponent;
+  @ViewChild('queryCatalogStatusMessage') private queryCatalogStatusMessage!: StatusMessageComponent;
+  selectedOfferId: string = "";
 
   constructor(private apiService: ApiService) {}
 
-  protected async acceptContractOffer() {
-    this.acceptOfferStatusMessage.showInfoMessage();
-    console.log("'Accept Contract Offer' button pressed");
-
-    this.apiService.acceptContractOffer({
-      counterPartyAddress: environment.counter_party_address,
-      offerId: 'dummy' // TODO set to the actual offer id from the selection step
+  protected async queryCatalog() {
+    this.queryCatalogStatusMessage.showInfoMessage();
+    this.apiService.selectContractOffer({
+      counterPartyAddress: environment.counter_party_address
     }).then(response => {
       console.log(response);
-      this.acceptOfferStatusMessage.showSuccessMessage("Check console for details.", 20000);
+      this.queryCatalogStatusMessage.showSuccessMessage("Check console for details.", 20000);
+      this.selectedOfferId = response.offerId;
     }).catch((e: HttpErrorResponse) => {
-      this.acceptOfferStatusMessage.showErrorMessage(e.error.detail);
+      this.queryCatalogStatusMessage.showErrorMessage(e.error.detail);
     });
   }
 }

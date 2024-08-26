@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule , FormsModule } from '@angular/forms';
 
 import {
+  AccordionButtonDirective,
+  AccordionComponent, AccordionItemComponent,
   AvatarModule,
   ButtonGroupModule,
   ButtonModule,
@@ -12,7 +14,7 @@ import {
   NavModule,
   ProgressModule,
   TableModule,
-  TabsModule,
+  TabsModule, TemplateIdDirective,
 } from '@coreui/angular';
 import { IconModule } from '@coreui/icons-angular';
 
@@ -20,6 +22,7 @@ import { OfferRoutingModule } from './offer-routing.module';
 import { ProvideComponent } from './provide/provide.component';
 import { ConsumeComponent } from './consume/consume.component';
 import { CommonViewsModule } from '../common-views/common-views.module';
+import { AcceptOfferComponent } from './accept/accept-offer.component';
 
 @NgModule({
   imports: [
@@ -39,8 +42,12 @@ import { CommonViewsModule } from '../common-views/common-views.module';
     ButtonGroupModule,
     AvatarModule,
     TableModule,
-    FormsModule, 
+    FormsModule,
+    AccordionComponent,
+    AccordionItemComponent,
+    TemplateIdDirective,
+    AccordionButtonDirective,
   ],
-  declarations: [ProvideComponent, ConsumeComponent],
+  declarations: [ProvideComponent, ConsumeComponent, AcceptOfferComponent],
 })
 export class OfferModule {}

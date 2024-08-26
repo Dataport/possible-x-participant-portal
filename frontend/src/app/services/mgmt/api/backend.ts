@@ -32,8 +32,7 @@ export interface IOfferDetailsTO {
 }
 
 export interface ISelectOfferRequestTO {
-    counterPartyAddress: string;
-    offerId: string;
+    counterPartyAddress: string
 }
 
 export interface ITransferDetailsTO {
