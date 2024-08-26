@@ -1,9 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
 import { ProvideComponent } from './provide.component';
 import { ApiService } from '../../../services/mgmt/api/api.service';
 import { GridModule } from '@coreui/angular';
 import { FormsModule } from '@angular/forms';
+import { CommonViewsModule } from '../../common-views/common-views.module';
 
 
 describe('ProvideComponent', () => {
@@ -21,7 +21,7 @@ describe('ProvideComponent', () => {
       providers: [
         { provide: ApiService, useValue: apiServiceSpy }
       ],
-      imports: [ FormsModule, GridModule ],
+      imports: [ FormsModule, GridModule , CommonViewsModule ],
     })
     .compileComponents();
 
@@ -37,17 +37,14 @@ describe('ProvideComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should call createOffer on apiService when createOffer is called', async () => {
+    const spy = spyOn<any>(component, 'createOffer').and.callThrough();
+    const mockResponse = Promise.resolve({ id: '123' });
+    apiService.createOffer.and.returnValue(mockResponse);
 
-  it('should call getHealth on apiService when getHealth is called', () => {
-    apiService.getHealth.and.returnValue(of({ status: 'healthy' }));
-    component.getHealth();
-    expect(apiService.getHealth).toHaveBeenCalled();
-  });
+    await (component as any).createOffer();
 
-
-  it('should call createOffer on apiService when createOffer is called', () => {
-    apiService.createOffer.and.returnValue(of({ id: '123' }));
-    component.createOffer();
+    expect(spy).toHaveBeenCalled();
     expect(apiService.createOffer).toHaveBeenCalled();
   });
 
