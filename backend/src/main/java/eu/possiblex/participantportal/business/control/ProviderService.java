@@ -1,5 +1,9 @@
 package eu.possiblex.participantportal.business.control;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import eu.possiblex.participantportal.business.entity.edc.CreateEdcOfferBE;
 import eu.possiblex.participantportal.business.entity.edc.asset.AssetCreateRequest;
 import eu.possiblex.participantportal.business.entity.edc.asset.AssetProperties;
 import eu.possiblex.participantportal.business.entity.edc.asset.DataAddress;
@@ -9,15 +13,15 @@ import eu.possiblex.participantportal.business.entity.edc.contractdefinition.Con
 import eu.possiblex.participantportal.business.entity.edc.contractdefinition.Criterion;
 import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyCreateRequest;
+import eu.possiblex.participantportal.business.entity.edc.policy.PolicyTarget;
+import eu.possiblex.participantportal.business.entity.fh.CreateDatasetEntryBE;
 import eu.possiblex.participantportal.business.entity.fh.FhIdResponse;
-import eu.possiblex.participantportal.business.entity.fh.catalog.*;
 import eu.possiblex.participantportal.business.entity.fh.catalog.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -33,22 +37,27 @@ public class ProviderService {
     @Value("${fh.catalog.secret-key}")
     private String fhCatalogSecretKey;
 
-    public ProviderService(@Autowired EdcClient edcClient, @Autowired FhCatalogClient fhCatalogClient) {
+    private final ObjectMapper objectMapper;
+
+    public ProviderService(@Autowired EdcClient edcClient, @Autowired FhCatalogClient fhCatalogClient,
+        @Autowired ObjectMapper objectMapper) {
 
         this.edcClient = edcClient;
         this.fhCatalogClient = fhCatalogClient;
+        this.objectMapper = objectMapper;
     }
 
-    public IdResponse createOffer() {
+    public IdResponse createOffer(CreateDatasetEntryBE createDatasetEntryBE, CreateEdcOfferBE createEdcOfferBE) {
 
-        createDatasetEntryInFhCatalog("test-provider");
-        return createEdcOffer();
+        createDatasetEntryInFhCatalog(createDatasetEntryBE, "test-provider");
+        return createEdcOffer(createEdcOfferBE);
     }
 
-    private IdResponse createEdcOffer() {
+    private IdResponse createEdcOffer(CreateEdcOfferBE createEdcOfferBE) {
         // create asset
         DataAddress dataAddress = IonosS3DataSource.builder().bucketName("dev-provider-edc-bucket-possible-31952746")
-            .blobName("ssss.txt").keyName("ssss.txt").storage("s3-eu-central-2.ionoscloud.com").build();
+            .blobName(createEdcOfferBE.getFileName()).keyName(createEdcOfferBE.getFileName())
+            .storage("s3-eu-central-2.ionoscloud.com").build();
         AssetCreateRequest assetCreateRequest = AssetCreateRequest.builder().id("assetId_" + UUID.randomUUID())
             .properties(
                 AssetProperties.builder().name("assetName").description("assetDescription").version("assetVersion")
@@ -59,9 +68,27 @@ public class ProviderService {
 
         // create policy
         String policyId = "policyId_" + UUID.randomUUID();
-        PolicyCreateRequest policyCreateRequest = PolicyCreateRequest.builder().id(policyId).policy(
-            Policy.builder().id(policyId).obligation(Collections.emptyList()).prohibition(Collections.emptyList())
-                .permission(Collections.emptyList()).build()).build();
+
+        Policy policy = null;
+        try {
+            JsonNode policyNode = createEdcOfferBE.getPolicy().get("policy");
+
+            policy = objectMapper.treeToValue(policyNode, Policy.class);
+
+            policy.setId(policyId);
+
+            List<JsonNode> permission = policy.getPermission();
+            permission.forEach(p -> ((ObjectNode) p).put("odrl:target", assetIdResponse.getId()));
+
+            List<JsonNode> prohibition = policy.getProhibition();
+            prohibition.forEach(p -> ((ObjectNode) p).put("odrl:target", assetIdResponse.getId()));
+
+            policy.setTarget(PolicyTarget.builder().id(assetIdResponse.getId()).build());
+        } catch (Exception e) {
+            log.info(e.getMessage());
+        }
+
+        PolicyCreateRequest policyCreateRequest = PolicyCreateRequest.builder().id(policyId).policy(policy).build();
         log.info("Creating Policy {}", policyCreateRequest);
         IdResponse policyIdResponse = edcClient.createPolicy(policyCreateRequest);
 
@@ -76,7 +103,7 @@ public class ProviderService {
         return edcClient.createContractDefinition(contractDefinitionCreateRequest);
     }
 
-    private FhIdResponse createDatasetEntryInFhCatalog(String cat_name) {
+    private FhIdResponse createDatasetEntryInFhCatalog(CreateDatasetEntryBE createDatasetEntryBE, String cat_name) {
 
         DatasetToCatalogRequest datasetToCatalogRequest = DatasetToCatalogRequest.builder().graphElements(List.of(
             GraphFirstElement.builder().id("_:b4").foafmbox(FoafMbox.builder().id("mailto:info@gv.hamburg.de").build())

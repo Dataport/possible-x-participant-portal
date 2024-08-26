@@ -2,6 +2,7 @@ package eu.possiblex.participantportal.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.possiblex.participantportal.application.boundary.ProviderRestApi;
+import eu.possiblex.participantportal.application.control.RequestMapper;
 import eu.possiblex.participantportal.application.entity.CreateOfferRequestTO;
 import eu.possiblex.participantportal.business.entity.edc.common.IdResponse;
 import eu.possiblex.participantportal.business.control.ProviderService;
@@ -13,6 +14,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.lenient;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -31,6 +33,9 @@ class ProviderControllerTest {
     @MockBean
     private ProviderService providerService;
 
+    @MockBean
+    RequestMapper requestMapper;
+
     public static String asJsonString(final Object obj) {
 
         try {
@@ -45,7 +50,7 @@ class ProviderControllerTest {
 
         IdResponse createOfferResponse = new IdResponse();
         createOfferResponse.setId(CREATE_OFFER_RESPONSE_ID);
-        lenient().when(providerService.createOffer()).thenReturn(createOfferResponse);
+        lenient().when(providerService.createOffer(any(), any())).thenReturn(createOfferResponse);
 
     }
 
@@ -54,7 +59,7 @@ class ProviderControllerTest {
         //when
         //then
         this.mockMvc.perform(post("/provider/offer").content(asJsonString(new CreateOfferRequestTO()))
-                .contentType(MediaType.APPLICATION_JSON)).andDo(print())
-            .andExpect(status().isOk()).andExpect(jsonPath("$.id").value(CREATE_OFFER_RESPONSE_ID));
+                .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(CREATE_OFFER_RESPONSE_ID));
     }
 }

@@ -1,14 +1,18 @@
 package eu.possiblex.participantportal.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.possiblex.participantportal.business.entity.edc.CreateEdcOfferBE;
 import eu.possiblex.participantportal.business.entity.edc.common.IdResponse;
 import eu.possiblex.participantportal.business.control.EdcClient;
 import eu.possiblex.participantportal.business.control.FhCatalogClient;
 import eu.possiblex.participantportal.business.control.ProviderService;
+import eu.possiblex.participantportal.business.entity.fh.CreateDatasetEntryBE;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -29,10 +33,13 @@ class ProviderServiceTest {
     @Autowired
     FhCatalogClient fhCatalogClient;
 
+    @MockBean
+    ObjectMapper objectMapper;
+
     @Test
     void testCreateOffer() {
 
-        IdResponse response = providerService.createOffer();
+        IdResponse response = providerService.createOffer(new CreateDatasetEntryBE(), new CreateEdcOfferBE());
 
         verify(fhCatalogClient).addDatasetToFhCatalog(any(), any(), any(), any());
 
@@ -45,7 +52,7 @@ class ProviderServiceTest {
         assertFalse(response.getId().isBlank());
     }
 
-    // Test-specific configuration to provide a fake implementation of EdcClient
+    // Test-specific configuration to provide a fake implementation of EdcClient and FhCatalogClient
     @TestConfiguration
     static class TestConfig {
         @Bean
