@@ -44,13 +44,13 @@ public class Policy {
     private String id;
 
     @JsonProperty(EdcConstants.ODRL_PREFIX + "permission")
-    private List<JsonNode> permission = new ArrayList<>();; // replace this with proper classes once needed
+    private List<JsonNode> permission; // replace this with proper classes once needed
 
     @JsonProperty(EdcConstants.ODRL_PREFIX + "prohibition")
-    private List<JsonNode> prohibition = new ArrayList<>(); // replace this with proper classes once needed
+    private List<JsonNode> prohibition; // replace this with proper classes once needed
 
     @JsonProperty(EdcConstants.ODRL_PREFIX + "obligation")
-    private List<JsonNode> obligation = new ArrayList<>(); // replace this with proper classes once needed
+    private List<JsonNode> obligation; // replace this with proper classes once needed
 
     @JsonProperty(EdcConstants.ODRL_PREFIX + "target")
     private PolicyTarget target;
@@ -64,5 +64,29 @@ public class Policy {
     @JsonProperty("@context")
     public String getContext() {
         return CONTEXT;
+    }
+
+    public void setPermission(List<JsonNode> permission) {
+        if (permission == null) {
+            this.permission = new ArrayList<>();
+        } else {
+            this.permission = permission;
+        }
+    }
+
+    public void setProhibition(List<JsonNode> prohibition) {
+        if (prohibition == null) {
+            this.prohibition = new ArrayList<>();
+        } else {
+            this.prohibition = prohibition;
+        }
+    }
+
+    public void setObligation(List<JsonNode> obligation) {
+        if (obligation == null) {
+            this.obligation = new ArrayList<>();
+        } else {
+            this.obligation = obligation;
+        }
     }
 }
