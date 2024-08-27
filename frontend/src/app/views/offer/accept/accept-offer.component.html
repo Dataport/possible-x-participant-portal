@@ -6,7 +6,7 @@
     <c-container class="flex justify-center">
       <c-row>
         <div class="mb-3 flex-1 w-100 bg-white">
-          Data Ressource Name
+          <b>Name:</b> {{ offer?.name }}
         </div>
       </c-row>
 
@@ -20,11 +20,10 @@
             </ng-template>
             <ng-template cTemplateId="accordionBodyTemplate">
               <div class="accordion-body">
-                Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore
-                magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea
-                commodi consequat. Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-                pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit
-                anim id est laborum.
+                <b>Description:</b> {{ offer?.description }} <br/><br/>
+                <b>Content Type:</b> {{ offer?.contenttype }} <br/><br/>
+                <b>Version:</b> {{ offer?.version }} <br/><br/>
+                <b>Policies:</b> <br/> <pre>{{ offer?.policies | json }}</pre>
               </div>
             </ng-template>
           </c-accordion-item>

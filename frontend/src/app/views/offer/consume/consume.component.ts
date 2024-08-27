@@ -3,6 +3,7 @@ import { ApiService } from '../../../services/mgmt/api/api.service';
 import { StatusMessageComponent } from '../../common-views/status-message/status-message.component';
 import { HttpErrorResponse } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
+import { IOfferDetailsTO } from '../../../services/mgmt/api/backend';
 
 @Component({
   selector: 'app-consume',
@@ -11,18 +12,18 @@ import { environment } from '../../../../environments/environment';
 })
 export class ConsumeComponent {
   @ViewChild('queryCatalogStatusMessage') private queryCatalogStatusMessage!: StatusMessageComponent;
-  selectedOfferId: string = "";
+  selectedOffer?: IOfferDetailsTO = undefined;
 
   constructor(private apiService: ApiService) {}
 
-  protected async queryCatalog() {
+  protected async selectOffer() {
     this.queryCatalogStatusMessage.showInfoMessage();
     this.apiService.selectContractOffer({
       counterPartyAddress: environment.counter_party_address
     }).then(response => {
       console.log(response);
       this.queryCatalogStatusMessage.showSuccessMessage("Check console for details.", 20000);
-      this.selectedOfferId = response.offerId;
+      this.selectedOffer = response;
     }).catch((e: HttpErrorResponse) => {
       this.queryCatalogStatusMessage.showErrorMessage(e.error.detail);
     });

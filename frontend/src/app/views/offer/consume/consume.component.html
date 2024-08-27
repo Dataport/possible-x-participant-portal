@@ -1,8 +1,8 @@
-<div [hidden]="selectedOfferId" style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+<div [hidden]="selectedOffer" style="display: flex; justify-content: center; align-items: center; height: 100vh;">
   <div class="p-6 w-full max-w-3xl"> <!-- Centered form container with fixed max width -->
     <div class="flex justify-center">
-      <button (click)="queryCatalog()" cButton color="primary" shape="rounded-0" type="submit">
-        Query Catalog
+      <button (click)="selectOffer()" cButton color="primary" shape="rounded-0" type="submit">
+        Select offer
       </button>
     </div>
 
@@ -16,4 +16,4 @@
     </div>
   </div>
 </div>
-<app-accept-offer [hidden]="!selectedOfferId" [offerId]="selectedOfferId"></app-accept-offer>
+<app-accept-offer [hidden]="!selectedOffer" [offer]="selectedOffer"></app-accept-offer>
