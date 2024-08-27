@@ -21,7 +21,7 @@ public interface ConsumerApiMapper {
     ConsumeOfferRequestBE consumeOfferRequestTOtoBO(ConsumeOfferRequestTO to);
 
     @Mapping(source = "assetId", target = "offerId")
-    @Mapping(constant = "Data Ressource", target = "offerType") // TODO pass actual data
+    @Mapping(constant = "Data Resource", target = "offerType") // TODO pass actual data
     @Mapping(expression = "java(OffsetDateTime.now())", target = "creationDate") // TODO pass actual data
     @Mapping(source = "name", target = "name")
     @Mapping(source = "description", target = "description")
