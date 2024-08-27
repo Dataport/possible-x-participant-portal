@@ -23,12 +23,12 @@
           <option *ngFor="let policy of getPolicyNames()" [value]="policy">{{ policy }}</option>
         </select>
       </div>
-      
-      <div>
+
+      <div *ngIf="policy">
         <label>Policy Details</label>
-        <textarea [value]="getPolicyDetails(policy)" readonly class="form-control" rows="10"></textarea>
+        <textarea [value]="getPolicyDetails(policy)" readonly class="form-control" rows="10" disabled></textarea>
       </div>
-      
+
       <div class="text-right mt-3">
         <button (click)="createOffer()" cButton color="primary" shape="rounded-0" type="submit">
           Create Offer
