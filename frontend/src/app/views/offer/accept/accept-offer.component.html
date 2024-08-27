@@ -16,7 +16,7 @@
       created: {{ offer?.creationDate }}
     </div>
     <div class="p-3">
-      <c-badge color="primary">
+      <c-badge color="primary" shape="rounded-0">
         {{ offer?.contentType }}
       </c-badge>
     </div>
@@ -60,9 +60,9 @@
 
   <div class="w-full max-w-3xl">
     <div class="flex justify-between">
-      <a cButton color="light" [routerLink]="['/offer/consume']" role="button">
+      <button (click)="cancel()" cButton color="secondary" shape="rounded-0">
         Cancel
-      </a>
+      </button>
       <button (click)="acceptContractOffer()" cButton color="primary" shape="rounded-0" type="submit">
         Accept and transfer
       </button>

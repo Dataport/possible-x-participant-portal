@@ -16,4 +16,4 @@
     </div>
   </div>
 </div>
-<app-accept-offer [hidden]="!selectedOffer" [offer]="selectedOffer"></app-accept-offer>
+<app-accept-offer [hidden]="!selectedOffer" [offer]="selectedOffer" (dismiss)="deselectOffer()"></app-accept-offer>

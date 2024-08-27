@@ -25,7 +25,11 @@ export class ConsumeComponent {
       this.queryCatalogStatusMessage.showSuccessMessage("Check console for details.", 20000);
       this.selectedOffer = response;
     }).catch((e: HttpErrorResponse) => {
-      this.queryCatalogStatusMessage.showErrorMessage(e.error.detail);
+      this.queryCatalogStatusMessage.showErrorMessage(e.error.detail, 20000);
     });
+  }
+
+  deselectOffer(): void {
+    this.selectedOffer = undefined;
   }
 }
