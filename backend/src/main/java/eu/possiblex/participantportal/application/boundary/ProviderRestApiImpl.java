@@ -30,6 +30,11 @@ public class ProviderRestApiImpl implements ProviderRestApi {
         this.providerApiMapper = providerApiMapper;
     }
 
+    /**
+     * POST endpoint to create an offer
+     *
+     * @return success message
+     */
     @Override
     public JsonNode createOffer(@RequestBody CreateOfferRequestTO createOfferRequestTO) {
 
