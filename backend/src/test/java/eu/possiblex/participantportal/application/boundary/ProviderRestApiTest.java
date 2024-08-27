@@ -1,9 +1,8 @@
-package eu.possiblex.participantportal.controller;
+package eu.possiblex.participantportal.application.boundary;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import eu.possiblex.participantportal.application.boundary.ProviderRestApiImpl;
 import eu.possiblex.participantportal.application.control.ProviderApiMapper;
 import eu.possiblex.participantportal.application.entity.CreateOfferRequestTO;
 import eu.possiblex.participantportal.business.control.ProviderService;
@@ -32,8 +31,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(ProviderRestApiImpl.class)
-@ContextConfiguration(classes = { ProviderControllerTest.TestConfig.class, ProviderRestApiImpl.class })
-class ProviderControllerTest {
+@ContextConfiguration(classes = { ProviderRestApiTest.TestConfig.class, ProviderRestApiImpl.class })
+class ProviderRestApiTest {
 
     private static final String ASSET_NAME = "BestAsset3000";
 
