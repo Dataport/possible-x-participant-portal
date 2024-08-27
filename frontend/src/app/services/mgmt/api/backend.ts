@@ -1,6 +1,9 @@
 /* tslint:disable */
 /* eslint-disable */
 
+export interface IProviderRestApi {
+}
+
 export interface IConsumeOfferRequestTO {
     counterPartyAddress: string;
 }
@@ -38,7 +41,7 @@ export class RestApplicationClient {
 
     /**
      * HTTP POST /provider/offer
-     * Java method: eu.possiblex.participantportal.application.boundary.ProviderRestApi.createOffer
+     * Java method: eu.possiblex.participantportal.application.boundary.ProviderRestApiImpl.createOffer
      */
     createOffer(createOfferRequestTO: ICreateOfferRequestTO): RestResponse<any> {
         return this.httpClient.request({ method: "POST", url: uriEncoding`provider/offer`, data: createOfferRequestTO });

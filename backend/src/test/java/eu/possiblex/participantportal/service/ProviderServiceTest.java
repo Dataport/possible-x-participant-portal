@@ -3,13 +3,14 @@ package eu.possiblex.participantportal.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.possiblex.participantportal.business.control.ProviderService;
 import eu.possiblex.participantportal.business.entity.edc.CreateEdcOfferBE;
 import eu.possiblex.participantportal.business.entity.edc.asset.AssetCreateRequest;
 import eu.possiblex.participantportal.business.entity.edc.asset.ionoss3extension.IonosS3DataSource;
 import eu.possiblex.participantportal.business.entity.edc.common.IdResponse;
 import eu.possiblex.participantportal.business.control.EdcClient;
 import eu.possiblex.participantportal.business.control.FhCatalogClient;
-import eu.possiblex.participantportal.business.control.ProviderService;
+import eu.possiblex.participantportal.business.control.ProviderServiceImpl;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyCreateRequest;
 import eu.possiblex.participantportal.business.entity.fh.CreateDatasetEntryBE;
 import org.junit.jupiter.api.Test;
@@ -27,7 +28,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 
 @SpringBootTest
-@ContextConfiguration(classes = { ProviderServiceTest.TestConfig.class, ProviderService.class })
+@ContextConfiguration(classes = { ProviderServiceTest.TestConfig.class, ProviderServiceImpl.class })
 class ProviderServiceTest {
     @Autowired
     ProviderService providerService;
