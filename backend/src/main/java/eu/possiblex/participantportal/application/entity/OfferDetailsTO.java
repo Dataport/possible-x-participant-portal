@@ -1,12 +1,11 @@
 package eu.possiblex.participantportal.application.entity;
 
-import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.time.OffsetDateTime;
 
 @Data
 @Builder
@@ -14,9 +13,9 @@ import java.util.List;
 @AllArgsConstructor
 public class OfferDetailsTO {
     private String offerId;
+    private String offerType;
+    private OffsetDateTime creationDate;
     private String name;
     private String description;
     private String contentType;
-    private String version;
-    private List<Policy> policies;
 }

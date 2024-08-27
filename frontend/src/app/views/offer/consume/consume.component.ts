@@ -19,7 +19,8 @@ export class ConsumeComponent {
   protected async selectOffer() {
     this.queryCatalogStatusMessage.showInfoMessage();
     this.apiService.selectContractOffer({
-      counterPartyAddress: environment.counter_party_address
+      counterPartyAddress: environment.counter_party_address,
+      offerId: 'dummy' // TODO pass actual data
     }).then(response => {
       console.log(response);
       this.queryCatalogStatusMessage.showSuccessMessage("Check console for details.", 20000);

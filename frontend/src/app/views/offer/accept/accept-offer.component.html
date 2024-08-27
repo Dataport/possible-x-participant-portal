@@ -13,9 +13,6 @@
       {{ offer?.name }}
     </div>
     <div class="p-3">
-      created: {{ offer?.creationDate }}
-    </div>
-    <div class="p-3">
       <c-badge color="primary" shape="rounded-0">
         {{ offer?.contentType }}
       </c-badge>
@@ -32,10 +29,10 @@
         </ng-template>
         <ng-template cTemplateId="accordionBodyTemplate">
           <div class="accordion-body">
-            <b>Description:</b> {{ offer?.description }} <br/><br/>
-            <b>Content Type:</b> {{ offer?.contentType }} <br/><br/>
-            <b>Version:</b> {{ offer?.version }} <br/><br/>
-            <b>Policies:</b> <br/> <pre>{{ offer?.policies | json }}</pre>
+            <b>Offer Type:</b> {{ offer?.offerType }} <br/><br/>
+            <b>Creation Date:</b> {{ offer?.creationDate | date:'short' }} <br/><br/>
+            <b>Offer Name:</b> {{ offer?.name }} <br/><br/>
+            <b>Offer Description:</b> {{ offer?.description }}
           </div>
         </ng-template>
       </c-accordion-item>

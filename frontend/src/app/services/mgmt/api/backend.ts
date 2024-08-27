@@ -24,33 +24,20 @@ export interface IExceptionTO {
 
 export interface IOfferDetailsTO {
     offerId: string;
+    offerType: string;
+    creationDate: Date;
     name: string;
     description: string;
     contentType: string;
-    version: string;
-    policies: IPolicy[];
-    creationDate?: string;
 }
 
 export interface ISelectOfferRequestTO {
-    counterPartyAddress: string
+    counterPartyAddress: string;
+    offerId: string;
 }
 
 export interface ITransferDetailsTO {
     state: ITransferProcessState;
-}
-
-export interface IPolicy {
-    "@id": string;
-    "odrl:permission": any[];
-    "odrl:prohibition": any[];
-    "odrl:obligation": any[];
-    "odrl:target": IPolicyTarget;
-    "@type": string;
-}
-
-export interface IPolicyTarget {
-    "@id": string;
 }
 
 export interface HttpClient {

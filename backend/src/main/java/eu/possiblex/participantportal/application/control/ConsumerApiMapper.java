@@ -11,7 +11,9 @@ import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProce
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring")
+import java.time.OffsetDateTime;
+
+@Mapper(componentModel = "spring", imports = { OffsetDateTime.class })
 public interface ConsumerApiMapper {
 
     SelectOfferRequestBE selectOfferRequestTOtoBO(SelectOfferRequestTO to);
@@ -19,11 +21,11 @@ public interface ConsumerApiMapper {
     ConsumeOfferRequestBE consumeOfferRequestTOtoBO(ConsumeOfferRequestTO to);
 
     @Mapping(source = "assetId", target = "offerId")
+    @Mapping(constant = "Data Ressource", target = "offerType") // TODO pass actual data
+    @Mapping(expression = "java(OffsetDateTime.now())", target = "creationDate") // TODO pass actual data
     @Mapping(source = "name", target = "name")
     @Mapping(source = "description", target = "description")
     @Mapping(source = "contenttype", target = "contentType")
-    @Mapping(source = "version", target = "version")
-    @Mapping(source = "hasPolicy", target = "policies")
     OfferDetailsTO dcatDatasetToOfferDetailsTo(DcatDataset dataset);
 
     TransferDetailsTO transferProcessToDetailsTO(TransferProcess process);
