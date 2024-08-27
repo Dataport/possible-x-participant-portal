@@ -2,7 +2,7 @@ package eu.possiblex.participantportal.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.possiblex.participantportal.application.boundary.ProviderRestApi;
-import eu.possiblex.participantportal.application.control.RequestMapper;
+import eu.possiblex.participantportal.application.control.ProviderApiMapper;
 import eu.possiblex.participantportal.application.entity.CreateOfferRequestTO;
 import eu.possiblex.participantportal.business.entity.edc.common.IdResponse;
 import eu.possiblex.participantportal.business.control.ProviderService;
@@ -34,7 +34,7 @@ class ProviderControllerTest {
     private ProviderService providerService;
 
     @MockBean
-    RequestMapper requestMapper;
+    ProviderApiMapper providerApiMapper;
 
     public static String asJsonString(final Object obj) {
 

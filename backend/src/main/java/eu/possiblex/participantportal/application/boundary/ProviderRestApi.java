@@ -3,7 +3,7 @@ package eu.possiblex.participantportal.application.boundary;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import eu.possiblex.participantportal.application.control.RequestMapper;
+import eu.possiblex.participantportal.application.control.ProviderApiMapper;
 import eu.possiblex.participantportal.application.entity.CreateOfferRequestTO;
 import eu.possiblex.participantportal.business.entity.edc.CreateEdcOfferBE;
 import eu.possiblex.participantportal.business.entity.edc.common.IdResponse;
@@ -22,14 +22,14 @@ public class ProviderRestApi {
 
     private final ObjectMapper objectMapper;
 
-    private final RequestMapper requestMapper;
+    private final ProviderApiMapper providerApiMapper;
 
     public ProviderRestApi(@Autowired ProviderService providerService, @Autowired ObjectMapper objectMapper,
-        @Autowired RequestMapper requestMapper) {
+        @Autowired ProviderApiMapper providerApiMapper) {
 
         this.providerService = providerService;
         this.objectMapper = objectMapper;
-        this.requestMapper = requestMapper;
+        this.providerApiMapper = providerApiMapper;
     }
 
     /**
@@ -40,9 +40,9 @@ public class ProviderRestApi {
     @PostMapping(value = "/offer", produces = MediaType.APPLICATION_JSON_VALUE)
     public JsonNode createOffer(@RequestBody CreateOfferRequestTO createOfferRequestTO) {
 
-        CreateDatasetEntryBE createDatasetEntryBE = requestMapper.getCreateDatasetEntryDTOFromCreateOfferRequestTO(
+        CreateDatasetEntryBE createDatasetEntryBE = providerApiMapper.getCreateDatasetEntryDTOFromCreateOfferRequestTO(
             createOfferRequestTO);
-        CreateEdcOfferBE createEdcOfferBE = requestMapper.getCreateEdcOfferDTOFromCreateOfferRequestTO(
+        CreateEdcOfferBE createEdcOfferBE = providerApiMapper.getCreateEdcOfferDTOFromCreateOfferRequestTO(
             createOfferRequestTO);
 
         IdResponse response = providerService.createOffer(createDatasetEntryBE, createEdcOfferBE);

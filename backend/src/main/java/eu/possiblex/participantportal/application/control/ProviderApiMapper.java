@@ -6,7 +6,7 @@ import eu.possiblex.participantportal.business.entity.fh.CreateDatasetEntryBE;
 import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
-public interface RequestMapper {
+public interface ProviderApiMapper {
     @Mapping(target = "fileName", source = "fileName")
     @Mapping(target = "policy", source = "policy")
     CreateEdcOfferBE getCreateEdcOfferDTOFromCreateOfferRequestTO(CreateOfferRequestTO createOfferRequestTO);
