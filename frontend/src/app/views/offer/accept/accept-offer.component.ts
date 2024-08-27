@@ -16,7 +16,7 @@ export class AcceptOfferComponent {
 
   constructor(private apiService: ApiService) {}
 
-  protected async acceptContractOffer() {
+  async acceptContractOffer() {
     this.acceptOfferStatusMessage.showInfoMessage();
     console.log("'Accept Contract Offer' button pressed");
 

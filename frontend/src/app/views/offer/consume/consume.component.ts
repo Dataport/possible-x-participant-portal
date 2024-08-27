@@ -16,7 +16,7 @@ export class ConsumeComponent {
 
   constructor(private apiService: ApiService) {}
 
-  protected async selectOffer() {
+  async selectOffer() {
     this.queryCatalogStatusMessage.showInfoMessage();
     this.apiService.selectContractOffer({
       counterPartyAddress: environment.counter_party_address,
