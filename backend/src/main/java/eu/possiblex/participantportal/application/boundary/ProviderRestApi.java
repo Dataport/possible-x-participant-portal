@@ -15,5 +15,5 @@ public interface ProviderRestApi {
      * @return success message
      */
     @PostMapping(value = "/offer", produces = MediaType.APPLICATION_JSON_VALUE)
-    public JsonNode createOffer(@RequestBody CreateOfferRequestTO createOfferRequestTO);
+    JsonNode createOffer(@RequestBody CreateOfferRequestTO createOfferRequestTO);
 }

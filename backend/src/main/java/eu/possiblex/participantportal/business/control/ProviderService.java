@@ -12,5 +12,5 @@ public interface ProviderService {
      * @param createEdcOfferBE request for creating an offer in the EDC catalog
      * @return success message (currently an IdResponse)
      */
-    public IdResponse createOffer(CreateDatasetEntryBE createDatasetEntryBE, CreateEdcOfferBE createEdcOfferBE);
+    IdResponse createOffer(CreateDatasetEntryBE createDatasetEntryBE, CreateEdcOfferBE createEdcOfferBE);
 }
