@@ -1,7 +1,10 @@
 import { AcceptOfferComponent } from './accept-offer.component';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ApiService } from '../../../services/mgmt/api/api.service';
-import { ITransferDetailsTO, RestResponse } from '../../../services/mgmt/api/backend';
+import { ITransferDetailsTO } from '../../../services/mgmt/api/backend';
+import { BadgeComponent , AccordionComponent, AccordionItemComponent } from '@coreui/angular';
+import { CommonViewsModule } from '../../common-views/common-views.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('AcceptOfferComponent', () => {
   let component: AcceptOfferComponent;
@@ -15,7 +18,8 @@ describe('AcceptOfferComponent', () => {
       declarations: [AcceptOfferComponent],
       providers: [
         { provide: ApiService, useValue: apiServiceSpy }
-      ]
+      ],
+      imports: [ BadgeComponent, AccordionComponent, AccordionItemComponent, CommonViewsModule, BrowserAnimationsModule ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(AcceptOfferComponent);
@@ -29,7 +33,8 @@ describe('AcceptOfferComponent', () => {
   });
 
   it('should call apiService on acceptContractOffer', () => {
-    apiService.acceptContractOffer.and.returnValue({ state: "COMPLETED" } as RestResponse<ITransferDetailsTO>);
+    const mockResponse = Promise.resolve({ state: "COMPLETED" } as ITransferDetailsTO);
+    apiService.acceptContractOffer.and.returnValue(mockResponse);
 
     component.acceptContractOffer();
 
