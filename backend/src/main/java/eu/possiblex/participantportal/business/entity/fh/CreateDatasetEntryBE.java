@@ -10,6 +10,9 @@ import lombok.*;
 @Setter
 public class CreateDatasetEntryBE {
 
+    private String offerType;
+    private String offerName;
+    private String offerDescription;
     private JsonNode policy;
 
 }

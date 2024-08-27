@@ -57,9 +57,11 @@ class ProviderServiceTest {
         //given
         CreateEdcOfferBE createEdcOfferBE = CreateEdcOfferBE.builder().fileName(FILE_NAME)
             .policy(objectMapper.readTree(POLICY_JSON_STRING)).build();
+        CreateDatasetEntryBE createDatasetEntryBE  = CreateDatasetEntryBE.builder()
+            .policy(objectMapper.readTree(POLICY_JSON_STRING)).build();
 
         //when
-        IdResponse response = providerService.createOffer(new CreateDatasetEntryBE(), createEdcOfferBE);
+        IdResponse response = providerService.createOffer(createDatasetEntryBE, createEdcOfferBE);
 
         //then
         ArgumentCaptor<AssetCreateRequest> assetCreateRequestCaptor = forClass(AssetCreateRequest.class);
