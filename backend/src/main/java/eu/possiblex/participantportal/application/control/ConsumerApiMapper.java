@@ -21,7 +21,7 @@ public interface ConsumerApiMapper {
     @Mapping(source = "assetId", target = "offerId")
     @Mapping(source = "name", target = "name")
     @Mapping(source = "description", target = "description")
-    @Mapping(source = "contenttype", target = "contenttype")
+    @Mapping(source = "contenttype", target = "contentType")
     @Mapping(source = "version", target = "version")
     @Mapping(source = "hasPolicy", target = "policies")
     OfferDetailsTO dcatDatasetToOfferDetailsTo(DcatDataset dataset);

@@ -26,9 +26,10 @@ export interface IOfferDetailsTO {
     offerId: string;
     name: string;
     description: string;
-    contenttype: string;
+    contentType: string;
     version: string;
     policies: IPolicy[];
+    creationDate?: string;
 }
 
 export interface ISelectOfferRequestTO {

@@ -1,6 +1,5 @@
 package eu.possiblex.participantportal.application.entity;
 
-import eu.possiblex.participantportal.business.entity.edc.catalog.DcatDataset;
 import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,7 +16,7 @@ public class OfferDetailsTO {
     private String offerId;
     private String name;
     private String description;
-    private String contenttype;
+    private String contentType;
     private String version;
     private List<Policy> policies;
 }
