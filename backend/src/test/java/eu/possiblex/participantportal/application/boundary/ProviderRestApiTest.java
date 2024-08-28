@@ -37,15 +37,6 @@ class ProviderRestApiTest {
     @Autowired
     private ProviderService providerService;
 
-    public static String asJsonString(final Object obj) {
-
-        try {
-            return new ObjectMapper().writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     @Test
     void shouldReturnMessageOnCreateOffer() throws Exception {
         //given
@@ -57,7 +48,7 @@ class ProviderRestApiTest {
 
         //when
         //then
-        this.mockMvc.perform(post("/provider/offer").content(asJsonString(request))
+        this.mockMvc.perform(post("/provider/offer").content(RestApiHelper.asJsonString(request))
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
             .andExpect(jsonPath("$.id").value(ProviderServiceFake.CREATE_OFFER_RESPONSE_ID));
 

@@ -1,8 +1,7 @@
-package eu.possiblex.participantportal.service;
+package eu.possiblex.participantportal.business.control;
 
 import eu.possiblex.participantportal.business.entity.fh.FhIdResponse;
 import eu.possiblex.participantportal.business.entity.fh.catalog.DatasetToCatalogRequest;
-import eu.possiblex.participantportal.business.control.FhCatalogClient;
 
 import java.util.Map;
 

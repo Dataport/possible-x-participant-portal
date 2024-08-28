@@ -9,8 +9,6 @@ import eu.possiblex.participantportal.business.entity.edc.asset.ionoss3extension
 import eu.possiblex.participantportal.business.entity.edc.common.IdResponse;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyCreateRequest;
 import eu.possiblex.participantportal.business.entity.fh.CreateDatasetEntryBE;
-import eu.possiblex.participantportal.service.EdcClientFake;
-import eu.possiblex.participantportal.service.FhCatalogClientFake;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;

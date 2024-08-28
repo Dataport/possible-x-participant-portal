@@ -17,7 +17,7 @@
  * - Dataport (part of the POSSIBLE project) - 14 August, 2024 - Adjust package names and imports
  */
 
-package eu.possiblex.participantportal.service;
+package eu.possiblex.participantportal.business.control;
 
 import eu.possiblex.participantportal.business.entity.edc.asset.AssetCreateRequest;
 import eu.possiblex.participantportal.business.entity.edc.asset.ionoss3extension.IonosS3DataDestination;
@@ -35,7 +35,6 @@ import eu.possiblex.participantportal.business.entity.edc.transfer.DataRequest;
 import eu.possiblex.participantportal.business.entity.edc.transfer.IonosS3TransferProcess;
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcessState;
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferRequest;
-import eu.possiblex.participantportal.business.control.EdcClient;
 
 import java.util.ArrayList;
 import java.util.List;
