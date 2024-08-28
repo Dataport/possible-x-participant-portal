@@ -4,6 +4,7 @@ import { ProvideComponent } from './provide.component';
 import { ApiService } from '../../../services/mgmt/api/api.service';
 import { GridModule } from '@coreui/angular';
 import { FormsModule } from '@angular/forms';
+import { CommonViewsModule } from '../../common-views/common-views.module';
 
 
 describe('ProvideComponent', () => {
@@ -21,7 +22,7 @@ describe('ProvideComponent', () => {
       providers: [
         { provide: ApiService, useValue: apiServiceSpy }
       ],
-      imports: [ FormsModule, GridModule ],
+      imports: [ FormsModule, GridModule, CommonViewsModule ],
     })
     .compileComponents();
 
@@ -45,9 +46,9 @@ describe('ProvideComponent', () => {
   });
 
 
-  it('should call createOffer on apiService when createOffer is called', () => {
-    apiService.createOffer.and.returnValue(of({ id: '123' }));
-    component.createOffer();
+  it('should call createOffer on apiService when createOffer is called', async () => {
+    apiService.createOffer.and.returnValue(Promise.resolve({ id: '123' }));
+    await component.createOffer();
     expect(apiService.createOffer).toHaveBeenCalled();
   });
 
