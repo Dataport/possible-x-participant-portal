@@ -16,9 +16,9 @@ import java.time.OffsetDateTime;
 @Mapper(componentModel = "spring", imports = { OffsetDateTime.class })
 public interface ConsumerApiMapper {
 
-    SelectOfferRequestBE selectOfferRequestTOtoBO(SelectOfferRequestTO to);
+    SelectOfferRequestBE selectOfferRequestTOtoBE(SelectOfferRequestTO to);
 
-    ConsumeOfferRequestBE consumeOfferRequestTOtoBO(ConsumeOfferRequestTO to);
+    ConsumeOfferRequestBE consumeOfferRequestTOtoBE(ConsumeOfferRequestTO to);
 
     @Mapping(source = "assetId", target = "offerId")
     @Mapping(constant = "Data Resource", target = "offerType") // TODO pass actual data
@@ -26,7 +26,7 @@ public interface ConsumerApiMapper {
     @Mapping(source = "name", target = "name")
     @Mapping(source = "description", target = "description")
     @Mapping(source = "contenttype", target = "contentType")
-    OfferDetailsTO dcatDatasetToOfferDetailsTo(DcatDataset dataset);
+    OfferDetailsTO dcatDatasetToOfferDetailsTO(DcatDataset dataset);
 
     TransferDetailsTO transferProcessToDetailsTO(TransferProcess process);
 }

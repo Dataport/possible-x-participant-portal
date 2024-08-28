@@ -38,23 +38,23 @@ public class ConsumerRestApiImpl implements ConsumerRestApi {
     @Override
     public OfferDetailsTO selectContractOffer(@RequestBody SelectOfferRequestTO request) {
 
-        SelectOfferRequestBE bo = consumerApiMapper.selectOfferRequestTOtoBO(request);
+        SelectOfferRequestBE be = consumerApiMapper.selectOfferRequestTOtoBE(request);
         DcatDataset dataset;
         try {
-            dataset = consumerService.selectContractOffer(bo);
+            dataset = consumerService.selectContractOffer(be);
         } catch (OfferNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
-        return consumerApiMapper.dcatDatasetToOfferDetailsTo(dataset);
+        return consumerApiMapper.dcatDatasetToOfferDetailsTO(dataset);
     }
 
     @Override
     public TransferDetailsTO acceptContractOffer(@RequestBody ConsumeOfferRequestTO request) {
 
-        ConsumeOfferRequestBE bo = consumerApiMapper.consumeOfferRequestTOtoBO(request);
+        ConsumeOfferRequestBE be = consumerApiMapper.consumeOfferRequestTOtoBE(request);
         TransferProcess process;
         try {
-            process = consumerService.acceptContractOffer(bo);
+            process = consumerService.acceptContractOffer(be);
         } catch (OfferNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (NegotiationFailedException | TransferFailedException e) {
