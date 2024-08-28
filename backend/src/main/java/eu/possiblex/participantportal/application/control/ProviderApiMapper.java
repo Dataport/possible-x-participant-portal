@@ -2,7 +2,7 @@ package eu.possiblex.participantportal.application.control;
 
 import eu.possiblex.participantportal.application.entity.CreateOfferRequestTO;
 import eu.possiblex.participantportal.business.entity.edc.CreateEdcOfferBE;
-import eu.possiblex.participantportal.business.entity.fh.CreateDatasetEntryBE;
+import eu.possiblex.participantportal.business.entity.fh.CreateFhOfferBE;
 import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
@@ -12,5 +12,5 @@ public interface ProviderApiMapper {
     CreateEdcOfferBE getCreateEdcOfferDTOFromCreateOfferRequestTO(CreateOfferRequestTO createOfferRequestTO);
 
     @Mapping(target = "policy", source = "policy")
-    CreateDatasetEntryBE getCreateDatasetEntryDTOFromCreateOfferRequestTO(CreateOfferRequestTO createOfferRequestTO);
+    CreateFhOfferBE getCreateDatasetEntryDTOFromCreateOfferRequestTO(CreateOfferRequestTO createOfferRequestTO);
 }

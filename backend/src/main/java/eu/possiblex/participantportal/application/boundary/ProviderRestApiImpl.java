@@ -8,7 +8,7 @@ import eu.possiblex.participantportal.application.entity.CreateOfferRequestTO;
 import eu.possiblex.participantportal.business.control.ProviderService;
 import eu.possiblex.participantportal.business.entity.edc.CreateEdcOfferBE;
 import eu.possiblex.participantportal.business.entity.edc.common.IdResponse;
-import eu.possiblex.participantportal.business.entity.fh.CreateDatasetEntryBE;
+import eu.possiblex.participantportal.business.entity.fh.CreateFhOfferBE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,15 +38,12 @@ public class ProviderRestApiImpl implements ProviderRestApi {
     @Override
     public JsonNode createOffer(@RequestBody CreateOfferRequestTO createOfferRequestTO) {
 
-        CreateDatasetEntryBE createDatasetEntryBE = providerApiMapper.getCreateDatasetEntryDTOFromCreateOfferRequestTO(
+        CreateFhOfferBE createFhOfferBE = providerApiMapper.getCreateDatasetEntryDTOFromCreateOfferRequestTO(
             createOfferRequestTO);
         CreateEdcOfferBE createEdcOfferBE = providerApiMapper.getCreateEdcOfferDTOFromCreateOfferRequestTO(
             createOfferRequestTO);
 
-        IdResponse response = providerService.createOffer(createDatasetEntryBE, createEdcOfferBE);
-        ObjectNode node = objectMapper.createObjectNode();
-        node.put("id", response.getId());
-        return node;
+        return providerService.createOffer(createFhOfferBE, createEdcOfferBE);
     }
 
 }

@@ -8,7 +8,7 @@ import eu.possiblex.participantportal.business.entity.edc.asset.AssetCreateReque
 import eu.possiblex.participantportal.business.entity.edc.asset.ionoss3extension.IonosS3DataSource;
 import eu.possiblex.participantportal.business.entity.edc.common.IdResponse;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyCreateRequest;
-import eu.possiblex.participantportal.business.entity.fh.CreateDatasetEntryBE;
+import eu.possiblex.participantportal.business.entity.fh.CreateFhOfferBE;
 import eu.possiblex.participantportal.service.EdcClientFake;
 import eu.possiblex.participantportal.service.FhCatalogClientFake;
 import org.junit.jupiter.api.Test;
@@ -56,11 +56,11 @@ class ProviderServiceTest {
         //given
         CreateEdcOfferBE createEdcOfferBE = CreateEdcOfferBE.builder().fileName(FILE_NAME)
             .policy(objectMapper.readTree(POLICY_JSON_STRING)).build();
-        CreateDatasetEntryBE createDatasetEntryBE  = CreateDatasetEntryBE.builder()
+        CreateFhOfferBE createFhOfferBE = CreateFhOfferBE.builder()
             .policy(objectMapper.readTree(POLICY_JSON_STRING)).build();
 
         //when
-        IdResponse response = providerService.createOffer(createDatasetEntryBE, createEdcOfferBE);
+        var response = providerService.createOffer(createFhOfferBE, createEdcOfferBE);
 
         //then
         ArgumentCaptor<AssetCreateRequest> assetCreateRequestCaptor = forClass(AssetCreateRequest.class);
@@ -86,8 +86,8 @@ class ProviderServiceTest {
         policyCreateRequest.getPolicy().getProhibition().forEach(p -> assertNotEquals("GENERATED_ASSET_ID", p.get("odrl:target").textValue()));
 
         assertNotNull(response);
-        assertNotNull(response.getId());
-        assertFalse(response.getId().isBlank());
+        assertNotNull(response.get("EDC-ID"));
+        assertNotNull(response.get("FH-ID"));
     }
 
     // Test-specific configuration to provide a fake implementation of EdcClient and FhCatalogClient

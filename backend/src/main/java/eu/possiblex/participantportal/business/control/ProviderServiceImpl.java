@@ -14,7 +14,7 @@ import eu.possiblex.participantportal.business.entity.edc.contractdefinition.Cri
 import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyCreateRequest;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyTarget;
-import eu.possiblex.participantportal.business.entity.fh.CreateDatasetEntryBE;
+import eu.possiblex.participantportal.business.entity.fh.CreateFhOfferBE;
 import eu.possiblex.participantportal.business.entity.fh.FhIdResponse;
 import eu.possiblex.participantportal.business.entity.fh.catalog.*;
 import lombok.extern.slf4j.Slf4j;
@@ -52,15 +52,20 @@ public class ProviderServiceImpl implements ProviderService{
     /**
      * Given a request for creating a dataset entry in the Fraunhofer catalog and
      * a request for creating an EDC offer, create the dataset entry and the offer in the EDC catalog.
-     * @param createDatasetEntryBE request for creating a dataset entry
+     * @param createFhOfferBE request for creating a dataset entry
      * @param createEdcOfferBE request for creating an EDC offer
      * @return success message (currently an IdResponse)
      */
     @Override
-    public IdResponse createOffer(CreateDatasetEntryBE createDatasetEntryBE, CreateEdcOfferBE createEdcOfferBE) {
+    public ObjectNode createOffer(CreateFhOfferBE createFhOfferBE, CreateEdcOfferBE createEdcOfferBE) {
 
-        createDatasetEntryInFhCatalog(createDatasetEntryBE, "test-provider");
-        return createEdcOffer(createEdcOfferBE);
+        ObjectNode node = objectMapper.createObjectNode();
+        var fhIdResponse = createDatasetEntryInFhCatalog(createFhOfferBE, "test-provider");
+        var idResponse = createEdcOffer(createEdcOfferBE);
+        node.put("FH-ID", fhIdResponse.getId());
+        node.put("EDC-ID", idResponse.getId());
+        return node;
+
     }
 
     private IdResponse createEdcOffer(CreateEdcOfferBE createEdcOfferBE) {
@@ -118,7 +123,7 @@ public class ProviderServiceImpl implements ProviderService{
         return policy;
     }
 
-    private FhIdResponse createDatasetEntryInFhCatalog(CreateDatasetEntryBE createDatasetEntryBE, String cat_name) {
+    private FhIdResponse createDatasetEntryInFhCatalog(CreateFhOfferBE createFhOfferBE, String cat_name) {
 
         DatasetToCatalogRequest datasetToCatalogRequest = DatasetToCatalogRequest.builder().graphElements(List.of(
             GraphFirstElement.builder().id("_:b4").foafmbox(FoafMbox.builder().id("mailto:info@gv.hamburg.de").build())
