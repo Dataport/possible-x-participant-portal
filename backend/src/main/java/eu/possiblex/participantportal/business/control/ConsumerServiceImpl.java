@@ -55,10 +55,13 @@ public class ConsumerServiceImpl implements ConsumerService {
     }
 
     /**
-     * Given a request for consuming an offer, perform the necessary steps on the EDC to transfer the data.
+     * Given a request for an offer, accept the offer on the EDC and perform the transfer.
      *
      * @param request request for consuming an offer
-     * @return data address in the transfer response (TBR)
+     * @exception OfferNotFoundException could not find the offer from the request
+     * @exception NegotiationFailedException failed to negotiate over the offer
+     * @exception TransferFailedException failed to transfer the data
+     * @return final result of the transfer
      */
     @Override
     public TransferProcess acceptContractOffer(ConsumeOfferRequestBE request)
