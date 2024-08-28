@@ -10,8 +10,9 @@ import lombok.*;
 @Setter
 public class CreateEdcOfferBE {
 
+    private String assetName;
+    private String assetDescription;
     private String fileName;
-
     private JsonNode policy;
 
 }

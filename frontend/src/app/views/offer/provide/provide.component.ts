@@ -15,6 +15,7 @@ export class ProvideComponent {
   offerName: string = "";
   policy: string = "";
   offerDescription: string = "";
+  fileName: string = "";
 
   policyMap = POLICY_MAP;
 
@@ -31,7 +32,7 @@ export class ProvideComponent {
       offerType: this.offerType,
       offerName: this.offerName,
       offerDescription: this.offerDescription,
-      fileName: 'PLACEHOLDER',
+      fileName: this.fileName,
       policy: this.policyMap[this.policy]
     }).then(response => {
       console.log(response);

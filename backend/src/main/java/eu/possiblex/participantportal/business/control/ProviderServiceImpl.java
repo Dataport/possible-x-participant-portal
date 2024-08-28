@@ -78,8 +78,9 @@ public class ProviderServiceImpl implements ProviderService{
             .storage("s3-eu-central-2.ionoscloud.com").build();
         AssetCreateRequest assetCreateRequest = AssetCreateRequest.builder().id("assetId_" + UUID.randomUUID())
             .properties(
-                AssetProperties.builder().name("assetName").description("assetDescription").version("assetVersion")
-                    .contenttype("application/json").build()).dataAddress(dataAddress).build();
+                AssetProperties.builder().name(createEdcOfferBE.getAssetName()).description(createEdcOfferBE.getAssetDescription()).
+                        //version("assetVersion").
+                        contenttype("application/json").build()).dataAddress(dataAddress).build();
 
         log.info("Creating Asset {}", assetCreateRequest);
         IdResponse assetIdResponse = edcClient.createAsset(assetCreateRequest);

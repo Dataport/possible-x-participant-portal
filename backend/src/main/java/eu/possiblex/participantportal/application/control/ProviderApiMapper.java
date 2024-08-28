@@ -7,6 +7,9 @@ import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
 public interface ProviderApiMapper {
+
+    @Mapping(target = "assetName", source = "offerName")
+    @Mapping(target = "assetDescription", source = "offerDescription")
     @Mapping(target = "fileName", source = "fileName")
     @Mapping(target = "policy", source = "policy")
     CreateEdcOfferBE getCreateEdcOfferDTOFromCreateOfferRequestTO(CreateOfferRequestTO createOfferRequestTO);
