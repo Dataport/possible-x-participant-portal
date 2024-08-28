@@ -4,6 +4,9 @@
 export interface IConsumerRestApi {
 }
 
+export interface IProviderRestApi {
+}
+
 export interface IConsumeOfferRequestTO {
     counterPartyAddress: string;
     offerId: string;
@@ -68,10 +71,10 @@ export class RestApplicationClient {
 
     /**
      * HTTP POST /provider/offer
-     * Java method: eu.possiblex.participantportal.application.boundary.ProviderRestApi.createOffer
+     * Java method: eu.possiblex.participantportal.application.boundary.ProviderRestApiImpl.createOffer
      */
-    createOffer(assetRequest: ICreateOfferRequestTO): RestResponse<any> {
-        return this.httpClient.request({ method: "POST", url: uriEncoding`provider/offer`, data: assetRequest });
+    createOffer(createOfferRequestTO: ICreateOfferRequestTO): RestResponse<any> {
+        return this.httpClient.request({ method: "POST", url: uriEncoding`provider/offer`, data: createOfferRequestTO });
     }
 }
 

@@ -16,8 +16,4 @@ export class ApiService extends RestApplicationClient {
     super(new AngularHttpClientImpl(http, environment.api_url));
   }
 
-  getHealth(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/health`);
-  }
-
 }

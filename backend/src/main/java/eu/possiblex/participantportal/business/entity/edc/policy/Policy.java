@@ -15,6 +15,7 @@
  *
  * Modifications:
  * - Dataport (part of the POSSIBLE project) - 14 August, 2024 - Adjust package names and imports
+ * - Dataport (part of the POSSIBLE project) - 26 August, 2024 - Add CONTEXT attribute, replace String with JsonNode
  */
 
 package eu.possiblex.participantportal.business.entity.edc.policy;
@@ -24,6 +25,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import eu.possiblex.participantportal.business.entity.edc.EdcConstants;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -36,17 +38,22 @@ public class Policy {
 
     private static final String TYPE = EdcConstants.ODRL_PREFIX + "Set";
 
+    private static final String CONTEXT = EdcConstants.POLICY_CONTEXT;
+
     @JsonProperty("@id")
     private String id;
 
+    @Builder.Default
     @JsonProperty(EdcConstants.ODRL_PREFIX + "permission")
-    private List<JsonNode> permission; // replace this with proper classes once needed
+    private List<JsonNode> permission = new ArrayList<>(); // replace this with proper classes once needed
 
+    @Builder.Default
     @JsonProperty(EdcConstants.ODRL_PREFIX + "prohibition")
-    private List<JsonNode> prohibition; // replace this with proper classes once needed
+    private List<JsonNode> prohibition = new ArrayList<>(); // replace this with proper classes once needed
 
+    @Builder.Default
     @JsonProperty(EdcConstants.ODRL_PREFIX + "obligation")
-    private List<JsonNode> obligation; // replace this with proper classes once needed
+    private List<JsonNode> obligation = new ArrayList<>(); // replace this with proper classes once needed
 
     @JsonProperty(EdcConstants.ODRL_PREFIX + "target")
     private PolicyTarget target;
@@ -56,4 +63,10 @@ public class Policy {
 
         return TYPE;
     }
+
+    @JsonProperty("@context")
+    public String getContext() {
+        return CONTEXT;
+    }
+
 }

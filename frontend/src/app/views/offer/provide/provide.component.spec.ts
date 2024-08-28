@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
 import { ProvideComponent } from './provide.component';
 import { ApiService } from '../../../services/mgmt/api/api.service';
 import { GridModule } from '@coreui/angular';
@@ -38,17 +37,14 @@ describe('ProvideComponent', () => {
     expect(component).toBeTruthy();
   });
 
-
-  it('should call getHealth on apiService when getHealth is called', () => {
-    apiService.getHealth.and.returnValue(of({ status: 'healthy' }));
-    component.getHealth();
-    expect(apiService.getHealth).toHaveBeenCalled();
-  });
-
-
   it('should call createOffer on apiService when createOffer is called', async () => {
-    apiService.createOffer.and.returnValue(Promise.resolve({ id: '123' }));
+    const spy = spyOn<any>(component, 'createOffer').and.callThrough();
+    const mockResponse = Promise.resolve({ id: '123' });
+    apiService.createOffer.and.returnValue(mockResponse);
+
     await component.createOffer();
+
+    expect(spy).toHaveBeenCalled();
     expect(apiService.createOffer).toHaveBeenCalled();
   });
 

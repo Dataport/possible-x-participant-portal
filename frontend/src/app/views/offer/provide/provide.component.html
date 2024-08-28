@@ -6,14 +6,27 @@
           <label class="form-label">Offer Type</label>
           <select [(ngModel)]="offerType" class="form-select rounded-none w-full">
             <option disabled hidden selected value="">Please select ...</option>
-            <option [value]="true">Service</option>
-            <option [value]="false">Data Asset</option>
+            <option value="Service">Service</option>
+            <option value="Data Asset">Data Asset</option>
           </select>
         </div>
         <div class="mb-3 flex-1">
           <label class="form-label">Offer Name</label>
           <input [(ngModel)]="offerName" class="form-control rounded-none w-full">
         </div>
+      </div>
+
+      <div class="mb-3 flex-1">
+        <label class="form-label">Policy</label>
+        <select [(ngModel)]="policy" class="form-select rounded-none w-full">
+          <option disabled hidden selected value="">Please select ...</option>
+          <option *ngFor="let policy of getPolicyNames()" [value]="policy">{{ policy }}</option>
+        </select>
+      </div>
+
+      <div *ngIf="policy">
+        <label>Policy Details</label>
+        <textarea [value]="getPolicyDetails(policy)" readonly class="form-control" rows="10" disabled></textarea>
       </div>
 
       <div class="text-right mt-3">

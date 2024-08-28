@@ -15,6 +15,7 @@
  *
  * Modifications:
  * - Dataport (part of the POSSIBLE project) - 14 August, 2024 - Adjust package names and imports
+ * - Dataport (part of the POSSIBLE project) - 26 August, 2024 - Add POLICY_CONTEXT attribute
  */
 
 package eu.possiblex.participantportal.business.entity.edc;
@@ -24,6 +25,8 @@ import java.util.Map;
 public class EdcConstants {
     public static final Map<String, String> EDC_CONTEXT = Map.of("@vocab", "https://w3id.org/edc/v0.0.1/ns/", "edc",
         "https://w3id.org/edc/v0.0.1/ns/", "odrl", "http://www.w3.org/ns/odrl/2/");
+
+    public static final String POLICY_CONTEXT = "http://www.w3.org/ns/odrl.jsonld";
 
     public static final String ODRL_PREFIX = "odrl:";
 
