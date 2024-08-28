@@ -156,6 +156,7 @@ public class ConsumerServiceImpl implements ConsumerService {
             log.info("Transfer Process {}", transferProcess);
             transferCheckAttempts += 1;
             if (transferCheckAttempts >= 15 || transferProcess.getState().equals(TransferProcessState.TERMINATED)) {
+                edcClient.deprovisionTransfer(transferProcess.getId());
                 throw new TransferFailedException("Transfer never reached COMPLETED state.");
             }
         } while (!transferProcess.getState().equals(TransferProcessState.COMPLETED));
