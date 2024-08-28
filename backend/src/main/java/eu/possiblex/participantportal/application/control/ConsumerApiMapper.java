@@ -20,12 +20,12 @@ public interface ConsumerApiMapper {
 
     ConsumeOfferRequestBE consumeOfferRequestTOtoBE(ConsumeOfferRequestTO to);
 
-    @Mapping(source = "assetId", target = "offerId")
-    @Mapping(constant = "Data Resource", target = "offerType") // TODO pass actual data
-    @Mapping(expression = "java(OffsetDateTime.now())", target = "creationDate") // TODO pass actual data
-    @Mapping(source = "name", target = "name")
-    @Mapping(source = "description", target = "description")
-    @Mapping(source = "contenttype", target = "contentType")
+    @Mapping(target = "offerId", source = "assetId")
+    @Mapping(target = "offerType", constant = "Data Resource") // TODO pass actual data
+    @Mapping(target = "creationDate", expression = "java(OffsetDateTime.now())") // TODO pass actual data
+    @Mapping(target = "name", source = "name")
+    @Mapping(target = "description", source = "description")
+    @Mapping(target = "contentType", source = "contenttype")
     OfferDetailsTO dcatDatasetToOfferDetailsTO(DcatDataset dataset);
 
     TransferDetailsTO transferProcessToDetailsTO(TransferProcess process);
