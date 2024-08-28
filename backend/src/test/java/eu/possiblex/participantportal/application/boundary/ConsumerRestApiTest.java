@@ -35,7 +35,7 @@ public class ConsumerRestApiTest {
     @TestConfiguration
     static class TestConfig {
         @Bean
-        public ConsumerServiceFake consumerService() {
+        public ConsumerService consumerService() {
 
             return Mockito.spy(new ConsumerServiceFake());
         }
