@@ -6,3 +6,4 @@ fh:
   catalog:
     url: test
     secret-key: test
+    catalog-name: test-provider

@@ -22,3 +22,4 @@ fh:
   catalog:
     url: url
     secret-key: secret
+    catalog-name: test-provider

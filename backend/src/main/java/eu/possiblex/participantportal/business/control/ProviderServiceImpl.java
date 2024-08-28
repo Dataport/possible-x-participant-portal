@@ -32,13 +32,13 @@ import java.util.UUID;
 @Slf4j
 public class ProviderServiceImpl implements ProviderService{
 
-    private final EdcClient edcClient;
-
-    private final FhCatalogClient fhCatalogClient;
-
     @Value("${fh.catalog.secret-key}")
     private String fhCatalogSecretKey;
+    @Value("${fh.catalog.catalog-name}")
+    private String catalogName;
 
+    private final EdcClient edcClient;
+    private final FhCatalogClient fhCatalogClient;
     private final ObjectMapper objectMapper;
 
     public ProviderServiceImpl(@Autowired EdcClient edcClient, @Autowired FhCatalogClient fhCatalogClient,
@@ -60,10 +60,13 @@ public class ProviderServiceImpl implements ProviderService{
     public ObjectNode createOffer(CreateFhOfferBE createFhOfferBE, CreateEdcOfferBE createEdcOfferBE) {
 
         ObjectNode node = objectMapper.createObjectNode();
-        var fhIdResponse = createDatasetEntryInFhCatalog(createFhOfferBE, "test-provider");
+
         var idResponse = createEdcOffer(createEdcOfferBE);
-        node.put("FH-ID", fhIdResponse.getId());
         node.put("EDC-ID", idResponse.getId());
+
+        var fhIdResponse = createFhCatalogOffer(createFhOfferBE);
+        node.put("FH-ID", fhIdResponse.getId());
+
         return node;
 
     }
@@ -99,6 +102,37 @@ public class ProviderServiceImpl implements ProviderService{
         return edcClient.createContractDefinition(contractDefinitionCreateRequest);
     }
 
+    private FhIdResponse createFhCatalogOffer(CreateFhOfferBE createFhOfferBE) {
+
+        DatasetToCatalogRequest datasetToCatalogRequest = DatasetToCatalogRequest.builder().graphElements(List.of(
+                GraphFirstElement.builder().id("_:b4").foafmbox(FoafMbox.builder().id("mailto:info@gv.hamburg.de").build())
+                        .type("foaf:Organization").foafname("Landesbetrieb für Geoinformation und Vermessung").build(),
+                GraphSecondElement.builder().id("https://piveau.io/set/distribution/6c2122e6-59d6-4342-ada9-a2f336450add")
+                        .type("dcat:Distribution")
+                        //.title("my_file.pdf")
+                        .identifier("https://possible.fokus.fraunhofer.de/set/distribution/1").accessURL(
+                                AccessURL.builder().id("http://85.215.193.145:9192/api/v1/data/assets/test-document_company2").build())
+                        .build(), GraphThirdElement.builder().id("https://piveau.io/set/data/hamburg_geo_id").language(
+                                DctLanguage.builder().id("http://publications.europa.eu/resource/authority/language/DEU").build())
+                        .producedBy(GaxTrustFrameworkProducedBy.builder()
+                                .id("https://www.hamburg.de/politik-und-verwaltung/behoerden/behoerde-fuer-stadtentwicklung-und-wohnen/aemter-und-landesbetrieb/landesbetrieb-geoinformation-und-vermessung/wir-ueber-uns/impressum-244100")
+                                .build()).title(DctTitle.builder().language("de").value("Schulstandorte Hamburg").build())
+                        .distribution(DcatDistribution.builder()
+                                .id("https://piveau.io/set/distribution/6c2122e6-59d6-4342-ada9-a2f336450add").build()).description(
+                                DctDescription.builder().language("de").value(
+                                                "Für jede Schule und ggf. ihre Zweigstellen werden dargestellt: - Geoposition und ggf. - Adresse (Straße, Hausnummer, PLZ, Ort) - Kontaktdaten (Telefon, E-Mail-Funktionspostfach, Fax, Homepage) - Schulmerkmale (Schulnummer, Zweigstelle ja/nein, Schulform nach Haushaltskapitel, Erwachsenenbildung ja/nein, Telefonnummer der Schulaufsicht, zugehöriger ReBBZ-Standort) - Zahl der Schüler")
+                                        .build()).publisher(DctPublisher.builder().id("_:b4").build()).build())).build();
+
+        String value_type = "identifiers";
+        Map<String, String> auth = Map.of("Content-Type", "application/json", "Authorization",
+                "Bearer " + fhCatalogSecretKey);
+        log.info("Adding Dataset to Fraunhofer Catalog {}", datasetToCatalogRequest);
+        FhIdResponse response = fhCatalogClient.addDatasetToFhCatalog(auth, datasetToCatalogRequest, catalogName,
+                value_type);
+        log.info("Response from FH Catalog: {}", response.getId());
+        return response;
+    }
+
     private Policy getPolicy(CreateEdcOfferBE createEdcOfferBE, String policyId, IdResponse assetIdResponse) {
 
         Policy policy = null;
@@ -121,36 +155,5 @@ public class ProviderServiceImpl implements ProviderService{
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
         return policy;
-    }
-
-    private FhIdResponse createDatasetEntryInFhCatalog(CreateFhOfferBE createFhOfferBE, String cat_name) {
-
-        DatasetToCatalogRequest datasetToCatalogRequest = DatasetToCatalogRequest.builder().graphElements(List.of(
-            GraphFirstElement.builder().id("_:b4").foafmbox(FoafMbox.builder().id("mailto:info@gv.hamburg.de").build())
-                .type("foaf:Organization").foafname("Landesbetrieb für Geoinformation und Vermessung").build(),
-            GraphSecondElement.builder().id("https://piveau.io/set/distribution/6c2122e6-59d6-4342-ada9-a2f336450add")
-                .type("dcat:Distribution")
-                //.title("my_file.pdf")
-                .identifier("https://possible.fokus.fraunhofer.de/set/distribution/1").accessURL(
-                    AccessURL.builder().id("http://85.215.193.145:9192/api/v1/data/assets/test-document_company2").build())
-                .build(), GraphThirdElement.builder().id("https://piveau.io/set/data/hamburg_geo_id").language(
-                    DctLanguage.builder().id("http://publications.europa.eu/resource/authority/language/DEU").build())
-                .producedBy(GaxTrustFrameworkProducedBy.builder()
-                    .id("https://www.hamburg.de/politik-und-verwaltung/behoerden/behoerde-fuer-stadtentwicklung-und-wohnen/aemter-und-landesbetrieb/landesbetrieb-geoinformation-und-vermessung/wir-ueber-uns/impressum-244100")
-                    .build()).title(DctTitle.builder().language("de").value("Schulstandorte Hamburg").build())
-                .distribution(DcatDistribution.builder()
-                    .id("https://piveau.io/set/distribution/6c2122e6-59d6-4342-ada9-a2f336450add").build()).description(
-                    DctDescription.builder().language("de").value(
-                            "Für jede Schule und ggf. ihre Zweigstellen werden dargestellt: - Geoposition und ggf. - Adresse (Straße, Hausnummer, PLZ, Ort) - Kontaktdaten (Telefon, E-Mail-Funktionspostfach, Fax, Homepage) - Schulmerkmale (Schulnummer, Zweigstelle ja/nein, Schulform nach Haushaltskapitel, Erwachsenenbildung ja/nein, Telefonnummer der Schulaufsicht, zugehöriger ReBBZ-Standort) - Zahl der Schüler")
-                        .build()).publisher(DctPublisher.builder().id("_:b4").build()).build())).build();
-
-        String value_type = "identifiers";
-        Map<String, String> auth = Map.of("Content-Type", "application/json", "Authorization",
-            "Bearer " + fhCatalogSecretKey);
-        log.info("Adding Dataset to Fraunhofer Catalog {}", datasetToCatalogRequest);
-        FhIdResponse response = fhCatalogClient.addDatasetToFhCatalog(auth, datasetToCatalogRequest, cat_name,
-            value_type);
-        log.info("Response from FH Catalog: {}", response.getId());
-        return response;
     }
 }
