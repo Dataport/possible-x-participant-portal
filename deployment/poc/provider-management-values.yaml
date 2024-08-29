@@ -29,5 +29,6 @@ application:
       data:
         SPRING_PROFILES_ACTIVE: dev
         FH_CATALOG_URL: https://possible.fokus.fraunhofer.de/api/hub/repo
+        EDC_MGMTBASEURL: https://provider.edc.poc.possible-x.de/management
   secrets:
     - provider-management-secrets

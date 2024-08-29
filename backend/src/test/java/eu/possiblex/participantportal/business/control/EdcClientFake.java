@@ -17,7 +17,7 @@
  * - Dataport (part of the POSSIBLE project) - 14 August, 2024 - Adjust package names and imports
  */
 
-package eu.possiblex.participantportal.service;
+package eu.possiblex.participantportal.business.control;
 
 import eu.possiblex.participantportal.business.entity.edc.asset.AssetCreateRequest;
 import eu.possiblex.participantportal.business.entity.edc.asset.ionoss3extension.IonosS3DataDestination;
@@ -28,25 +28,31 @@ import eu.possiblex.participantportal.business.entity.edc.common.IdResponse;
 import eu.possiblex.participantportal.business.entity.edc.contractdefinition.ContractDefinitionCreateRequest;
 import eu.possiblex.participantportal.business.entity.edc.negotiation.ContractNegotiation;
 import eu.possiblex.participantportal.business.entity.edc.negotiation.NegotiationInitiateRequest;
+import eu.possiblex.participantportal.business.entity.edc.negotiation.NegotiationState;
 import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyCreateRequest;
 import eu.possiblex.participantportal.business.entity.edc.transfer.DataRequest;
 import eu.possiblex.participantportal.business.entity.edc.transfer.IonosS3TransferProcess;
+import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcessState;
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferRequest;
-import eu.possiblex.participantportal.business.control.EdcClient;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class EdcClientFake implements EdcClient {
 
     public static final String FAKE_ID = "myId";
 
+    public static final String BAD_NEGOTIATION_ID = "badNegotiation";
+
+    public static final String BAD_TRANSFER_ID = "badTransfer";
+
     public static final long FAKE_TIMESTAMP = 1234L;
 
-    private IdResponse generateFakeIdResponse() {
+    private IdResponse generateFakeIdResponse(String id) {
 
         IdResponse response = new IdResponse();
-        response.setId(FAKE_ID);
+        response.setId(id);
         response.setCreatedAt(FAKE_TIMESTAMP);
         response.setType("edc:IdResponseDto");
         return response;
@@ -55,36 +61,40 @@ public class EdcClientFake implements EdcClient {
     @Override
     public IdResponse createAsset(AssetCreateRequest assetCreateRequest) {
 
-        return generateFakeIdResponse();
+        return generateFakeIdResponse(assetCreateRequest.getId());
     }
 
     @Override
     public IdResponse createPolicy(PolicyCreateRequest policyCreateRequest) {
 
-        return generateFakeIdResponse();
+        return generateFakeIdResponse(policyCreateRequest.getId());
     }
 
     @Override
     public IdResponse createContractDefinition(ContractDefinitionCreateRequest contractDefinitionCreateRequest) {
 
-        return generateFakeIdResponse();
+        return generateFakeIdResponse(contractDefinitionCreateRequest.getId());
     }
 
     @Override
     public DcatCatalog queryCatalog(CatalogRequest catalogRequest) {
 
-        DcatDataset dataset = new DcatDataset();
-        dataset.setAssetId(FAKE_ID);
-        dataset.setHasPolicy(List.of(Policy.builder().id("myId").build()));
         DcatCatalog catalog = new DcatCatalog();
-        catalog.setDataset(List.of(dataset));
+        List<DcatDataset> datasets = new ArrayList<>();
+        for (String id : List.of(FAKE_ID, BAD_NEGOTIATION_ID, BAD_TRANSFER_ID)) {
+            DcatDataset dataset = new DcatDataset();
+            dataset.setAssetId(id);
+            dataset.setHasPolicy(List.of(Policy.builder().id(id).build()));
+            datasets.add(dataset);
+        }
+        catalog.setDataset(datasets);
         return catalog;
     }
 
     @Override
     public IdResponse negotiateOffer(NegotiationInitiateRequest negotiationInitiateRequest) {
 
-        return generateFakeIdResponse();
+        return generateFakeIdResponse(negotiationInitiateRequest.getOffer().getAssetId());
     }
 
     @Override
@@ -94,14 +104,18 @@ public class EdcClientFake implements EdcClient {
         negotiation.setType("edc:ContractNegotiationDto");
         negotiation.setId(FAKE_ID);
         negotiation.setContractAgreementId(FAKE_ID + ":" + FAKE_ID + ":" + FAKE_ID);
-        negotiation.setState("FINALIZED");
+        if (negotiationId.equals(BAD_NEGOTIATION_ID)) {
+            negotiation.setState(NegotiationState.TERMINATED);
+        } else {
+            negotiation.setState(NegotiationState.FINALIZED);
+        }
         return negotiation;
     }
 
     @Override
     public IdResponse initiateTransfer(TransferRequest transferRequest) {
 
-        return generateFakeIdResponse();
+        return generateFakeIdResponse(transferRequest.getAssetId());
     }
 
     @Override
@@ -114,7 +128,11 @@ public class EdcClientFake implements EdcClient {
         process.setId(FAKE_ID);
         process.setType("edc:TransferProcessDto");
         process.setDataRequest(request);
-        process.setState("COMPLETED");
+        if (transferId.equals(BAD_TRANSFER_ID)) {
+            process.setState(TransferProcessState.TERMINATED);
+        } else {
+            process.setState(TransferProcessState.COMPLETED);
+        }
         process.setDataDestination(new IonosS3DataDestination());
         return process;
     }

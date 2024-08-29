@@ -25,7 +25,7 @@ export class ProvideComponent {
     this.offerCreationStatusMessage.hideAllMessages();
   }
 
-  protected async createOffer() {
+  async createOffer() {
     this.offerCreationStatusMessage.showInfoMessage();
 
     this.apiService.createOffer({

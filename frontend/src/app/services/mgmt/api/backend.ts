@@ -1,11 +1,15 @@
 /* tslint:disable */
 /* eslint-disable */
 
+export interface IConsumerRestApi {
+}
+
 export interface IProviderRestApi {
 }
 
 export interface IConsumeOfferRequestTO {
     counterPartyAddress: string;
+    offerId: string;
 }
 
 export interface ICreateOfferRequestTO {
@@ -21,6 +25,24 @@ export interface IExceptionTO {
     message: string;
 }
 
+export interface IOfferDetailsTO {
+    offerId: string;
+    offerType: string;
+    creationDate: Date;
+    name: string;
+    description: string;
+    contentType: string;
+}
+
+export interface ISelectOfferRequestTO {
+    counterPartyAddress: string;
+    offerId: string;
+}
+
+export interface ITransferDetailsTO {
+    state: ITransferProcessState;
+}
+
 export interface HttpClient {
 
     request<R>(requestConfig: { method: string; url: string; queryParams?: any; data?: any; copyFn?: (data: R) => R; }): RestResponse<R>;
@@ -32,11 +54,19 @@ export class RestApplicationClient {
     }
 
     /**
-     * HTTP POST /consumer/acceptContractOffer
-     * Java method: eu.possiblex.participantportal.application.boundary.ConsumerRestApi.acceptContractOffer
+     * HTTP POST /consumer/offer/accept
+     * Java method: eu.possiblex.participantportal.application.boundary.ConsumerRestApiImpl.acceptContractOffer
      */
-    acceptContractOffer(request: IConsumeOfferRequestTO): RestResponse<any> {
-        return this.httpClient.request({ method: "POST", url: uriEncoding`consumer/acceptContractOffer`, data: request });
+    acceptContractOffer(request: IConsumeOfferRequestTO): RestResponse<ITransferDetailsTO> {
+        return this.httpClient.request({ method: "POST", url: uriEncoding`consumer/offer/accept`, data: request });
+    }
+
+    /**
+     * HTTP POST /consumer/offer/select
+     * Java method: eu.possiblex.participantportal.application.boundary.ConsumerRestApiImpl.selectContractOffer
+     */
+    selectContractOffer(request: ISelectOfferRequestTO): RestResponse<IOfferDetailsTO> {
+        return this.httpClient.request({ method: "POST", url: uriEncoding`consumer/offer/select`, data: request });
     }
 
     /**
@@ -49,6 +79,8 @@ export class RestApplicationClient {
 }
 
 export type RestResponse<R> = Promise<R>;
+
+export type ITransferProcessState = "INITIAL" | "PROVISIONING" | "PROVISIONING_REQUESTED" | "PROVISIONED" | "REQUESTING" | "REQUESTED" | "STARTING" | "STARTED" | "SUSPENDING" | "SUSPENDED" | "COMPLETING" | "COMPLETED" | "TERMINATING" | "TERMINATED" | "DEPROVISIONING" | "DEPROVISIONING_REQUESTED" | "DEPROVISIONED";
 
 function uriEncoding(template: TemplateStringsArray, ...substitutions: any[]): string {
     let result = "";

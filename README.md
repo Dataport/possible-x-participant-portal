@@ -47,7 +47,7 @@ If you only want to build the project, you can run
 
 after which the built jar can be found at `backend/build/libs/backend-x.y.z.jar`
 
-## Run Participant Portal Backend
+## Run Participant Portal Backend (currently including frontend)
 
 Through gradle:
 
@@ -55,10 +55,18 @@ Through gradle:
 ./gradlew bootRun
 ```
 
-Running a specific configuration (e.g. for local consumer)
+Running a specific configuration:
+
+E.g. for local consumer:
 
 ```
-./gradlew bootRun --args='--spring.profiles.active=consumer-local'
+./gradlew bootRun --args='--spring.profiles.active=consumer-local' -PnpmEnv="consumer-local"
+```
+
+E.g. for local provider:
+
+```
+./gradlew bootRun --args='--spring.profiles.active=provider-local' -PnpmEnv="provider-local"
 ```
 
 Alternatively running the jar directly (if built previously):

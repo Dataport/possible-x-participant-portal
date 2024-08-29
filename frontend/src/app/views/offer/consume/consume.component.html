@@ -1,18 +1,19 @@
-<div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+<div [hidden]="selectedOffer" style="display: flex; justify-content: center; align-items: center; height: 100vh;">
   <div class="p-6 w-full max-w-3xl"> <!-- Centered form container with fixed max width -->
     <div class="flex justify-center">
-      <button (click)="acceptContractOffer()" cButton color="primary" shape="rounded-0" type="submit">
-        Accept Contract Offer
+      <button (click)="selectOffer()" cButton color="primary" shape="rounded-0" type="submit">
+        Select offer
       </button>
     </div>
 
     <div class="flex justify-center mt-3">
       <app-status-message
-        #acceptOfferStatusMessage
-        [errorMessage]="'Offer consumation failed.'"
-        [infoMessage]="'Offer consumation ongoing.'"
-        [successMessage]="'Offer successfully consumed.'">
+        #queryCatalogStatusMessage
+        [errorMessage]="'Catalog Request failed.'"
+        [infoMessage]="'Catalog Request ongoing.'"
+        [successMessage]="'Catalog request succeeded.'">
       </app-status-message>
     </div>
   </div>
 </div>
+<app-accept-offer [hidden]="!selectedOffer" [offer]="selectedOffer" (dismiss)="deselectOffer()"></app-accept-offer>

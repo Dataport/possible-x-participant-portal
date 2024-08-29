@@ -42,7 +42,7 @@ public class ContractNegotiation {
 
     private String protocol;
 
-    private String state;
+    private NegotiationState state;
 
     private String counterPartyAddress;
 

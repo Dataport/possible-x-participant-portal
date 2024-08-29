@@ -21,7 +21,7 @@ describe('ProvideComponent', () => {
       providers: [
         { provide: ApiService, useValue: apiServiceSpy }
       ],
-      imports: [ FormsModule, GridModule , CommonViewsModule ],
+      imports: [ FormsModule, GridModule, CommonViewsModule ],
     })
     .compileComponents();
 
@@ -42,7 +42,7 @@ describe('ProvideComponent', () => {
     const mockResponse = Promise.resolve({ id: '123' });
     apiService.createOffer.and.returnValue(mockResponse);
 
-    await (component as any).createOffer();
+    await component.createOffer();
 
     expect(spy).toHaveBeenCalled();
     expect(apiService.createOffer).toHaveBeenCalled();
