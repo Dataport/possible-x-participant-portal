@@ -20,7 +20,7 @@
 package eu.possiblex.participantportal.business.entity.edc.catalog;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import eu.possiblex.participantportal.business.entity.edc.EdcConstants;
+import eu.possiblex.participantportal.business.entity.common.JsonLdConstants;
 
 public class DcatService {
     @JsonProperty("@id")
@@ -29,9 +29,9 @@ public class DcatService {
     @JsonProperty("@type")
     private String type;
 
-    @JsonProperty(EdcConstants.DCT_PREFIX + "terms")
+    @JsonProperty(JsonLdConstants.DCT_PREFIX + "terms")
     private String terms;
 
-    @JsonProperty(EdcConstants.DCT_PREFIX + "endpointUrl")
+    @JsonProperty(JsonLdConstants.DCT_PREFIX + "endpointUrl")
     private String endpointUrl;
 }

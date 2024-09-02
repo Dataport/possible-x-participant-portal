@@ -20,7 +20,7 @@
 package eu.possiblex.participantportal.business.entity.edc.contractdefinition;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import eu.possiblex.participantportal.business.entity.edc.EdcConstants;
+import eu.possiblex.participantportal.business.entity.common.JsonLdConstants;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,7 +34,7 @@ import java.util.Map;
 @ToString
 @Builder
 public class ContractDefinitionCreateRequest {
-    private static final Map<String, String> CONTEXT = EdcConstants.EDC_CONTEXT;
+    private static final Map<String, String> CONTEXT = JsonLdConstants.EDC_CONTEXT;
 
     private static final String TYPE = "ContractDefinition";
 

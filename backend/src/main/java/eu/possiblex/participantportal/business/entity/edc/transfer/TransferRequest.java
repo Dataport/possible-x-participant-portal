@@ -20,7 +20,7 @@
 package eu.possiblex.participantportal.business.entity.edc.transfer;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import eu.possiblex.participantportal.business.entity.edc.EdcConstants;
+import eu.possiblex.participantportal.business.entity.common.JsonLdConstants;
 import eu.possiblex.participantportal.business.entity.edc.asset.DataAddress;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,7 +34,7 @@ import java.util.Map;
 @ToString
 @Builder
 public class TransferRequest {
-    private static final Map<String, String> CONTEXT = EdcConstants.EDC_CONTEXT;
+    private static final Map<String, String> CONTEXT = JsonLdConstants.EDC_CONTEXT;
 
     private static final String TYPE = "TransferRequestDto";
 

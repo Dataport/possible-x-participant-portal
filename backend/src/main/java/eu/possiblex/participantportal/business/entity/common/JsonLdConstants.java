@@ -18,13 +18,17 @@
  * - Dataport (part of the POSSIBLE project) - 26 August, 2024 - Add POLICY_CONTEXT attribute
  */
 
-package eu.possiblex.participantportal.business.entity.edc;
+package eu.possiblex.participantportal.business.entity.common;
 
 import java.util.Map;
 
-public class EdcConstants {
+public class JsonLdConstants {
     public static final Map<String, String> EDC_CONTEXT = Map.of("@vocab", "https://w3id.org/edc/v0.0.1/ns/", "edc",
         "https://w3id.org/edc/v0.0.1/ns/", "odrl", "http://www.w3.org/ns/odrl/2/");
+
+    public static final Map<String, String> FH_CONTEXT = Map.of("skos", "http://www.w3.org/2004/02/skos/core#", "dct",
+        "http://purl.org/dc/terms/", "dcat", "http://www.w3.org/ns/dcat#", "rdf",
+        "http://www.w3.org/1999/02/22-rdf-syntax-ns#", "foaf", "http://xmlns.com/foaf/0.1/", "edc", "https://w3id.org/edc/v0.0.1/ns/");
 
     public static final String POLICY_CONTEXT = "http://www.w3.org/ns/odrl.jsonld";
 
@@ -34,7 +38,9 @@ public class EdcConstants {
 
     public static final String DCT_PREFIX = "dct:";
 
-    private EdcConstants() {
+    public static final String EDC_PREFIX = "edc:";
+
+    private JsonLdConstants() {
 
     }
 }

@@ -24,5 +24,5 @@ public class GraphSecondElement {
     private String title;
 
     @JsonProperty("dcat:accessURL")
-    private AccessURL accessURL;
+    private DcatAccessURL accessURL;
 }

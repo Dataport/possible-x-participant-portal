@@ -20,7 +20,7 @@
 package eu.possiblex.participantportal.business.entity.edc.policy;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import eu.possiblex.participantportal.business.entity.edc.EdcConstants;
+import eu.possiblex.participantportal.business.entity.common.JsonLdConstants;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,7 +33,7 @@ import java.util.Map;
 @ToString
 @Builder
 public class PolicyCreateRequest {
-    private static final Map<String, String> CONTEXT = EdcConstants.EDC_CONTEXT;
+    private static final Map<String, String> CONTEXT = JsonLdConstants.EDC_CONTEXT;
 
     @JsonProperty("@id")
     private String id;

@@ -20,7 +20,7 @@
 package eu.possiblex.participantportal.business.control;
 
 import eu.possiblex.participantportal.business.entity.fh.FhIdResponse;
-import eu.possiblex.participantportal.business.entity.fh.catalog.DatasetToCatalogRequest;
+import eu.possiblex.participantportal.business.entity.fh.catalog.DcatDataset;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -32,7 +32,7 @@ import java.util.Map;
 public interface FhCatalogClient {
     @PostExchange("/catalogues/{cat_name}/datasets")
     FhIdResponse addDatasetToFhCatalog(@RequestHeader Map<String, String> auth,
-        @RequestBody DatasetToCatalogRequest datasetToCatalogRequest, @PathVariable String cat_name,
+        @RequestBody DcatDataset datasetToCatalogRequest, @PathVariable String cat_name,
         @RequestParam String value_type);
 
 }

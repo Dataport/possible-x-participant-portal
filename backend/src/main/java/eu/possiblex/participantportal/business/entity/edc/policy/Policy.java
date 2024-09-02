@@ -22,7 +22,7 @@ package eu.possiblex.participantportal.business.entity.edc.policy;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
-import eu.possiblex.participantportal.business.entity.edc.EdcConstants;
+import eu.possiblex.participantportal.business.entity.common.JsonLdConstants;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -36,26 +36,26 @@ import java.util.List;
 @Builder
 public class Policy {
 
-    private static final String TYPE = EdcConstants.ODRL_PREFIX + "Set";
+    private static final String TYPE = JsonLdConstants.ODRL_PREFIX + "Set";
 
-    private static final String CONTEXT = EdcConstants.POLICY_CONTEXT;
+    private static final String CONTEXT = JsonLdConstants.POLICY_CONTEXT;
 
     @JsonProperty("@id")
     private String id;
 
     @Builder.Default
-    @JsonProperty(EdcConstants.ODRL_PREFIX + "permission")
+    @JsonProperty(JsonLdConstants.ODRL_PREFIX + "permission")
     private List<JsonNode> permission = new ArrayList<>(); // replace this with proper classes once needed
 
     @Builder.Default
-    @JsonProperty(EdcConstants.ODRL_PREFIX + "prohibition")
+    @JsonProperty(JsonLdConstants.ODRL_PREFIX + "prohibition")
     private List<JsonNode> prohibition = new ArrayList<>(); // replace this with proper classes once needed
 
     @Builder.Default
-    @JsonProperty(EdcConstants.ODRL_PREFIX + "obligation")
+    @JsonProperty(JsonLdConstants.ODRL_PREFIX + "obligation")
     private List<JsonNode> obligation = new ArrayList<>(); // replace this with proper classes once needed
 
-    @JsonProperty(EdcConstants.ODRL_PREFIX + "target")
+    @JsonProperty(JsonLdConstants.ODRL_PREFIX + "target")
     private PolicyTarget target;
 
     @JsonProperty("@type")

@@ -21,8 +21,9 @@ package eu.possiblex.participantportal.business.entity.edc.catalog;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import eu.possiblex.participantportal.business.entity.edc.EdcConstants;
+import eu.possiblex.participantportal.business.entity.common.JsonLdConstants;
 import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
+import eu.possiblex.participantportal.business.entity.fh.FhConstants;
 import lombok.*;
 
 import java.util.List;
@@ -40,11 +41,11 @@ public class DcatDataset {
     private String type;
 
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-    @JsonProperty(EdcConstants.ODRL_PREFIX + "hasPolicy")
+    @JsonProperty(JsonLdConstants.ODRL_PREFIX + "hasPolicy")
     private List<Policy> hasPolicy;
 
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-    @JsonProperty(EdcConstants.DCAT_PREFIX + "distribution")
+    @JsonProperty(JsonLdConstants.DCAT_PREFIX + "distribution")
     private List<DcatDistribution> distribution;
 
     private String version;

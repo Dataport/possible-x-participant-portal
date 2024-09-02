@@ -3,6 +3,7 @@ package eu.possiblex.participantportal.business.control;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import eu.possiblex.participantportal.business.entity.common.JsonLdConstants;
 import eu.possiblex.participantportal.business.entity.edc.CreateEdcOfferBE;
 import eu.possiblex.participantportal.business.entity.edc.asset.AssetCreateRequest;
 import eu.possiblex.participantportal.business.entity.edc.asset.AssetProperties;
@@ -30,15 +31,18 @@ import java.util.UUID;
 
 @Service
 @Slf4j
-public class ProviderServiceImpl implements ProviderService{
+public class ProviderServiceImpl implements ProviderService {
 
     @Value("${fh.catalog.secret-key}")
     private String fhCatalogSecretKey;
+
     @Value("${fh.catalog.catalog-name}")
     private String catalogName;
 
     private final EdcClient edcClient;
+
     private final FhCatalogClient fhCatalogClient;
+
     private final ObjectMapper objectMapper;
 
     public ProviderServiceImpl(@Autowired EdcClient edcClient, @Autowired FhCatalogClient fhCatalogClient,
@@ -50,8 +54,9 @@ public class ProviderServiceImpl implements ProviderService{
     }
 
     /**
-     * Given a request for creating a dataset entry in the Fraunhofer catalog and
-     * a request for creating an EDC offer, create the dataset entry and the offer in the EDC catalog.
+     * Given a request for creating a dataset entry in the Fraunhofer catalog and a request for creating an EDC offer,
+     * create the dataset entry and the offer in the EDC catalog.
+     *
      * @param createFhOfferBE request for creating a dataset entry
      * @param createEdcOfferBE request for creating an EDC offer
      * @return success message (currently an IdResponse)
@@ -59,35 +64,37 @@ public class ProviderServiceImpl implements ProviderService{
     @Override
     public ObjectNode createOffer(CreateFhOfferBE createFhOfferBE, CreateEdcOfferBE createEdcOfferBE) {
 
+        String assetId = "assetId_" + UUID.randomUUID();
+
         ObjectNode node = objectMapper.createObjectNode();
 
-        var idResponse = createEdcOffer(createEdcOfferBE);
-        node.put("EDC-ID", idResponse.getId());
-
-        var fhIdResponse = createFhCatalogOffer(createFhOfferBE);
+        var fhIdResponse = createFhCatalogOffer(createFhOfferBE, assetId);
         node.put("FH-ID", fhIdResponse.getId());
+
+        var idResponse = createEdcOffer(createEdcOfferBE, assetId);
+        node.put("EDC-ID", idResponse.getId());
 
         return node;
 
     }
 
-    private IdResponse createEdcOffer(CreateEdcOfferBE createEdcOfferBE) {
+    private IdResponse createEdcOffer(CreateEdcOfferBE createEdcOfferBE, String assetId) {
         // create asset
         DataAddress dataAddress = IonosS3DataSource.builder().bucketName("dev-provider-edc-bucket-possible-31952746")
             .blobName(createEdcOfferBE.getFileName()).keyName(createEdcOfferBE.getFileName())
             .storage("s3-eu-central-2.ionoscloud.com").build();
-        AssetCreateRequest assetCreateRequest = AssetCreateRequest.builder().id("assetId_" + UUID.randomUUID())
-            .properties(
-                AssetProperties.builder().name(createEdcOfferBE.getAssetName()).description(createEdcOfferBE.getAssetDescription()).
-                        //version("assetVersion").
-                        contenttype("application/json").build()).dataAddress(dataAddress).build();
+        AssetCreateRequest assetCreateRequest = AssetCreateRequest.builder().id(assetId).properties(
+            AssetProperties.builder().name(createEdcOfferBE.getAssetName())
+                .description(createEdcOfferBE.getAssetDescription()).
+                //version("assetVersion").
+                    contenttype("application/json").build()).dataAddress(dataAddress).build();
 
         log.info("Creating Asset {}", assetCreateRequest);
         IdResponse assetIdResponse = edcClient.createAsset(assetCreateRequest);
 
         // create policy
         String policyId = "policyId_" + UUID.randomUUID();
-        Policy policy = getPolicy(createEdcOfferBE, policyId, assetIdResponse);
+        Policy policy = getPolicy(createEdcOfferBE.getPolicy(), assetIdResponse.getId());
         PolicyCreateRequest policyCreateRequest = PolicyCreateRequest.builder().id(policyId).policy(policy).build();
         log.info("Creating Policy {}", policyCreateRequest);
         IdResponse policyIdResponse = edcClient.createPolicy(policyCreateRequest);
@@ -103,55 +110,39 @@ public class ProviderServiceImpl implements ProviderService{
         return edcClient.createContractDefinition(contractDefinitionCreateRequest);
     }
 
-    private FhIdResponse createFhCatalogOffer(CreateFhOfferBE createFhOfferBE) {
+    private FhIdResponse createFhCatalogOffer(CreateFhOfferBE createFhOfferBE, String assetId) {
 
-        DatasetToCatalogRequest datasetToCatalogRequest = DatasetToCatalogRequest.builder().graphElements(List.of(
-                GraphFirstElement.builder().id("_:b4").foafmbox(FoafMbox.builder().id("mailto:info@gv.hamburg.de").build())
-                        .type("foaf:Organization").foafname("Landesbetrieb für Geoinformation und Vermessung").build(),
-                GraphSecondElement.builder().id("https://piveau.io/set/distribution/6c2122e6-59d6-4342-ada9-a2f336450add")
-                        .type("dcat:Distribution")
-                        //.title("my_file.pdf")
-                        .identifier("https://possible.fokus.fraunhofer.de/set/distribution/1").accessURL(
-                                AccessURL.builder().id("http://85.215.193.145:9192/api/v1/data/assets/test-document_company2").build())
-                        .build(), GraphThirdElement.builder().id("https://piveau.io/set/data/hamburg_geo_id").language(
-                                DctLanguage.builder().id("http://publications.europa.eu/resource/authority/language/DEU").build())
-                        .producedBy(GaxTrustFrameworkProducedBy.builder()
-                                .id("https://www.hamburg.de/politik-und-verwaltung/behoerden/behoerde-fuer-stadtentwicklung-und-wohnen/aemter-und-landesbetrieb/landesbetrieb-geoinformation-und-vermessung/wir-ueber-uns/impressum-244100")
-                                .build()).title(DctTitle.builder().language("de").value("Schulstandorte Hamburg").build())
-                        .distribution(DcatDistribution.builder()
-                                .id("https://piveau.io/set/distribution/6c2122e6-59d6-4342-ada9-a2f336450add").build()).description(
-                                DctDescription.builder().language("de").value(
-                                                "Für jede Schule und ggf. ihre Zweigstellen werden dargestellt: - Geoposition und ggf. - Adresse (Straße, Hausnummer, PLZ, Ort) - Kontaktdaten (Telefon, E-Mail-Funktionspostfach, Fax, Homepage) - Schulmerkmale (Schulnummer, Zweigstelle ja/nein, Schulform nach Haushaltskapitel, Erwachsenenbildung ja/nein, Telefonnummer der Schulaufsicht, zugehöriger ReBBZ-Standort) - Zahl der Schüler")
-                                        .build()).publisher(DctPublisher.builder().id("_:b4").build()).build())).build();
+        Policy policy = getPolicy(createFhOfferBE.getPolicy(), assetId);
+
+        DcatDataset dataset = DcatDataset.builder().id(assetId).hasPolicy(policy).title(createFhOfferBE.getOfferName())
+            .description(createFhOfferBE.getOfferDescription()).build();
 
         String value_type = "identifiers";
         Map<String, String> auth = Map.of("Content-Type", "application/json", "Authorization",
-                "Bearer " + fhCatalogSecretKey);
-        log.info("Adding Dataset to Fraunhofer Catalog {}", datasetToCatalogRequest);
-        FhIdResponse response = fhCatalogClient.addDatasetToFhCatalog(auth, datasetToCatalogRequest, catalogName,
-                value_type);
+            "Bearer " + fhCatalogSecretKey);
+        log.info("Adding Dataset to Fraunhofer Catalog {}", dataset);
+        FhIdResponse response = fhCatalogClient.addDatasetToFhCatalog(auth, dataset, catalogName,
+            value_type);
         log.info("Response from FH Catalog: {}", response.getId());
         return response;
     }
 
-    private Policy getPolicy(CreateEdcOfferBE createEdcOfferBE, String policyId, IdResponse assetIdResponse) {
+    private Policy getPolicy(JsonNode policyJsonNode, String assetId) {
 
         Policy policy = null;
         String policyAttibuteString = "policy";
-        String targetAttributeString = "odrl:target";
+        String targetAttributeString = JsonLdConstants.ODRL_PREFIX + "target";
         try {
-            JsonNode policyNode = createEdcOfferBE.getPolicy().get(policyAttibuteString);
+            JsonNode policyNode = policyJsonNode.get(policyAttibuteString);
+
             policy = objectMapper.treeToValue(policyNode, Policy.class);
 
-            //set policyId
-            policy.setId(policyId);
-
             //set target to assetId in permissions and prohibitions
-            policy.getPermission().forEach(p -> ((ObjectNode) p).put(targetAttributeString, assetIdResponse.getId()));
-            policy.getProhibition().forEach(p -> ((ObjectNode) p).put(targetAttributeString, assetIdResponse.getId()));
+            policy.getPermission().forEach(p -> ((ObjectNode) p).put(targetAttributeString, assetId));
+            policy.getProhibition().forEach(p -> ((ObjectNode) p).put(targetAttributeString, assetId));
 
             //set target with assetId
-            policy.setTarget(PolicyTarget.builder().id(assetIdResponse.getId()).build());
+            policy.setTarget(PolicyTarget.builder().id(assetId).build());
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }

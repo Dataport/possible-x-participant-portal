@@ -77,7 +77,8 @@ class ProviderServiceTest {
         PolicyCreateRequest policyCreateRequest = policyCreateRequestCaptor.getValue();
         //check if policyId is set correctly
         String policyId = policyCreateRequest.getId();
-        assertEquals(policyId, policyCreateRequest.getPolicy().getId());
+        assertTrue(policyCreateRequest.getId().matches("policyId_[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"));
+        assertEquals("GENERATED_POLICY_ID", policyCreateRequest.getPolicy().getId());
         //check if target of permissions and prohibitions is not placeholder value anymore
         policyCreateRequest.getPolicy().getPermission().forEach(p -> assertNotEquals("GENERATED_ASSET_ID", p.get("odrl:target").textValue()));
         policyCreateRequest.getPolicy().getProhibition().forEach(p -> assertNotEquals("GENERATED_ASSET_ID", p.get("odrl:target").textValue()));

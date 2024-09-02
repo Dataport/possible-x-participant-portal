@@ -21,7 +21,7 @@ package eu.possiblex.participantportal.business.entity.edc.catalog;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import eu.possiblex.participantportal.business.entity.edc.EdcConstants;
+import eu.possiblex.participantportal.business.entity.common.JsonLdConstants;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -43,10 +43,10 @@ public class DcatCatalog {
     private Map<String, String> context;
 
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-    @JsonProperty(EdcConstants.DCAT_PREFIX + "dataset")
+    @JsonProperty(JsonLdConstants.DCAT_PREFIX + "dataset")
     private List<DcatDataset> dataset;
 
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-    @JsonProperty(EdcConstants.DCAT_PREFIX + "service")
+    @JsonProperty(JsonLdConstants.DCAT_PREFIX + "service")
     private List<DcatService> service;
 }

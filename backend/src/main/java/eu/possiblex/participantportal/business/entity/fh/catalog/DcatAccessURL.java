@@ -10,7 +10,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @Builder
-public class AccessURL {
+public class DcatAccessURL {
     @JsonProperty("@id")
     private String id;
 }

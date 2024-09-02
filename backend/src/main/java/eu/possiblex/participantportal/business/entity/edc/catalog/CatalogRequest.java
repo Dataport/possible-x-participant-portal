@@ -20,7 +20,7 @@
 package eu.possiblex.participantportal.business.entity.edc.catalog;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import eu.possiblex.participantportal.business.entity.edc.EdcConstants;
+import eu.possiblex.participantportal.business.entity.common.JsonLdConstants;
 import lombok.*;
 
 import java.util.Map;
@@ -31,7 +31,7 @@ import java.util.Map;
 @ToString
 @Builder
 public class CatalogRequest {
-    private static final Map<String, String> CONTEXT = EdcConstants.EDC_CONTEXT;
+    private static final Map<String, String> CONTEXT = JsonLdConstants.EDC_CONTEXT;
 
     private static final String PROTOCOL = "dataspace-protocol-http";
 

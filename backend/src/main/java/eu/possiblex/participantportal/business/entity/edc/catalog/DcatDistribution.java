@@ -20,7 +20,7 @@
 package eu.possiblex.participantportal.business.entity.edc.catalog;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import eu.possiblex.participantportal.business.entity.edc.EdcConstants;
+import eu.possiblex.participantportal.business.entity.common.JsonLdConstants;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -32,9 +32,9 @@ public class DcatDistribution {
     @JsonProperty("@type")
     private String type;
 
-    @JsonProperty(EdcConstants.DCT_PREFIX + "format")
+    @JsonProperty(JsonLdConstants.DCT_PREFIX + "format")
     private Map<String, String> format;
 
-    @JsonProperty(EdcConstants.DCAT_PREFIX + "accessService")
+    @JsonProperty(JsonLdConstants.DCAT_PREFIX + "accessService")
     private String accessService;
 }
