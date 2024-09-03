@@ -16,7 +16,8 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ContextConfiguration;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -67,12 +68,6 @@ class ConsumerServiceTest {
                 .counterPartyAddress("http://example.com")
                 .offerId("someUnknownId")
                 .build()));
-    }
-
-    @Test
-    void thisShouldFail() {
-
-        assertTrue(false);
     }
 
     @Test
