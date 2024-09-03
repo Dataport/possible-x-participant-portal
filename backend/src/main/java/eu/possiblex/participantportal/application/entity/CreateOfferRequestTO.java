@@ -1,6 +1,6 @@
 package eu.possiblex.participantportal.application.entity;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import lombok.*;
 
 @NoArgsConstructor
@@ -18,6 +18,6 @@ public class CreateOfferRequestTO {
 
     private String fileName;
 
-    private JsonNode policy;
+    private Policy policy;
 
 }

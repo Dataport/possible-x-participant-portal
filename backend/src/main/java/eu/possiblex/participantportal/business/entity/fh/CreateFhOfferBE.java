@@ -1,6 +1,6 @@
 package eu.possiblex.participantportal.business.entity.fh;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import lombok.*;
 
 @NoArgsConstructor
@@ -11,8 +11,11 @@ import lombok.*;
 public class CreateFhOfferBE {
 
     private String offerType;
+
     private String offerName;
+
     private String offerDescription;
-    private JsonNode policy;
+
+    private Policy policy;
 
 }

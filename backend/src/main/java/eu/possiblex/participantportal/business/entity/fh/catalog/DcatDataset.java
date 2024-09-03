@@ -2,10 +2,11 @@ package eu.possiblex.participantportal.business.entity.fh.catalog;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import eu.possiblex.participantportal.business.entity.common.JsonLdBase;
 import eu.possiblex.participantportal.business.entity.common.JsonLdConstants;
-import eu.possiblex.participantportal.business.entity.edc.catalog.DcatDistribution;
 import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 import java.util.Map;
@@ -15,14 +16,12 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@Builder
-public class DcatDataset {
+@SuperBuilder
+public class DcatDataset extends JsonLdBase {
 
     private static final String TYPE = JsonLdConstants.DCAT_PREFIX + "Dataset";
-    private static final Map<String, String> CONTEXT = JsonLdConstants.FH_CONTEXT;
 
-    @JsonProperty("@id")
-    private String id;
+    private static final Map<String, String> CONTEXT = JsonLdConstants.FH_CONTEXT;
 
     @JsonProperty(JsonLdConstants.ODRL_PREFIX + "hasPolicy")
     private Policy hasPolicy;
@@ -51,6 +50,7 @@ public class DcatDataset {
 
     @JsonProperty("@context")
     public Map<String, String> getContext() {
+
         return CONTEXT;
     }
 }

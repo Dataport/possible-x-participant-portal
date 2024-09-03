@@ -1,6 +1,6 @@
 package eu.possiblex.participantportal.business.entity.edc;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import lombok.*;
 
 @NoArgsConstructor
@@ -11,8 +11,11 @@ import lombok.*;
 public class CreateEdcOfferBE {
 
     private String assetName;
+
     private String assetDescription;
+
     private String fileName;
-    private JsonNode policy;
+
+    private Policy policy;
 
 }
