@@ -1,7 +1,6 @@
 package eu.possiblex.participantportal.business.control;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import eu.possiblex.participantportal.application.entity.CreateOfferResponseTO;
 import eu.possiblex.participantportal.business.entity.edc.CreateEdcOfferBE;
 import eu.possiblex.participantportal.business.entity.edc.asset.AssetCreateRequest;
 import eu.possiblex.participantportal.business.entity.edc.asset.AssetProperties;
@@ -31,20 +30,16 @@ public class ProviderServiceImpl implements ProviderService {
 
     private final FhCatalogClient fhCatalogClient;
 
-    private final ObjectMapper objectMapper;
-
     @Value("${fh.catalog.secret-key}")
     private String fhCatalogSecretKey;
 
     @Value("${fh.catalog.catalog-name}")
     private String catalogName;
 
-    public ProviderServiceImpl(@Autowired EdcClient edcClient, @Autowired FhCatalogClient fhCatalogClient,
-        @Autowired ObjectMapper objectMapper) {
+    public ProviderServiceImpl(@Autowired EdcClient edcClient, @Autowired FhCatalogClient fhCatalogClient) {
 
         this.edcClient = edcClient;
         this.fhCatalogClient = fhCatalogClient;
-        this.objectMapper = objectMapper;
     }
 
     /**
@@ -53,19 +48,19 @@ public class ProviderServiceImpl implements ProviderService {
      *
      * @param createFhOfferBE request for creating a dataset entry
      * @param createEdcOfferBE request for creating an EDC offer
-     * @return success message (currently an IdResponse)
+     * @return create offer response object
      */
     @Override
-    public ObjectNode createOffer(CreateFhOfferBE createFhOfferBE, CreateEdcOfferBE createEdcOfferBE) {
+    public CreateOfferResponseTO createOffer(CreateFhOfferBE createFhOfferBE, CreateEdcOfferBE createEdcOfferBE) {
 
         String assetId = "assetId_" + UUID.randomUUID();
-        ObjectNode node = objectMapper.createObjectNode();
-        var fhIdResponse = createFhCatalogOffer(createFhOfferBE, assetId);
-        node.put("FH-ID", fhIdResponse.getId());
-        var idResponse = createEdcOffer(createEdcOfferBE, assetId);
-        node.put("EDC-ID", idResponse.getId());
+        CreateOfferResponseTO createOfferResponseTO = new CreateOfferResponseTO();
+        var fhResponseId = createFhCatalogOffer(createFhOfferBE, assetId);
+        var edcResponseId = createEdcOffer(createEdcOfferBE, assetId);
+        createOfferResponseTO.setEdcResponseId(edcResponseId.getId());
+        createOfferResponseTO.setFhResponseId(fhResponseId.getId());
 
-        return node;
+        return createOfferResponseTO;
 
     }
 

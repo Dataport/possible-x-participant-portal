@@ -1,7 +1,7 @@
 package eu.possiblex.participantportal.application.boundary;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import eu.possiblex.participantportal.application.entity.CreateOfferRequestTO;
+import eu.possiblex.participantportal.application.entity.CreateOfferResponseTO;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,8 +12,8 @@ public interface ProviderRestApi {
     /**
      * POST endpoint to create an offer
      *
-     * @return success message
+     * @return create offer response object
      */
     @PostMapping(value = "/offer", produces = MediaType.APPLICATION_JSON_VALUE)
-    JsonNode createOffer(@RequestBody CreateOfferRequestTO createOfferRequestTO);
+    CreateOfferResponseTO createOffer(@RequestBody CreateOfferRequestTO createOfferRequestTO);
 }

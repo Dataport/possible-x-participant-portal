@@ -28,14 +28,25 @@ import static org.mockito.Mockito.verify;
 class ProviderServiceTest {
     private static final String FILE_NAME = "file.txt";
 
-    private static final String POLICY_JSON_STRING =
-        "{\n" + "    \"@id\": \"GENERATED_POLICY_ID\",\n" + "    \"@type\": \"odrl:Set\",\n"
-            + "    \"odrl:permission\": [\n" + "      {\n" + "        \"odrl:target\": \"GENERATED_ASSET_ID\",\n"
-            + "        \"odrl:action\": {\n" + "          \"odrl:type\": \"http://www.w3.org/ns/odrl/2/use\"\n"
-            + "        }\n" + "      },\n" + "      {\n" + "        \"odrl:target\": \"GENERATED_ASSET_ID\",\n"
-            + "        \"odrl:action\": {\n" + "          \"odrl:type\": \"http://www.w3.org/ns/odrl/2/transfer\"\n"
-            + "        }\n" + "      }\n" + "    ],\n" + "    \"odrl:prohibition\": [],\n"
-            + "    \"odrl:obligation\": []\n" + "  }";
+    private static final String POLICY_JSON_STRING = """
+        {
+            "@id": "GENERATED_POLICY_ID",
+            "@type": "odrl:Set",
+            "odrl:permission": [
+              {
+                "odrl:action": {
+                  "odrl:type": "http://www.w3.org/ns/odrl/2/use"
+                }
+              },
+              {
+                "odrl:action": {
+                  "odrl:type": "http://www.w3.org/ns/odrl/2/transfer"
+                }
+              }
+            ],
+            "odrl:prohibition": [],
+            "odrl:obligation": []
+          }""";
 
     @Autowired
     ProviderService providerService;
@@ -78,17 +89,12 @@ class ProviderServiceTest {
         PolicyCreateRequest policyCreateRequest = policyCreateRequestCaptor.getValue();
         //check if policyId is set correctly
         assertTrue(policyCreateRequest.getId()
-            .matches("policyId_[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"));
+            .matches("policyDefinitionId_[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"));
         assertEquals("GENERATED_POLICY_ID", policyCreateRequest.getPolicy().getId());
-        //check if target of permissions and prohibitions is not placeholder value anymore
-        policyCreateRequest.getPolicy().getPermission()
-            .forEach(p -> assertNotEquals("GENERATED_ASSET_ID", p.get("odrl:target").textValue()));
-        policyCreateRequest.getPolicy().getProhibition()
-            .forEach(p -> assertNotEquals("GENERATED_ASSET_ID", p.get("odrl:target").textValue()));
 
         assertNotNull(response);
-        assertNotNull(response.get("EDC-ID"));
-        assertNotNull(response.get("FH-ID"));
+        assertNotNull(response.getEdcResponseId());
+        assertNotNull(response.getFhResponseId());
     }
 
     // Test-specific configuration to provide a fake implementation of EdcClient and FhCatalogClient

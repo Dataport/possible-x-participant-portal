@@ -17,7 +17,12 @@ export interface ICreateOfferRequestTO {
     offerName: string;
     offerDescription: string;
     fileName: string;
-    policy: any;
+    policy: IPolicy;
+}
+
+export interface ICreateOfferResponseTO {
+    edcResponseId: string;
+    fhResponseId: string;
 }
 
 export interface IExceptionTO {
@@ -41,6 +46,20 @@ export interface ISelectOfferRequestTO {
 
 export interface ITransferDetailsTO {
     state: ITransferProcessState;
+}
+
+export interface IPolicy {
+    "@id": string;
+    "odrl:permission": any[];
+    "odrl:prohibition": any[];
+    "odrl:obligation": any[];
+    "odrl:target": IPolicyTarget;
+    "@context": string;
+    "@type": string;
+}
+
+export interface IPolicyTarget {
+    "@id": string;
 }
 
 export interface HttpClient {
@@ -73,7 +92,7 @@ export class RestApplicationClient {
      * HTTP POST /provider/offer
      * Java method: eu.possiblex.participantportal.application.boundary.ProviderRestApiImpl.createOffer
      */
-    createOffer(createOfferRequestTO: ICreateOfferRequestTO): RestResponse<any> {
+    createOffer(createOfferRequestTO: ICreateOfferRequestTO): RestResponse<ICreateOfferResponseTO> {
         return this.httpClient.request({ method: "POST", url: uriEncoding`provider/offer`, data: createOfferRequestTO });
     }
 }

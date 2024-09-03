@@ -1,12 +1,10 @@
 package eu.possiblex.participantportal.business.control;
 
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import eu.possiblex.participantportal.application.entity.CreateOfferResponseTO;
 import eu.possiblex.participantportal.business.entity.edc.CreateEdcOfferBE;
-import eu.possiblex.participantportal.business.entity.edc.common.IdResponse;
 import eu.possiblex.participantportal.business.entity.fh.CreateFhOfferBE;
 
-public class ProviderServiceFake implements ProviderService{
+public class ProviderServiceFake implements ProviderService {
 
     public static final String CREATE_OFFER_RESPONSE_ID = "abc123";
 
@@ -19,10 +17,9 @@ public class ProviderServiceFake implements ProviderService{
      * @return success message (currently an IdResponse)
      */
     @Override
-    public ObjectNode createOffer(CreateFhOfferBE createDatasetEntryBE, CreateEdcOfferBE createEdcOfferBE) {
-        ObjectNode node =  JsonNodeFactory.instance.objectNode();
-        node.put("EDC-ID", CREATE_OFFER_RESPONSE_ID);
-        node.put("FH-ID", CREATE_OFFER_RESPONSE_ID);
-        return node;
+    public CreateOfferResponseTO createOffer(CreateFhOfferBE createDatasetEntryBE, CreateEdcOfferBE createEdcOfferBE) {
+
+        return CreateOfferResponseTO.builder().edcResponseId(CREATE_OFFER_RESPONSE_ID)
+            .fhResponseId(CREATE_OFFER_RESPONSE_ID).build();
     }
 }
