@@ -18,7 +18,7 @@ describe('ProvideComponent', () => {
   } as ICreateOfferResponseTO;
 
   beforeEach(async () => {
-    const apiServiceSpy = jasmine.createSpyObj('ApiService', ['getHealth', 'createOffer']);
+    const apiServiceSpy = jasmine.createSpyObj('ApiService', ['createOffer']);
 
 
     await TestBed.configureTestingModule({
