@@ -43,13 +43,13 @@ describe('ProvideComponent', () => {
   });
 
   it('should call createOffer on apiService when createOffer is called', async () => {
-    const spy = spyOn<any>(component, 'createOffer').and.callThrough();
     const mockResponse = Promise.resolve(offerCreationResponse);
     apiService.createOffer.and.returnValue(mockResponse);
 
+    component.policy = 'Everything is allowed';
+
     await component.createOffer();
 
-    expect(spy).toHaveBeenCalled();
     expect(apiService.createOffer).toHaveBeenCalled();
   });
 
