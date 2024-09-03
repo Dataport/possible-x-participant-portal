@@ -5,6 +5,7 @@ import eu.possiblex.participantportal.application.entity.CreateOfferRequestTO;
 import eu.possiblex.participantportal.application.entity.CreateOfferResponseTO;
 import eu.possiblex.participantportal.business.control.ProviderService;
 import eu.possiblex.participantportal.business.entity.edc.CreateEdcOfferBE;
+import eu.possiblex.participantportal.business.entity.exception.*;
 import eu.possiblex.participantportal.business.entity.fh.CreateFhOfferBE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -32,7 +33,9 @@ public class ProviderRestApiImpl implements ProviderRestApi {
      * @return success message
      */
     @Override
-    public CreateOfferResponseTO createOffer(@RequestBody CreateOfferRequestTO createOfferRequestTO) {
+    public CreateOfferResponseTO createOffer(@RequestBody CreateOfferRequestTO createOfferRequestTO)
+        throws AssetCreationFailedException, AssetConflictException, PolicyCreationFailedException,
+        PolicyConflictException, ContractDefinitionConflictException, ContractDefinitionCreationException {
 
         CreateFhOfferBE createFhOfferBE = providerApiMapper.getCreateDatasetEntryDTOFromCreateOfferRequestTO(
             createOfferRequestTO);

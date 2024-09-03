@@ -48,8 +48,8 @@ class ProviderRestApiTest {
         //then
         this.mockMvc.perform(post("/provider/offer").content(RestApiHelper.asJsonString(request))
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
-            .andExpect(jsonPath("$.EDC-ID").value(ProviderServiceFake.CREATE_OFFER_RESPONSE_ID))
-            .andExpect(jsonPath("$.FH-ID").value(ProviderServiceFake.CREATE_OFFER_RESPONSE_ID));
+            .andExpect(jsonPath("$.edcResponseId").value(ProviderServiceFake.CREATE_OFFER_RESPONSE_ID))
+            .andExpect(jsonPath("$.fhResponseId").value(ProviderServiceFake.CREATE_OFFER_RESPONSE_ID));
 
         ArgumentCaptor<CreateFhOfferBE> createDatasetEntryCaptor = ArgumentCaptor.forClass(CreateFhOfferBE.class);
         ArgumentCaptor<CreateEdcOfferBE> createEdcOfferCaptor = ArgumentCaptor.forClass(CreateEdcOfferBE.class);

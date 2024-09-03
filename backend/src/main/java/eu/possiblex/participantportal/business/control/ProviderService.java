@@ -2,6 +2,7 @@ package eu.possiblex.participantportal.business.control;
 
 import eu.possiblex.participantportal.application.entity.CreateOfferResponseTO;
 import eu.possiblex.participantportal.business.entity.edc.CreateEdcOfferBE;
+import eu.possiblex.participantportal.business.entity.exception.*;
 import eu.possiblex.participantportal.business.entity.fh.CreateFhOfferBE;
 
 public interface ProviderService {
@@ -13,5 +14,7 @@ public interface ProviderService {
      * @param createEdcOfferBE request for creating an EDC offer
      * @return create offer response object
      */
-    CreateOfferResponseTO createOffer(CreateFhOfferBE createFhOfferBE, CreateEdcOfferBE createEdcOfferBE);
+    CreateOfferResponseTO createOffer(CreateFhOfferBE createFhOfferBE, CreateEdcOfferBE createEdcOfferBE)
+        throws AssetCreationFailedException, AssetConflictException, PolicyCreationFailedException,
+        PolicyConflictException, ContractDefinitionConflictException, ContractDefinitionCreationException;
 }
