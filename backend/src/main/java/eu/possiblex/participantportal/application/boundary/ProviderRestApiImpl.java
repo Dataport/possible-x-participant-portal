@@ -34,8 +34,7 @@ public class ProviderRestApiImpl implements ProviderRestApi {
      */
     @Override
     public CreateOfferResponseTO createOffer(@RequestBody CreateOfferRequestTO createOfferRequestTO)
-        throws AssetCreationFailedException, AssetConflictException, PolicyCreationFailedException,
-        PolicyConflictException, ContractDefinitionConflictException, ContractDefinitionCreationException {
+        throws EdcOfferCreationException, FhOfferCreationException {
 
         CreateFhOfferBE createFhOfferBE = providerApiMapper.getCreateDatasetEntryDTOFromCreateOfferRequestTO(
             createOfferRequestTO);
