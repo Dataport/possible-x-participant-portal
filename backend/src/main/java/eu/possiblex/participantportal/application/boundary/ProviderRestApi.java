@@ -2,7 +2,6 @@ package eu.possiblex.participantportal.application.boundary;
 
 import eu.possiblex.participantportal.application.entity.CreateOfferRequestTO;
 import eu.possiblex.participantportal.application.entity.CreateOfferResponseTO;
-import eu.possiblex.participantportal.business.entity.exception.*;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,7 +15,5 @@ public interface ProviderRestApi {
      * @return create offer response object
      */
     @PostMapping(value = "/offer", produces = MediaType.APPLICATION_JSON_VALUE)
-    CreateOfferResponseTO createOffer(@RequestBody CreateOfferRequestTO createOfferRequestTO)
-        throws AssetCreationFailedException, AssetConflictException, PolicyCreationFailedException,
-        PolicyConflictException, ContractDefinitionConflictException, ContractDefinitionCreationException;
+    CreateOfferResponseTO createOffer(@RequestBody CreateOfferRequestTO createOfferRequestTO);
 }

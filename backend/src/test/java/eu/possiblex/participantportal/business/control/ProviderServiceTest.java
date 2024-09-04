@@ -8,7 +8,8 @@ import eu.possiblex.participantportal.business.entity.edc.asset.AssetCreateReque
 import eu.possiblex.participantportal.business.entity.edc.asset.ionoss3extension.IonosS3DataSource;
 import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyCreateRequest;
-import eu.possiblex.participantportal.business.entity.exception.*;
+import eu.possiblex.participantportal.business.entity.exception.EdcOfferCreationException;
+import eu.possiblex.participantportal.business.entity.exception.FhOfferCreationException;
 import eu.possiblex.participantportal.business.entity.fh.CreateFhOfferBE;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -62,9 +63,7 @@ class ProviderServiceTest {
     ObjectMapper objectMapper;
 
     @Test
-    void testCreateOffer() throws JsonProcessingException, AssetCreationFailedException, AssetConflictException,
-        PolicyCreationFailedException, PolicyConflictException, ContractDefinitionConflictException,
-        ContractDefinitionCreationException {
+    void testCreateOffer() throws JsonProcessingException, EdcOfferCreationException, FhOfferCreationException {
         //given
         CreateEdcOfferBE createEdcOfferBE = CreateEdcOfferBE.builder().fileName(FILE_NAME)
             .policy(objectMapper.readValue(POLICY_JSON_STRING, Policy.class)).build();
