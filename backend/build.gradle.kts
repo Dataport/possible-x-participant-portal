@@ -61,6 +61,7 @@ tasks.getByName<Jar>("jar") {
 }
 
 tasks.register<Copy>("copyWebApp") {
+  outputs.upToDateWhen { false }
   description = "Copies the GUI into the resources of the Spring project."
   group = "Application"
   from("$rootDir/frontend/build/resources/browser")
