@@ -26,12 +26,6 @@ import { DynamicFormArrayComponent } from '@components/dynamic-form-array/dynami
 import { BehaviorSubject, takeWhile } from 'rxjs';
 import { ExportService } from '@services/export.service';
 import { Mutex } from 'async-mutex';
-//import { OrganizationsApiService } from 'src/app/services/organizations-api.service';
-//import { ActiveOrganizationRoleService } from 'src/app/services/active-organization-role.service';
-//import { getOfferingTncFromParticipantSd } from 'src/app/utils/credential-tools';
-//import { IServiceOfferingTermsAndConditions } from 'src/app/views/serviceofferings/serviceofferings-data';
-import { FormField } from '@models/form-field.model';
-
 
 @Component({
   selector: 'app-base-wizard-extension',
@@ -53,21 +47,9 @@ export class BaseWizardExtensionComponent {
 
   private disabledFields: string[] = [];
 
-  //private merlotTnc: IServiceOfferingTermsAndConditions;
-  //private providerTnc: IServiceOfferingTermsAndConditions;
-
   constructor(protected formFieldService: FormfieldControlService,
     protected exportService: ExportService,
-    protected changeDetectorRef: ChangeDetectorRef,
-    //private organizationsApiService: OrganizationsApiService,
-    //private activeOrgRoleService: ActiveOrganizationRoleService
-  ) {
-      //let merlotFederationSd = this.organizationsApiService.getMerlotFederationOrga().selfDescription;
-      //let providerSd = this.activeOrgRoleService.activeOrganizationRole.value.orgaData.selfDescription;
-
-      //this.merlotTnc = getOfferingTncFromParticipantSd(merlotFederationSd);
-      //this.providerTnc = getOfferingTncFromParticipantSd(providerSd);
-    }
+    protected changeDetectorRef: ChangeDetectorRef) {}
 
   private selectShape(shaclFile: ShaclFile, credentialSubjectId: string): void {
     this.shaclFile = shaclFile;
@@ -222,10 +204,6 @@ export class BaseWizardExtensionComponent {
     }
   }
 
-  private updateDateField(formControl: FormControl) {
-    formControl.patchValue(new Date().toLocaleString("de-DE", {timeZone: "Europe/Berlin", timeStyle: "short", dateStyle: "medium"}));
-  }
-
   private processFormInput(formInput: DynamicFormInputComponent, prefillFields: any) {
     if (formInput === undefined || prefillFields === undefined) {
       return;
@@ -236,14 +214,6 @@ export class BaseWizardExtensionComponent {
     if (fullKey === "gx:providedBy") {
       this.orgaIdFields.push(formInput.form.controls[formInput.input.id]); // save for later reference
     } 
-
-    if (fullKey === "merlot:creationDate") {
-      if (!Object.keys(prefillFields).includes(fullKey)) {
-        this.updateDateField(formInput.form.controls[formInput.input.id] as FormControl); // initial update
-        this.createDateTimer = setInterval(() => this.updateDateField(formInput.form.controls[formInput.input.id] as FormControl), 1000); // set timer to refresh date field
-      }
-      formInput.form.controls[formInput.input.id].disable();
-    }
     
     if (Object.keys(prefillFields).includes(fullKey)) {
       let fieldValue = this.unpackValueFromField(prefillFields[fullKey]);
@@ -317,28 +287,9 @@ export class BaseWizardExtensionComponent {
         this.processFormArray(expandedField.formArrayViewChildren.find(f => f.input.id === cf.id), prefillFields[parentKey][i]);
       }
 
-      let fullKey = input.prefix + ":" + input.key;
-      let prefillEntry = prefillFields[parentKey][i];
-      //if (fullKey === "gx:termsAndConditions") {
-      //  this.compareAndDisableTnc(input, expandedField, prefillEntry, this.merlotTnc, "MERLOT AGB");
-      //  this.compareAndDisableTnc(input, expandedField, prefillEntry, this.providerTnc, "Anbieter AGB");
-      //}
-
       i += 1;
     }
   }
-
-  private compareAndDisableTnc(input: FormField, expandedField: ExpandedFieldsComponent, prefillEntry: any, otherTnc: any, tncName: string) {
-    if (prefillEntry['gx:URL'] === otherTnc['gx:URL'] 
-      && prefillEntry['gx:hash'] === otherTnc['gx:hash']) {
-        input.name = tncName;
-        for (let cf of input.childrenFields) {
-          let inputField = expandedField.formInputViewChildren.find(f => f.input.id === cf.id);
-          inputField.form.controls[inputField.input.id].disable();
-        }
-    }
-  }
-
 
   private unpackValueFromField(field) {
     if (field instanceof Array) {
