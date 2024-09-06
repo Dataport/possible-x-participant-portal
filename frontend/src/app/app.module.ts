@@ -5,6 +5,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
+import { WizardAppModule } from './sdwizard/wizardapp.module';
+
 import {
   AvatarModule,
   BadgeModule,
@@ -28,6 +30,7 @@ import {
   UtilitiesModule,
 } from '@coreui/angular';
 import { DefaultLayoutComponent } from './containers/default-layout/default-layout.component';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 @NgModule({
   declarations: [
@@ -58,9 +61,11 @@ import { DefaultLayoutComponent } from './containers/default-layout/default-layo
   TabsModule,
   UtilitiesModule,
   BrowserAnimationsModule,
+  WizardAppModule,
   ],
   providers: [
-    provideHttpClient(withInterceptorsFromDi())
+    provideHttpClient(withInterceptorsFromDi()),
+    provideAnimationsAsync()
   ],
   bootstrap: [AppComponent]
 })
