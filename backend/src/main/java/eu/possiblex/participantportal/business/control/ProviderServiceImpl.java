@@ -15,6 +15,7 @@ import eu.possiblex.participantportal.business.entity.exception.FhOfferCreationE
 import eu.possiblex.participantportal.business.entity.fh.CreateFhOfferBE;
 import eu.possiblex.participantportal.business.entity.fh.FhIdResponse;
 import eu.possiblex.participantportal.business.entity.fh.catalog.DcatDataset;
+import eu.possiblex.participantportal.business.entity.fh.catalog.DcatDistribution;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,6 +38,9 @@ public class ProviderServiceImpl implements ProviderService {
 
     @Value("${fh.catalog.catalog-name}")
     private String catalogName;
+
+    @Value("${edc.protocol-url}")
+    private String edcProtocolUrl;
 
     public ProviderServiceImpl(@Autowired EdcClient edcClient, @Autowired FhCatalogClient fhCatalogClient) {
 
@@ -123,7 +127,8 @@ public class ProviderServiceImpl implements ProviderService {
     private FhIdResponse createFhCatalogOffer(CreateFhOfferBE createFhOfferBE, String assetId) {
 
         DcatDataset dataset = DcatDataset.builder().id(assetId).hasPolicy(createFhOfferBE.getPolicy())
-            .title(createFhOfferBE.getOfferName()).description(createFhOfferBE.getOfferDescription()).build();
+            .title(createFhOfferBE.getOfferName()).description(createFhOfferBE.getOfferDescription())
+                .assetId(assetId).distribution(List.of(DcatDistribution.builder().id("testId").accessUrl(edcProtocolUrl).build())).build();
 
         String value_type = "identifiers";
         Map<String, String> auth = Map.of("Content-Type", "application/json", "Authorization",
