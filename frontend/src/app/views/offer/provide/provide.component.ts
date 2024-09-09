@@ -3,6 +3,8 @@ import {ApiService} from '../../../services/mgmt/api/api.service'
 import {StatusMessageComponent} from '../../common-views/status-message/status-message.component';
 import {HttpErrorResponse} from '@angular/common/http';
 import {POLICY_MAP} from '../../../constants';
+import { OfferingWizardExtensionComponent } from '../../../wizard-extension/offering-wizard-extension/offering-wizard-extension.component';
+import { TBR_OFFERING_ID } from '../offer-data';
 
 @Component({
   selector: 'app-provide',
@@ -17,6 +19,8 @@ export class ProvideComponent {
   fileName: string = "";
   policyMap = POLICY_MAP;
   @ViewChild('offerCreationStatusMessage') private offerCreationStatusMessage!: StatusMessageComponent;
+
+  @ViewChild("wizardExtension") private wizardExtension: OfferingWizardExtensionComponent;
 
   constructor(private apiService: ApiService) {
   }
@@ -49,5 +53,31 @@ export class ProvideComponent {
   protected getPolicyDetails(policy: string): string {
     const policyDetails = this.policyMap[policy];
     return policyDetails ? JSON.stringify(policyDetails, null, 2) : '';
+  }
+
+
+  prefillWizardNewOffering() {
+
+    let gxServiceOfferingCs = {
+      "gx:providedBy": {
+        "@id": "did:web:someorga.eu"
+      },
+      type: "gx:ServiceOffering"
+    }
+
+
+    let prefillSd = {
+      selfDescription: {
+        id: '',
+        verifiableCredential: [
+          {credentialSubject: gxServiceOfferingCs}
+        ]
+      }
+    }
+
+    this.wizardExtension.loadShape(null, TBR_OFFERING_ID).then(_ => {
+      this.wizardExtension.prefillFields(prefillSd);
+    });
+    
   }
 }

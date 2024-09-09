@@ -20,8 +20,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { BaseWizardExtensionComponent } from '../base-wizard-extension/base-wizard-extension.component';
 import { ICredentialSubject, IGxServiceOfferingCs, TBR_OFFERING_ID } from '../../views/offer/offer-data';
 import { isGxServiceOfferingCs } from '../../utils/credential-utils';
-import { Router } from '@angular/router';
 import { BehaviorSubject, takeWhile } from 'rxjs';
+import { ApiService } from '../../services/mgmt/api/api.service';
 
 
 @Component({
@@ -32,21 +32,21 @@ import { BehaviorSubject, takeWhile } from 'rxjs';
 export class OfferingWizardExtensionComponent {
   @ViewChild("gxServiceOfferingWizard") private gxServiceOfferingWizard: BaseWizardExtensionComponent;
 
-  @ViewChild("saveStatusMessage") public saveStatusMessage: StatusMessageComponent;
+  @ViewChild("offerCreationStatusMessage") public offerCreationStatusMessage!: StatusMessageComponent;
 
   public submitCompleteEvent: EventEmitter<any> = new EventEmitter();
 
   public prefillDone: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   constructor(
-    private router: Router
+    private apiService: ApiService
   ) { }
 
 
   public async loadShape(shapeName: string, id: string): Promise<void> {
     this.prefillDone.next(false);
-    console.log("Loading shape", shapeName);
-    //await this.gxServiceOfferingWizard.loadShape(this.serviceofferingApiService.getGxServiceOfferingShape(), id);
+    console.log("Loading shape", shapeName); 
+    await this.gxServiceOfferingWizard.loadShape(this.apiService.getGxServiceOfferingShape(), id);
   }
 
   public isShapeLoaded(): boolean {
@@ -75,9 +75,9 @@ export class OfferingWizardExtensionComponent {
       });
   }
 
-  protected onSubmit(publishAfterSave: boolean): void {
-    console.log("onSubmit");
-    this.saveStatusMessage.hideAllMessages();
+  async createOffer() {
+    console.log("Create offer.");
+    this.offerCreationStatusMessage.hideAllMessages();
 
     let gxOfferingJsonSd: IGxServiceOfferingCs = this.gxServiceOfferingWizard.generateJsonCs();
 
@@ -90,59 +90,22 @@ export class OfferingWizardExtensionComponent {
       }
     }
 
-    let saveCallback: Promise<any>;
     if (gxOfferingJsonSd.id === TBR_OFFERING_ID) {
-      //saveCallback = this.serviceofferingApiService.createServiceOffering(offeringDto);
-    } else {
-      //saveCallback = this.serviceofferingApiService.updateServiceOffering(offeringDto, gxOfferingJsonSd.id);
+      this.apiService.createOffer(offeringDto).then(response => {
+        console.log(response);
+        this.offerCreationStatusMessage.showSuccessMessage("", 20000);
+        this.submitCompleteEvent.emit(null);
+      }).catch((e: HttpErrorResponse) => {
+        this.offerCreationStatusMessage.showErrorMessage(e.error.detail);
+      }).catch(_ => {
+        this.offerCreationStatusMessage.showErrorMessage("Unbekannter Fehler");
+      });
     }
-
-    //saveCallback.then(result => {
-    //  if (publishAfterSave) {
-    //    this.serviceofferingApiService.releaseServiceOffering(result["id"])
-    //    .then(_ => {
-    //      this.saveStatusMessage.showSuccessMessage("ID: " + result["id"]);
-    //      this.submitCompleteEvent.emit(null);
-    //      if (gxOfferingJsonSd.id === TBR_OFFERING_ID) {
-    //        this.router.navigate(["service-offerings/edit/", result["id"]], {state: {message: "ID: " + result["id"], inDraft: false}});
-    //      }
-    //    })
-    //    .catch((e: HttpErrorResponse) => {
-    //      this.saveStatusMessage.showErrorMessage(e.error.message);
-    //      this.submitButtonsDisabled = false;
-    //      this.waitingForResponse = false;
-    //    })
-    //    .catch(_ => {
-    //      this.saveStatusMessage.showErrorMessage("Unbekannter Fehler");
-    //      this.submitButtonsDisabled = false;
-    //      this.waitingForResponse = false;
-    //    });
-    //  } else {
-    //    this.saveStatusMessage.showSuccessMessage("ID: " + result["id"]);
-    //    this.submitCompleteEvent.emit(null);
-    //    if (gxOfferingJsonSd.id === TBR_OFFERING_ID) {
-    //      this.router.navigate(["service-offerings/edit/", result["id"]], {state: {message: "ID: " + result["id"], inDraft: true}});
-    //    }
-    //  }
-    //  this.submitCompleteEvent.emit(null);
-    //}).catch((e: HttpErrorResponse) => {
-    //  this.saveStatusMessage.showErrorMessage(e.error.message);
-    //  this.submitButtonsDisabled = false;
-    //})
-    //.catch(_ => {
-    //  this.saveStatusMessage.showErrorMessage("Unbekannter Fehler");
-    //  this.submitButtonsDisabled = false;
-    //}).finally(() => {
-    //  if (!publishAfterSave) {
-    //    this.submitButtonsDisabled = false;
-    //  }
-    //  this.waitingForResponse = false;
-    //});
   }
 
   public ngOnDestroy() {
     this.gxServiceOfferingWizard.ngOnDestroy();
-    this.saveStatusMessage.hideAllMessages();
+    this.offerCreationStatusMessage.hideAllMessages();
   }
 
   protected isWizardFormInvalid(): boolean {

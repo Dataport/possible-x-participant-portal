@@ -17,18 +17,19 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { WizardAppModule } from '../sdwizard/wizardapp.module';
-import { CommonViewsModule } from "../views/common-views/common-views.module";
+import { CommonViewsModule } from '../views/common-views/common-views.module';
 import { ButtonGroupModule, ButtonModule, GridModule, ModalModule } from '@coreui/angular';
 import { FormsModule } from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { OfferingWizardExtensionComponent } from './offering-wizard-extension/offering-wizard-extension.component';
 import { BaseWizardExtensionComponent } from './base-wizard-extension/base-wizard-extension.component';
 import { MaterialModule } from '../sdwizard/material.module'
 import { IconModule } from '@coreui/icons-angular';
 
 @NgModule({
-    declarations: [BaseWizardExtensionComponent],
+    declarations: [BaseWizardExtensionComponent, OfferingWizardExtensionComponent],
     exports: [
-        BaseWizardExtensionComponent,
+        BaseWizardExtensionComponent, OfferingWizardExtensionComponent
     ],
     imports: [
         CommonModule,

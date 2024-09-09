@@ -4,7 +4,7 @@ import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
+import { WizardExtensionModule } from './wizard-extension/wizard-extension.module';
 import { WizardAppModule } from './sdwizard/wizardapp.module';
 
 import {
@@ -62,6 +62,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
   UtilitiesModule,
   BrowserAnimationsModule,
   WizardAppModule,
+  WizardExtensionModule
   ],
   providers: [
     provideHttpClient(withInterceptorsFromDi()),

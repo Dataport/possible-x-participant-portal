@@ -5,9 +5,8 @@ import {saveAs} from 'file-saver';
 import {Prefix, ShaclFile} from '@models/shacl-file';
 import {Utils} from '@shared/utils';
 import {FormfieldControlService} from './form-field.service';
-import { ServiceofferingApiService } from '../../../../services/serviceoffering-api.service';
+import { ApiService } from '../../../../services/mgmt/api/api.service';
 import {DownloadFormat} from '@shared/download-format.enum';
-import { OrganizationsApiService } from 'src/app/services/organizations-api.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,8 +14,7 @@ import { OrganizationsApiService } from 'src/app/services/organizations-api.serv
 export class ExportService {
 
   constructor(private formFieldService: FormfieldControlService, 
-    private serviceOfferingApiService: ServiceofferingApiService,
-    private organizationsApiService: OrganizationsApiService) {
+    private apiService: ApiService) {
   }
 
   createRDFStream(file: ShaclFile) {
