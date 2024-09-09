@@ -61,7 +61,7 @@ public class ProviderServiceImpl implements ProviderService {
             throws FhOfferCreationException, EdcOfferCreationException {
 
         String assetId = generateAssetId();
-        RequestBuilder requestBuilder = new RequestBuilder(assetId, createFhOfferBE, createEdcOfferBE);
+        ProviderRequestBuilder requestBuilder = new ProviderRequestBuilder(assetId, createFhOfferBE, createEdcOfferBE);
 
         FhIdResponse fhResponseId = createFhCatalogOffer(requestBuilder);
         IdResponse edcResponseId = createEdcOffer(requestBuilder);
@@ -85,7 +85,7 @@ public class ProviderServiceImpl implements ProviderService {
      * @return the ID response from EDC
      * @throws EdcOfferCreationException if EDC offer creation fails
      */
-    private IdResponse createEdcOffer(RequestBuilder requestBuilder) throws EdcOfferCreationException {
+    private IdResponse createEdcOffer(ProviderRequestBuilder requestBuilder) throws EdcOfferCreationException {
         try {
             AssetCreateRequest assetCreateRequest = requestBuilder.buildAssetRequest();
             log.info("Creating Asset {}", assetCreateRequest);
@@ -112,7 +112,7 @@ public class ProviderServiceImpl implements ProviderService {
      * @return the ID response from FH catalog
      * @throws FhOfferCreationException if FH offer creation fails
      */
-    private FhIdResponse createFhCatalogOffer(RequestBuilder requestBuilder) throws FhOfferCreationException {
+    private FhIdResponse createFhCatalogOffer(ProviderRequestBuilder requestBuilder) throws FhOfferCreationException {
         try {
             DcatDataset dcatDataset = requestBuilder.buildFhCatalogOfferRequest();
             log.info("Adding Dataset to Fraunhofer Catalog {}", dcatDataset);

@@ -16,23 +16,23 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * The RequestBuilder class is responsible for constructing various request objects required for creating offers in the
+ * The ProviderRequestBuilder class is responsible for constructing various request objects required for creating offers in the
  * FH catalog and EDC.
  */
-public class RequestBuilder {
+public class ProviderRequestBuilder {
 
     private final String assetId;
     private final CreateFhOfferBE createFhOfferBE;
     private final CreateEdcOfferBE createEdcOfferBE;
 
     /**
-     * Constructor for RequestBuilder.
+     * Constructor for ProviderRequestBuilder.
      *
      * @param assetId the asset ID
      * @param createFhOfferBE the FH offer business entity
      * @param createEdcOfferBE the EDC offer business entity
      */
-    public RequestBuilder(String assetId, CreateFhOfferBE createFhOfferBE, CreateEdcOfferBE createEdcOfferBE) {
+    public ProviderRequestBuilder(String assetId, CreateFhOfferBE createFhOfferBE, CreateEdcOfferBE createEdcOfferBE) {
         this.assetId = assetId;
         this.createFhOfferBE = createFhOfferBE;
         this.createEdcOfferBE = createEdcOfferBE;
