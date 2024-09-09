@@ -7,3 +7,6 @@ fh:
     url: test
     secret-key: test
     catalog-name: test-provider
+
+sdCreationWizardApi:
+  base-url: test

@@ -23,3 +23,6 @@ fh:
     url: url
     secret-key: secret
     catalog-name: test-provider
+
+sdCreationWizardApi:
+  base-url: http://localhost:8085
