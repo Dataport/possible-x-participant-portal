@@ -7,6 +7,18 @@ export interface IConsumerRestApi {
 export interface IProviderRestApi {
 }
 
+export interface IResourceShapeRestApi {
+    gxInstantiatedVirtualResourceShape: string;
+    gxDataResourceShape: string;
+    gxPhysicalResourceShape: string;
+    gxSoftwareResourceShape: string;
+    gxVirtualResourceShape: string;
+}
+
+export interface IServiceOfferingShapeRestApi {
+    gxServiceOfferingShape: string;
+}
+
 export interface IConsumeOfferRequestTO {
     counterPartyAddress: string;
     offerId: string;
@@ -23,11 +35,6 @@ export interface ICreateOfferRequestTO {
 export interface ICreateOfferResponseTO {
     edcResponseId: string;
     fhResponseId: string;
-}
-
-export interface IExceptionTO {
-    httpStatusCode: number;
-    message: string;
 }
 
 export interface IOfferDetailsTO {
@@ -94,6 +101,54 @@ export class RestApplicationClient {
      */
     createOffer(createOfferRequestTO: ICreateOfferRequestTO): RestResponse<ICreateOfferResponseTO> {
         return this.httpClient.request({ method: "POST", url: uriEncoding`provider/offer`, data: createOfferRequestTO });
+    }
+
+    /**
+     * HTTP GET /shapes/gx/resource/dataresource
+     * Java method: eu.possiblex.participantportal.application.boundary.ShapeRestApiImpl.getGxDataResourceShape
+     */
+    getGxDataResourceShape(): RestResponse<string> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`shapes/gx/resource/dataresource` });
+    }
+
+    /**
+     * HTTP GET /shapes/gx/resource/instantiatedvirtualresource
+     * Java method: eu.possiblex.participantportal.application.boundary.ShapeRestApiImpl.getGxInstantiatedVirtualResourceShape
+     */
+    getGxInstantiatedVirtualResourceShape(): RestResponse<string> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`shapes/gx/resource/instantiatedvirtualresource` });
+    }
+
+    /**
+     * HTTP GET /shapes/gx/resource/physicalresource
+     * Java method: eu.possiblex.participantportal.application.boundary.ShapeRestApiImpl.getGxPhysicalResourceShape
+     */
+    getGxPhysicalResourceShape(): RestResponse<string> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`shapes/gx/resource/physicalresource` });
+    }
+
+    /**
+     * HTTP GET /shapes/gx/resource/softwareresource
+     * Java method: eu.possiblex.participantportal.application.boundary.ShapeRestApiImpl.getGxSoftwareResourceShape
+     */
+    getGxSoftwareResourceShape(): RestResponse<string> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`shapes/gx/resource/softwareresource` });
+    }
+
+    /**
+     * HTTP GET /shapes/gx/resource/virtualresource
+     * Java method: eu.possiblex.participantportal.application.boundary.ShapeRestApiImpl.getGxVirtualResourceShape
+     */
+    getGxVirtualResourceShape(): RestResponse<string> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`shapes/gx/resource/virtualresource` });
+    }
+
+    /**
+     * HTTP GET /shapes/gx/serviceoffering
+     * Java method: eu.possiblex.participantportal.application.boundary.ShapeRestApiImpl.getGxServiceOfferingShape
+     */
+    getGxServiceOfferingShape(): RestResponse<string> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`shapes/gx/serviceoffering` });
     }
 }
 
