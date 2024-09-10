@@ -16,9 +16,11 @@ import java.util.List;
 
 public class ConsumerServiceFake implements ConsumerService {
 
-    public static final String VALID_OFFER_ID = "validOffer";
+    public static final String VALID_FH_OFFER_ID = "validFhCatalogOfferId";
 
-    public static final String MISSING_OFFER_ID = "missingOffer";
+    public static final String VALID_EDC_OFFER_ID = "validEdcCatalogOfferId";
+
+    public static final String MISSING_OFFER_ID = "missingOfferFhCatalogOfferId";
 
     public static final String BAD_NEGOTIATION_OFFER_ID = "badNegotiation";
 

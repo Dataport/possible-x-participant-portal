@@ -60,17 +60,16 @@ public class ConsumerRestApiTest {
         this.mockMvc.perform(post("/consumer/offer/select")
                 .content(RestApiHelper.asJsonString(SelectOfferRequestTO
                     .builder()
-                        .counterPartyAddress("http://example.com")
-                        .offerId(ConsumerServiceFake.VALID_OFFER_ID)
+                        .fhCatalogOfferId(ConsumerServiceFake.VALID_FH_OFFER_ID)
                     .build()))
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print())
-            .andExpect(status().isOk()).andExpect(jsonPath("$.offerId").value(ConsumerServiceFake.VALID_OFFER_ID));
+            .andExpect(status().isOk()).andExpect(jsonPath("$.offerId").value(ConsumerServiceFake.VALID_FH_OFFER_ID));
 
         ArgumentCaptor<SelectOfferRequestBE> requestCaptor = ArgumentCaptor.forClass(SelectOfferRequestBE.class);
 
         verify(consumerService).selectContractOffer(requestCaptor.capture());
 
-        assertEquals(ConsumerServiceFake.VALID_OFFER_ID, requestCaptor.getValue().getOfferId());
+        assertEquals(ConsumerServiceFake.VALID_FH_OFFER_ID, requestCaptor.getValue().getOfferId());
     }
 
     @Test
@@ -78,8 +77,7 @@ public class ConsumerRestApiTest {
         this.mockMvc.perform(post("/consumer/offer/select")
                 .content(RestApiHelper.asJsonString(SelectOfferRequestTO
                     .builder()
-                    .counterPartyAddress("http://example.com")
-                    .offerId(ConsumerServiceFake.MISSING_OFFER_ID)
+                    .fhCatalogOfferId(ConsumerServiceFake.MISSING_OFFER_ID)
                     .build()))
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print())
             .andExpect(status().isNotFound());
@@ -91,8 +89,7 @@ public class ConsumerRestApiTest {
         this.mockMvc.perform(post("/consumer/offer/accept")
                 .content(RestApiHelper.asJsonString(ConsumeOfferRequestTO
                     .builder()
-                        .counterPartyAddress("http://example.com")
-                        .offerId(ConsumerServiceFake.VALID_OFFER_ID)
+                         .edcOfferId(ConsumerServiceFake.VALID_EDC_OFFER_ID)
                     .build()))
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print())
             .andExpect(status().isOk()).andExpect(jsonPath("$.state").value(TransferProcessState.COMPLETED.name()));
@@ -101,7 +98,7 @@ public class ConsumerRestApiTest {
 
         verify(consumerService).acceptContractOffer(requestCaptor.capture());
 
-        assertEquals(ConsumerServiceFake.VALID_OFFER_ID, requestCaptor.getValue().getOfferId());
+        assertEquals(ConsumerServiceFake.VALID_FH_OFFER_ID, requestCaptor.getValue().getOfferId());
     }
 
     @Test
@@ -109,8 +106,7 @@ public class ConsumerRestApiTest {
         this.mockMvc.perform(post("/consumer/offer/accept")
                 .content(RestApiHelper.asJsonString(ConsumeOfferRequestTO
                     .builder()
-                    .counterPartyAddress("http://example.com")
-                    .offerId(ConsumerServiceFake.MISSING_OFFER_ID)
+                    .edcOfferId(ConsumerServiceFake.MISSING_OFFER_ID)
                     .build()))
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print())
             .andExpect(status().isNotFound());
@@ -121,8 +117,7 @@ public class ConsumerRestApiTest {
         this.mockMvc.perform(post("/consumer/offer/accept")
                 .content(RestApiHelper.asJsonString(ConsumeOfferRequestTO
                     .builder()
-                    .counterPartyAddress("http://example.com")
-                    .offerId(ConsumerServiceFake.BAD_NEGOTIATION_OFFER_ID)
+                    .edcOfferId(ConsumerServiceFake.VALID_EDC_OFFER_ID)
                     .build()))
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print())
             .andExpect(status().isInternalServerError());
@@ -133,8 +128,7 @@ public class ConsumerRestApiTest {
         this.mockMvc.perform(post("/consumer/offer/accept")
                 .content(RestApiHelper.asJsonString(ConsumeOfferRequestTO
                     .builder()
-                    .counterPartyAddress("http://example.com")
-                    .offerId(ConsumerServiceFake.BAD_TRANSFER_OFFER_ID)
+                    .edcOfferId(ConsumerServiceFake.BAD_TRANSFER_OFFER_ID)
                     .build()))
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print())
             .andExpect(status().isInternalServerError());

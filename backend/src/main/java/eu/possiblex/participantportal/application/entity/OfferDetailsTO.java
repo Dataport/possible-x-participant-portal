@@ -12,7 +12,10 @@ import java.time.OffsetDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OfferDetailsTO {
-    private String offerId;
+    /**
+     * The ID of the offer in the EDC Catalog, which corresponds to the offer that the user has chosen in the FH Catalog.
+     */
+    private String edcOfferId;
     private String offerType;
     private OffsetDateTime creationDate;
     private String name;

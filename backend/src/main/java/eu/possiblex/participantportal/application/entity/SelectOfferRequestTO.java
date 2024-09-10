@@ -10,6 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SelectOfferRequestTO {
-    private String counterPartyAddress;
-    private String offerId;
+
+    /**
+     * The offer ID from the offer in the FH Catalog.
+     */
+    private String fhCatalogOfferId;
 }
