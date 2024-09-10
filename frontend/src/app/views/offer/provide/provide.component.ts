@@ -9,7 +9,7 @@ import { TBR_OFFERING_ID } from '../offer-data';
 @Component({
   selector: 'app-provide',
   templateUrl: './provide.component.html',
-  styleUrl: './provide.component.scss'
+  styleUrls: ['./provide.component.scss']
 })
 export class ProvideComponent {
   offerType: string = "";

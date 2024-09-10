@@ -30,7 +30,6 @@ import {
   UtilitiesModule,
 } from '@coreui/angular';
 import { DefaultLayoutComponent } from './containers/default-layout/default-layout.component';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 @NgModule({
   declarations: [
@@ -66,7 +65,6 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
   ],
   providers: [
     provideHttpClient(withInterceptorsFromDi()),
-    provideAnimationsAsync()
   ],
   bootstrap: [AppComponent]
 })

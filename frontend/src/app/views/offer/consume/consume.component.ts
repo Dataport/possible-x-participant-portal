@@ -8,7 +8,7 @@ import { IOfferDetailsTO } from '../../../services/mgmt/api/backend';
 @Component({
   selector: 'app-consume',
   templateUrl: './consume.component.html',
-  styleUrl: './consume.component.scss'
+  styleUrls: ['./consume.component.scss']
 })
 export class ConsumeComponent {
   @ViewChild('queryCatalogStatusMessage') private queryCatalogStatusMessage!: StatusMessageComponent;

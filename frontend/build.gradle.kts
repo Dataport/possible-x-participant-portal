@@ -13,7 +13,7 @@ node {
 tasks {
   val npmInstalll by registering(NpmTask::class) {
     outputs.upToDateWhen { false }
-    args.set(listOf("clean-install", "--legacy-peer-deps"))
+    args.set(listOf("clean-install"))
   }
 
   val npmBuild by registering(NpmTask::class) {

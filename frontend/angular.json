@@ -22,11 +22,11 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:application",
+          "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "outputPath": "build/resources",
             "index": "src/index.html",
-            "browser": "src/main.ts",
+            "main": "src/main.ts",
             "polyfills": [
               "zone.js"
             ],
@@ -36,10 +36,12 @@
               "src/assets",
               {
                 "glob": "**/*",
-                "input": "public"
+                "input": "public",
+                "output": "/"
               }
             ],
             "styles": [
+              "src/styles/custom-theme.scss",
               "src/styles/styles.scss"
             ],
             "scripts": []
@@ -121,25 +123,28 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "consumer-dev": {
-              "buildTarget": "participant-portal:build:consumer-dev"
+              "browserTarget": "participant-portal:build:consumer-dev"
             },
             "provider-dev": {
-              "buildTarget": "participant-portal:build:provider-dev"
+              "browserTarget": "participant-portal:build:provider-dev"
             },
             "local": {
-              "buildTarget": "participant-portal:build:local"
+              "browserTarget": "participant-portal:build:local"
             },
             "consumer-local": {
-              "buildTarget": "participant-portal:build:consumer-local"
+              "browserTarget": "participant-portal:build:consumer-local"
             },
             "provider-local": {
-              "buildTarget": "participant-portal:build:provider-local"
+              "browserTarget": "participant-portal:build:provider-local"
             }
           },
           "defaultConfiguration": "local"
         },
         "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n"
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "participant-portal:build"
+          }
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
@@ -154,10 +159,12 @@
               "src/assets",
               {
                 "glob": "**/*",
-                "input": "public"
+                "input": "public",
+                "output": "/"
               }
             ],
             "styles": [
+              "src/styles/custom-theme.scss",
               "src/styles/styles.scss"
             ],
             "scripts": []
