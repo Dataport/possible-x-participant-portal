@@ -1,4 +1,4 @@
-import {Component, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ViewChild} from '@angular/core';
 import {ApiService} from '../../../services/mgmt/api/api.service'
 import {StatusMessageComponent} from '../../common-views/status-message/status-message.component';
 import {HttpErrorResponse} from '@angular/common/http';
@@ -11,7 +11,7 @@ import { TBR_OFFERING_ID } from '../offer-data';
   templateUrl: './provide.component.html',
   styleUrls: ['./provide.component.scss']
 })
-export class ProvideComponent {
+export class ProvideComponent implements AfterViewInit{
   offerType: string = "";
   offerName: string = "";
   policy: string = "";
@@ -23,6 +23,10 @@ export class ProvideComponent {
   @ViewChild("wizardExtension") private wizardExtension: OfferingWizardExtensionComponent;
 
   constructor(private apiService: ApiService) {
+  }
+
+  ngAfterViewInit(): void {
+      this.prefillWizardNewOffering();
   }
 
   async createOffer() {

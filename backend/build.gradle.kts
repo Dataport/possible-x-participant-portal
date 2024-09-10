@@ -64,7 +64,7 @@ tasks.register<Copy>("copyWebApp") {
   outputs.upToDateWhen { false }
   description = "Copies the GUI into the resources of the Spring project."
   group = "Application"
-  from("$rootDir/frontend/build/resources/browser")
+  from("$rootDir/frontend/build/resources")
   into(layout.buildDirectory.dir("resources/main/static/."))
 }
 
