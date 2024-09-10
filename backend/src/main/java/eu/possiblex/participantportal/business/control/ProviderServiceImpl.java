@@ -39,7 +39,7 @@ public class ProviderServiceImpl implements ProviderService {
     @Value("${fh.catalog.catalog-name}")
     private String catalogName;
 
-    @Value("${edc.protocol-url}")
+    @Value("${edc.protocol-base-url}")
     private String edcProtocolUrl;
 
     public ProviderServiceImpl(@Autowired EdcClient edcClient, @Autowired FhCatalogClient fhCatalogClient) {

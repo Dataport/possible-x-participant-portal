@@ -14,7 +14,7 @@ management:
 edc:
   x-api-key: password
   mgmt-base-url: http://localhost:19193/management
-  protocol-url: http://localhost:19194/protocol
+  protocol-base-url: http://localhost:19194/protocol
 
 springdoc:
   show-actuator: true
