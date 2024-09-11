@@ -18,10 +18,11 @@ import { Component, EventEmitter, ViewChild } from '@angular/core';
 import { StatusMessageComponent } from '../../views/common-views/status-message/status-message.component';
 import { HttpErrorResponse } from '@angular/common/http';
 import { BaseWizardExtensionComponent } from '../base-wizard-extension/base-wizard-extension.component';
-import { ICredentialSubject, IGxServiceOfferingCs, TBR_OFFERING_ID } from '../../views/offer/offer-data';
-import { isGxServiceOfferingCs } from '../../utils/credential-utils';
+import { ICredentialSubject, IGxServiceOfferingCs, TBR_ID } from '../../views/offer/offer-data';
+import { isGxServiceOfferingCs, isDataResourceCs } from '../../utils/credential-utils';
 import { BehaviorSubject, takeWhile } from 'rxjs';
 import { ApiService } from '../../services/mgmt/api/api.service';
+import { POLICY_MAP } from '../../constants';
 
 
 @Component({
@@ -31,31 +32,44 @@ import { ApiService } from '../../services/mgmt/api/api.service';
 })
 export class OfferingWizardExtensionComponent {
   @ViewChild("gxServiceOfferingWizard") private gxServiceOfferingWizard: BaseWizardExtensionComponent;
-
+  @ViewChild("gxDataResourceWizard") private gxDataResourceWizard: BaseWizardExtensionComponent;
   @ViewChild("offerCreationStatusMessage") public offerCreationStatusMessage!: StatusMessageComponent;
 
   public submitCompleteEvent: EventEmitter<any> = new EventEmitter();
 
   public prefillDone: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
+  fileName: string = "";
+  policyMap = POLICY_MAP;
+  policy: string = "";
+  isDataOffering: boolean;
+
   constructor(
     private apiService: ApiService
   ) { }
 
 
-  public async loadShape(shapeName: string, id: string): Promise<void> {
+  public async loadShape(offerType: string, id: string): Promise<void> {
+    this.isDataOffering = offerType === "data";
+    
     this.prefillDone.next(false);
-    console.log("Loading shape", shapeName); 
+    console.log("Loading shape"); 
     await this.gxServiceOfferingWizard.loadShape(this.apiService.getGxServiceOfferingShape(), id);
+    if(this.isDataOffering) {
+      await this.gxDataResourceWizard.loadShape(this.apiService.getGxDataResourceShape(), id);
+    }
   }
 
   public isShapeLoaded(): boolean {
-    return this.gxServiceOfferingWizard?.isShapeLoaded()
+    return this.gxServiceOfferingWizard?.isShapeLoaded() && this.isDataOffering ? this.gxDataResourceWizard?.isShapeLoaded() : true;
   }
 
   private prefillHandleCs(cs: ICredentialSubject) {
     if (isGxServiceOfferingCs(cs)) {
       this.gxServiceOfferingWizard.prefillFields(cs, ["gx:providedBy"]);
+    }
+    if (isDataResourceCs(cs)) {
+      this.gxDataResourceWizard.prefillFields(cs, []);
     }
   }
 
@@ -90,7 +104,7 @@ export class OfferingWizardExtensionComponent {
       }
     }
 
-    if (gxOfferingJsonSd.id === TBR_OFFERING_ID) {
+    if (gxOfferingJsonSd.id === TBR_ID) {
       this.apiService.createOffer(offeringDto).then(response => {
         console.log(response);
         this.offerCreationStatusMessage.showSuccessMessage("", 20000);
@@ -101,6 +115,15 @@ export class OfferingWizardExtensionComponent {
         this.offerCreationStatusMessage.showErrorMessage("Unbekannter Fehler");
       });
     }
+  }
+
+  protected getPolicyNames() {
+    return Object.keys(this.policyMap);
+  }
+
+  protected getPolicyDetails(policy: string): string {
+    const policyDetails = this.policyMap[policy];
+    return policyDetails ? JSON.stringify(policyDetails, null, 2) : '';
   }
 
   public ngOnDestroy() {

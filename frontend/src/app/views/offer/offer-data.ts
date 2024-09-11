@@ -1,4 +1,4 @@
-export const TBR_OFFERING_ID: string = "urn:uuid:GENERATED_OFFERING_ID";
+export const TBR_ID: string = "urn:uuid:GENERATED_ID";
 
 export interface IVerifiablePresentation {
     id: string;

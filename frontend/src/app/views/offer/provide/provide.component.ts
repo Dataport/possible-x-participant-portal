@@ -4,7 +4,7 @@ import {StatusMessageComponent} from '../../common-views/status-message/status-m
 import {HttpErrorResponse} from '@angular/common/http';
 import {POLICY_MAP} from '../../../constants';
 import { OfferingWizardExtensionComponent } from '../../../wizard-extension/offering-wizard-extension/offering-wizard-extension.component';
-import { TBR_OFFERING_ID } from '../offer-data';
+import { TBR_ID } from '../offer-data';
 
 @Component({
   selector: 'app-provide',
@@ -12,7 +12,7 @@ import { TBR_OFFERING_ID } from '../offer-data';
   styleUrls: ['./provide.component.scss']
 })
 export class ProvideComponent implements AfterViewInit{
-  offerType: string = "";
+  offerType: string = "data";
   offerName: string = "";
   policy: string = "";
   offerDescription: string = "";
@@ -50,16 +50,6 @@ export class ProvideComponent implements AfterViewInit{
     this.offerCreationStatusMessage.hideAllMessages();
   }
 
-  protected getPolicyNames() {
-    return Object.keys(this.policyMap);
-  }
-
-  protected getPolicyDetails(policy: string): string {
-    const policyDetails = this.policyMap[policy];
-    return policyDetails ? JSON.stringify(policyDetails, null, 2) : '';
-  }
-
-
   prefillWizardNewOffering() {
 
     let gxServiceOfferingCs = {
@@ -79,7 +69,7 @@ export class ProvideComponent implements AfterViewInit{
       }
     }
 
-    this.wizardExtension.loadShape(null, TBR_OFFERING_ID).then(_ => {
+    this.wizardExtension.loadShape(this.offerType, TBR_ID).then(_ => {
       this.wizardExtension.prefillFields(prefillSd);
     });
     
