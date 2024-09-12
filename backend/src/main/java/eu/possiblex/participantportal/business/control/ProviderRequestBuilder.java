@@ -11,6 +11,8 @@ import eu.possiblex.participantportal.business.entity.edc.contractdefinition.Cri
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyCreateRequest;
 import eu.possiblex.participantportal.business.entity.fh.CreateFhOfferBE;
 import eu.possiblex.participantportal.business.entity.fh.catalog.DcatDataset;
+import eu.possiblex.participantportal.business.entity.fh.catalog.DcatDistribution;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
 import java.util.UUID;
@@ -20,11 +22,14 @@ import java.util.UUID;
  * FH catalog and EDC.
  */
 public class ProviderRequestBuilder {
-
+    
     private final String assetId;
     private final CreateFhOfferBE createFhOfferBE;
     private final CreateEdcOfferBE createEdcOfferBE;
 
+    @Value("${edc.protocol-base-url}")
+    private String edcProtocolUrl;
+    
     /**
      * Constructor for ProviderRequestBuilder.
      *
@@ -49,6 +54,8 @@ public class ProviderRequestBuilder {
             .hasPolicy(createFhOfferBE.getPolicy())
             .title(createFhOfferBE.getOfferName())
             .description(createFhOfferBE.getOfferDescription())
+            .assetId(assetId)
+            .distribution(List.of(DcatDistribution.builder().id("testId").accessUrl(edcProtocolUrl).build()))
             .build();
     }
 

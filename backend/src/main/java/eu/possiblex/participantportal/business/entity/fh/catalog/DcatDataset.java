@@ -42,6 +42,9 @@ public class DcatDataset extends JsonLdBase {
     @JsonProperty(JsonLdConstants.EDC_PREFIX + "contenttype")
     private String contenttype;
 
+    @JsonProperty("https://possible-gaia-x.de/ns/#assetId")
+    private String assetId;
+
     @JsonProperty("@type")
     public String getType() {
 

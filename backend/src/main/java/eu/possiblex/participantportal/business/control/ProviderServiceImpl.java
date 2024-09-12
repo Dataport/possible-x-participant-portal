@@ -3,8 +3,12 @@ package eu.possiblex.participantportal.business.control;
 import eu.possiblex.participantportal.application.entity.CreateOfferResponseTO;
 import eu.possiblex.participantportal.business.entity.edc.CreateEdcOfferBE;
 import eu.possiblex.participantportal.business.entity.edc.asset.AssetCreateRequest;
+import eu.possiblex.participantportal.business.entity.edc.asset.AssetProperties;
+import eu.possiblex.participantportal.business.entity.edc.asset.DataAddress;
+import eu.possiblex.participantportal.business.entity.edc.asset.ionoss3extension.IonosS3DataSource;
 import eu.possiblex.participantportal.business.entity.edc.common.IdResponse;
 import eu.possiblex.participantportal.business.entity.edc.contractdefinition.ContractDefinitionCreateRequest;
+import eu.possiblex.participantportal.business.entity.edc.contractdefinition.Criterion;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyCreateRequest;
 import eu.possiblex.participantportal.business.entity.exception.EdcOfferCreationException;
 import eu.possiblex.participantportal.business.entity.exception.FhOfferCreationException;
@@ -16,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -27,6 +32,7 @@ import java.util.UUID;
 public class ProviderServiceImpl implements ProviderService {
 
     private final EdcClient edcClient;
+
     private final FhCatalogClient fhCatalogClient;
 
     @Value("${fh.catalog.secret-key}")
@@ -124,4 +130,5 @@ public class ProviderServiceImpl implements ProviderService {
             throw new FhOfferCreationException("An error occurred: " + e.getMessage());
         }
     }
+
 }

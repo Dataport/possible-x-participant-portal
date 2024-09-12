@@ -11,6 +11,7 @@ import eu.possiblex.participantportal.business.entity.edc.policy.PolicyCreateReq
 import eu.possiblex.participantportal.business.entity.exception.EdcOfferCreationException;
 import eu.possiblex.participantportal.business.entity.exception.FhOfferCreationException;
 import eu.possiblex.participantportal.business.entity.fh.CreateFhOfferBE;
+import eu.possiblex.participantportal.business.entity.fh.catalog.DcatDataset;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
@@ -77,7 +78,15 @@ class ProviderServiceTest {
         ArgumentCaptor<AssetCreateRequest> assetCreateRequestCaptor = forClass(AssetCreateRequest.class);
         ArgumentCaptor<PolicyCreateRequest> policyCreateRequestCaptor = forClass(PolicyCreateRequest.class);
 
-        verify(fhCatalogClient).addDatasetToFhCatalog(any(), any(), any(), any());
+        ArgumentCaptor<DcatDataset> dcatDatasetCaptor = forClass(DcatDataset.class);
+
+        verify(fhCatalogClient).addDatasetToFhCatalog(any(), dcatDatasetCaptor.capture(), any(), any());
+        //check if assetId exists and AccessURL is set correctly
+        DcatDataset dcatDataset = dcatDatasetCaptor.getValue();
+        assertNotNull(dcatDataset);
+        assertTrue(dcatDataset.getAssetId()
+                .matches("assetId_[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"));
+        assertEquals("test", dcatDataset.getDistribution().get(0).getAccessUrl());
 
         verify(edcClient).createAsset(assetCreateRequestCaptor.capture());
         verify(edcClient).createPolicy(policyCreateRequestCaptor.capture());
