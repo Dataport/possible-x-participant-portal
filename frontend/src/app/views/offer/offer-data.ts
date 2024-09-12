@@ -1,4 +1,5 @@
-export const TBR_ID: string = "urn:uuid:GENERATED_ID";
+export const TBR_SERVICE_OFFERING_ID: string = "urn:uuid:GENERATED_SERVICE_OFFERING_ID";
+export const TBR_DATA_RESOURCE_ID: string = "urn:uuid:GENERATED_DATA_RESOURCE_ID";
 
 export interface IVerifiablePresentation {
     id: string;
@@ -21,6 +22,19 @@ export interface IGxServiceOfferingCs extends ICredentialSubject {
     "gx:policy": string[];
     "gx:dataProtectionRegime": string[];
     "gx:dataAccountExport": IDataAccountExport[];
+    "gx:name": string;
+    "gx:description": string;
+}
+
+export interface IGxDataResourceCs extends ICredentialSubject {
+    "gx:copyrightOwnedBy": INodeKindIRITypeId;
+    "gx:producedBy": INodeKindIRITypeId;
+    "gx:exposedThrough": INodeKindIRITypeId;
+    "gx:containsPII": boolean;
+    "gx:obsoleteDateTime": string;
+    "gx:expirationDateTime": string;
+    "gx:policy": string[];
+    "gx:license": string[];
     "gx:name": string;
     "gx:description": string;
 }

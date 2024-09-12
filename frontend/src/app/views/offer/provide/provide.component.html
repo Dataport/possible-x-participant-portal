@@ -2,15 +2,17 @@
   <div class="p-6 w-full max-w-3xl"> <!-- Centered form container with fixed max width -->
     <c-container class="flex justify-center" fluid>
       <div class="mb-3 flex-1">
+        <div class="flex pb-3 text-3xl font-bold text-brand-800">
+          Service Offering Type Selection
+        </div>
         <label class="form-label">Offer Type</label>
         <select [(ngModel)]="offerType" class="form-select rounded-none w-full" (change)="prefillWizardNewOffering()">
           <option value="service">Service offering</option>
           <option value="data" selected>Data offering</option>
         </select>
       </div>
-<br>
+      <br>
       <app-offering-wizard-extension #wizardExtension></app-offering-wizard-extension>
-      
     </c-container>
   </div>
 </div>

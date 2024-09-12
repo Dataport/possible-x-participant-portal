@@ -4,7 +4,7 @@ import {StatusMessageComponent} from '../../common-views/status-message/status-m
 import {HttpErrorResponse} from '@angular/common/http';
 import {POLICY_MAP} from '../../../constants';
 import { OfferingWizardExtensionComponent } from '../../../wizard-extension/offering-wizard-extension/offering-wizard-extension.component';
-import { TBR_ID } from '../offer-data';
+import { TBR_SERVICE_OFFERING_ID, TBR_DATA_RESOURCE_ID } from '../offer-data';
 
 @Component({
   selector: 'app-provide',
@@ -19,7 +19,6 @@ export class ProvideComponent implements AfterViewInit{
   fileName: string = "";
   policyMap = POLICY_MAP;
   @ViewChild('offerCreationStatusMessage') private offerCreationStatusMessage!: StatusMessageComponent;
-
   @ViewChild("wizardExtension") private wizardExtension: OfferingWizardExtensionComponent;
 
   constructor(private apiService: ApiService) {
@@ -59,19 +58,32 @@ export class ProvideComponent implements AfterViewInit{
       type: "gx:ServiceOffering"
     }
 
+    let prefillSd: any[] = [ gxServiceOfferingCs ];
 
-    let prefillSd = {
-      selfDescription: {
-        id: '',
-        verifiableCredential: [
-          {credentialSubject: gxServiceOfferingCs}
-        ]
+    if (!this.isOfferingDataOffering()) {
+      this.wizardExtension.loadShape(this.offerType, TBR_SERVICE_OFFERING_ID, null).then(_ => {
+        this.wizardExtension.prefillFields(prefillSd);
+      });
+    } else {
+      let gxDataResourceCs = {
+        "gx:producedBy": {
+          "@id": "did:web:someorga.eu"
+        },
+        "gx:exposedThrough": [TBR_SERVICE_OFFERING_ID],
+        "gx:copyrightOwnedBy": ["did:web:someorga.eu"],
+        "gx:containsPII": false,
+        type: "gx:DataResource"
       }
-    }
 
-    this.wizardExtension.loadShape(this.offerType, TBR_ID).then(_ => {
-      this.wizardExtension.prefillFields(prefillSd);
-    });
-    
+      prefillSd.push(gxDataResourceCs);
+
+      this.wizardExtension.loadShape(this.offerType, TBR_SERVICE_OFFERING_ID, TBR_DATA_RESOURCE_ID).then(_ => {
+        this.wizardExtension.prefillFields(prefillSd);
+      });
+    }    
+  }
+
+  protected isOfferingDataOffering() {
+    return this.offerType === "data";
   }
 }
