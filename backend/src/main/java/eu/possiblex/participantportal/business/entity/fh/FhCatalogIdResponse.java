@@ -23,10 +23,16 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * The response for creating a new offer in the FH Catalog.
+ */
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class FhIdResponse {
+public class FhCatalogIdResponse {
 
+    /**
+     * the offer ID
+     */
     private String id;
 }

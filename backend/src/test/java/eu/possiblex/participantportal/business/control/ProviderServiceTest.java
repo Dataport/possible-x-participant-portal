@@ -57,7 +57,7 @@ class ProviderServiceTest {
     EdcClient edcClient;
 
     @Autowired
-    FhCatalogClient fhCatalogClient;
+    FHCatalogClient fhCatalogClient;
 
     @Autowired
     ObjectMapper objectMapper;
@@ -77,7 +77,7 @@ class ProviderServiceTest {
         ArgumentCaptor<AssetCreateRequest> assetCreateRequestCaptor = forClass(AssetCreateRequest.class);
         ArgumentCaptor<PolicyCreateRequest> policyCreateRequestCaptor = forClass(PolicyCreateRequest.class);
 
-        verify(fhCatalogClient).addDatasetToFhCatalog(any(), any(), any(), any());
+        verify(fhCatalogClient).addDatasetToFhCatalog(any());
 
         verify(edcClient).createAsset(assetCreateRequestCaptor.capture());
         verify(edcClient).createPolicy(policyCreateRequestCaptor.capture());
@@ -109,7 +109,7 @@ class ProviderServiceTest {
         }
 
         @Bean
-        public FhCatalogClient fhCatalogClient() {
+        public FHCatalogClient fhCatalogClient() {
 
             return Mockito.spy(new FhCatalogClientFake());
         }
