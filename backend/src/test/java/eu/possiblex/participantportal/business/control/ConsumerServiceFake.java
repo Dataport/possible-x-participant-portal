@@ -2,6 +2,7 @@ package eu.possiblex.participantportal.business.control;
 
 import eu.possiblex.participantportal.business.entity.ConsumeOfferRequestBE;
 import eu.possiblex.participantportal.business.entity.SelectOfferRequestBE;
+import eu.possiblex.participantportal.business.entity.SelectOfferResponseBE;
 import eu.possiblex.participantportal.business.entity.edc.catalog.DcatDataset;
 import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import eu.possiblex.participantportal.business.entity.edc.transfer.IonosS3TransferProcess;
@@ -20,24 +21,28 @@ public class ConsumerServiceFake implements ConsumerService {
 
     public static final String VALID_EDC_OFFER_ID = "validEdcCatalogOfferId";
 
-    public static final String MISSING_OFFER_ID = "missingOfferFhCatalogOfferId";
+    public static final String BAD_EDC_OFFER_ID = "badEdcCatalogOfferId";
 
-    public static final String BAD_NEGOTIATION_OFFER_ID = "badNegotiation";
+    public static final String VALID_ASSET_ID = "validAssetId";
+
+    public static final String MISSING_OFFER_ID = "missingOfferFhCatalogOfferId";
 
     public static final String BAD_TRANSFER_OFFER_ID = "badTransfer";
 
-    @Override
-    public DcatDataset selectContractOffer(SelectOfferRequestBE request) throws OfferNotFoundException {
+    public static final String VALID_COUNTER_PARTY_ADDRESS = "some provider EDC URL";
 
-        if(request.getOfferId().equals(MISSING_OFFER_ID)) {
+    @Override
+    public SelectOfferResponseBE selectContractOffer(SelectOfferRequestBE request) throws OfferNotFoundException {
+
+        if(request.getFhCatalogOfferId().equals(MISSING_OFFER_ID)) {
             throw new OfferNotFoundException("not found");
         }
 
-        return DcatDataset
+        DcatDataset edcCatalogOfferMock = DcatDataset
             .builder()
-            .assetId(request.getOfferId())
-            .name(request.getOfferId())
-            .description(request.getOfferId())
+            .assetId(VALID_ASSET_ID)
+            .name("some name")
+            .description("some description")
             .version("v1.2.3")
             .contenttype("application/json")
             .hasPolicy(List.of(Policy
@@ -47,15 +52,21 @@ public class ConsumerServiceFake implements ConsumerService {
                 .obligation(Collections.emptyList())
                 .build()))
             .build();
+
+        SelectOfferResponseBE response = new SelectOfferResponseBE();
+        response.setEdcOffer(edcCatalogOfferMock);
+        response.setCounterPartyAddress(VALID_COUNTER_PARTY_ADDRESS);
+
+        return response;
     }
 
     @Override
     public TransferProcess acceptContractOffer(ConsumeOfferRequestBE request)
         throws OfferNotFoundException, NegotiationFailedException, TransferFailedException {
 
-        return switch (request.getOfferId()) {
+        return switch (request.getEdcOfferId()) {
             case MISSING_OFFER_ID -> throw new OfferNotFoundException("not found");
-            case BAD_NEGOTIATION_OFFER_ID -> throw new NegotiationFailedException("negotiation failed");
+            case BAD_EDC_OFFER_ID -> throw new NegotiationFailedException("negotiation failed");
             case BAD_TRANSFER_OFFER_ID -> throw new TransferFailedException("transfer failed");
             default -> IonosS3TransferProcess.builder().state(TransferProcessState.COMPLETED).build();
         };

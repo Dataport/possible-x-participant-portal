@@ -11,6 +11,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ConsumeOfferRequestTO {
     /**
+     * @see eu.possiblex.participantportal.application.entity.OfferDetailsTO#counterPartyAddress
+     */
+    private String counterPartyAddress;
+
+    /**
      * @see eu.possiblex.participantportal.application.entity.OfferDetailsTO#edcOfferId
      */
     private String edcOfferId;

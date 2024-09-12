@@ -2,7 +2,7 @@ package eu.possiblex.participantportal.business.control;
 
 import eu.possiblex.participantportal.business.entity.ConsumeOfferRequestBE;
 import eu.possiblex.participantportal.business.entity.SelectOfferRequestBE;
-import eu.possiblex.participantportal.business.entity.edc.catalog.DcatDataset;
+import eu.possiblex.participantportal.business.entity.SelectOfferResponseBE;
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcess;
 import eu.possiblex.participantportal.business.entity.exception.NegotiationFailedException;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
@@ -45,11 +45,10 @@ class ConsumerServiceTest {
     void shouldSelectContractOffer() throws OfferNotFoundException {
 
         reset(edcClient);
-        DcatDataset response = consumerService.selectContractOffer(
+        SelectOfferResponseBE response = consumerService.selectContractOffer(
             SelectOfferRequestBE
                 .builder()
-                .counterPartyAddress("http://example.com")
-                .offerId(EdcClientFake.FAKE_ID)
+                .fhCatalogOfferId(EdcClientFake.FAKE_ID)
                 .build());
 
         verify(edcClient).queryCatalog(any());
@@ -65,8 +64,7 @@ class ConsumerServiceTest {
         assertThrows(OfferNotFoundException.class, () -> consumerService.selectContractOffer(
             SelectOfferRequestBE
                 .builder()
-                .counterPartyAddress("http://example.com")
-                .offerId("someUnknownId")
+                .fhCatalogOfferId("someUnknownId")
                 .build()));
     }
 
@@ -79,7 +77,7 @@ class ConsumerServiceTest {
             ConsumeOfferRequestBE
                 .builder()
                 .counterPartyAddress("http://example.com")
-                .offerId(EdcClientFake.FAKE_ID)
+                .edcOfferId(EdcClientFake.FAKE_ID)
                 .build());
 
         verify(edcClient).negotiateOffer(any());
@@ -95,7 +93,7 @@ class ConsumerServiceTest {
             ConsumeOfferRequestBE
                 .builder()
                 .counterPartyAddress("http://example.com")
-                .offerId("someUnknownId")
+                .edcOfferId("someUnknownId")
                 .build()));
     }
 
@@ -106,7 +104,7 @@ class ConsumerServiceTest {
             ConsumeOfferRequestBE
                 .builder()
                 .counterPartyAddress("http://example.com")
-                .offerId(EdcClientFake.BAD_NEGOTIATION_ID)
+                .edcOfferId(EdcClientFake.BAD_NEGOTIATION_ID)
                 .build()));
     }
 
@@ -117,7 +115,7 @@ class ConsumerServiceTest {
             ConsumeOfferRequestBE
                 .builder()
                 .counterPartyAddress("http://example.com")
-                .offerId(EdcClientFake.BAD_TRANSFER_ID)
+                .edcOfferId(EdcClientFake.BAD_TRANSFER_ID)
                 .build()));
     }
 }

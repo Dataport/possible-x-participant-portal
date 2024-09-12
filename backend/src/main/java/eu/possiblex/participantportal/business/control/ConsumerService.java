@@ -2,6 +2,7 @@ package eu.possiblex.participantportal.business.control;
 
 import eu.possiblex.participantportal.business.entity.ConsumeOfferRequestBE;
 import eu.possiblex.participantportal.business.entity.SelectOfferRequestBE;
+import eu.possiblex.participantportal.business.entity.SelectOfferResponseBE;
 import eu.possiblex.participantportal.business.entity.edc.catalog.DcatDataset;
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcess;
 import eu.possiblex.participantportal.business.entity.exception.NegotiationFailedException;
@@ -16,7 +17,7 @@ public interface ConsumerService {
      * @exception OfferNotFoundException could not find the offer from the request
      * @return details of the offer
      */
-    DcatDataset selectContractOffer(SelectOfferRequestBE request) throws OfferNotFoundException;
+    SelectOfferResponseBE selectContractOffer(SelectOfferRequestBE request) throws OfferNotFoundException;
 
     /**
      * Given a request for an offer, accept the offer on the data transfer component and perform the transfer.

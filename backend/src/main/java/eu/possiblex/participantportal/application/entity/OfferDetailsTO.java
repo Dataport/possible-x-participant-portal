@@ -13,9 +13,13 @@ import java.time.OffsetDateTime;
 @AllArgsConstructor
 public class OfferDetailsTO {
     /**
-     * The ID of the offer in the EDC Catalog, which corresponds to the offer that the user has chosen in the FH Catalog.
+     * The ID which is used to identify the offer in the EDC Catalog. Currently this is the asset-ID, because an asset will only be used in one offer.
      */
     private String edcOfferId;
+    /**
+     * The URL of the EDC Connector of the provider.
+     */
+    private String counterPartyAddress;
     private String offerType;
     private OffsetDateTime creationDate;
     private String name;

@@ -63,13 +63,15 @@ public class ConsumerRestApiTest {
                         .fhCatalogOfferId(ConsumerServiceFake.VALID_FH_OFFER_ID)
                     .build()))
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print())
-            .andExpect(status().isOk()).andExpect(jsonPath("$.offerId").value(ConsumerServiceFake.VALID_FH_OFFER_ID));
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.counterPartyAddress").value(ConsumerServiceFake.VALID_COUNTER_PARTY_ADDRESS))
+            .andExpect(jsonPath("$.edcOfferId").value(ConsumerServiceFake.VALID_ASSET_ID));
 
         ArgumentCaptor<SelectOfferRequestBE> requestCaptor = ArgumentCaptor.forClass(SelectOfferRequestBE.class);
 
+        // check that business logic was called and that parameter from REST was given
         verify(consumerService).selectContractOffer(requestCaptor.capture());
-
-        assertEquals(ConsumerServiceFake.VALID_FH_OFFER_ID, requestCaptor.getValue().getOfferId());
+        assertEquals(ConsumerServiceFake.VALID_FH_OFFER_ID, requestCaptor.getValue().getFhCatalogOfferId());
     }
 
     @Test
@@ -96,9 +98,9 @@ public class ConsumerRestApiTest {
 
         ArgumentCaptor<ConsumeOfferRequestBE> requestCaptor = ArgumentCaptor.forClass(ConsumeOfferRequestBE.class);
 
+        // check that business logic was called and that parameter from REST was given
         verify(consumerService).acceptContractOffer(requestCaptor.capture());
-
-        assertEquals(ConsumerServiceFake.VALID_FH_OFFER_ID, requestCaptor.getValue().getOfferId());
+        assertEquals(ConsumerServiceFake.VALID_EDC_OFFER_ID, requestCaptor.getValue().getEdcOfferId());
     }
 
     @Test
@@ -117,7 +119,7 @@ public class ConsumerRestApiTest {
         this.mockMvc.perform(post("/consumer/offer/accept")
                 .content(RestApiHelper.asJsonString(ConsumeOfferRequestTO
                     .builder()
-                    .edcOfferId(ConsumerServiceFake.VALID_EDC_OFFER_ID)
+                    .edcOfferId(ConsumerServiceFake.BAD_EDC_OFFER_ID)
                     .build()))
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print())
             .andExpect(status().isInternalServerError());

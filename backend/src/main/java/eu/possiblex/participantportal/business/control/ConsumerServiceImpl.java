@@ -2,6 +2,7 @@ package eu.possiblex.participantportal.business.control;
 
 import eu.possiblex.participantportal.business.entity.ConsumeOfferRequestBE;
 import eu.possiblex.participantportal.business.entity.SelectOfferRequestBE;
+import eu.possiblex.participantportal.business.entity.SelectOfferResponseBE;
 import eu.possiblex.participantportal.business.entity.edc.asset.DataAddress;
 import eu.possiblex.participantportal.business.entity.edc.asset.ionoss3extension.IonosS3DataDestination;
 import eu.possiblex.participantportal.business.entity.edc.catalog.CatalogRequest;
@@ -21,9 +22,7 @@ import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundExc
 import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -39,46 +38,43 @@ public class ConsumerServiceImpl implements ConsumerService {
         this.edcClient = edcClient;
     }
 
-    /**
-     * Given a request for an offer, select it and return the details of this offer from the EDC catalog.
-     *
-     * @param request request for selecting the offer
-     * @return details of the offer
-     */
     @Override
-    public DcatDataset selectContractOffer(SelectOfferRequestBE request) {
-        DcatCatalog catalog = queryEdcCatalog(CatalogRequest
+    public SelectOfferResponseBE selectContractOffer(SelectOfferRequestBE request) {
+
+        // get offer from FH Catalog and parse the attributes needed to get the offer from EDC Catalog
+        String counterPartyAddress = "";
+        String assetId = "";
+
+        // get offer from EDC Catalog
+        DcatCatalog edcCatalog = queryEdcCatalog(CatalogRequest
             .builder()
-            .counterPartyAddress(request.getCounterPartyAddress())
+            .counterPartyAddress(counterPartyAddress)
             .build());
-        return catalog.getDataset().get(0);
+
+        SelectOfferResponseBE response = new SelectOfferResponseBE();
+        DcatDataset edcCatalogOffer = edcCatalog.getDataset().get(0);
+        response.setEdcOffer(edcCatalogOffer);
+        response.setCounterPartyAddress(counterPartyAddress);
+
+        return response;
     }
 
-    /**
-     * Given a request for an offer, accept the offer on the EDC and perform the transfer.
-     *
-     * @param request request for consuming an offer
-     * @exception OfferNotFoundException could not find the offer from the request
-     * @exception NegotiationFailedException failed to negotiate over the offer
-     * @exception TransferFailedException failed to transfer the data
-     * @return final result of the transfer
-     */
     @Override
     public TransferProcess acceptContractOffer(ConsumeOfferRequestBE request)
         throws OfferNotFoundException, NegotiationFailedException, TransferFailedException {
 
-        // query catalog
-        DcatCatalog catalog = queryEdcCatalog(CatalogRequest
+        // query edcOffer
+        DcatCatalog edcOffer = queryEdcCatalog(CatalogRequest
             .builder()
             .counterPartyAddress(request.getCounterPartyAddress())
             .build());
-        DcatDataset dataset = getDatasetById(catalog, request.getOfferId());
+        DcatDataset dataset = getDatasetById(edcOffer, request.getEdcOfferId());
 
         // initiate negotiation
         NegotiationInitiateRequest negotiationInitiateRequest = NegotiationInitiateRequest
             .builder()
             .counterPartyAddress(request.getCounterPartyAddress())
-            .providerId(catalog.getParticipantId())
+            .providerId(edcOffer.getParticipantId())
             .offer(ContractOffer
                 .builder()
                 .offerId(dataset.getHasPolicy().get(0).getId())
@@ -98,7 +94,7 @@ public class ConsumerServiceImpl implements ConsumerService {
             .build();
         TransferRequest transferRequest = TransferRequest
             .builder()
-            .connectorId(catalog.getParticipantId())
+            .connectorId(edcOffer.getParticipantId())
             .counterPartyAddress(request.getCounterPartyAddress())
             .assetId(dataset.getAssetId())
             .contractId(contractNegotiation.getContractAgreementId())
@@ -108,15 +104,14 @@ public class ConsumerServiceImpl implements ConsumerService {
     }
 
     private DcatCatalog queryEdcCatalog(CatalogRequest catalogRequest) {
-        // query catalog
         log.info("Query Catalog with Request {}", catalogRequest);
         return edcClient.queryCatalog(catalogRequest);
     }
 
-    private DcatDataset getDatasetById(DcatCatalog catalog, String offerId) throws OfferNotFoundException {
+    private DcatDataset getDatasetById(DcatCatalog catalog, String assetId) throws OfferNotFoundException {
         List<DcatDataset> datasets = catalog.getDataset()
             .stream()
-            .filter(d -> d.getAssetId().equals(offerId))
+            .filter(d -> d.getAssetId().equals(assetId))
             .toList();
 
         if (datasets.size() == 1) {

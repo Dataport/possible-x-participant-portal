@@ -8,6 +8,7 @@ import eu.possiblex.participantportal.application.entity.TransferDetailsTO;
 import eu.possiblex.participantportal.business.control.ConsumerService;
 import eu.possiblex.participantportal.business.entity.ConsumeOfferRequestBE;
 import eu.possiblex.participantportal.business.entity.SelectOfferRequestBE;
+import eu.possiblex.participantportal.business.entity.SelectOfferResponseBE;
 import eu.possiblex.participantportal.business.entity.edc.catalog.DcatDataset;
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcess;
 import eu.possiblex.participantportal.business.entity.exception.NegotiationFailedException;
@@ -39,13 +40,13 @@ public class ConsumerRestApiImpl implements ConsumerRestApi {
     public OfferDetailsTO selectContractOffer(@RequestBody SelectOfferRequestTO request) {
 
         SelectOfferRequestBE be = consumerApiMapper.selectOfferRequestTOtoBE(request);
-        DcatDataset dataset;
+        SelectOfferResponseBE response;
         try {
-            dataset = consumerService.selectContractOffer(be);
+            response = consumerService.selectContractOffer(be);
         } catch (OfferNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
-        return consumerApiMapper.dcatDatasetToOfferDetailsTO(dataset);
+        return consumerApiMapper.selectOfferResponseBEToOfferDetailsTO(response);
     }
 
     @Override
