@@ -9,11 +9,11 @@ export interface IProviderRestApi {
 }
 
 export interface IResourceShapeRestApi {
-    gxInstantiatedVirtualResourceShape: string;
     gxDataResourceShape: string;
     gxPhysicalResourceShape: string;
     gxSoftwareResourceShape: string;
     gxVirtualResourceShape: string;
+    gxInstantiatedVirtualResourceShape: string;
 }
 
 export interface IServiceOfferingShapeRestApi {
@@ -26,9 +26,7 @@ export interface IConsumeOfferRequestTO {
 }
 
 export interface ICreateOfferRequestTO {
-    offerType: string;
-    offerName: string;
-    offerDescription: string;
+    credentialSubjectList: any[];
     fileName: string;
     policy: IPolicy;
 }

@@ -10,8 +10,6 @@ import lombok.*;
 @Setter
 public class CreateFhOfferBE {
 
-    private String offerType;
-
     private String offerName;
 
     private String offerDescription;

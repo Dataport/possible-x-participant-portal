@@ -9,6 +9,7 @@ import eu.possiblex.participantportal.business.entity.edc.CreateEdcOfferBE;
 import eu.possiblex.participantportal.business.entity.exception.EdcOfferCreationException;
 import eu.possiblex.participantportal.business.entity.exception.FhOfferCreationException;
 import eu.possiblex.participantportal.business.entity.fh.CreateFhOfferBE;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -21,6 +22,7 @@ import org.springframework.web.server.ResponseStatusException;
  */
 @RestController
 @CrossOrigin("*") // TODO replace this with proper CORS configuration
+@Slf4j
 public class ProviderRestApiImpl implements ProviderRestApi {
 
     private final ProviderService providerService;
@@ -48,6 +50,8 @@ public class ProviderRestApiImpl implements ProviderRestApi {
      */
     @Override
     public CreateOfferResponseTO createOffer(@RequestBody CreateOfferRequestTO createOfferRequestTO) {
+
+        log.info("CreateOfferRequestTO: {}", createOfferRequestTO);
 
         CreateFhOfferBE createFhOfferBE = providerApiMapper.getCreateDatasetEntryDTOFromCreateOfferRequestTO(
             createOfferRequestTO);

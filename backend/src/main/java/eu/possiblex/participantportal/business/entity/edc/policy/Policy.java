@@ -20,6 +20,7 @@
 
 package eu.possiblex.participantportal.business.entity.edc.policy;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -36,6 +37,7 @@ import java.util.List;
 @ToString
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Policy {
 
     private static final String TYPE = JsonLdConstants.ODRL_PREFIX + "Set";

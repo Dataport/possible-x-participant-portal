@@ -20,6 +20,7 @@ import { BaseWizardExtensionComponent } from '../base-wizard-extension/base-wiza
 import { ICredentialSubject, IGxServiceOfferingCs, IGxDataResourceCs } from '../../views/offer/offer-data';
 import { isGxServiceOfferingCs, isDataResourceCs } from '../../utils/credential-utils';
 import { BehaviorSubject, takeWhile } from 'rxjs';
+import {HttpErrorResponse} from '@angular/common/http';
 import { ApiService } from '../../services/mgmt/api/api.service';
 import { POLICY_MAP } from '../../constants';
 
@@ -126,16 +127,18 @@ export class OfferingWizardExtensionComponent {
       let gxDataResourceJsonSd: IGxDataResourceCs = this.gxDataResourceWizard.generateJsonCs();
       createOfferTo.credentialSubjectList.push(gxDataResourceJsonSd);
     }
-    
-    //this.apiService.createOffer(createOfferTo).then(response => {
-    //  console.log(response);
-    //  this.offerCreationStatusMessage.showSuccessMessage("", 20000);
-    //}).catch((e: HttpErrorResponse) => {
-    //  this.offerCreationStatusMessage.showErrorMessage(e.error.detail);
-   // }).catch(_ => {
-    //  this.offerCreationStatusMessage.showErrorMessage("Unbekannter Fehler");
-    //});
+
     console.log(createOfferTo);
+    
+    this.apiService.createOffer(createOfferTo).then(response => {
+      console.log(response);
+      this.offerCreationStatusMessage.showSuccessMessage("", 20000);
+    }).catch((e: HttpErrorResponse) => {
+      this.offerCreationStatusMessage.showErrorMessage(e.error.detail);
+    }).catch(_ => {
+      this.offerCreationStatusMessage.showErrorMessage("Unbekannter Fehler");
+    });
+    
   }
 
   protected getPolicyNames() {
