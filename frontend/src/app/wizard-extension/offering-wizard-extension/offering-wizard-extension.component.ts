@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-import { Component, EventEmitter, ViewChild } from '@angular/core';
+import { Component, forwardRef, ViewChild } from '@angular/core';
 import { StatusMessageComponent } from '../../views/common-views/status-message/status-message.component';
 import { HttpErrorResponse } from '@angular/common/http';
 import { BaseWizardExtensionComponent } from '../base-wizard-extension/base-wizard-extension.component';
@@ -24,27 +24,57 @@ import { BehaviorSubject, takeWhile } from 'rxjs';
 import { ApiService } from '../../services/mgmt/api/api.service';
 import { POLICY_MAP } from '../../constants';
 
+import {
+  AbstractControl,
+  ControlValueAccessor,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  NG_VALUE_ACCESSOR, ValidationErrors,
+  Validators
+} from "@angular/forms";
+
+interface PossibleSpecificFieldsFormModel {
+  fileName: FormControl<string>;
+  policy: FormControl<string>;
+}
 
 @Component({
   selector: 'app-offering-wizard-extension',
   templateUrl: './offering-wizard-extension.component.html',
-  styleUrls: ['./offering-wizard-extension.component.scss']
+  styleUrls: ['./offering-wizard-extension.component.scss'],
+  providers: [{
+    provide: NG_VALUE_ACCESSOR,
+    useExisting: forwardRef(() => OfferingWizardExtensionComponent),
+    multi: true
+  }]
 })
-export class OfferingWizardExtensionComponent {
+export class OfferingWizardExtensionComponent implements ControlValueAccessor {
   @ViewChild("gxServiceOfferingWizard") private gxServiceOfferingWizard: BaseWizardExtensionComponent;
   @ViewChild("gxDataResourceWizard") private gxDataResourceWizard: BaseWizardExtensionComponent;
   @ViewChild("offerCreationStatusMessage") public offerCreationStatusMessage!: StatusMessageComponent;
 
+  possibleSpecificFieldsForm: FormGroup<PossibleSpecificFieldsFormModel>;
+  selectedFileName: string = "";
+  policyMap = POLICY_MAP;
+  selectedPolicy: string = "";
+
+  private onChange = (value: any) => {};
+  private onTouched = () => {};
+
   public prefillDone: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
-  protected fileName: string = "";
-  protected policyMap = POLICY_MAP;
-  protected policy: string = "";
   protected isDataOffering: boolean = true;
 
   constructor(
-    private apiService: ApiService
-  ) { }
+    private apiService: ApiService,
+    private fb: FormBuilder
+  ) { 
+    this.possibleSpecificFieldsForm = this.fb.group({
+      fileName: this.fb.nonNullable.control<string>('', [Validators.required, this.validateStringField]),
+      policy: this.fb.nonNullable.control<string>('', [Validators.required, this.validateStringField])
+    });
+  }
 
   public async loadShape(offerType: string, serviceOfferingId: string, dataResourceId: string): Promise<void> {
     this.isDataOffering = offerType === "data";
@@ -119,8 +149,8 @@ export class OfferingWizardExtensionComponent {
         credentialSubjectList: [
           gxOfferingJsonSd,
         ],
-        fileName: this.fileName,
-        policy: this.policyMap[this.policy].policy
+        fileName: this.selectedFileName,
+        policy: this.policyMap[this.selectedPolicy].policy
     }
 
     if (this.isOfferingDataOffering()) {
@@ -150,20 +180,20 @@ export class OfferingWizardExtensionComponent {
 
   public ngOnDestroy() {
     this.gxServiceOfferingWizard.ngOnDestroy();
+    this.gxDataResourceWizard.ngOnDestroy();
+    this.possibleSpecificFieldsForm = null;
     this.offerCreationStatusMessage.hideAllMessages();
   }
 
   protected isWizardFormInvalid(): boolean {
-    return this.gxServiceOfferingWizard?.isWizardFormInvalid() 
-      || this.isOfferingDataOffering() ? this.gxDataResourceWizard?.isWizardFormInvalid() : false;
+    let serviceOfferingWizardInvalid = this.gxServiceOfferingWizard?.isWizardFormInvalid();
+    let dataResourceWizardInvalid = this.isOfferingDataOffering() ? this.gxDataResourceWizard?.isWizardFormInvalid() : false;
+  
+    return serviceOfferingWizardInvalid || dataResourceWizardInvalid;
   }
 
   protected isOfferingDataOffering() {
     return this.isDataOffering;
-  }
-
-  protected isPossibleSpecificFormValid() {
-    return this.isFieldFilled(this.policy) && this.isFieldFilled(this.fileName)
   }
 
   public isFieldFilled(str: string){
@@ -172,5 +202,49 @@ export class OfferingWizardExtensionComponent {
     }
 
     return true;
+  }
+
+  writeValue(value: any): void {
+    if (value) {
+      this.selectedFileName = value.fileName || '';
+      this.selectedPolicy = value.policy || '';
+      this.possibleSpecificFieldsForm.setValue({
+        fileName: this.selectedFileName,
+        policy: this.selectedPolicy
+      });
+    }
+  }
+
+  registerOnChange(fn: any): void {
+    this.onChange = fn;
+  }
+
+  registerOnTouched(fn: any): void {
+    this.onTouched = fn;
+  }
+
+  setDisabledState?(isDisabled: boolean): void {
+    if (isDisabled) {
+      this.possibleSpecificFieldsForm.disable();
+    } else {
+      this.possibleSpecificFieldsForm.enable();
+    }
+  }
+
+  get isInvalidFileName(): boolean {
+    return this.possibleSpecificFieldsForm.controls.fileName.hasError('Empty');
+  }
+
+  get isInvalidPolicy(): boolean {
+    return this.possibleSpecificFieldsForm.controls.policy.hasError('Empty');
+  }
+
+  validateStringField(control: AbstractControl): ValidationErrors | null {
+    if (control.value && control.value.trim() !== '') {
+      return null;
+    }
+    return {
+      'Empty': true
+    };
   }
 }
