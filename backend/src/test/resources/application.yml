@@ -1,7 +1,7 @@
 edc:
   x-api-key: test
   mgmt-base-url: test
-
+  protocol-base-url: test
 fh:
   catalog:
     url: test

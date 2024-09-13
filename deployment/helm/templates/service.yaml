@@ -1,14 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: { { include "possible-x-edc-management.fullname" . } }
+  name: {{ include "possible-x-edc-management.fullname" . }}
   labels:
-    { { - include "possible-x-edc-management.labels" . | nindent 4 } }
+    {{- include "possible-x-edc-management.labels" . | nindent 4 }}
 spec:
-  type: { { .Values.service.type } }
+  type: {{ .Values.service.type }}
   ports:
-    - port: { { .Values.service.port } }
-      targetPort: { { .Values.service.targetPort } }
+    - port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.targetPort }}
       protocol: TCP
   selector:
-    { { - include "possible-x-edc-management.selectorLabels" . | nindent 4 } }
+    {{- include "possible-x-edc-management.selectorLabels" . | nindent 4 }}

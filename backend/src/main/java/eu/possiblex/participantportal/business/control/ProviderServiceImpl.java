@@ -3,12 +3,8 @@ package eu.possiblex.participantportal.business.control;
 import eu.possiblex.participantportal.application.entity.CreateOfferResponseTO;
 import eu.possiblex.participantportal.business.entity.edc.CreateEdcOfferBE;
 import eu.possiblex.participantportal.business.entity.edc.asset.AssetCreateRequest;
-import eu.possiblex.participantportal.business.entity.edc.asset.AssetProperties;
-import eu.possiblex.participantportal.business.entity.edc.asset.DataAddress;
-import eu.possiblex.participantportal.business.entity.edc.asset.ionoss3extension.IonosS3DataSource;
 import eu.possiblex.participantportal.business.entity.edc.common.IdResponse;
 import eu.possiblex.participantportal.business.entity.edc.contractdefinition.ContractDefinitionCreateRequest;
-import eu.possiblex.participantportal.business.entity.edc.contractdefinition.Criterion;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyCreateRequest;
 import eu.possiblex.participantportal.business.entity.exception.EdcOfferCreationException;
 import eu.possiblex.participantportal.business.entity.exception.FhOfferCreationException;
@@ -20,10 +16,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Service implementation for managing provider-related operations.
+ */
 @Service
 @Slf4j
 public class ProviderServiceImpl implements ProviderService {
@@ -38,102 +36,98 @@ public class ProviderServiceImpl implements ProviderService {
     @Value("${fh.catalog.catalog-name}")
     private String catalogName;
 
-    public ProviderServiceImpl(@Autowired EdcClient edcClient, @Autowired FhCatalogClient fhCatalogClient) {
+    @Value("${edc.protocol-base-url}")
+    private String edcProtocolUrl;
 
+
+    /**
+     * Constructor for ProviderServiceImpl.
+     *
+     * @param edcClient the EDC client
+     * @param fhCatalogClient the FH catalog client
+     */
+    @Autowired
+    public ProviderServiceImpl(EdcClient edcClient, FhCatalogClient fhCatalogClient) {
         this.edcClient = edcClient;
         this.fhCatalogClient = fhCatalogClient;
     }
 
     /**
-     * Given a request for creating a dataset entry in the Fraunhofer catalog and a request for creating an EDC offer,
-     * create the dataset entry and the offer in the EDC catalog.
+     * Creates an offer by interacting with both FH catalog and EDC.
      *
-     * @param createFhOfferBE request for creating a dataset entry
-     * @param createEdcOfferBE request for creating an EDC offer
-     * @return create offer response object
+     * @param createFhOfferBE the FH offer business entity
+     * @param createEdcOfferBE the EDC offer business entity
+     * @return the response transfer object containing offer IDs
+     * @throws FhOfferCreationException if FH offer creation fails
+     * @throws EdcOfferCreationException if EDC offer creation fails
      */
     @Override
     public CreateOfferResponseTO createOffer(CreateFhOfferBE createFhOfferBE, CreateEdcOfferBE createEdcOfferBE)
-        throws FhOfferCreationException, EdcOfferCreationException {
+            throws FhOfferCreationException, EdcOfferCreationException {
 
-        String assetId = "assetId_" + UUID.randomUUID();
+        String assetId = generateAssetId();
+        ProviderRequestBuilder requestBuilder = new ProviderRequestBuilder(assetId, createFhOfferBE, createEdcOfferBE, edcProtocolUrl);
 
-        CreateOfferResponseTO createOfferResponseTO = new CreateOfferResponseTO();
+        FhIdResponse fhResponseId = createFhCatalogOffer(requestBuilder);
+        IdResponse edcResponseId = createEdcOffer(requestBuilder);
 
-        FhIdResponse fhResponseId = null;
-        try {
-            fhResponseId = createFhCatalogOffer(createFhOfferBE, assetId);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new FhOfferCreationException(e.getMessage());
-        }
-
-        IdResponse edcResponseId = null;
-        try {
-            edcResponseId = createEdcOffer(createEdcOfferBE, assetId);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new EdcOfferCreationException(e.getMessage());
-        }
-
-        createOfferResponseTO.setEdcResponseId(edcResponseId.getId());
-        createOfferResponseTO.setFhResponseId(fhResponseId.getId());
-
-        return createOfferResponseTO;
-
+        return new CreateOfferResponseTO(edcResponseId.getId(), fhResponseId.getId());
     }
 
-    private IdResponse createEdcOffer(CreateEdcOfferBE createEdcOfferBE, String assetId) {
-        // create asset
-        DataAddress dataAddress = IonosS3DataSource.builder().bucketName("dev-provider-edc-bucket-possible-31952746")
-            .blobName(createEdcOfferBE.getFileName()).keyName(createEdcOfferBE.getFileName())
-            .storage("s3-eu-central-2.ionoscloud.com").build();
-        AssetCreateRequest assetCreateRequest = AssetCreateRequest.builder().id(assetId).properties(
-            AssetProperties.builder().name(createEdcOfferBE.getAssetName())
-                .description(createEdcOfferBE.getAssetDescription()).
-                //version("assetVersion").
-                    contenttype("application/json").build()).dataAddress(dataAddress).build();
-
-        log.info("Creating Asset {}", assetCreateRequest);
-        IdResponse assetIdResponse = edcClient.createAsset(assetCreateRequest);
-
-        // create policy
-        String policyDefinitionId = "policyDefinitionId_" + UUID.randomUUID();
-
-        PolicyCreateRequest policyCreateRequest = PolicyCreateRequest.builder().id(policyDefinitionId)
-            .policy(createEdcOfferBE.getPolicy()).build();
-
-        log.info("Creating Policy {}", policyCreateRequest);
-        IdResponse policyIdResponse = edcClient.createPolicy(policyCreateRequest);
-
-        // create contract definition
-        String contractDefinitionId = "contractDefinitionId_" + UUID.randomUUID();
-
-        ContractDefinitionCreateRequest contractDefinitionCreateRequest = ContractDefinitionCreateRequest.builder()
-            .id(contractDefinitionId).contractPolicyId(policyIdResponse.getId())
-            .accessPolicyId(policyIdResponse.getId()).assetsSelector(List.of(
-                Criterion.builder().operandLeft("https://w3id.org/edc/v0.0.1/ns/id").operator("=")
-                    .operandRight(assetIdResponse.getId()).build())).build();
-
-        log.info("Creating Contract Definition {}", contractDefinitionCreateRequest);
-
-        return edcClient.createContractDefinition(contractDefinitionCreateRequest);
+    /**
+     * Generates a unique asset ID.
+     *
+     * @return the generated asset ID
+     */
+    private String generateAssetId() {
+        return "assetId_" + UUID.randomUUID();
     }
 
-    private FhIdResponse createFhCatalogOffer(CreateFhOfferBE createFhOfferBE, String assetId) {
+    /**
+     * Creates an EDC offer by building and sending the necessary requests.
+     *
+     * @param requestBuilder the request builder
+     * @return the ID response from EDC
+     * @throws EdcOfferCreationException if EDC offer creation fails
+     */
+    private IdResponse createEdcOffer(ProviderRequestBuilder requestBuilder) throws EdcOfferCreationException {
+        try {
+            AssetCreateRequest assetCreateRequest = requestBuilder.buildAssetRequest();
+            log.info("Creating Asset {}", assetCreateRequest);
+            IdResponse assetIdResponse = edcClient.createAsset(assetCreateRequest);
 
-        DcatDataset dataset = DcatDataset.builder().id(assetId).hasPolicy(createFhOfferBE.getPolicy())
-            .title(createFhOfferBE.getOfferName()).description(createFhOfferBE.getOfferDescription()).build();
+            PolicyCreateRequest policyCreateRequest = requestBuilder.buildPolicyRequest();
+            log.info("Creating Policy {}", policyCreateRequest);
+            IdResponse policyIdResponse = edcClient.createPolicy(policyCreateRequest);
 
-        String value_type = "identifiers";
-        Map<String, String> auth = Map.of("Content-Type", "application/json", "Authorization",
-            "Bearer " + fhCatalogSecretKey);
+            ContractDefinitionCreateRequest contractDefinitionCreateRequest = requestBuilder.buildContractDefinitionRequest(policyIdResponse, assetIdResponse);
+            log.info("Creating Contract Definition {}", contractDefinitionCreateRequest);
 
-        log.info("Adding Dataset to Fraunhofer Catalog {}", dataset);
-        FhIdResponse response = fhCatalogClient.addDatasetToFhCatalog(auth, dataset, catalogName, value_type);
-        log.info("Response from FH Catalog: {}", response.getId());
+            return edcClient.createContractDefinition(contractDefinitionCreateRequest);
+        } catch (Exception e) {
+            log.error("An error occurred: {}", e.getMessage(), e);
+            throw new EdcOfferCreationException("An error occurred: " + e.getMessage());
+        }
+    }
 
-        return response;
+    /**
+     * Creates an FH catalog offer by building and sending the necessary requests.
+     *
+     * @param requestBuilder the request builder
+     * @return the ID response from FH catalog
+     * @throws FhOfferCreationException if FH offer creation fails
+     */
+    private FhIdResponse createFhCatalogOffer(ProviderRequestBuilder requestBuilder) throws FhOfferCreationException {
+        try {
+            DcatDataset dcatDataset = requestBuilder.buildFhCatalogOfferRequest();
+            log.info("Adding Dataset to Fraunhofer Catalog {}", dcatDataset);
+
+            Map<String, String> auth = Map.of("Content-Type", "application/json", "Authorization", "Bearer " + fhCatalogSecretKey);
+            return fhCatalogClient.addDatasetToFhCatalog(auth, dcatDataset, catalogName, "identifiers");
+        } catch (Exception e) {
+            log.error("An error occurred: {}", e.getMessage(), e);
+            throw new FhOfferCreationException("An error occurred: " + e.getMessage());
+        }
     }
 
 }
