@@ -1,6 +1,7 @@
 package eu.possiblex.participantportal.business.control;
 
 import eu.possiblex.participantportal.application.entity.CreateOfferResponseTO;
+import eu.possiblex.participantportal.application.entity.ParticipantIdTO;
 import eu.possiblex.participantportal.business.entity.edc.CreateEdcOfferBE;
 import eu.possiblex.participantportal.business.entity.exception.EdcOfferCreationException;
 import eu.possiblex.participantportal.business.entity.exception.FhOfferCreationException;
@@ -17,4 +18,11 @@ public interface ProviderService {
      */
     CreateOfferResponseTO createOffer(CreateFhOfferBE createFhOfferBE, CreateEdcOfferBE createEdcOfferBE)
         throws FhOfferCreationException, EdcOfferCreationException;
+
+    /**
+     * Return the participant's id.
+     *
+     * @return participant id
+     */
+    ParticipantIdTO getParticipantId();
 }

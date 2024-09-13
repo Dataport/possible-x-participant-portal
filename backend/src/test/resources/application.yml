@@ -10,3 +10,5 @@ fh:
 
 sdCreationWizardApi:
   base-url: test
+
+participant-id: "did:web:test.eu"

@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -40,7 +41,6 @@ class ProviderRestApiTest {
     @Test
     void shouldReturnMessageOnCreateOffer() throws Exception {
         //given
-
         CreateOfferRequestTO request = CreateOfferRequestTO.builder().offerDescription("description").offerName("name")
             .offerType("type").fileName("fileName").policy(new Policy()).build();
 
@@ -62,6 +62,14 @@ class ProviderRestApiTest {
         assertThat(request.getPolicy()).usingRecursiveComparison().isEqualTo(createFhOfferBE.getPolicy());
         assertThat(request.getPolicy()).usingRecursiveComparison().isEqualTo(createEdcOfferBE.getPolicy());
         assertEquals(request.getFileName(), createEdcOfferBE.getFileName());
+    }
+
+    @Test
+    void shouldReturnMessageOnGetParticipantId() throws Exception {
+        //when
+        //then
+        this.mockMvc.perform(get("/provider/id")).andDo(print()).andExpect(status().isOk())
+            .andExpect(jsonPath("$.participantId").value(ProviderServiceFake.PARTICIPANT_ID));
     }
 
     @TestConfiguration

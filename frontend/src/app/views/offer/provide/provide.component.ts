@@ -1,7 +1,6 @@
 import {AfterViewInit, Component, ViewChild} from '@angular/core';
 import {ApiService} from '../../../services/mgmt/api/api.service'
 import {StatusMessageComponent} from '../../common-views/status-message/status-message.component';
-import {HttpErrorResponse} from '@angular/common/http';
 import {POLICY_MAP} from '../../../constants';
 import { OfferingWizardExtensionComponent } from '../../../wizard-extension/offering-wizard-extension/offering-wizard-extension.component';
 import { TBR_SERVICE_OFFERING_ID, TBR_DATA_RESOURCE_ID } from '../offer-data';
@@ -18,42 +17,26 @@ export class ProvideComponent implements AfterViewInit{
   offerDescription: string = "";
   fileName: string = "";
   policyMap = POLICY_MAP;
+  participantId = "";
   @ViewChild('offerCreationStatusMessage') private offerCreationStatusMessage!: StatusMessageComponent;
   @ViewChild("wizardExtension") private wizardExtension: OfferingWizardExtensionComponent;
 
   constructor(private apiService: ApiService) {
   }
-
   ngAfterViewInit(): void {
-      this.prefillWizardNewOffering();
-  }
-
-  async createOffer() {
-    this.offerCreationStatusMessage.showInfoMessage();
-
-    this.apiService.createOffer({
-      offerType: this.offerType,
-      offerName: this.offerName,
-      offerDescription: this.offerDescription,
-      fileName: this.fileName,
-      policy: this.policyMap[this.policy].policy
-    }).then(response => {
-      console.log(response);
-      this.offerCreationStatusMessage.showSuccessMessage("", 20000);
-    }).catch((e: HttpErrorResponse) => {
-      this.offerCreationStatusMessage.showErrorMessage(e.error.detail);
-    });
+    this.prefillWizardNewOffering();
   }
 
   protected hideAllMessages() {
     this.offerCreationStatusMessage.hideAllMessages();
   }
 
-  prefillWizardNewOffering() {
+  async prefillWizardNewOffering() {
+    await this.retrieveAndSetParticipantId();
 
     let gxServiceOfferingCs = {
       "gx:providedBy": {
-        "@id": "did:web:someorga.eu"
+        "@id": this.participantId
       },
       type: "gx:ServiceOffering"
     }
@@ -67,10 +50,10 @@ export class ProvideComponent implements AfterViewInit{
     } else {
       let gxDataResourceCs = {
         "gx:producedBy": {
-          "@id": "did:web:someorga.eu"
+          "@id": this.participantId
         },
         "gx:exposedThrough": [TBR_SERVICE_OFFERING_ID],
-        "gx:copyrightOwnedBy": ["did:web:someorga.eu"],
+        "gx:copyrightOwnedBy": [this.participantId],
         "gx:containsPII": false,
         type: "gx:DataResource"
       }
@@ -85,5 +68,15 @@ export class ProvideComponent implements AfterViewInit{
 
   protected isOfferingDataOffering() {
     return this.offerType === "data";
+  }
+
+  async retrieveAndSetParticipantId() {
+    try {
+      const response = await this.apiService.getParticipantId();
+      console.log(response);
+      this.participantId = response.participantId;
+    }catch(e) {
+      console.error(e);
+    };
   }
 }

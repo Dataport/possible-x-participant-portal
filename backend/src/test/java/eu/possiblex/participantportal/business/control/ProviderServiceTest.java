@@ -85,7 +85,7 @@ class ProviderServiceTest {
         DcatDataset dcatDataset = dcatDatasetCaptor.getValue();
         assertNotNull(dcatDataset);
         assertTrue(dcatDataset.getAssetId()
-                .matches("assetId_[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"));
+            .matches("assetId_[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"));
         assertEquals("test", dcatDataset.getDistribution().get(0).getAccessUrl());
 
         verify(edcClient).createAsset(assetCreateRequestCaptor.capture());
@@ -106,6 +106,16 @@ class ProviderServiceTest {
         assertNotNull(response);
         assertNotNull(response.getEdcResponseId());
         assertNotNull(response.getFhResponseId());
+    }
+
+    @Test
+    void testGetParticipantId() {
+        //when
+        var participantIdTO = providerService.getParticipantId();
+
+        //then
+        String expectedId = "did:web:test.eu";
+        assertEquals(expectedId, participantIdTO.getParticipantId());
     }
 
     // Test-specific configuration to provide a fake implementation of EdcClient and FhCatalogClient

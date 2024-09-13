@@ -5,6 +5,7 @@ export interface IConsumerRestApi {
 }
 
 export interface IProviderRestApi {
+    participantId: IParticipantIdTO;
 }
 
 export interface IResourceShapeRestApi {
@@ -44,6 +45,10 @@ export interface IOfferDetailsTO {
     name: string;
     description: string;
     contentType: string;
+}
+
+export interface IParticipantIdTO {
+    participantId: string;
 }
 
 export interface ISelectOfferRequestTO {
@@ -93,6 +98,14 @@ export class RestApplicationClient {
      */
     selectContractOffer(request: ISelectOfferRequestTO): RestResponse<IOfferDetailsTO> {
         return this.httpClient.request({ method: "POST", url: uriEncoding`consumer/offer/select`, data: request });
+    }
+
+    /**
+     * HTTP GET /provider/id
+     * Java method: eu.possiblex.participantportal.application.boundary.ProviderRestApiImpl.getParticipantId
+     */
+    getParticipantId(): RestResponse<IParticipantIdTO> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`provider/id` });
     }
 
     /**
