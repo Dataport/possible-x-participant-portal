@@ -31,33 +31,32 @@
       POSSIBLE-specific Fields
   </div>
 
-  <div class="form-group row pb-6 min-h-32 justify-start">
-    <form [formGroup]="possibleSpecificFieldsForm">
-      <label class="form-label">Policy*</label>
-      <select formControlName="policy" class="form-select rounded-none w-full">
-        <option disabled hidden selected value="">Please select ...</option>
-        <option *ngFor="let policy of getPolicyNames()" [value]="policy">{{ policy }}</option>
-      </select>
-      <div *ngIf="isInvalidPolicy" class="text-error pt-2">
-        <small>Policy is required.</small>
-      </div>
-      <br>
-      <div *ngIf="selectedPolicy">
-        <label>Policy Details</label>
-        <textarea [value]="getPolicyDetails(selectedPolicy)" readonly class="form-control" rows="10" disabled></textarea>
-        <br>
-      </div>
-      <label class="form-label">File Name*</label>
-      <input formControlName="fileName" type="text" class="form-control rounded-none w-full" placeholder="e.g. MyFile.json">
-      <div *ngIf="isInvalidFileName" class="text-error pt-2">
-        <small>Filename is required.</small>
-      </div>
-    </form>
+  <label class="form-label">Policy*</label>
+  <select [(ngModel)]="selectedPolicy" class="form-select rounded-none w-full">
+    <option disabled hidden selected value="">Please select ...</option>
+    <option *ngFor="let policy of getPolicyNames()" [value]="policy">{{ policy }}</option>
+  </select>
+  <div *ngIf="isInvalidPolicy" class="text-error pt-2">
+    <small>Policy is required.</small>
+  </div>
+  <br>
+  <div *ngIf="selectedPolicy">
+    <label>Policy Details</label>
+    <textarea [value]="getPolicyDetails(selectedPolicy)" readonly class="form-control" rows="10" disabled></textarea>
+    <br>
+  </div>
+  <label class="form-label">File Name*</label>
+  <input [(ngModel)]="selectedFileName" type="text" class="form-control rounded-none w-full" placeholder="e.g. MyFile.json">
+  <div *ngIf="isInvalidFileName" class="text-error pt-2">
+    <small>Filename is required.</small>
   </div>
 </div>
 
+<div>Selected Policy: {{ selectedPolicy }}</div>
+<div>Selected FileName: {{ selectedFileName }}</div>
+
 <div class="text-right mt-3t">
-    <button [disabled]="isWizardFormInvalid() || possibleSpecificFieldsForm.invalid" cButton color="primary" (click)="createOffer()" shape="rounded-0"
+    <button [disabled]="isWizardFormInvalid() || isPossibleSpecificFormInvalid()" cButton color="primary" (click)="createOffer()" shape="rounded-0"
         type="submit">
         Create Offer
     </button>
