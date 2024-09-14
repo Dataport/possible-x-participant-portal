@@ -1,10 +1,17 @@
 package eu.possiblex.participantportal.application.boundary;
 
 import eu.possiblex.participantportal.application.control.ConsumerApiMapper;
+import eu.possiblex.participantportal.application.entity.ConsumeOfferRequestTO;
 import eu.possiblex.participantportal.application.entity.SelectOfferRequestTO;
 import eu.possiblex.participantportal.business.control.*;
 import eu.possiblex.participantportal.business.entity.edc.catalog.DcatCatalog;
 import eu.possiblex.participantportal.business.entity.edc.catalog.DcatDataset;
+import eu.possiblex.participantportal.business.entity.edc.common.IdResponse;
+import eu.possiblex.participantportal.business.entity.edc.negotiation.ContractNegotiation;
+import eu.possiblex.participantportal.business.entity.edc.negotiation.NegotiationState;
+import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
+import eu.possiblex.participantportal.business.entity.edc.transfer.IonosS3TransferProcess;
+import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcessState;
 import eu.possiblex.participantportal.utils.TestUtils;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
@@ -50,6 +57,64 @@ public class ConsumerModuleTest {
     private TechnicalFhCatalogClient technicalFhCatalogClientMock;
 
     private static String TEST_FILES_PATH = "unit_tests/ConsumerModuleTest/";
+
+    @Test
+    void acceptContractOfferSucceeds() throws Exception {
+
+        // GIVEN
+
+        reset(edcClientMock);
+        reset(technicalFhCatalogClientMock);
+
+        String edcOfferId = "edcOfferId";
+        String counterPartyAddress = "counterPartyAddress";
+
+        // let the EDC provide the test data catalog
+        DcatDataset mockDatasetWrongOne = new DcatDataset(); // an offer in the EDC Catalog which the user does not look for
+        mockDatasetWrongOne.setAssetId("assetIdWhichTheUserDoesNotLookFor");
+        mockDatasetWrongOne.setName("wrong");
+        mockDatasetWrongOne.setContenttype("wrong");
+        mockDatasetWrongOne.setDescription("wrong");
+        DcatDataset mockDatasetCorrectOne = new DcatDataset(); // the offer in the EDC Catalog which the user looks for
+        mockDatasetCorrectOne.setAssetId(edcOfferId);
+        mockDatasetCorrectOne.setName("correctName");
+        mockDatasetCorrectOne.setContenttype("correctContentType");
+        mockDatasetCorrectOne.setDescription("correctDescription");
+        Policy policy = new Policy();
+        policy.setId("policyId");
+        mockDatasetCorrectOne.setHasPolicy(List.of(policy));
+        DcatCatalog edcCatalogAnswerMock = new DcatCatalog();
+        edcCatalogAnswerMock.setDataset(List.of(mockDatasetWrongOne, mockDatasetCorrectOne));
+        Mockito.when(edcClientMock.queryCatalog(Mockito.any())).thenReturn(edcCatalogAnswerMock);
+
+        // define EDC client behaviour for the data transfer so that it goes through
+        IdResponse negotiation = new IdResponse();
+        negotiation.setId("negiotiationId");
+        Mockito.when(edcClientMock.negotiateOffer(Mockito.any())).thenReturn(negotiation);
+        ContractNegotiation contractNegotiation = new ContractNegotiation();
+        contractNegotiation.setState(NegotiationState.FINALIZED);
+        Mockito.when(edcClientMock.checkOfferStatus(Mockito.eq(negotiation.getId()))).thenReturn(contractNegotiation);
+        IdResponse transfer = new IdResponse();
+        transfer.setId("transferId");
+        Mockito.when(edcClientMock.initiateTransfer(Mockito.any())).thenReturn(transfer);
+        IonosS3TransferProcess transferProcess = new IonosS3TransferProcess();
+        transferProcess.setState(TransferProcessState.COMPLETED);
+        Mockito.when(edcClientMock.checkTransferStatus(Mockito.any())).thenReturn(transferProcess);
+
+        // WHEN/THEN
+
+        this.mockMvc.perform(post("/consumer/offer/accept")
+                        .content(RestApiHelper.asJsonString(ConsumeOfferRequestTO
+                                .builder()
+                                .edcOfferId(edcOfferId)
+                                .counterPartyAddress(counterPartyAddress)
+                                .build()))
+                        .contentType(MediaType.APPLICATION_JSON)).andDo(print())
+                .andExpect(status().isOk()).andExpect(jsonPath("$.state").value(TransferProcessState.COMPLETED.name()));
+
+        // THEN
+
+    }
 
     @Test
     void selectingOfferSucceeds() throws Exception {
