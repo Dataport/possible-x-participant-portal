@@ -33,6 +33,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
+@ToString
 public class DcatDataset {
     @JsonProperty("@id")
     private String id;

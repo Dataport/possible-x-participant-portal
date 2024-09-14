@@ -20,6 +20,7 @@ import eu.possiblex.participantportal.business.entity.edc.transfer.TransferReque
 import eu.possiblex.participantportal.business.entity.exception.NegotiationFailedException;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
+import eu.possiblex.participantportal.business.entity.fh.FhCatalogOffer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,28 +34,32 @@ public class ConsumerServiceImpl implements ConsumerService {
 
     private final EdcClient edcClient;
 
-    public ConsumerServiceImpl(@Autowired EdcClient edcClient) {
+    private final FHCatalogClient fhCatalogClient;
+
+    public ConsumerServiceImpl(@Autowired EdcClient edcClient, @Autowired FHCatalogClient fhCatalogClient) {
 
         this.edcClient = edcClient;
+        this.fhCatalogClient = fhCatalogClient;
     }
 
     @Override
-    public SelectOfferResponseBE selectContractOffer(SelectOfferRequestBE request) {
+    public SelectOfferResponseBE selectContractOffer(SelectOfferRequestBE request) throws OfferNotFoundException {
 
         // get offer from FH Catalog and parse the attributes needed to get the offer from EDC Catalog
-        String counterPartyAddress = "";
-        String assetId = "";
+        FhCatalogOffer fhCatalogOffer = fhCatalogClient.getFhCatalogOffer(request.getFhCatalogOfferId());
+        log.info("got fh catalog offer " + fhCatalogOffer);
 
         // get offer from EDC Catalog
         DcatCatalog edcCatalog = queryEdcCatalog(CatalogRequest
             .builder()
-            .counterPartyAddress(counterPartyAddress)
+            .counterPartyAddress(fhCatalogOffer.getCounterPartyAddress())
             .build());
+        log.info("got edc catalog: " + edcCatalog);
+        DcatDataset edcCatalogOffer = getDatasetById(edcCatalog, fhCatalogOffer.getAssetId());
 
         SelectOfferResponseBE response = new SelectOfferResponseBE();
-        DcatDataset edcCatalogOffer = edcCatalog.getDataset().get(0);
         response.setEdcOffer(edcCatalogOffer);
-        response.setCounterPartyAddress(counterPartyAddress);
+        response.setCounterPartyAddress(fhCatalogOffer.getCounterPartyAddress());
 
         return response;
     }
@@ -117,7 +122,7 @@ public class ConsumerServiceImpl implements ConsumerService {
         if (datasets.size() == 1) {
             return datasets.get(0);
         } else {
-            throw new OfferNotFoundException("Offer with given ID not found or ambiguous.");
+            throw new OfferNotFoundException("Offer with given ID not found or ambiguous. Nr of offers: " + datasets.size());
         }
     }
 

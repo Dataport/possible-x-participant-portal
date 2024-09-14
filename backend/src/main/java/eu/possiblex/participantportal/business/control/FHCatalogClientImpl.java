@@ -1,23 +1,25 @@
 package eu.possiblex.participantportal.business.control;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogOffer;
 import eu.possiblex.participantportal.business.entity.fh.catalog.DcatDataset;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.support.WebClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 
+import java.util.Iterator;
 import java.util.Map;
 
 @Service
 @Slf4j
 public class FHCatalogClientImpl implements FHCatalogClient {
-
-    @Value("${fh.catalog.url}")
-    private String fhCatalogUrl;
 
     @Value("${fh.catalog.secret-key}")
     private String fhCatalogSecretKey;
@@ -25,33 +27,101 @@ public class FHCatalogClientImpl implements FHCatalogClient {
     @Value("${fh.catalog.catalog-name}")
     private String catalogName;
 
+    private TechnicalFhCatalogClient technicalFhCatalogClient;
+
+    public FHCatalogClientImpl(@Autowired TechnicalFhCatalogClient technicalFhCatalogClient) {
+        this.technicalFhCatalogClient = technicalFhCatalogClient;
+    }
+
     @Override
     public FhCatalogIdResponse addDatasetToFhCatalog(DcatDataset datasetToCatalogRequest) {
-        TechnicalFhCatalogClient technicalFhCatalogClient = createTechnicalFhCatalogClient();
-
+        log.info("using catalog with name: " + catalogName);
         FhCatalogIdResponse response = technicalFhCatalogClient.addDatasetToFhCatalog(createHeaders(), datasetToCatalogRequest, catalogName, "identifiers");
+        log.info("got offer id: " + response.getId());
         return response;
     }
 
     @Override
     public FhCatalogOffer getFhCatalogOffer(String datasetId) {
-        TechnicalFhCatalogClient technicalFhCatalogClient = createTechnicalFhCatalogClient();
-        String offerJson = technicalFhCatalogClient.getFhCatalogOffer(datasetId);
-        log.info("answer for fh catalog ID " + datasetId + ": " + offerJson);
+        log.info("fetching offer for fh catalog ID " + datasetId);
+        String offerJsonContent = technicalFhCatalogClient.getFhCatalogOffer(datasetId);
+        log.info("answer for fh catalog ID: " + offerJsonContent);
+
+        return parseFhOfferJson(offerJsonContent);
+    }
+
+    private FhCatalogOffer parseFhOfferJson(String offerJsonContent) {
+
+        FhCatalogOffer fhCatalogOffer;
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode offerJson = mapper.readTree(offerJsonContent);
+
+            String assetId = getValueForAttribute("assetId", offerJson);
+            String accessURL = getValueForAttribute("accessURL", offerJson);
+            log.info("parsed fh catalog offer id assetId: " + assetId);
+            log.info("parsed fh catalog offer id accessURL: " + accessURL);
+
+            fhCatalogOffer = new FhCatalogOffer();
+            fhCatalogOffer.setAssetId(assetId);
+            fhCatalogOffer.setCounterPartyAddress(accessURL);
+
+        } catch (Exception e) {
+            throw new RuntimeException("failed to parse fh catalog offer json: " + offerJsonContent, e);
+        }
+
+        return fhCatalogOffer;
+    }
+
+    /**
+     * Recursively parses the given JSON object. Looks for the first occurrence of an attribute with the given name and returns its value.
+     * An attribute in the JSON object will match the given attribute name, if:
+     * * it has the same name
+     * * it ends with "#" + the given attribute name
+     * * it ends with ":" + the given attribute name
+     * <p>
+     * This method can be improved to better deal with JSON-LD structures in the future if necessary.
+     *
+     * @param attribute
+     * @param jsonNode
+     * @return
+     */
+    private String getValueForAttribute(String attribute, JsonNode jsonNode) {
+
+        if (jsonNode.isArray()) {
+            for (int i = 0; i < jsonNode.size(); i++) {
+                JsonNode child = jsonNode.get(i);
+
+                String value = getValueForAttribute(attribute, child);
+
+                if (value != null) {
+                    return value;
+                }
+            }
+
+            return null;
+        }
+
+        for (Iterator<Map.Entry<String, JsonNode>> iter = jsonNode.fields(); iter.hasNext(); ) {
+            Map.Entry<String, JsonNode> entry = iter.next();
+
+            String key = entry.getKey();
+            if (key.equals(attribute) || key.endsWith("#" + attribute) || key.endsWith(":" + attribute)) {
+                return entry.getValue().asText();
+            }
+
+            String value = getValueForAttribute(attribute, entry.getValue());
+
+            if (value != null) {
+                return value;
+            }
+        }
 
         return null;
     }
 
     private Map<String, String> createHeaders() {
         return Map.of("Content-Type", "application/json", "Authorization", "Bearer " + fhCatalogSecretKey);
-    }
-
-    private TechnicalFhCatalogClient createTechnicalFhCatalogClient() {
-
-        WebClient webClient = WebClient.builder().baseUrl(fhCatalogUrl).build();
-        HttpServiceProxyFactory httpServiceProxyFactory = HttpServiceProxyFactory.builder()
-                .exchangeAdapter(WebClientAdapter.create(webClient)).build();
-        return httpServiceProxyFactory.createClient(TechnicalFhCatalogClient.class);
     }
 
 }
