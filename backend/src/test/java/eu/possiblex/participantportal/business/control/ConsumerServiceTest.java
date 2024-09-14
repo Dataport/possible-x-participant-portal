@@ -58,17 +58,6 @@ class ConsumerServiceTest {
     }
 
     @Test
-    @Disabled // TODO enable this once the user actually selects an existing offering
-    void shouldSelectContractOfferNotFound() {
-
-        assertThrows(OfferNotFoundException.class, () -> consumerService.selectContractOffer(
-            SelectOfferRequestBE
-                .builder()
-                .fhCatalogOfferId("someUnknownId")
-                .build()));
-    }
-
-    @Test
     void shouldAcceptContractOffer()
         throws NegotiationFailedException, TransferFailedException, OfferNotFoundException {
 

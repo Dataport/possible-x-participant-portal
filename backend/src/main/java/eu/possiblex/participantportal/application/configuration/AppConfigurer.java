@@ -12,6 +12,9 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 @Configuration
 public class AppConfigurer {
 
+    @Value("${fh.catalog.url}")
+    private String fhCatalogUrl;
+
     @Value("${edc.x-api-key}")
     private String edcAccessKey;
 
@@ -27,4 +30,12 @@ public class AppConfigurer {
         return httpServiceProxyFactory.createClient(EdcClient.class);
     }
 
+    @Bean
+    public TechnicalFhCatalogClient technicalFhCatalogClient() {
+
+        WebClient webClient = WebClient.builder().baseUrl(fhCatalogUrl).build();
+        HttpServiceProxyFactory httpServiceProxyFactory = HttpServiceProxyFactory.builder()
+                .exchangeAdapter(WebClientAdapter.create(webClient)).build();
+        return httpServiceProxyFactory.createClient(TechnicalFhCatalogClient.class);
+    }
 }
