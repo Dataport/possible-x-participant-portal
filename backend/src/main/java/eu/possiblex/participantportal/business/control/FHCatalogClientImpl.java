@@ -2,7 +2,7 @@ package eu.possiblex.participantportal.business.control;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.JsonNodeType;
+import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogOffer;
 import eu.possiblex.participantportal.business.entity.fh.catalog.DcatDataset;
@@ -10,9 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.support.WebClientAdapter;
-import org.springframework.web.service.invoker.HttpServiceProxyFactory;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -42,9 +40,17 @@ public class FHCatalogClientImpl implements FHCatalogClient {
     }
 
     @Override
-    public FhCatalogOffer getFhCatalogOffer(String datasetId) {
+    public FhCatalogOffer getFhCatalogOffer(String datasetId) throws OfferNotFoundException {
         log.info("fetching offer for fh catalog ID " + datasetId);
-        String offerJsonContent = technicalFhCatalogClient.getFhCatalogOffer(datasetId);
+        String offerJsonContent = null;
+        try {
+            offerJsonContent = technicalFhCatalogClient.getFhCatalogOffer(datasetId);
+        } catch (WebClientResponseException e) {
+            if (e.getStatusCode().value() == 404) {
+                throw new OfferNotFoundException("no FH Catalog offer found with ID " + datasetId);
+            }
+            throw e;
+        }
         log.info("answer for fh catalog ID: " + offerJsonContent);
 
         return parseFhOfferJson(offerJsonContent);
@@ -61,6 +67,10 @@ public class FHCatalogClientImpl implements FHCatalogClient {
             String accessURL = getValueForAttribute("accessURL", offerJson);
             log.info("parsed fh catalog offer id assetId: " + assetId);
             log.info("parsed fh catalog offer id accessURL: " + accessURL);
+
+            if ((assetId == null) || (accessURL == null) || assetId.isEmpty() || accessURL.isEmpty()) {
+                throw new RuntimeException("FH catalog offer did not contain all expected infos! asset-ID: " + assetId + ", access URL: " + accessURL);
+            }
 
             fhCatalogOffer = new FhCatalogOffer();
             fhCatalogOffer.setAssetId(assetId);

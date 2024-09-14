@@ -16,3 +16,4 @@ public class SelectOfferRequestTO {
      */
     private String fhCatalogOfferId;
 }
+

@@ -39,28 +39,38 @@ public class ConsumerRestApiImpl implements ConsumerRestApi {
     @Override
     public OfferDetailsTO selectContractOffer(@RequestBody SelectOfferRequestTO request) {
 
+        log.info("selecting contract with " + request);
         SelectOfferRequestBE be = consumerApiMapper.selectOfferRequestTOtoBE(request);
         SelectOfferResponseBE response;
         try {
             response = consumerService.selectContractOffer(be);
         } catch (OfferNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
+
+        log.info("returning for selecting contract: " + response);
         return consumerApiMapper.selectOfferResponseBEToOfferDetailsTO(response);
     }
 
     @Override
     public TransferDetailsTO acceptContractOffer(@RequestBody ConsumeOfferRequestTO request) {
 
+        log.info("accepting contract with " + request);
         ConsumeOfferRequestBE be = consumerApiMapper.consumeOfferRequestTOtoBE(request);
         TransferProcess process;
         try {
             process = consumerService.acceptContractOffer(be);
         } catch (OfferNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        } catch (NegotiationFailedException | TransferFailedException e) {
+        } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
-        return consumerApiMapper.transferProcessToDetailsTO(process);
+
+        TransferDetailsTO response = consumerApiMapper.transferProcessToDetailsTO(process);
+
+        log.info("returning for accepting contract: " + response);
+        return  response;
     }
 }

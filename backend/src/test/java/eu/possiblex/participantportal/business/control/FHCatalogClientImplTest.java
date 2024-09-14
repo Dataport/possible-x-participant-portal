@@ -1,5 +1,6 @@
 package eu.possiblex.participantportal.business.control;
 
+import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogOffer;
 import eu.possiblex.participantportal.utils.TestUtils;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
@@ -16,7 +17,7 @@ import java.util.stream.Collectors;
 public class FHCatalogClientImplTest {
 
     @Test
-    public void parseDataCorrectly() {
+    public void parseDataCorrectly() throws OfferNotFoundException {
         // GIVEN a mocked technical client that returns a test FH Catalog offer
 
         String fhCatalogOfferContent = TestUtils.loadTextFile("unit_tests/FHCatalogClientImplTest/validFhOffer.json");

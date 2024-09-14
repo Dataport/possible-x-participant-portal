@@ -122,7 +122,7 @@ public class ConsumerServiceImpl implements ConsumerService {
         if (datasets.size() == 1) {
             return datasets.get(0);
         } else {
-            throw new OfferNotFoundException("Offer with given ID not found or ambiguous. Nr of offers: " + datasets.size());
+            throw new OfferNotFoundException("Offer with given ID " + assetId + " not found or ambiguous. Nr of offers: " + datasets.size());
         }
     }
 
