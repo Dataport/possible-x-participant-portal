@@ -88,10 +88,10 @@
         <input [formControlName]="input.id" [matDatepicker]="picker" matInput>
         <mat-datepicker-toggle [for]="picker" matSuffix></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
+        <div cFormText>
+          {{input.description[this.translate.currentLang]}}
+        </div>
       </mat-form-field>
-      <div cFormText>
-        {{input.description[this.translate.currentLang]}}
-      </div>
       <mat-error>
         <app-show-errors [ctrl]="$any(form.get(input.id))" [label]="input.name"></app-show-errors>
       </mat-error>
@@ -104,10 +104,10 @@
         <input [formControlName]="input.id" [ngxMatDatetimePicker]="picker" matInput>
         <mat-datepicker-toggle [for]="$any(picker)" matSuffix></mat-datepicker-toggle>
         <ngx-mat-datetime-picker #picker></ngx-mat-datetime-picker>
+        <div cFormText>
+          {{input.description[this.translate.currentLang]}}
+        </div>
       </mat-form-field>
-      <div cFormText>
-        {{input.description[this.translate.currentLang]}}
-      </div>
       <mat-error>
         <app-show-errors [ctrl]="$any(form.get(input.id))" [label]="input.name"></app-show-errors>
       </mat-error>
