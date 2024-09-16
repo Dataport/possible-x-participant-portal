@@ -68,7 +68,9 @@
         <select class="form-select" [formControlName]="input.id">
           <option *ngFor="let option of input.in" [value]="option.value">{{option.value}}</option>
         </select>
-        
+        <div cFormText>
+          {{input.description[this.translate.currentLang]}}
+        </div>
       </div>
       <mat-error>
         <app-show-errors [ctrl]="$any(form.get(input.id))" [label]="input.name"></app-show-errors>
@@ -87,6 +89,9 @@
         <mat-datepicker-toggle [for]="picker" matSuffix></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
       </mat-form-field>
+      <div cFormText>
+        {{input.description[this.translate.currentLang]}}
+      </div>
       <mat-error>
         <app-show-errors [ctrl]="$any(form.get(input.id))" [label]="input.name"></app-show-errors>
       </mat-error>
@@ -100,6 +105,9 @@
         <mat-datepicker-toggle [for]="$any(picker)" matSuffix></mat-datepicker-toggle>
         <ngx-mat-datetime-picker #picker></ngx-mat-datetime-picker>
       </mat-form-field>
+      <div cFormText>
+        {{input.description[this.translate.currentLang]}}
+      </div>
       <mat-error>
         <app-show-errors [ctrl]="$any(form.get(input.id))" [label]="input.name"></app-show-errors>
       </mat-error>
@@ -109,6 +117,9 @@
       <mat-checkbox [formControlName]="input.id" class="checkbox-style">
         <mat-label>{{input.name}}<span *ngIf="input.required" aria-required="true" class="required">*</span><span class="field-key">&nbsp;&nbsp;{{ input.key }}</span>
       </mat-label>
+      <div cFormText>
+        {{input.description[this.translate.currentLang]}}
+      </div>
       </mat-checkbox>
       <mat-error>
         <app-show-errors [ctrl]="$any(form.get(input.id))" [label]="input.name"></app-show-errors>
