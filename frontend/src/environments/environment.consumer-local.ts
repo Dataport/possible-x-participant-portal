@@ -2,6 +2,5 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-    api_url: "http://localhost:8081",
-    counter_party_address: "http://localhost:19194/protocol"
+    api_url: "http://localhost:8081"
   };
