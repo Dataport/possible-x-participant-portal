@@ -9,7 +9,7 @@ export interface IProviderRestApi {
 
 export interface IConsumeOfferRequestTO {
     counterPartyAddress: string;
-    offerId: string;
+    edcOfferId: string;
 }
 
 export interface ICreateOfferRequestTO {
@@ -25,13 +25,9 @@ export interface ICreateOfferResponseTO {
     fhResponseId: string;
 }
 
-export interface IExceptionTO {
-    httpStatusCode: number;
-    message: string;
-}
-
 export interface IOfferDetailsTO {
-    offerId: string;
+    edcOfferId: string;
+    counterPartyAddress: string;
     offerType: string;
     creationDate: Date;
     name: string;
@@ -40,8 +36,7 @@ export interface IOfferDetailsTO {
 }
 
 export interface ISelectOfferRequestTO {
-    counterPartyAddress: string;
-    offerId: string;
+    fhCatalogOfferId: string;
 }
 
 export interface ITransferDetailsTO {
