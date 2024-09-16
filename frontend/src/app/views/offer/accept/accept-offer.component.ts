@@ -22,7 +22,7 @@ export class AcceptOfferComponent {
 
     this.apiService.acceptContractOffer({
       counterPartyAddress: environment.counter_party_address,
-      offerId: this.offer == undefined ? "" : this.offer.offerId
+      edcOfferId: this.offer == undefined ? "" : this.offer.edcOfferId
     }).then(response => {
       console.log(response);
       this.acceptOfferStatusMessage.showSuccessMessage("Check console for details.", 20000);

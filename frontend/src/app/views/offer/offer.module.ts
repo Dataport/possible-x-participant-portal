@@ -23,6 +23,7 @@ import { ProvideComponent } from './provide/provide.component';
 import { ConsumeComponent } from './consume/consume.component';
 import { CommonViewsModule } from '../common-views/common-views.module';
 import { AcceptOfferComponent } from './accept/accept-offer.component';
+import { SelectOfferComponent } from './select/select-offer.component';
 
 @NgModule({
     imports: [
@@ -49,6 +50,6 @@ import { AcceptOfferComponent } from './accept/accept-offer.component';
         AccordionButtonDirective,
         BadgeComponent,
     ],
-  declarations: [ProvideComponent, ConsumeComponent, AcceptOfferComponent],
+  declarations: [ProvideComponent, ConsumeComponent, AcceptOfferComponent, SelectOfferComponent],
 })
 export class OfferModule {}
