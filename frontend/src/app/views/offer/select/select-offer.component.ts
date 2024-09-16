@@ -46,7 +46,7 @@ export class SelectOfferComponent implements ControlValueAccessor {
   async selectOffer() {
     this.queryCatalogStatusMessage.showInfoMessage();
     this.apiService.selectContractOffer({
-      offerId: this.selectedOfferId
+      fhCatalogOfferId: this.selectedOfferId
     }).then(response => {
       console.log(response);
       this.queryCatalogStatusMessage.showSuccessMessage("Check console for details.", 20000);

@@ -3,6 +3,9 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SelectOfferComponent } from './select-offer.component';
 import { ApiService } from "../../../services/mgmt/api/api.service";
 import { IOfferDetailsTO } from "../../../services/mgmt/api/backend";
+import { StatusMessageComponent } from "../../common-views/status-message/status-message.component";
+import { Component, NO_ERRORS_SCHEMA } from "@angular/core";
+import { first } from "rxjs";
 
 describe('SelectOfferComponent', () => {
   let component: SelectOfferComponent;
@@ -10,7 +13,8 @@ describe('SelectOfferComponent', () => {
   let apiService: jasmine.SpyObj<ApiService>;
 
   const offerDetails = {
-    offerId: 'dummy',
+    edcOfferId: 'dummy',
+    counterPartyAddress: 'dummy',
     offerType: 'dummy',
     creationDate: new Date(Date.now()),
     name: 'dummy',
@@ -18,14 +22,25 @@ describe('SelectOfferComponent', () => {
     contentType: 'dummy'
   } as IOfferDetailsTO;
 
+  @Component({
+    selector: 'app-status-message',
+    template: ''
+  })
+  class MockStatusMessageComponent implements Partial<StatusMessageComponent>{
+    public showInfoMessage() {}
+    public showSuccessMessage() {}
+    public showErrorMessage() {}
+  }
+
   beforeEach(async () => {
     const apiServiceSpy = jasmine.createSpyObj('ApiService', ['selectContractOffer']);
 
     await TestBed.configureTestingModule({
-      declarations: [SelectOfferComponent],
+      declarations: [SelectOfferComponent, MockStatusMessageComponent],
       providers: [
         { provide: ApiService, useValue: apiServiceSpy }
       ],
+      schemas: [NO_ERRORS_SCHEMA],
     })
     .compileComponents();
 
@@ -42,12 +57,12 @@ describe('SelectOfferComponent', () => {
   it('should emit selected offer', () => {
     const mockResponse = Promise.resolve(offerDetails);
     apiService.selectContractOffer.and.returnValue(mockResponse);
-    spyOn(component.selectedOffer, 'emit');
+    component.selectedOffer.pipe(first())
+      .subscribe((offer) => expect(offer).toEqual(offerDetails));
 
     component.selectOffer();
 
     expect(apiService.selectContractOffer).toHaveBeenCalled();
-    expect(component.selectedOffer.emit).toHaveBeenCalledWith(offerDetails);
   });
 
   it('should validate input field', () => {

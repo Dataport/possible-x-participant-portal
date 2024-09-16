@@ -1,18 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ConsumeComponent } from './consume.component';
-import { AcceptOfferComponent } from '../accept/accept-offer.component';
 import { IOfferDetailsTO } from '../../../services/mgmt/api/backend';
-import { CommonViewsModule } from '../../common-views/common-views.module';
-import { BadgeComponent, AccordionComponent, AccordionItemComponent } from '@coreui/angular';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NO_ERRORS_SCHEMA } from "@angular/core";
 
 describe('ConsumeComponent', () => {
   let component: ConsumeComponent;
   let fixture: ComponentFixture<ConsumeComponent>;
 
   const offerDetails = {
-    offerId: 'dummy',
+    edcOfferId: 'dummy',
+    counterPartyAddress: 'dummy',
     offerType: 'dummy',
     creationDate: new Date(Date.now()),
     name: 'dummy',
@@ -23,8 +21,8 @@ describe('ConsumeComponent', () => {
   beforeEach(async () => {
 
     await TestBed.configureTestingModule({
-      declarations: [ConsumeComponent, AcceptOfferComponent ],
-      imports: [ CommonViewsModule , BadgeComponent, AccordionComponent, AccordionItemComponent, BrowserAnimationsModule ]
+      declarations: [ ConsumeComponent ],
+      schemas: [ NO_ERRORS_SCHEMA ],
     })
     .compileComponents();
 
