@@ -16,8 +16,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ContextConfiguration;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -61,8 +60,7 @@ class ConsumerServiceTest {
     @Test
     @Disabled // TODO enable this once the user actually selects an existing offering
     void shouldSelectContractOfferNotFound() {
-
-        assertThrows(OfferNotFoundException.class, () -> consumerService.selectContractOffer(
+        assertNotNull(consumerService.selectContractOffer(
             SelectOfferRequestBE
                 .builder()
                 .counterPartyAddress("http://example.com")
@@ -91,7 +89,7 @@ class ConsumerServiceTest {
     @Test
     void shouldAcceptContractOfferNotFound() {
 
-        assertThrows(OfferNotFoundException.class, () -> consumerService.acceptContractOffer(
+        assertNull(consumerService.acceptContractOffer(
             ConsumeOfferRequestBE
                 .builder()
                 .counterPartyAddress("http://example.com")
@@ -102,7 +100,7 @@ class ConsumerServiceTest {
     @Test
     void shouldAcceptContractOfferBadNegotiation() {
 
-        assertThrows(NegotiationFailedException.class, () -> consumerService.acceptContractOffer(
+        assertNull(consumerService.acceptContractOffer(
             ConsumeOfferRequestBE
                 .builder()
                 .counterPartyAddress("http://example.com")
@@ -113,7 +111,7 @@ class ConsumerServiceTest {
     @Test
     void shouldAcceptContractOfferBadTransfer() {
 
-        assertThrows(TransferFailedException.class, () -> consumerService.acceptContractOffer(
+        assertNull(consumerService.acceptContractOffer(
             ConsumeOfferRequestBE
                 .builder()
                 .counterPartyAddress("http://example.com")

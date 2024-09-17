@@ -47,11 +47,15 @@ public class ConsumerServiceImpl implements ConsumerService {
      */
     @Override
     public DcatDataset selectContractOffer(SelectOfferRequestBE request) {
-        DcatCatalog catalog = queryEdcCatalog(CatalogRequest
-            .builder()
-            .counterPartyAddress(request.getCounterPartyAddress())
-            .build());
-        return catalog.getDataset().get(0);
+        try {
+            DcatCatalog catalog = queryEdcCatalog(CatalogRequest
+                    .builder()
+                    .counterPartyAddress(request.getCounterPartyAddress())
+                    .build());
+            return catalog.getDataset().get(0);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     /**
@@ -64,47 +68,49 @@ public class ConsumerServiceImpl implements ConsumerService {
      * @return final result of the transfer
      */
     @Override
-    public TransferProcess acceptContractOffer(ConsumeOfferRequestBE request)
-        throws OfferNotFoundException, NegotiationFailedException, TransferFailedException {
-
-        // query catalog
-        DcatCatalog catalog = queryEdcCatalog(CatalogRequest
-            .builder()
-            .counterPartyAddress(request.getCounterPartyAddress())
-            .build());
-        DcatDataset dataset = getDatasetById(catalog, request.getOfferId());
-
-        // initiate negotiation
-        NegotiationInitiateRequest negotiationInitiateRequest = NegotiationInitiateRequest
-            .builder()
-            .counterPartyAddress(request.getCounterPartyAddress())
-            .providerId(catalog.getParticipantId())
-            .offer(ContractOffer
+    public TransferProcess acceptContractOffer(ConsumeOfferRequestBE request) {
+        try {
+            // query catalog
+            DcatCatalog catalog = queryEdcCatalog(CatalogRequest
                 .builder()
-                .offerId(dataset.getHasPolicy().get(0).getId())
-                .assetId(dataset.getAssetId())
-                .policy(dataset.getHasPolicy().get(0))
-                .build())
-            .build();
-        ContractNegotiation contractNegotiation = negotiateOffer(negotiationInitiateRequest);
+                .counterPartyAddress(request.getCounterPartyAddress())
+                .build());
+            DcatDataset dataset = getDatasetById(catalog, request.getOfferId());
 
-        // initiate transfer
-        DataAddress dataAddress = IonosS3DataDestination
-            .builder()
-            .storage("s3-eu-central-2.ionoscloud.com")
-            .bucketName("dev-consumer-edc-bucket-possible-31952746")
-            .path("s3HatGeklappt/")
-            .keyName("myKey")
-            .build();
-        TransferRequest transferRequest = TransferRequest
-            .builder()
-            .connectorId(catalog.getParticipantId())
-            .counterPartyAddress(request.getCounterPartyAddress())
-            .assetId(dataset.getAssetId())
-            .contractId(contractNegotiation.getContractAgreementId())
-            .dataDestination(dataAddress)
-            .build();
-        return performTransfer(transferRequest);
+            // initiate negotiation
+            NegotiationInitiateRequest negotiationInitiateRequest = NegotiationInitiateRequest
+                .builder()
+                .counterPartyAddress(request.getCounterPartyAddress())
+                .providerId(catalog.getParticipantId())
+                .offer(ContractOffer
+                    .builder()
+                    .offerId(dataset.getHasPolicy().get(0).getId())
+                    .assetId(dataset.getAssetId())
+                    .policy(dataset.getHasPolicy().get(0))
+                    .build())
+                .build();
+            ContractNegotiation contractNegotiation = negotiateOffer(negotiationInitiateRequest);
+
+            // initiate transfer
+            DataAddress dataAddress = IonosS3DataDestination
+                .builder()
+                .storage("s3-eu-central-2.ionoscloud.com")
+                .bucketName("dev-consumer-edc-bucket-possible-31952746")
+                .path("s3HatGeklappt/")
+                .keyName("myKey")
+                .build();
+            TransferRequest transferRequest = TransferRequest
+                .builder()
+                .connectorId(catalog.getParticipantId())
+                .counterPartyAddress(request.getCounterPartyAddress())
+                .assetId(dataset.getAssetId())
+                .contractId(contractNegotiation.getContractAgreementId())
+                .dataDestination(dataAddress)
+                .build();
+            return performTransfer(transferRequest);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private DcatCatalog queryEdcCatalog(CatalogRequest catalogRequest) {

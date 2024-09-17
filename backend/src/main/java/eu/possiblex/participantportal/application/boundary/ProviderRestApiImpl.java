@@ -8,6 +8,7 @@ import eu.possiblex.participantportal.business.entity.edc.CreateEdcOfferBE;
 import eu.possiblex.participantportal.business.entity.exception.EdcOfferCreationException;
 import eu.possiblex.participantportal.business.entity.exception.FhOfferCreationException;
 import eu.possiblex.participantportal.business.entity.fh.CreateFhOfferBE;
+import eu.possiblex.participantportal.utilities.PossibleXException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -44,16 +45,14 @@ public class ProviderRestApiImpl implements ProviderRestApi {
      * @return the response transfer object containing offer IDs
      */
     @Override
-    public CreateOfferResponseTO createOffer(@RequestBody CreateOfferRequestTO createOfferRequestTO) {
+    public CreateOfferResponseTO createOffer(@RequestBody CreateOfferRequestTO createOfferRequestTO) throws PossibleXException{
         CreateFhOfferBE createFhOfferBE = providerApiMapper.getCreateDatasetEntryDTOFromCreateOfferRequestTO(createOfferRequestTO);
         CreateEdcOfferBE createEdcOfferBE = providerApiMapper.getCreateEdcOfferDTOFromCreateOfferRequestTO(createOfferRequestTO);
 
-        try {
-            return providerService.createOffer(createFhOfferBE, createEdcOfferBE);
-        } catch (EdcOfferCreationException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "EDC offer creation failed: " + e.getMessage());
-        } catch (FhOfferCreationException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Fraunhofer catalog offer creation failed: " + e.getMessage());
+        CreateOfferResponseTO response = providerService.createOffer(createFhOfferBE, createEdcOfferBE);
+        if (response == null) {
+            throw new PossibleXException("Couldn't create offer", HttpStatus.BAD_REQUEST);
         }
+        return response;
     }
 }

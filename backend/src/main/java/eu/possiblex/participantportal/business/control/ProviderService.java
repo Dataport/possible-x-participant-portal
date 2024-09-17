@@ -15,6 +15,5 @@ public interface ProviderService {
      * @param createEdcOfferBE request for creating an EDC offer
      * @return create offer response object
      */
-    CreateOfferResponseTO createOffer(CreateFhOfferBE createFhOfferBE, CreateEdcOfferBE createEdcOfferBE)
-        throws FhOfferCreationException, EdcOfferCreationException;
+    CreateOfferResponseTO createOffer(CreateFhOfferBE createFhOfferBE, CreateEdcOfferBE createEdcOfferBE);
 }

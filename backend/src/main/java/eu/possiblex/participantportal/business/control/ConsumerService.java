@@ -16,7 +16,7 @@ public interface ConsumerService {
      * @exception OfferNotFoundException could not find the offer from the request
      * @return details of the offer
      */
-    DcatDataset selectContractOffer(SelectOfferRequestBE request) throws OfferNotFoundException;
+    DcatDataset selectContractOffer(SelectOfferRequestBE request);
 
     /**
      * Given a request for an offer, accept the offer on the data transfer component and perform the transfer.
@@ -27,6 +27,5 @@ public interface ConsumerService {
      * @exception TransferFailedException failed to transfer the data
      * @return final result of the transfer
      */
-    TransferProcess acceptContractOffer(ConsumeOfferRequestBE request)
-        throws OfferNotFoundException, NegotiationFailedException, TransferFailedException;
+    TransferProcess acceptContractOffer(ConsumeOfferRequestBE request);
 }

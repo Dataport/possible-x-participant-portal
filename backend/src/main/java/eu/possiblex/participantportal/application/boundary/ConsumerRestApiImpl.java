@@ -13,6 +13,7 @@ import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProce
 import eu.possiblex.participantportal.business.entity.exception.NegotiationFailedException;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
+import eu.possiblex.participantportal.utilities.PossibleXException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,29 +37,23 @@ public class ConsumerRestApiImpl implements ConsumerRestApi {
     }
 
     @Override
-    public OfferDetailsTO selectContractOffer(@RequestBody SelectOfferRequestTO request) {
+    public OfferDetailsTO selectContractOffer(@RequestBody SelectOfferRequestTO request) throws PossibleXException {
 
         SelectOfferRequestBE be = consumerApiMapper.selectOfferRequestTOtoBE(request);
-        DcatDataset dataset;
-        try {
-            dataset = consumerService.selectContractOffer(be);
-        } catch (OfferNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        DcatDataset dataset = consumerService.selectContractOffer(be);
+        if (dataset == null) {
+            throw new PossibleXException("Couldn't select contract offer", HttpStatus.NOT_FOUND);
         }
         return consumerApiMapper.dcatDatasetToOfferDetailsTO(dataset);
     }
 
     @Override
-    public TransferDetailsTO acceptContractOffer(@RequestBody ConsumeOfferRequestTO request) {
+    public TransferDetailsTO acceptContractOffer(@RequestBody ConsumeOfferRequestTO request) throws PossibleXException {
 
         ConsumeOfferRequestBE be = consumerApiMapper.consumeOfferRequestTOtoBE(request);
-        TransferProcess process;
-        try {
-            process = consumerService.acceptContractOffer(be);
-        } catch (OfferNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        } catch (NegotiationFailedException | TransferFailedException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        TransferProcess process = consumerService.acceptContractOffer(be);
+        if (process == null) {
+            throw new PossibleXException("Couldn't accept contract offer", HttpStatus.NOT_FOUND);
         }
         return consumerApiMapper.transferProcessToDetailsTO(process);
     }

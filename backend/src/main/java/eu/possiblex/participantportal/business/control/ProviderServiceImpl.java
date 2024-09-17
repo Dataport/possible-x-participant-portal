@@ -63,15 +63,19 @@ public class ProviderServiceImpl implements ProviderService {
      */
     @Override
     public CreateOfferResponseTO createOffer(CreateFhOfferBE createFhOfferBE, CreateEdcOfferBE createEdcOfferBE)
-            throws FhOfferCreationException, EdcOfferCreationException {
+             {
 
         String assetId = generateAssetId();
         ProviderRequestBuilder requestBuilder = new ProviderRequestBuilder(assetId, createFhOfferBE, createEdcOfferBE, edcProtocolUrl);
 
-        FhIdResponse fhResponseId = createFhCatalogOffer(requestBuilder);
-        IdResponse edcResponseId = createEdcOffer(requestBuilder);
+        try {
+            FhIdResponse fhResponseId = createFhCatalogOffer(requestBuilder);
+            IdResponse edcResponseId = createEdcOffer(requestBuilder);
+            return new CreateOfferResponseTO(edcResponseId.getId(), fhResponseId.getId());
+        } catch (Exception e) {
+            return null;
+        }
 
-        return new CreateOfferResponseTO(edcResponseId.getId(), fhResponseId.getId());
     }
 
     /**

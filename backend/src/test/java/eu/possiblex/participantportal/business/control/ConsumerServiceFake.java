@@ -25,10 +25,10 @@ public class ConsumerServiceFake implements ConsumerService {
     public static final String BAD_TRANSFER_OFFER_ID = "badTransfer";
 
     @Override
-    public DcatDataset selectContractOffer(SelectOfferRequestBE request) throws OfferNotFoundException {
+    public DcatDataset selectContractOffer(SelectOfferRequestBE request) {
 
         if(request.getOfferId().equals(MISSING_OFFER_ID)) {
-            throw new OfferNotFoundException("not found");
+            return null;
         }
 
         return DcatDataset
@@ -48,13 +48,12 @@ public class ConsumerServiceFake implements ConsumerService {
     }
 
     @Override
-    public TransferProcess acceptContractOffer(ConsumeOfferRequestBE request)
-        throws OfferNotFoundException, NegotiationFailedException, TransferFailedException {
+    public TransferProcess acceptContractOffer(ConsumeOfferRequestBE request) {
 
         return switch (request.getOfferId()) {
-            case MISSING_OFFER_ID -> throw new OfferNotFoundException("not found");
-            case BAD_NEGOTIATION_OFFER_ID -> throw new NegotiationFailedException("negotiation failed");
-            case BAD_TRANSFER_OFFER_ID -> throw new TransferFailedException("transfer failed");
+            case MISSING_OFFER_ID -> null;
+            case BAD_NEGOTIATION_OFFER_ID -> null;
+            case BAD_TRANSFER_OFFER_ID -> null;
             default -> IonosS3TransferProcess.builder().state(TransferProcessState.COMPLETED).build();
         };
 
