@@ -1,7 +1,7 @@
-# Participant Portal Backend
+# POSSIBLE-X Participant Portal Backend
 
-The Participant Portal is the decentralized UI for the participants in the Portal-X dataspace who want to consume or
-provide offerings.
+The POSSIBLE-X Participant Portal is the decentralized UI for the participants in the Portal-X dataspace who want to
+consume or provide offerings.
 
 It consists of an Angular frontend and a Spring-Boot backend.
 
@@ -27,6 +27,8 @@ export EDC_XAPIKEY="EDC X-API-Key"
 export EDC_MGMTBASEURL="EDC management URL"
 export FH_CATALOG_URL="Fraunhofer catalogue URL"
 export FH_CATALOG_SECRETKEY="secret key"
+export SDCREATIONWIZARDAPI_BASEURL="SD Creation Wizard API base URL"
+export PARTICIPANTID="participant ID"
 ```
 
 Through gradle:
