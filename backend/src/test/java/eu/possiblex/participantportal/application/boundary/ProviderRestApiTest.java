@@ -135,7 +135,7 @@ class ProviderRestApiTest {
                             }
                         },
                         "id": "urn:uuid:GENERATED_SERVICE_OFFERING_ID",
-                        "type": "gx:ServiceOffering"
+                        "@type": "gx:ServiceOffering"
                     },
                     {
                         "@context": {
@@ -174,7 +174,7 @@ class ProviderRestApiTest {
                             "@type": "xsd:string"
                         },
                         "id": "urn:uuid:GENERATED_DATA_RESOURCE_ID",
-                        "type": "gx:DataResource"
+                        "@type": "gx:DataResource"
                     }
                 ],
                 "fileName": "testfile.txt",

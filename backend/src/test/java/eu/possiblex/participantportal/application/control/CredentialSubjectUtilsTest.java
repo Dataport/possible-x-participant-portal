@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.possiblex.participantportal.application.entity.CreateOfferRequestTO;
+import eu.possiblex.participantportal.business.entity.selfdescriptions.PojoCredentialSubject;
 import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.serviceofferings.GxServiceOfferingCredentialSubject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,7 +27,7 @@ class CredentialSubjectUtilsTest {
 
         CreateOfferRequestTO requestTO = objectMapper.readValue(getCreateOfferTOJsonString(),
             CreateOfferRequestTO.class);
-        List<JsonNode> credentialSubjectList = requestTO.getCredentialSubjectList();
+        List<PojoCredentialSubject> credentialSubjectList = requestTO.getCredentialSubjectList();
 
         List<GxServiceOfferingCredentialSubject> serviceOfferingCredentialSubjects = CredentialSubjectUtils.findAllCredentialSubjectsByType(
             GxServiceOfferingCredentialSubject.class, credentialSubjectList);
@@ -40,7 +41,7 @@ class CredentialSubjectUtilsTest {
 
         CreateOfferRequestTO requestTO = objectMapper.readValue(getCreateOfferTOJsonString(),
             CreateOfferRequestTO.class);
-        List<JsonNode> credentialSubjectList = requestTO.getCredentialSubjectList();
+        List<PojoCredentialSubject> credentialSubjectList = requestTO.getCredentialSubjectList();
 
         GxServiceOfferingCredentialSubject serviceOfferingCredentialSubject = CredentialSubjectUtils.findFirstCredentialSubjectByType(
             GxServiceOfferingCredentialSubject.class, credentialSubjectList);
@@ -105,7 +106,7 @@ class CredentialSubjectUtilsTest {
                             }
                         },
                         "id": "urn:uuid:GENERATED_SERVICE_OFFERING_ID",
-                        "type": "gx:ServiceOffering"
+                        "@type": "gx:ServiceOffering"
                     },
                     {
                         "@context": {
@@ -144,7 +145,7 @@ class CredentialSubjectUtilsTest {
                             "@type": "xsd:string"
                         },
                         "id": "urn:uuid:GENERATED_DATA_RESOURCE_ID",
-                        "type": "gx:DataResource"
+                        "@type": "gx:DataResource"
                     }
                 ],
                 "fileName": "testfile.txt",
