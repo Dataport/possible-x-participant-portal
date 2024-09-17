@@ -10,7 +10,7 @@ import eu.possiblex.participantportal.business.entity.edc.policy.PolicyCreateReq
 import eu.possiblex.participantportal.business.entity.exception.EdcOfferCreationException;
 import eu.possiblex.participantportal.business.entity.exception.FhOfferCreationException;
 import eu.possiblex.participantportal.business.entity.fh.CreateFhOfferBE;
-import eu.possiblex.participantportal.business.entity.fh.FhIdResponse;
+import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
 import eu.possiblex.participantportal.business.entity.fh.catalog.DcatDataset;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,13 +29,10 @@ public class ProviderServiceImpl implements ProviderService {
 
     private final EdcClient edcClient;
 
-    private final FhCatalogClient fhCatalogClient;
+    private final FHCatalogClient fhCatalogClient;
 
     @Value("${fh.catalog.secret-key}")
     private String fhCatalogSecretKey;
-
-    @Value("${fh.catalog.catalog-name}")
-    private String catalogName;
 
     @Value("${edc.protocol-base-url}")
     private String edcProtocolUrl;
@@ -50,8 +47,7 @@ public class ProviderServiceImpl implements ProviderService {
      * @param fhCatalogClient the FH catalog client
      */
     @Autowired
-    public ProviderServiceImpl(EdcClient edcClient, FhCatalogClient fhCatalogClient) {
-
+    public ProviderServiceImpl(EdcClient edcClient, FHCatalogClient fhCatalogClient) {
         this.edcClient = edcClient;
         this.fhCatalogClient = fhCatalogClient;
     }
@@ -73,7 +69,7 @@ public class ProviderServiceImpl implements ProviderService {
         ProviderRequestBuilder requestBuilder = new ProviderRequestBuilder(assetId, createFhOfferBE, createEdcOfferBE,
             edcProtocolUrl);
 
-        FhIdResponse fhResponseId = createFhCatalogOffer(requestBuilder);
+        FhCatalogIdResponse fhResponseId = createFhCatalogOffer(requestBuilder);
         IdResponse edcResponseId = createEdcOffer(requestBuilder);
 
         return new CreateOfferResponseTO(edcResponseId.getId(), fhResponseId.getId());
@@ -136,15 +132,12 @@ public class ProviderServiceImpl implements ProviderService {
      * @return the ID response from FH catalog
      * @throws FhOfferCreationException if FH offer creation fails
      */
-    private FhIdResponse createFhCatalogOffer(ProviderRequestBuilder requestBuilder) throws FhOfferCreationException {
-
+    private FhCatalogIdResponse createFhCatalogOffer(ProviderRequestBuilder requestBuilder) throws FhOfferCreationException {
         try {
             DcatDataset dcatDataset = requestBuilder.buildFhCatalogOfferRequest();
             log.info("Adding Dataset to Fraunhofer Catalog {}", dcatDataset);
 
-            Map<String, String> auth = Map.of("Content-Type", "application/json", "Authorization",
-                "Bearer " + fhCatalogSecretKey);
-            return fhCatalogClient.addDatasetToFhCatalog(auth, dcatDataset, catalogName, "identifiers");
+            return fhCatalogClient.addDatasetToFhCatalog(dcatDataset);
         } catch (Exception e) {
             log.error("An error occurred: {}", e.getMessage(), e);
             throw new FhOfferCreationException("An error occurred: " + e.getMessage());

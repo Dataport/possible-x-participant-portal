@@ -6,6 +6,7 @@ import eu.possiblex.participantportal.application.entity.SelectOfferRequestTO;
 import eu.possiblex.participantportal.application.entity.TransferDetailsTO;
 import eu.possiblex.participantportal.business.entity.ConsumeOfferRequestBE;
 import eu.possiblex.participantportal.business.entity.SelectOfferRequestBE;
+import eu.possiblex.participantportal.business.entity.SelectOfferResponseBE;
 import eu.possiblex.participantportal.business.entity.edc.catalog.DcatDataset;
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcess;
 import org.mapstruct.Mapper;
@@ -20,13 +21,14 @@ public interface ConsumerApiMapper {
 
     ConsumeOfferRequestBE consumeOfferRequestTOtoBE(ConsumeOfferRequestTO to);
 
-    @Mapping(target = "offerId", source = "assetId")
+    @Mapping(target = "edcOfferId", source = "edcOffer.assetId")
     @Mapping(target = "offerType", constant = "Data Resource") // TODO pass actual data
     @Mapping(target = "creationDate", expression = "java(OffsetDateTime.now())") // TODO pass actual data
-    @Mapping(target = "name", source = "name")
-    @Mapping(target = "description", source = "description")
-    @Mapping(target = "contentType", source = "contenttype")
-    OfferDetailsTO dcatDatasetToOfferDetailsTO(DcatDataset dataset);
+    @Mapping(target = "name", source = "edcOffer.name")
+    @Mapping(target = "description", source = "edcOffer.description")
+    @Mapping(target = "contentType", source = "edcOffer.contenttype")
+    @Mapping(target = "counterPartyAddress", source = "counterPartyAddress")
+    OfferDetailsTO selectOfferResponseBEToOfferDetailsTO(SelectOfferResponseBE selectOfferResponseBE);
 
     TransferDetailsTO transferProcessToDetailsTO(TransferProcess process);
 }

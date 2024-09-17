@@ -58,7 +58,7 @@ class ProviderServiceTest {
     EdcClient edcClient;
 
     @Autowired
-    FhCatalogClient fhCatalogClient;
+    FHCatalogClient fhCatalogClient;
 
     @Autowired
     ObjectMapper objectMapper;
@@ -80,7 +80,7 @@ class ProviderServiceTest {
 
         ArgumentCaptor<DcatDataset> dcatDatasetCaptor = forClass(DcatDataset.class);
 
-        verify(fhCatalogClient).addDatasetToFhCatalog(any(), dcatDatasetCaptor.capture(), any(), any());
+        verify(fhCatalogClient).addDatasetToFhCatalog(dcatDatasetCaptor.capture());
         //check if assetId exists and AccessURL is set correctly
         DcatDataset dcatDataset = dcatDatasetCaptor.getValue();
         assertNotNull(dcatDataset);
@@ -128,9 +128,9 @@ class ProviderServiceTest {
         }
 
         @Bean
-        public FhCatalogClient fhCatalogClient() {
+        public FHCatalogClient fhCatalogClient() {
 
-            return Mockito.spy(new FhCatalogClientFake());
+            return Mockito.spy(new FhCatalogClientMock());
         }
 
         @Bean

@@ -19,21 +19,28 @@
 
 package eu.possiblex.participantportal.business.control;
 
-import eu.possiblex.participantportal.business.entity.fh.FhIdResponse;
+import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
+import eu.possiblex.participantportal.business.entity.fh.FhCatalogOffer;
 import eu.possiblex.participantportal.business.entity.fh.catalog.DcatDataset;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.service.annotation.GetExchange;
 import org.springframework.web.service.annotation.PostExchange;
 
 import java.util.Map;
 
-public interface FhCatalogClient {
+/**
+ * The technical class to access the FH Catalog via REST.
+ */
+public interface TechnicalFhCatalogClient {
     @PostExchange("/catalogues/{cat_name}/datasets")
-    FhIdResponse addDatasetToFhCatalog(@RequestHeader Map<String, String> auth,
-        @RequestBody DcatDataset datasetToCatalogRequest, @PathVariable String cat_name,
-        @RequestParam String value_type);
+    FhCatalogIdResponse addDatasetToFhCatalog(@RequestHeader Map<String, String> auth,
+                                              @RequestBody DcatDataset datasetToCatalogRequest, @PathVariable String cat_name,
+                                              @RequestParam String value_type);
 
+    @GetExchange("/datasets/{dataset_id}")
+    String getFhCatalogOffer(@PathVariable String dataset_id);
 }
 

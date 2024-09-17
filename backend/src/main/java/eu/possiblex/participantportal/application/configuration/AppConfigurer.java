@@ -1,8 +1,8 @@
 package eu.possiblex.participantportal.application.configuration;
 
 import eu.possiblex.participantportal.business.control.EdcClient;
-import eu.possiblex.participantportal.business.control.FhCatalogClient;
 import eu.possiblex.participantportal.business.control.SdCreationWizardApiClient;
+import eu.possiblex.participantportal.business.control.TechnicalFhCatalogClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,12 +41,12 @@ public class AppConfigurer {
     }
 
     @Bean
-    public FhCatalogClient fhCatalogClient() {
+    public TechnicalFhCatalogClient technicalFhCatalogClient() {
 
         WebClient webClient = WebClient.builder().baseUrl(fhCatalogUrl).build();
         HttpServiceProxyFactory httpServiceProxyFactory = HttpServiceProxyFactory.builder()
-            .exchangeAdapter(WebClientAdapter.create(webClient)).build();
-        return httpServiceProxyFactory.createClient(FhCatalogClient.class);
+                .exchangeAdapter(WebClientAdapter.create(webClient)).build();
+        return httpServiceProxyFactory.createClient(TechnicalFhCatalogClient.class);
     }
 
     @Bean

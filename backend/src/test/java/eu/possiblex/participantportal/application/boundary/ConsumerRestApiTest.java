@@ -1,7 +1,7 @@
 package eu.possiblex.participantportal.application.boundary;
 
 import eu.possiblex.participantportal.business.control.ConsumerService;
-import eu.possiblex.participantportal.business.control.ConsumerServiceFake;
+import eu.possiblex.participantportal.business.control.ConsumerServiceMock;
 import eu.possiblex.participantportal.application.control.ConsumerApiMapper;
 import eu.possiblex.participantportal.application.entity.ConsumeOfferRequestTO;
 import eu.possiblex.participantportal.application.entity.SelectOfferRequestTO;
@@ -37,7 +37,7 @@ public class ConsumerRestApiTest {
         @Bean
         public ConsumerService consumerService() {
 
-            return Mockito.spy(new ConsumerServiceFake());
+            return Mockito.spy(new ConsumerServiceMock());
         }
 
         @Bean
@@ -60,17 +60,18 @@ public class ConsumerRestApiTest {
         this.mockMvc.perform(post("/consumer/offer/select")
                 .content(RestApiHelper.asJsonString(SelectOfferRequestTO
                     .builder()
-                        .counterPartyAddress("http://example.com")
-                        .offerId(ConsumerServiceFake.VALID_OFFER_ID)
+                        .fhCatalogOfferId(ConsumerServiceMock.VALID_FH_OFFER_ID)
                     .build()))
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print())
-            .andExpect(status().isOk()).andExpect(jsonPath("$.offerId").value(ConsumerServiceFake.VALID_OFFER_ID));
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.counterPartyAddress").value(ConsumerServiceMock.VALID_COUNTER_PARTY_ADDRESS))
+            .andExpect(jsonPath("$.edcOfferId").value(ConsumerServiceMock.VALID_ASSET_ID));
 
         ArgumentCaptor<SelectOfferRequestBE> requestCaptor = ArgumentCaptor.forClass(SelectOfferRequestBE.class);
 
+        // check that business logic was called and that parameter from REST was given
         verify(consumerService).selectContractOffer(requestCaptor.capture());
-
-        assertEquals(ConsumerServiceFake.VALID_OFFER_ID, requestCaptor.getValue().getOfferId());
+        assertEquals(ConsumerServiceMock.VALID_FH_OFFER_ID, requestCaptor.getValue().getFhCatalogOfferId());
     }
 
     @Test
@@ -78,8 +79,7 @@ public class ConsumerRestApiTest {
         this.mockMvc.perform(post("/consumer/offer/select")
                 .content(RestApiHelper.asJsonString(SelectOfferRequestTO
                     .builder()
-                    .counterPartyAddress("http://example.com")
-                    .offerId(ConsumerServiceFake.MISSING_OFFER_ID)
+                    .fhCatalogOfferId(ConsumerServiceMock.MISSING_OFFER_ID)
                     .build()))
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print())
             .andExpect(status().isNotFound());
@@ -91,17 +91,16 @@ public class ConsumerRestApiTest {
         this.mockMvc.perform(post("/consumer/offer/accept")
                 .content(RestApiHelper.asJsonString(ConsumeOfferRequestTO
                     .builder()
-                        .counterPartyAddress("http://example.com")
-                        .offerId(ConsumerServiceFake.VALID_OFFER_ID)
+                         .edcOfferId(ConsumerServiceMock.VALID_EDC_OFFER_ID)
                     .build()))
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print())
             .andExpect(status().isOk()).andExpect(jsonPath("$.state").value(TransferProcessState.COMPLETED.name()));
 
         ArgumentCaptor<ConsumeOfferRequestBE> requestCaptor = ArgumentCaptor.forClass(ConsumeOfferRequestBE.class);
 
+        // check that business logic was called and that parameter from REST was given
         verify(consumerService).acceptContractOffer(requestCaptor.capture());
-
-        assertEquals(ConsumerServiceFake.VALID_OFFER_ID, requestCaptor.getValue().getOfferId());
+        assertEquals(ConsumerServiceMock.VALID_EDC_OFFER_ID, requestCaptor.getValue().getEdcOfferId());
     }
 
     @Test
@@ -109,8 +108,7 @@ public class ConsumerRestApiTest {
         this.mockMvc.perform(post("/consumer/offer/accept")
                 .content(RestApiHelper.asJsonString(ConsumeOfferRequestTO
                     .builder()
-                    .counterPartyAddress("http://example.com")
-                    .offerId(ConsumerServiceFake.MISSING_OFFER_ID)
+                    .edcOfferId(ConsumerServiceMock.MISSING_OFFER_ID)
                     .build()))
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print())
             .andExpect(status().isNotFound());
@@ -121,8 +119,7 @@ public class ConsumerRestApiTest {
         this.mockMvc.perform(post("/consumer/offer/accept")
                 .content(RestApiHelper.asJsonString(ConsumeOfferRequestTO
                     .builder()
-                    .counterPartyAddress("http://example.com")
-                    .offerId(ConsumerServiceFake.BAD_NEGOTIATION_OFFER_ID)
+                    .edcOfferId(ConsumerServiceMock.BAD_EDC_OFFER_ID)
                     .build()))
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print())
             .andExpect(status().isInternalServerError());
@@ -133,8 +130,7 @@ public class ConsumerRestApiTest {
         this.mockMvc.perform(post("/consumer/offer/accept")
                 .content(RestApiHelper.asJsonString(ConsumeOfferRequestTO
                     .builder()
-                    .counterPartyAddress("http://example.com")
-                    .offerId(ConsumerServiceFake.BAD_TRANSFER_OFFER_ID)
+                    .edcOfferId(ConsumerServiceMock.BAD_TRANSFER_OFFER_ID)
                     .build()))
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print())
             .andExpect(status().isInternalServerError());

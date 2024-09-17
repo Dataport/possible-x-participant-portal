@@ -24,12 +24,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import eu.possiblex.participantportal.business.entity.common.JsonLdConstants;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.List;
 import java.util.Map;
 
 @Getter
 @Setter
+@ToString
 public class DcatCatalog {
     @JsonProperty("@id")
     private String id;

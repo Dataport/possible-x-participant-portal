@@ -22,7 +22,7 @@ export interface IServiceOfferingShapeRestApi {
 
 export interface IConsumeOfferRequestTO {
     counterPartyAddress: string;
-    offerId: string;
+    edcOfferId: string;
 }
 
 export interface IConsumeOfferRequestTOBuilder {
@@ -46,7 +46,8 @@ export interface ICreateOfferResponseTOBuilder {
 }
 
 export interface IOfferDetailsTO {
-    offerId: string;
+    edcOfferId: string;
+    counterPartyAddress: string;
     offerType: string;
     creationDate: Date;
     name: string;
@@ -65,8 +66,7 @@ export interface IParticipantIdTOBuilder {
 }
 
 export interface ISelectOfferRequestTO {
-    counterPartyAddress: string;
-    offerId: string;
+    fhCatalogOfferId: string;
 }
 
 export interface ISelectOfferRequestTOBuilder {
