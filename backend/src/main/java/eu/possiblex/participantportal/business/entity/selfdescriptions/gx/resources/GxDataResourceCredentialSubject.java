@@ -88,8 +88,7 @@ public class GxDataResourceCredentialSubject extends PojoCredentialSubject {
     @JsonDeserialize(using = StringDeserializer.class)
     private String expirationDateTime;
 
-    @JsonProperty("type")
-    @JsonAlias("@type")
+    @JsonProperty("@type")
     @Override
     public String getType() {
 

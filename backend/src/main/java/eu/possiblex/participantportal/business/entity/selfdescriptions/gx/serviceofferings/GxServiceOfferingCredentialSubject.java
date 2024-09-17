@@ -92,8 +92,7 @@ public class GxServiceOfferingCredentialSubject extends PojoCredentialSubject {
     @JsonDeserialize(using = StringDeserializer.class)
     private String description;
 
-    @JsonProperty("type")
-    @JsonAlias("@type")
+    @JsonProperty("@type")
     @Override
     public String getType() {
 

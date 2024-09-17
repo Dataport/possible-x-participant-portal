@@ -36,8 +36,7 @@ public abstract class PojoCredentialSubject {
     // base fields
     private String id;
 
-    @JsonProperty("type")
-    @JsonAlias("@type")
+    @JsonProperty("@type")
     private String type;
 
     @JsonProperty("@context")
