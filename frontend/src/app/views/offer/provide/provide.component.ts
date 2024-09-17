@@ -38,7 +38,7 @@ export class ProvideComponent implements AfterViewInit{
       "gx:providedBy": {
         "@id": this.participantId
       },
-      type: "gx:ServiceOffering"
+      "@type": "gx:ServiceOffering"
     }
 
     let prefillSd: any[] = [ gxServiceOfferingCs ];
@@ -55,7 +55,7 @@ export class ProvideComponent implements AfterViewInit{
         "gx:exposedThrough": [TBR_SERVICE_OFFERING_ID],
         "gx:copyrightOwnedBy": [this.participantId],
         "gx:containsPII": false,
-        type: "gx:DataResource"
+        "@type": "gx:DataResource"
       }
 
       prefillSd.push(gxDataResourceCs);
