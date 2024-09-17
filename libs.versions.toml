@@ -9,6 +9,7 @@ reactorTest = "3.6.9"
 jUnit = "1.11.0"
 typescriptGenerator = "3.2.1263"
 mapStruct = "1.6.0"
+verifiableCredentialsJava = "1.11.0"
 
 [libraries]
 springBootStarterActuator = { module = "org.springframework.boot:spring-boot-starter-actuator", version.ref = "springBoot" }
@@ -25,6 +26,7 @@ therApi = { module = "com.github.therapi:therapi-runtime-javadoc", version.ref =
 therApiScribe = { module = "com.github.therapi:therapi-runtime-javadoc-scribe", version.ref = "therApi" }
 reactorTest = { module = "io.projectreactor:reactor-test", version.ref = "reactorTest" }
 jUnit = { module = "org.junit.platform:junit-platform-launcher", version.ref = "jUnit" }
+verifiableCredentialsJava = { module = "com.danubetech:verifiable-credentials-java", version.ref = "verifiableCredentialsJava" }
 
 [plugins]
 springBoot = { id = "org.springframework.boot", version.ref = "springBoot" }

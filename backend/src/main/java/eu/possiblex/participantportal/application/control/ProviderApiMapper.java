@@ -1,9 +1,9 @@
 package eu.possiblex.participantportal.application.control;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import eu.possiblex.participantportal.application.entity.CreateOfferRequestTO;
 import eu.possiblex.participantportal.business.entity.edc.CreateEdcOfferBE;
 import eu.possiblex.participantportal.business.entity.fh.CreateFhOfferBE;
+import eu.possiblex.participantportal.business.entity.selfdescriptions.PojoCredentialSubject;
 import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.serviceofferings.GxServiceOfferingCredentialSubject;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -26,7 +26,7 @@ public interface ProviderApiMapper {
     CreateFhOfferBE getCreateDatasetEntryDTOFromCreateOfferRequestTO(CreateOfferRequestTO createOfferRequestTO);
 
     @Named("customOfferNameMapping")
-    default String customOfferNameMapping(List<JsonNode> credentialSubjectList) {
+    default String customOfferNameMapping(List<PojoCredentialSubject> credentialSubjectList) {
 
         GxServiceOfferingCredentialSubject credentialSubject = CredentialSubjectUtils.findFirstCredentialSubjectByType(
             GxServiceOfferingCredentialSubject.class, credentialSubjectList);
@@ -38,7 +38,7 @@ public interface ProviderApiMapper {
     }
 
     @Named("customOfferDescriptionMapping")
-    default String customOfferDescriptionMapping(List<JsonNode> credentialSubjectList) {
+    default String customOfferDescriptionMapping(List<PojoCredentialSubject> credentialSubjectList) {
 
         GxServiceOfferingCredentialSubject credentialSubject = CredentialSubjectUtils.findFirstCredentialSubjectByType(
             GxServiceOfferingCredentialSubject.class, credentialSubjectList);

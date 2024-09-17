@@ -16,9 +16,9 @@
 
 package eu.possiblex.participantportal.business.entity.selfdescriptions;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
+import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.resources.GxDataResourceCredentialSubject;
+import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.serviceofferings.GxServiceOfferingCredentialSubject;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,34 +27,20 @@ import java.util.Map;
 
 @Getter
 @Setter
-@JsonIgnoreProperties(ignoreUnknown = true, value = { "type", "@context" }, allowGetters = true)
-public class PojoCredentialSubject {
-    @Getter(AccessLevel.NONE)
-    public static final String TYPE_NAMESPACE = "context";
-
-    @Getter(AccessLevel.NONE)
-    public static final String TYPE_CLASS = "type";
-
-    @Getter(AccessLevel.NONE)
-    public static final String TYPE = TYPE_NAMESPACE + ":" + TYPE_CLASS;
-
-    @Getter(AccessLevel.NONE)
-    public static final Map<String, String> CONTEXT = Map.of();
-
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, visible = true, defaultImpl = UnknownCredentialSubject.class)
+@JsonSubTypes({
+    @JsonSubTypes.Type(value = GxDataResourceCredentialSubject.class, name = GxDataResourceCredentialSubject.TYPE),
+    @JsonSubTypes.Type(value = GxServiceOfferingCredentialSubject.class, name = GxServiceOfferingCredentialSubject.TYPE),
+})
+public abstract class PojoCredentialSubject {
     // base fields
-    @JsonAlias("@id")
     private String id;
 
     @JsonProperty("type")
-    public String getType() {
-
-        return TYPE;
-    }
+    @JsonAlias("@type")
+    private String type;
 
     @JsonProperty("@context")
-    public Map<String, String> getContext() {
-
-        return CONTEXT;
-    }
+    private Map<String, String> context;
 }
 

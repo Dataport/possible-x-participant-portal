@@ -17,12 +17,12 @@
 import { Component, ViewChild } from '@angular/core';
 import { StatusMessageComponent } from '../../views/common-views/status-message/status-message.component';
 import { BaseWizardExtensionComponent } from '../base-wizard-extension/base-wizard-extension.component';
-import { ICredentialSubject, IGxServiceOfferingCs, IGxDataResourceCs } from '../../views/offer/offer-data';
 import { isGxServiceOfferingCs, isDataResourceCs } from '../../utils/credential-utils';
 import { BehaviorSubject, takeWhile } from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 import { ApiService } from '../../services/mgmt/api/api.service';
 import { POLICY_MAP } from '../../constants';
+import { IGxDataResourceCredentialSubject, IGxServiceOfferingCredentialSubject, IPojoCredentialSubject } from '../../services/mgmt/api/backend';
 
 @Component({
   selector: 'app-offering-wizard-extension',
@@ -64,7 +64,7 @@ export class OfferingWizardExtensionComponent {
     return this.gxServiceOfferingWizard?.isShapeLoaded() && this.isOfferingDataOffering() ? this.gxDataResourceWizard?.isShapeLoaded() : true;
   }
 
-  private prefillHandleCs(cs: ICredentialSubject) {
+  private prefillHandleCs(cs: IPojoCredentialSubject) {
     if (isGxServiceOfferingCs(cs)) {
       this.gxServiceOfferingWizard.prefillFields(cs, ["gx:providedBy"]);
     }
@@ -73,7 +73,7 @@ export class OfferingWizardExtensionComponent {
     }
   }
 
-  public prefillFields(csList: any) {
+  public prefillFields(csList: IPojoCredentialSubject[]) {
     for (let cs of csList) {
       this.prefillHandleCs(cs)
     }
@@ -113,7 +113,7 @@ export class OfferingWizardExtensionComponent {
     console.log("Create offer.");
     this.offerCreationStatusMessage.hideAllMessages();
 
-    let gxOfferingJsonSd: IGxServiceOfferingCs = this.gxServiceOfferingWizard.generateJsonCs();
+    let gxOfferingJsonSd: IGxServiceOfferingCredentialSubject = this.gxServiceOfferingWizard.generateJsonCs();
 
     let createOfferTo: any = {
         credentialSubjectList: [
@@ -124,7 +124,7 @@ export class OfferingWizardExtensionComponent {
     }
 
     if (this.isOfferingDataOffering()) {
-      let gxDataResourceJsonSd: IGxDataResourceCs = this.gxDataResourceWizard.generateJsonCs();
+      let gxDataResourceJsonSd: IGxDataResourceCredentialSubject = this.gxDataResourceWizard.generateJsonCs();
       createOfferTo.credentialSubjectList.push(gxDataResourceJsonSd);
     }
 

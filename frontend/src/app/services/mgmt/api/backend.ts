@@ -9,11 +9,11 @@ export interface IProviderRestApi {
 }
 
 export interface IResourceShapeRestApi {
+    gxInstantiatedVirtualResourceShape: string;
     gxDataResourceShape: string;
     gxPhysicalResourceShape: string;
     gxSoftwareResourceShape: string;
     gxVirtualResourceShape: string;
-    gxInstantiatedVirtualResourceShape: string;
 }
 
 export interface IServiceOfferingShapeRestApi {
@@ -25,15 +25,24 @@ export interface IConsumeOfferRequestTO {
     offerId: string;
 }
 
+export interface IConsumeOfferRequestTOBuilder {
+}
+
 export interface ICreateOfferRequestTO {
-    credentialSubjectList: any[];
+    credentialSubjectList: IPojoCredentialSubject[];
     fileName: string;
     policy: IPolicy;
+}
+
+export interface ICreateOfferRequestTOBuilder {
 }
 
 export interface ICreateOfferResponseTO {
     edcResponseId: string;
     fhResponseId: string;
+}
+
+export interface ICreateOfferResponseTOBuilder {
 }
 
 export interface IOfferDetailsTO {
@@ -45,8 +54,14 @@ export interface IOfferDetailsTO {
     contentType: string;
 }
 
+export interface IOfferDetailsTOBuilder {
+}
+
 export interface IParticipantIdTO {
     participantId: string;
+}
+
+export interface IParticipantIdTOBuilder {
 }
 
 export interface ISelectOfferRequestTO {
@@ -54,8 +69,63 @@ export interface ISelectOfferRequestTO {
     offerId: string;
 }
 
+export interface ISelectOfferRequestTOBuilder {
+}
+
 export interface ITransferDetailsTO {
     state: ITransferProcessState;
+}
+
+export interface ITransferDetailsTOBuilder {
+}
+
+export interface IPojoCredentialSubject {
+    id: string;
+    "@type": string;
+    "@context": { [index: string]: string };
+}
+
+export interface IUnknownCredentialSubject extends IPojoCredentialSubject {
+}
+
+export interface IGxDataAccountExport {
+    "gx:requestType": string;
+    "gx:accessType": string;
+    "gx:formatType": string;
+}
+
+export interface IGxSOTermsAndConditions {
+    "gx:URL": string;
+    "gx:hash": string;
+}
+
+export interface INodeKindIRITypeId {
+    id: string;
+}
+
+export interface IGxDataResourceCredentialSubject extends IPojoCredentialSubject {
+    type: string;
+    "gx:copyrightOwnedBy": INodeKindIRITypeId;
+    "gx:producedBy": INodeKindIRITypeId;
+    "gx:exposedThrough": INodeKindIRITypeId;
+    "gx:policy": string[];
+    "gx:license": string[];
+    "gx:containsPII": boolean;
+    "gx:name": string;
+    "gx:description": string;
+    "gx:obsoleteDateTime": string;
+    "gx:expirationDateTime": string;
+}
+
+export interface IGxServiceOfferingCredentialSubject extends IPojoCredentialSubject {
+    type: string;
+    "gx:providedBy": INodeKindIRITypeId;
+    "gx:termsAndConditions": IGxSOTermsAndConditions[];
+    "gx:policy": string[];
+    "gx:dataProtectionRegime": string[];
+    "gx:dataAccountExport": IGxDataAccountExport[];
+    "gx:name": string;
+    "gx:description": string;
 }
 
 export interface IPolicy {

@@ -1,9 +1,9 @@
-import { ICredentialSubject } from "../views/offer/offer-data";
+import { IPojoCredentialSubject } from "../services/mgmt/api/backend";
 
-export function isGxServiceOfferingCs(cs: ICredentialSubject): boolean {
-    return cs?.type === "gx:ServiceOffering";
+export function isGxServiceOfferingCs(cs: IPojoCredentialSubject): boolean {
+    return cs?.["@type"] === "gx:ServiceOffering";
 }
 
-export function isDataResourceCs(cs: ICredentialSubject): boolean {
-    return cs?.type === "gx:DataResource";
+export function isDataResourceCs(cs: IPojoCredentialSubject): boolean {
+    return cs?.["@type"] === "gx:DataResource";
 }

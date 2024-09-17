@@ -54,6 +54,8 @@ export class BaseWizardExtensionComponent {
   private selectShape(shaclFile: ShaclFile, credentialSubjectId: string): void {
     this.shaclFile = shaclFile;
     this.filteredShapes = this.formFieldService.updateFilteredShapes(this.shaclFile);
+    console.log(shaclFile);
+    console.log(this.filteredShapes);
     if (this.filteredShapes.length > 1) {
       console.log("too many shapes selected");
     }

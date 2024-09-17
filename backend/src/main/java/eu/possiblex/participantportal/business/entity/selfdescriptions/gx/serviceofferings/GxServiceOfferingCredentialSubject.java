@@ -16,10 +16,7 @@
 
 package eu.possiblex.participantportal.business.entity.selfdescriptions.gx.serviceofferings;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import eu.possiblex.participantportal.business.entity.selfdescriptions.PojoCredentialSubject;
@@ -96,6 +93,7 @@ public class GxServiceOfferingCredentialSubject extends PojoCredentialSubject {
     private String description;
 
     @JsonProperty("type")
+    @JsonAlias("@type")
     @Override
     public String getType() {
 

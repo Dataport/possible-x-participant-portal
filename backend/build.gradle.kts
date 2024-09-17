@@ -85,8 +85,9 @@ tasks {
     generateSpringApplicationClient = true
     addTypeNamePrefix = "I"
     classPatterns = listOf(
-      "eu.possiblex.participantportal.application.entity.*",
-      "eu.possiblex.participantportal.application.boundary.*"
+      "eu.possiblex.participantportal.application.entity.**",
+      "eu.possiblex.participantportal.application.boundary.**",
+      "eu.possiblex.participantportal.business.entity.selfdescriptions.**"
     )
     outputFile = "../frontend/src/app/services/mgmt/api/backend.ts"
     noFileComment = true
