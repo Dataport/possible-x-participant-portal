@@ -33,6 +33,7 @@ export class ProvideComponent implements AfterViewInit{
 
   async prefillWizardNewOffering() {
     await this.retrieveAndSetParticipantId();
+    this.wizardExtension.resetPossibleSpecificFormValues();
 
     let gxServiceOfferingCs = {
       "gx:providedBy": {

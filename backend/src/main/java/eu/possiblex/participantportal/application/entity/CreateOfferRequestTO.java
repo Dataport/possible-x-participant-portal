@@ -11,6 +11,7 @@ import java.util.List;
 @Builder
 @Getter
 @Setter
+@ToString
 public class CreateOfferRequestTO {
 
     private List<PojoCredentialSubject> credentialSubjectList;

@@ -188,7 +188,7 @@ export class OfferingWizardExtensionComponent {
     return !this.isFieldFilled(this.selectedPolicy);
   }
 
-  protected resetPossibleSpecificFormValues() {
+  public resetPossibleSpecificFormValues() {
     this.selectedFileName = "";
     this.selectedPolicy = "";
   }
