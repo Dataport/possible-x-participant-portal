@@ -29,7 +29,7 @@ export interface IConsumeOfferRequestTOBuilder {
 }
 
 export interface ICreateOfferRequestTO {
-    credentialSubjectList: IPojoCredentialSubject[];
+    credentialSubjectList: IPojoCredentialSubjectUnion[];
     fileName: string;
     policy: IPolicy;
 }
@@ -80,12 +80,12 @@ export interface ITransferDetailsTOBuilder {
 }
 
 export interface IPojoCredentialSubject {
+    "@type": "UnknownCredentialSubject" | "gx:DataResource" | "gx:ServiceOffering";
     id: string;
-    "@type": string;
-    "@context": { [index: string]: string };
 }
 
 export interface IUnknownCredentialSubject extends IPojoCredentialSubject {
+    "@type": "UnknownCredentialSubject";
 }
 
 export interface IGxDataAccountExport {
@@ -104,7 +104,7 @@ export interface INodeKindIRITypeId {
 }
 
 export interface IGxDataResourceCredentialSubject extends IPojoCredentialSubject {
-    type: string;
+    "@type": "gx:DataResource";
     "gx:copyrightOwnedBy": INodeKindIRITypeId;
     "gx:producedBy": INodeKindIRITypeId;
     "gx:exposedThrough": INodeKindIRITypeId;
@@ -115,10 +115,12 @@ export interface IGxDataResourceCredentialSubject extends IPojoCredentialSubject
     "gx:description": string;
     "gx:obsoleteDateTime": string;
     "gx:expirationDateTime": string;
+    "@context": { [index: string]: string };
+    type: string;
 }
 
 export interface IGxServiceOfferingCredentialSubject extends IPojoCredentialSubject {
-    type: string;
+    "@type": "gx:ServiceOffering";
     "gx:providedBy": INodeKindIRITypeId;
     "gx:termsAndConditions": IGxSOTermsAndConditions[];
     "gx:policy": string[];
@@ -126,6 +128,8 @@ export interface IGxServiceOfferingCredentialSubject extends IPojoCredentialSubj
     "gx:dataAccountExport": IGxDataAccountExport[];
     "gx:name": string;
     "gx:description": string;
+    "@context": { [index: string]: string };
+    type: string;
 }
 
 export interface IPolicy {
@@ -236,6 +240,8 @@ export class RestApplicationClient {
 export type RestResponse<R> = Promise<R>;
 
 export type ITransferProcessState = "INITIAL" | "PROVISIONING" | "PROVISIONING_REQUESTED" | "PROVISIONED" | "REQUESTING" | "REQUESTED" | "STARTING" | "STARTED" | "SUSPENDING" | "SUSPENDED" | "COMPLETING" | "COMPLETED" | "TERMINATING" | "TERMINATED" | "DEPROVISIONING" | "DEPROVISIONING_REQUESTED" | "DEPROVISIONED";
+
+export type IPojoCredentialSubjectUnion = IGxDataResourceCredentialSubject | IGxServiceOfferingCredentialSubject;
 
 function uriEncoding(template: TemplateStringsArray, ...substitutions: any[]): string {
     let result = "";

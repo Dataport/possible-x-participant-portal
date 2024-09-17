@@ -92,15 +92,13 @@ public class GxServiceOfferingCredentialSubject extends PojoCredentialSubject {
     @JsonDeserialize(using = StringDeserializer.class)
     private String description;
 
-    @JsonProperty("@type")
-    @Override
+    @JsonProperty("type")
     public String getType() {
 
         return TYPE;
     }
 
     @JsonProperty("@context")
-    @Override
     public Map<String, String> getContext() {
 
         return CONTEXT;

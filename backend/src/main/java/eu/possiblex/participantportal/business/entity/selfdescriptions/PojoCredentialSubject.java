@@ -27,7 +27,7 @@ import java.util.Map;
 
 @Getter
 @Setter
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, visible = true, defaultImpl = UnknownCredentialSubject.class)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, defaultImpl = UnknownCredentialSubject.class)
 @JsonSubTypes({
     @JsonSubTypes.Type(value = GxDataResourceCredentialSubject.class, name = GxDataResourceCredentialSubject.TYPE),
     @JsonSubTypes.Type(value = GxServiceOfferingCredentialSubject.class, name = GxServiceOfferingCredentialSubject.TYPE),
@@ -35,11 +35,5 @@ import java.util.Map;
 public abstract class PojoCredentialSubject {
     // base fields
     private String id;
-
-    @JsonProperty("@type")
-    private String type;
-
-    @JsonProperty("@context")
-    private Map<String, String> context;
 }
 

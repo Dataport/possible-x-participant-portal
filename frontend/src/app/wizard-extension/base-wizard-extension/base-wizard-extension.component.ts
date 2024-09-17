@@ -324,8 +324,8 @@ export class BaseWizardExtensionComponent {
 
     jsonCs["id"] = jsonCs["@id"]
     delete jsonCs["@id"]
-    jsonCs["type"] = jsonCs["@type"]
-    delete jsonCs["@type"]
+    //jsonCs["type"] = jsonCs["@type"]
+    //delete jsonCs["@type"]
     delete jsonCs[""]
 
     return jsonCs;
