@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import Data from '../mock/form.mock.json';
-import { TranslateService } from '@ngx-translate/core';
+import {TranslateService} from "@ngx-translate/core";
 
 @Injectable({
   providedIn: 'root'
@@ -51,7 +51,7 @@ export class ApiService {
     //const apiUrl = Utils.controlUrl(environment.wizard_api_url);
     //const params = new HttpParams().set('name', name);
     //incase of choosing language through the link .set('lan',this.translate.currentLang)
-   
+
     //return this.httpClient.get(`${apiUrl}/getJSON`, {params});
     return undefined;
     //return this.serviceofferingsApiService.fetchShape(name);

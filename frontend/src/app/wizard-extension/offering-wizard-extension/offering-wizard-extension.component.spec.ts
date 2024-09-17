@@ -17,6 +17,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { OfferingWizardExtensionComponent } from './offering-wizard-extension.component';
+import {ApiService} from "@services/api.service";
+import {WizardAppModule} from "../../sdwizard/wizardapp.module";
+import {AppModule} from "../../app.module";
+import {WizardExtensionModule} from "../wizard-extension.module";
 
 describe('OfferingWizardExtensionComponent', () => {
   let component: OfferingWizardExtensionComponent;
@@ -24,7 +28,11 @@ describe('OfferingWizardExtensionComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ OfferingWizardExtensionComponent ]
+      declarations: [ OfferingWizardExtensionComponent ],
+      imports: [
+        WizardAppModule,
+        WizardExtensionModule
+      ]
     })
     .compileComponents();
 

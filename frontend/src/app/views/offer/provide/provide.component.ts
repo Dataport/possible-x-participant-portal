@@ -19,7 +19,7 @@ export class ProvideComponent implements AfterViewInit{
   policyMap = POLICY_MAP;
   participantId = "";
   @ViewChild('offerCreationStatusMessage') private offerCreationStatusMessage!: StatusMessageComponent;
-  @ViewChild("wizardExtension") private wizardExtension: OfferingWizardExtensionComponent;
+  @ViewChild("wizardExtension") wizardExtension: OfferingWizardExtensionComponent;
 
   constructor(private apiService: ApiService) {
   }
@@ -64,7 +64,7 @@ export class ProvideComponent implements AfterViewInit{
       this.wizardExtension.loadShape(this.offerType, TBR_SERVICE_OFFERING_ID, TBR_DATA_RESOURCE_ID).then(_ => {
         this.wizardExtension.prefillFields(prefillSd);
       });
-    }    
+    }
   }
 
   protected isOfferingDataOffering() {
@@ -78,6 +78,6 @@ export class ProvideComponent implements AfterViewInit{
       this.participantId = response.participantId;
     }catch(e) {
       console.error(e);
-    };
+    }
   }
 }
