@@ -10,7 +10,6 @@ import {
   Validators
 } from "@angular/forms";
 import { StatusMessageComponent } from "../../common-views/status-message/status-message.component";
-import { ConsumeComponent } from "../consume/consume.component";
 import { ApiService } from "../../../services/mgmt/api/api.service";
 import { IOfferDetailsTO } from "../../../services/mgmt/api/backend";
 
@@ -24,7 +23,7 @@ interface SelectionFormModel {
   styleUrl: './select-offer.component.scss',
   providers: [{
     provide: NG_VALUE_ACCESSOR,
-    useExisting: forwardRef(() => ConsumeComponent),
+    useExisting: forwardRef(() => SelectOfferComponent),
     multi: true
   }]
 })
@@ -46,7 +45,7 @@ export class SelectOfferComponent implements ControlValueAccessor {
   async selectOffer() {
     this.queryCatalogStatusMessage.showInfoMessage();
     this.apiService.selectContractOffer({
-      fhCatalogOfferId: this.selectedOfferId
+      fhCatalogOfferId: this.selectionForm.controls.offerId.value
     }).then(response => {
       console.log(response);
       this.queryCatalogStatusMessage.showSuccessMessage("Check console for details.", 20000);
@@ -56,11 +55,11 @@ export class SelectOfferComponent implements ControlValueAccessor {
     });
   }
 
-  registerOnChange(fn: any): void {
+  registerOnChange(fn: (offerId: string) => void): void {
     this.onChange = fn;
   }
 
-  registerOnTouched(fn: any): void {
+  registerOnTouched(fn: () => void): void {
     this.onTouched = fn;
   }
 
