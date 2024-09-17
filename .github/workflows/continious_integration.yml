@@ -59,7 +59,7 @@ jobs:
     needs: build-and-push-image
     steps:
       - name: 'Invoke Kubectl Consumer'
-        uses: actions-hub/kubectl@master
+        uses: actions-hub/kubectl@v1.31.0
         env:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
         with:
@@ -69,7 +69,7 @@ jobs:
     needs: build-and-push-image
     steps:
       - name: 'Invoke Kubectl Provider'
-        uses: actions-hub/kubectl@master
+        uses: actions-hub/kubectl@v1.31.0
         env:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
         with:

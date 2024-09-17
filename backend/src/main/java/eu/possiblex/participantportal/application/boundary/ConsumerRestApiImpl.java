@@ -45,8 +45,10 @@ public class ConsumerRestApiImpl implements ConsumerRestApi {
         try {
             response = consumerService.selectContractOffer(be);
         } catch (OfferNotFoundException e) {
+            log.error("selectContractOffer offer not found", e);
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (Exception e) {
+            log.error("selectContractOffer other error", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
 
@@ -63,8 +65,10 @@ public class ConsumerRestApiImpl implements ConsumerRestApi {
         try {
             process = consumerService.acceptContractOffer(be);
         } catch (OfferNotFoundException e) {
+            log.error("acceptContractOffer offer not found", e);
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (Exception e) {
+            log.error("acceptContractOffer other error", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
 
