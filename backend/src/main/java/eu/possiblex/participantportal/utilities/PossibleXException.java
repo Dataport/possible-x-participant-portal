@@ -13,6 +13,11 @@ public class PossibleXException extends RuntimeException {
             this.status = status;
         }
 
+        public PossibleXException(String message) {
+            super(message);
+            this.status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
         public PossibleXException(String message, HttpStatus status, Throwable cause) {
             super(message, cause);
             this.status = status;

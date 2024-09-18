@@ -45,7 +45,7 @@ public class ProviderRestApiImpl implements ProviderRestApi {
      * @return the response transfer object containing offer IDs
      */
     @Override
-    public CreateOfferResponseTO createOffer(@RequestBody CreateOfferRequestTO createOfferRequestTO) throws PossibleXException{
+    public CreateOfferResponseTO createOffer(@RequestBody CreateOfferRequestTO createOfferRequestTO) {
         CreateFhOfferBE createFhOfferBE = providerApiMapper.getCreateDatasetEntryDTOFromCreateOfferRequestTO(createOfferRequestTO);
         CreateEdcOfferBE createEdcOfferBE = providerApiMapper.getCreateEdcOfferDTOFromCreateOfferRequestTO(createOfferRequestTO);
 

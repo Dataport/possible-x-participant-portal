@@ -37,7 +37,7 @@ public class ConsumerRestApiImpl implements ConsumerRestApi {
     }
 
     @Override
-    public OfferDetailsTO selectContractOffer(@RequestBody SelectOfferRequestTO request) throws PossibleXException {
+    public OfferDetailsTO selectContractOffer(@RequestBody SelectOfferRequestTO request) {
 
         SelectOfferRequestBE be = consumerApiMapper.selectOfferRequestTOtoBE(request);
         DcatDataset dataset = consumerService.selectContractOffer(be);
@@ -48,7 +48,7 @@ public class ConsumerRestApiImpl implements ConsumerRestApi {
     }
 
     @Override
-    public TransferDetailsTO acceptContractOffer(@RequestBody ConsumeOfferRequestTO request) throws PossibleXException {
+    public TransferDetailsTO acceptContractOffer(@RequestBody ConsumeOfferRequestTO request) {
 
         ConsumeOfferRequestBE be = consumerApiMapper.consumeOfferRequestTOtoBE(request);
         TransferProcess process = consumerService.acceptContractOffer(be);
