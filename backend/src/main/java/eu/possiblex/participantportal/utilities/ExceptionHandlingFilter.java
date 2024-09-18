@@ -22,7 +22,7 @@ public class ExceptionHandlingFilter implements Filter {
         try {
             chain.doFilter(request, response);
         } catch (PossibleXException e) {
-            log.error("PossibleXException: {}", e.getMessage());
+            log.error("PossibleXException: {}", e);
             ((HttpServletResponse) response).setStatus(e.getStatus().value());
         } catch (Exception e) {
             if (isPossibleXException(e)) {
