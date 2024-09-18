@@ -17,7 +17,7 @@ import java.util.Map;
 
 @Service
 @Slf4j
-public class FHCatalogClientImpl implements FHCatalogClient {
+public class FhCatalogClientImpl implements FhCatalogClient {
 
     @Value("${fh.catalog.secret-key}")
     private String fhCatalogSecretKey;
@@ -27,7 +27,7 @@ public class FHCatalogClientImpl implements FHCatalogClient {
 
     private TechnicalFhCatalogClient technicalFhCatalogClient;
 
-    public FHCatalogClientImpl(@Autowired TechnicalFhCatalogClient technicalFhCatalogClient) {
+    public FhCatalogClientImpl(@Autowired TechnicalFhCatalogClient technicalFhCatalogClient) {
         this.technicalFhCatalogClient = technicalFhCatalogClient;
     }
 

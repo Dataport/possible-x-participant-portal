@@ -4,7 +4,7 @@ import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogOffer;
 import eu.possiblex.participantportal.business.entity.fh.catalog.DcatDataset;
 
-public class FhCatalogClientMock implements FHCatalogClient {
+public class FhCatalogClientMock implements FhCatalogClient {
     @Override
     public FhCatalogIdResponse addDatasetToFhCatalog(DcatDataset datasetToCatalogRequest) {
         return new FhCatalogIdResponse("id");

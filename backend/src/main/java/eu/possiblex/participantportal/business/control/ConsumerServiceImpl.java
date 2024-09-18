@@ -34,9 +34,9 @@ public class ConsumerServiceImpl implements ConsumerService {
 
     private final EdcClient edcClient;
 
-    private final FHCatalogClient fhCatalogClient;
+    private final FhCatalogClient fhCatalogClient;
 
-    public ConsumerServiceImpl(@Autowired EdcClient edcClient, @Autowired FHCatalogClient fhCatalogClient) {
+    public ConsumerServiceImpl(@Autowired EdcClient edcClient, @Autowired FhCatalogClient fhCatalogClient) {
 
         this.edcClient = edcClient;
         this.fhCatalogClient = fhCatalogClient;

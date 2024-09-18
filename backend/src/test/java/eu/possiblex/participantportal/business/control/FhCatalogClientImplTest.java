@@ -3,18 +3,11 @@ package eu.possiblex.participantportal.business.control;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogOffer;
 import eu.possiblex.participantportal.utils.TestUtils;
-import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.stream.Collectors;
-
-public class FHCatalogClientImplTest {
+public class FhCatalogClientImplTest {
 
     @Test
     public void parseDataCorrectly() throws OfferNotFoundException {
@@ -24,7 +17,7 @@ public class FHCatalogClientImplTest {
 
         TechnicalFhCatalogClient technicalFhCatalogClientMock = Mockito.mock(TechnicalFhCatalogClient.class);
         Mockito.when(technicalFhCatalogClientMock.getFhCatalogOffer(Mockito.anyString())).thenReturn(fhCatalogOfferContent);
-        FHCatalogClientImpl sut = new FHCatalogClientImpl(technicalFhCatalogClientMock);
+        FhCatalogClientImpl sut = new FhCatalogClientImpl(technicalFhCatalogClientMock);
 
         // WHEN a dataset is retrieved
 

@@ -42,7 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Only the interface components which connect to other systems are mocked.
  */
 @WebMvcTest(ConsumerRestApiImpl.class)
-@ContextConfiguration(classes = {ConsumerModuleTest.TestConfig.class, ConsumerRestApiImpl.class, ConsumerServiceImpl.class, FHCatalogClientImpl.class})
+@ContextConfiguration(classes = {ConsumerModuleTest.TestConfig.class, ConsumerRestApiImpl.class, ConsumerServiceImpl.class, FhCatalogClientImpl.class})
 public class ConsumerModuleTest {
 
     @Autowired
@@ -50,7 +50,7 @@ public class ConsumerModuleTest {
     @Autowired
     private ConsumerService consumerService;
     @Autowired
-    private FHCatalogClientImpl fhCatalogClient;
+    private FhCatalogClientImpl fhCatalogClient;
     @Autowired
     private EdcClient edcClientMock;
     @Autowired

@@ -30,7 +30,7 @@ class ConsumerServiceTest {
     @Autowired
     private EdcClient edcClient;
     @Autowired
-    private FHCatalogClient fhCatalogClient;
+    private FhCatalogClient fhCatalogClient;
 
     @Test
     void selectContractOfferSucceeds() throws OfferNotFoundException {
@@ -134,9 +134,9 @@ class ConsumerServiceTest {
         }
 
         @Bean
-        public FHCatalogClient fhCatalogClient() {
+        public FhCatalogClient fhCatalogClient() {
 
-            return Mockito.mock(FHCatalogClient.class);
+            return Mockito.mock(FhCatalogClient.class);
         }
     }
 }

@@ -29,7 +29,7 @@ public class ProviderServiceImpl implements ProviderService {
 
     private final EdcClient edcClient;
 
-    private final FHCatalogClient fhCatalogClient;
+    private final FhCatalogClient fhCatalogClient;
 
     @Value("${fh.catalog.secret-key}")
     private String fhCatalogSecretKey;
@@ -47,7 +47,7 @@ public class ProviderServiceImpl implements ProviderService {
      * @param fhCatalogClient the FH catalog client
      */
     @Autowired
-    public ProviderServiceImpl(EdcClient edcClient, FHCatalogClient fhCatalogClient) {
+    public ProviderServiceImpl(EdcClient edcClient, FhCatalogClient fhCatalogClient) {
         this.edcClient = edcClient;
         this.fhCatalogClient = fhCatalogClient;
     }
