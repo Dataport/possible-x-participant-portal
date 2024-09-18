@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 @Setter
 @Getter
 public class PossibleXException extends RuntimeException {
-        private HttpStatus status;
+        private HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
         public PossibleXException(String message, HttpStatus status) {
             super(message);
             this.status = status;
@@ -15,7 +15,6 @@ public class PossibleXException extends RuntimeException {
 
         public PossibleXException(String message) {
             super(message);
-            this.status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
 
         public PossibleXException(String message, HttpStatus status, Throwable cause) {

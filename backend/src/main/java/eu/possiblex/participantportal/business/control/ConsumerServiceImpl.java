@@ -19,6 +19,7 @@ import eu.possiblex.participantportal.business.entity.edc.transfer.TransferReque
 import eu.possiblex.participantportal.business.entity.exception.NegotiationFailedException;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
+import eu.possiblex.participantportal.utilities.PossibleXException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -54,7 +55,7 @@ public class ConsumerServiceImpl implements ConsumerService {
                     .build());
             return catalog.getDataset().get(0);
         } catch (Exception e) {
-            return null;
+            throw new PossibleXException("Failed to select offer.", HttpStatus.NOT_FOUND);
         }
     }
 
@@ -109,7 +110,7 @@ public class ConsumerServiceImpl implements ConsumerService {
                 .build();
             return performTransfer(transferRequest);
         } catch (Exception e) {
-            return null;
+            throw new PossibleXException("Failed to accept offer with offerId" + request.getOfferId() + ": " + e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 

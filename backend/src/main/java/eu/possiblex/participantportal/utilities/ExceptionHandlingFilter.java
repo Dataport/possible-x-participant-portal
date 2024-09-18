@@ -21,9 +21,6 @@ public class ExceptionHandlingFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         try {
             chain.doFilter(request, response);
-        } catch (PossibleXException e) {
-            log.error("PossibleXException: {}", e);
-            ((HttpServletResponse) response).setStatus(e.getStatus().value());
         } catch (Exception e) {
             if (isPossibleXException(e)) {
                 PossibleXException ex = getPossibleXException(e);
@@ -37,13 +34,8 @@ public class ExceptionHandlingFilter implements Filter {
     }
 
     public boolean isPossibleXException(Throwable e) {
-        while (e != null) {
-            if (e instanceof PossibleXException) {
-                return true;
-            }
-            e = e.getCause();
-        }
-        return false;
+        PossibleXException pe = getPossibleXException(e);
+        return pe != null;
     }
 
     public PossibleXException getPossibleXException(Throwable e) {

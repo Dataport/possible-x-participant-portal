@@ -11,9 +11,11 @@ import eu.possiblex.participantportal.business.entity.exception.FhOfferCreationE
 import eu.possiblex.participantportal.business.entity.fh.CreateFhOfferBE;
 import eu.possiblex.participantportal.business.entity.fh.FhIdResponse;
 import eu.possiblex.participantportal.business.entity.fh.catalog.DcatDataset;
+import eu.possiblex.participantportal.utilities.PossibleXException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -73,7 +75,7 @@ public class ProviderServiceImpl implements ProviderService {
             IdResponse edcResponseId = createEdcOffer(requestBuilder);
             return new CreateOfferResponseTO(edcResponseId.getId(), fhResponseId.getId());
         } catch (Exception e) {
-            return null;
+            throw new PossibleXException("Failed to create offer: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
     }
