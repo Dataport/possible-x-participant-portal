@@ -67,9 +67,9 @@ public class ConsumerRestApiImpl implements ConsumerRestApi {
         } catch (OfferNotFoundException e) {
             throw new PossibleXException("Failed to select offer with offerId" + request.getEdcOfferId() + ". OfferNotFoundException: " + e, HttpStatus.NOT_FOUND);
         } catch (NegotiationFailedException e) {
-            throw new PossibleXException("Failed to select offer with offerId" + request.getEdcOfferId() + ". NegotiationFailedException: " + e, HttpStatus.NOT_FOUND);
+            throw new PossibleXException("Failed to select offer with offerId" + request.getEdcOfferId() + ". NegotiationFailedException: " + e);
         } catch (TransferFailedException e) {
-            throw new PossibleXException("Failed to select offer with offerId" + request.getEdcOfferId() + ". TransferFailedException: " + e, HttpStatus.NOT_FOUND);
+            throw new PossibleXException("Failed to select offer with offerId" + request.getEdcOfferId() + ". TransferFailedException: " + e);
         } catch (Exception e) {
             throw new PossibleXException("Failed to select offer with offerId" + request.getEdcOfferId() + ". Other Exception: " + e);
         }

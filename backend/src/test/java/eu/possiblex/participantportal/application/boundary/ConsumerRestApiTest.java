@@ -131,7 +131,7 @@ public class ConsumerRestApiTest {
                     .edcOfferId(ConsumerServiceMock.BAD_EDC_OFFER_ID)
                     .build()))
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print())
-            .andExpect(status().isNotFound());
+            .andExpect(status().isInternalServerError());
     }
 
     @Test
@@ -142,7 +142,7 @@ public class ConsumerRestApiTest {
                     .edcOfferId(ConsumerServiceMock.BAD_TRANSFER_OFFER_ID)
                     .build()))
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print())
-            .andExpect(status().isNotFound());
+            .andExpect(status().isInternalServerError());
     }
 
 }

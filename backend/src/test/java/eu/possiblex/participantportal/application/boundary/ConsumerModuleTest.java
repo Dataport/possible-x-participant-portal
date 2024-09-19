@@ -68,14 +68,10 @@ public class ConsumerModuleTest {
 
     @BeforeEach
     void setup() {
-
-        reset(edcClientMock);
-        reset(technicalFhCatalogClientMock);
-        this.mockMvc = MockMvcBuilders.standaloneSetup(new ConsumerModuleTest())
+        this.mockMvc = MockMvcBuilders.standaloneSetup(new ConsumerRestApiImpl(consumerService, Mappers.getMapper(ConsumerApiMapper.class)))
                 .addFilters(new ExceptionHandlingFilter())
                 .build();
     }
-
     @Test
     void acceptContractOfferSucceeds() throws Exception {
 
