@@ -1,6 +1,14 @@
-# Participant Portal Frontend
+# POSSIBLE-X Participant Portal Frontend
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.1.3.
+The POSSIBLE-X Participant Portal is the decentralized UI for the participants in the Portal-X dataspace who want to consume or provide offerings.
+
+It consists of an Angular frontend and a Spring-Boot backend.
+
+Participants can use the frontend to consume and provide offerings. The frontend itself does not contain major logic or data processing, it depends on the backend service for that.
+
+The frontend uses an adapted version of the [SD Creation Wizard](https://gitlab.eclipse.org/eclipse/xfsc/self-description-tooling/sd-creation-wizard-frontend) to create parts of the
+mask where participants can fill out all the fields needed to provide offerings. The SD Creation Wizard is integrated as a component and extended based on the implementation of the
+[MERLOT Marketplace Frontend](https://github.com/merlot-education/marketplace-frontend).
 
 ## Development server
 

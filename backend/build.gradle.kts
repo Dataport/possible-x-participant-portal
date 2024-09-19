@@ -64,7 +64,7 @@ tasks.register<Copy>("copyWebApp") {
   outputs.upToDateWhen { false }
   description = "Copies the GUI into the resources of the Spring project."
   group = "Application"
-  from("$rootDir/frontend/build/resources/browser")
+  from("$rootDir/frontend/build/resources")
   into(layout.buildDirectory.dir("resources/main/static/."))
 }
 
@@ -85,8 +85,9 @@ tasks {
     generateSpringApplicationClient = true
     addTypeNamePrefix = "I"
     classPatterns = listOf(
-      "eu.possiblex.participantportal.application.entity.*",
-      "eu.possiblex.participantportal.application.boundary.*"
+      "eu.possiblex.participantportal.application.entity.**",
+      "eu.possiblex.participantportal.application.boundary.**",
+      "eu.possiblex.participantportal.business.entity.selfdescriptions.**"
     )
     outputFile = "../frontend/src/app/services/mgmt/api/backend.ts"
     noFileComment = true

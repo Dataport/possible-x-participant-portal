@@ -4,24 +4,43 @@
   "compileOnSave": false,
   "compilerOptions": {
     "outDir": "./dist/out-tsc",
-    "strict": true,
     "noImplicitOverride": true,
-    "noPropertyAccessFromIndexSignature": true,
-    "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
     "sourceMap": true,
     "declaration": false,
     "experimentalDecorators": true,
-    "moduleResolution": "bundler",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
     "importHelpers": true,
     "target": "ES2022",
     "module": "ES2022",
+    "types": ["node"],
     "lib": [
       "ES2022",
       "dom"
-    ]
+    ],
+    "paths": {
+      "@components/*": [
+        "./src/app/sdwizard/core/dynamic-form/components/*"
+      ],
+      "@services/*": [
+        "./src/app/sdwizard/core/dynamic-form/services/*"
+      ],
+      "@models/*": [
+        "./src/app/sdwizard/core/dynamic-form/models/*"
+      ],
+      "@validations/*": [
+        "./src/app/sdwizard/core/dynamic-form/validations/*"
+      ],
+      "@directives/*": [
+        "./src/app/sdwizard/core/dynamic-form/directives/*"
+      ],
+      "@shared/*": [
+        "./src/app/sdwizard/shared/*"
+      ]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

@@ -96,3 +96,12 @@ npm run ng -- serve --configuration provider-local --port 4200
 ```
 
 Once the service is running, you can access it at e.g. http://localhost:4200/  (depending on the used configuration).
+
+## Functional Docu
+
+The consumer should be able to just copy the offer ID from the FH Catalog offer which he chooses in the FH Catalog.
+For that to work, the provider will put infos into the FH Catalog offer when the provider publishes an offer. These additional infos are the infos which are needed to identify the offer in the EDC Catalog (asset-ID and the URL of the provider EDC connector).
+
+On the consumer side the user will paste the offer ID into the provider frontend. Then the backend will fetch and parse the FH offer and parse it for the infos needed to identify the offer in the EDC Catalog.
+
+

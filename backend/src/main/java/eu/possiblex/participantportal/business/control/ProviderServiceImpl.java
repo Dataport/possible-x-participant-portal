@@ -1,6 +1,7 @@
 package eu.possiblex.participantportal.business.control;
 
 import eu.possiblex.participantportal.application.entity.CreateOfferResponseTO;
+import eu.possiblex.participantportal.application.entity.ParticipantIdTO;
 import eu.possiblex.participantportal.business.entity.edc.CreateEdcOfferBE;
 import eu.possiblex.participantportal.business.entity.edc.asset.AssetCreateRequest;
 import eu.possiblex.participantportal.business.entity.edc.common.IdResponse;
@@ -9,7 +10,7 @@ import eu.possiblex.participantportal.business.entity.edc.policy.PolicyCreateReq
 import eu.possiblex.participantportal.business.entity.exception.EdcOfferCreationException;
 import eu.possiblex.participantportal.business.entity.exception.FhOfferCreationException;
 import eu.possiblex.participantportal.business.entity.fh.CreateFhOfferBE;
-import eu.possiblex.participantportal.business.entity.fh.FhIdResponse;
+import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
 import eu.possiblex.participantportal.business.entity.fh.catalog.DcatDataset;
 import eu.possiblex.participantportal.utilities.PossibleXException;
 import lombok.extern.slf4j.Slf4j;
@@ -35,12 +36,11 @@ public class ProviderServiceImpl implements ProviderService {
     @Value("${fh.catalog.secret-key}")
     private String fhCatalogSecretKey;
 
-    @Value("${fh.catalog.catalog-name}")
-    private String catalogName;
-
     @Value("${edc.protocol-base-url}")
     private String edcProtocolUrl;
 
+    @Value("${participant-id}")
+    private String participantId;
 
     /**
      * Constructor for ProviderServiceImpl.
@@ -64,20 +64,35 @@ public class ProviderServiceImpl implements ProviderService {
      * @throws EdcOfferCreationException if EDC offer creation fails
      */
     @Override
-    public CreateOfferResponseTO createOffer(CreateFhOfferBE createFhOfferBE, CreateEdcOfferBE createEdcOfferBE)
-             {
+    public CreateOfferResponseTO createOffer(CreateFhOfferBE createFhOfferBE, CreateEdcOfferBE createEdcOfferBE) {
+
 
         String assetId = generateAssetId();
-        ProviderRequestBuilder requestBuilder = new ProviderRequestBuilder(assetId, createFhOfferBE, createEdcOfferBE, edcProtocolUrl);
+        ProviderRequestBuilder requestBuilder = new ProviderRequestBuilder(assetId, createFhOfferBE, createEdcOfferBE,
+            edcProtocolUrl);
 
         try {
-            FhIdResponse fhResponseId = createFhCatalogOffer(requestBuilder);
+            FhCatalogIdResponse fhResponseId = createFhCatalogOffer(requestBuilder);
             IdResponse edcResponseId = createEdcOffer(requestBuilder);
             return new CreateOfferResponseTO(edcResponseId.getId(), fhResponseId.getId());
+        } catch (EdcOfferCreationException e) {
+            throw new PossibleXException("Failed to create offer. EdcOfferCreationException: " + e, HttpStatus.BAD_REQUEST);
+        } catch (FhOfferCreationException e) {
+            throw new PossibleXException("Failed to create offer. FhOfferCreationException: " + e, HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            throw new PossibleXException("Failed to create offer: " + e, HttpStatus.BAD_REQUEST);
+            throw new PossibleXException("Failed to create offer. Other Exception: " + e);
         }
+    }
 
+    /**
+     * Return the participant's id.
+     *
+     * @return participant id
+     */
+    @Override
+    public ParticipantIdTO getParticipantId() {
+
+        return new ParticipantIdTO(participantId);
     }
 
     /**
@@ -86,6 +101,7 @@ public class ProviderServiceImpl implements ProviderService {
      * @return the generated asset ID
      */
     private String generateAssetId() {
+
         return "assetId_" + UUID.randomUUID();
     }
 
@@ -97,6 +113,7 @@ public class ProviderServiceImpl implements ProviderService {
      * @throws EdcOfferCreationException if EDC offer creation fails
      */
     private IdResponse createEdcOffer(ProviderRequestBuilder requestBuilder) throws EdcOfferCreationException {
+
         try {
             AssetCreateRequest assetCreateRequest = requestBuilder.buildAssetRequest();
             log.info("Creating Asset {}", assetCreateRequest);
@@ -106,7 +123,8 @@ public class ProviderServiceImpl implements ProviderService {
             log.info("Creating Policy {}", policyCreateRequest);
             IdResponse policyIdResponse = edcClient.createPolicy(policyCreateRequest);
 
-            ContractDefinitionCreateRequest contractDefinitionCreateRequest = requestBuilder.buildContractDefinitionRequest(policyIdResponse, assetIdResponse);
+            ContractDefinitionCreateRequest contractDefinitionCreateRequest = requestBuilder.buildContractDefinitionRequest(
+                policyIdResponse, assetIdResponse);
             log.info("Creating Contract Definition {}", contractDefinitionCreateRequest);
 
             return edcClient.createContractDefinition(contractDefinitionCreateRequest);
@@ -122,13 +140,12 @@ public class ProviderServiceImpl implements ProviderService {
      * @return the ID response from FH catalog
      * @throws FhOfferCreationException if FH offer creation fails
      */
-    private FhIdResponse createFhCatalogOffer(ProviderRequestBuilder requestBuilder) throws FhOfferCreationException {
+    private FhCatalogIdResponse createFhCatalogOffer(ProviderRequestBuilder requestBuilder) throws FhOfferCreationException {
         try {
             DcatDataset dcatDataset = requestBuilder.buildFhCatalogOfferRequest();
             log.info("Adding Dataset to Fraunhofer Catalog {}", dcatDataset);
 
-            Map<String, String> auth = Map.of("Content-Type", "application/json", "Authorization", "Bearer " + fhCatalogSecretKey);
-            return fhCatalogClient.addDatasetToFhCatalog(auth, dcatDataset, catalogName, "identifiers");
+            return fhCatalogClient.addDatasetToFhCatalog(dcatDataset);
         } catch (Exception e) {
             throw new FhOfferCreationException("An error occurred during Fh offer creation: " + e.getMessage());
         }

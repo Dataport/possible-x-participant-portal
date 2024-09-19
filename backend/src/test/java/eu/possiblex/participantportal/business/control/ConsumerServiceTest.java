@@ -2,18 +2,20 @@ package eu.possiblex.participantportal.business.control;
 
 import eu.possiblex.participantportal.business.entity.ConsumeOfferRequestBE;
 import eu.possiblex.participantportal.business.entity.SelectOfferRequestBE;
-import eu.possiblex.participantportal.business.entity.edc.catalog.DcatDataset;
+import eu.possiblex.participantportal.business.entity.SelectOfferResponseBE;
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcess;
 import eu.possiblex.participantportal.business.entity.exception.NegotiationFailedException;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
-import org.junit.jupiter.api.Disabled;
+import eu.possiblex.participantportal.business.entity.fh.FhCatalogOffer;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.test.context.ContextConfiguration;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,32 +26,32 @@ import static org.mockito.Mockito.*;
 @ContextConfiguration(classes = { ConsumerServiceTest.TestConfig.class, ConsumerServiceImpl.class })
 class ConsumerServiceTest {
 
-    // Test-specific configuration to provide a fake implementation of EdcClient
-    @TestConfiguration
-    static class TestConfig {
-        @Bean
-        public EdcClient edcClient() {
-
-            return Mockito.spy(new EdcClientFake());
-        }
-    }
-
     @Autowired
-    private ConsumerService consumerService;
+    private ConsumerService sut;
 
     @Autowired
     private EdcClient edcClient;
 
+    @Autowired
+    private FhCatalogClient fhCatalogClient;
+
     @Test
-    void shouldSelectContractOffer() throws OfferNotFoundException {
+    void selectContractOfferSucceeds() throws OfferNotFoundException {
+
+        // GIVEN
 
         reset(edcClient);
-        DcatDataset response = consumerService.selectContractOffer(
-            SelectOfferRequestBE
-                .builder()
-                .counterPartyAddress("http://example.com")
-                .offerId(EdcClientFake.FAKE_ID)
-                .build());
+        reset(fhCatalogClient);
+        FhCatalogOffer fhCatalogOffer = new FhCatalogOffer();
+        fhCatalogOffer.setAssetId(EdcClientFake.FAKE_ID);
+        Mockito.when(fhCatalogClient.getFhCatalogOffer(Mockito.eq(EdcClientFake.FAKE_ID))).thenReturn(fhCatalogOffer);
+
+        // WHEN
+
+        SelectOfferResponseBE response = sut.selectContractOffer(
+            SelectOfferRequestBE.builder().fhCatalogOfferId(EdcClientFake.FAKE_ID).build());
+
+        // THEN
 
         verify(edcClient).queryCatalog(any());
         verify(edcClient, times(0)).initiateTransfer(any());
@@ -58,27 +60,21 @@ class ConsumerServiceTest {
     }
 
     @Test
-    @Disabled // TODO enable this once the user actually selects an existing offering
-    void shouldSelectContractOfferNotFound() {
-        assertNotNull(consumerService.selectContractOffer(
-            SelectOfferRequestBE
-                .builder()
-                .counterPartyAddress("http://example.com")
-                .offerId("someUnknownId")
-                .build()));
-    }
-
-    @Test
-    void shouldAcceptContractOffer()
+    void acceptContractOfferSucceeds()
         throws NegotiationFailedException, TransferFailedException, OfferNotFoundException {
 
+        // GIVEN
+
         reset(edcClient);
-        TransferProcess response = consumerService.acceptContractOffer(
-            ConsumeOfferRequestBE
-                .builder()
-                .counterPartyAddress("http://example.com")
-                .offerId(EdcClientFake.FAKE_ID)
+        reset(fhCatalogClient);
+
+        // WHEN
+
+        TransferProcess response = sut.acceptContractOffer(
+            ConsumeOfferRequestBE.builder().counterPartyAddress("http://example.com").edcOfferId(EdcClientFake.FAKE_ID)
                 .build());
+
+        // THEN
 
         verify(edcClient).negotiateOffer(any());
         verify(edcClient).initiateTransfer(any());
@@ -89,33 +85,49 @@ class ConsumerServiceTest {
     @Test
     void shouldAcceptContractOfferNotFound() {
 
-        assertNull(consumerService.acceptContractOffer(
-            ConsumeOfferRequestBE
-                .builder()
-                .counterPartyAddress("http://example.com")
-                .offerId("someUnknownId")
+        reset(edcClient);
+        reset(fhCatalogClient);
+        assertThrows(OfferNotFoundException.class, () -> sut.acceptContractOffer(
+            ConsumeOfferRequestBE.builder().counterPartyAddress("http://example.com").edcOfferId("someUnknownId")
                 .build()));
     }
 
     @Test
     void shouldAcceptContractOfferBadNegotiation() {
 
-        assertNull(consumerService.acceptContractOffer(
-            ConsumeOfferRequestBE
-                .builder()
-                .counterPartyAddress("http://example.com")
-                .offerId(EdcClientFake.BAD_NEGOTIATION_ID)
-                .build()));
+        reset(edcClient);
+        reset(fhCatalogClient);
+        assertThrows(NegotiationFailedException.class, () -> sut.acceptContractOffer(
+            ConsumeOfferRequestBE.builder().counterPartyAddress("http://example.com")
+                .edcOfferId(EdcClientFake.BAD_NEGOTIATION_ID).build()));
     }
 
     @Test
     void shouldAcceptContractOfferBadTransfer() {
 
-        assertNull(consumerService.acceptContractOffer(
-            ConsumeOfferRequestBE
-                .builder()
-                .counterPartyAddress("http://example.com")
-                .offerId(EdcClientFake.BAD_TRANSFER_ID)
-                .build()));
+        reset(edcClient);
+        reset(fhCatalogClient);
+        assertThrows(TransferFailedException.class, () -> sut.acceptContractOffer(
+            ConsumeOfferRequestBE.builder().counterPartyAddress("http://example.com")
+                .edcOfferId(EdcClientFake.BAD_TRANSFER_ID).build()));
+    }
+
+    // Test-specific configuration to provide mocks
+    @TestConfiguration
+    static class TestConfig {
+        @MockBean
+        private TaskScheduler taskScheduler;
+
+        @Bean
+        public EdcClient edcClient() {
+
+            return Mockito.spy(new EdcClientFake());
+        }
+
+        @Bean
+        public FhCatalogClient fhCatalogClient() {
+
+            return Mockito.mock(FhCatalogClient.class);
+        }
     }
 }

@@ -1,0 +1,60 @@
+{
+  "@graph": [
+    {
+      "@id": "_:b0",
+      "http://www.w3.org/ns/odrl/2/action": {
+        "@id": "_:b1"
+      }
+    },
+    {
+      "@id": "_:b1",
+      "http://www.w3.org/ns/odrl/2/type": "http://www.w3.org/ns/odrl/2/use"
+    },
+    {
+      "@id": "file:///usr/verticles/testId",
+      "dct:identifier": "testIdentifier",
+      "dcat:accessURL": "",
+      "@type": "dcat:distribution"
+    },
+    {
+      "@id": "_:b2",
+      "http://www.w3.org/ns/odrl/2/type": "http://www.w3.org/ns/odrl/2/transfer"
+    },
+    {
+      "@id": "https://piveau.io/set/data/87ff3e97-8545-4e01-8a61-27d6c78130cb",
+      "@type": "dcat:Dataset",
+      "dct:title": "test",
+      "dcat:distribution": {
+        "@id": "file:///usr/verticles/testId"
+      },
+      "odrl:hasPolicy": {
+        "@id": "_:b3"
+      },
+      "https://possible-gaia-x.de/ns/#assetId": "EXPECTED_ASSET_ID_VALUE",
+      "dct:description": "test"
+    },
+    {
+      "@id": "_:b3",
+      "http://www.w3.org/ns/odrl/2/permission": [
+        {
+          "@id": "_:b4"
+        },
+        {
+          "@id": "_:b0"
+        }
+      ],
+      "@type": "http://www.w3.org/ns/odrl/2/Set"
+    },
+    {
+      "@id": "_:b4",
+      "http://www.w3.org/ns/odrl/2/action": {
+        "@id": "_:b2"
+      }
+    }
+  ],
+  "@context": {
+    "dct": "http://purl.org/dc/terms/",
+    "dcat": "http://www.w3.org/ns/dcat#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  }
+}

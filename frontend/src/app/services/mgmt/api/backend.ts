@@ -5,19 +5,36 @@ export interface IConsumerRestApi {
 }
 
 export interface IProviderRestApi {
+    participantId: IParticipantIdTO;
+}
+
+export interface IResourceShapeRestApi {
+    gxInstantiatedVirtualResourceShape: string;
+    gxDataResourceShape: string;
+    gxPhysicalResourceShape: string;
+    gxSoftwareResourceShape: string;
+    gxVirtualResourceShape: string;
+}
+
+export interface IServiceOfferingShapeRestApi {
+    gxServiceOfferingShape: string;
 }
 
 export interface IConsumeOfferRequestTO {
     counterPartyAddress: string;
-    offerId: string;
+    edcOfferId: string;
+}
+
+export interface IConsumeOfferRequestTOBuilder {
 }
 
 export interface ICreateOfferRequestTO {
-    offerType: string;
-    offerName: string;
-    offerDescription: string;
+    credentialSubjectList: IPojoCredentialSubjectUnion[];
     fileName: string;
     policy: IPolicy;
+}
+
+export interface ICreateOfferRequestTOBuilder {
 }
 
 export interface ICreateOfferResponseTO {
@@ -25,13 +42,12 @@ export interface ICreateOfferResponseTO {
     fhResponseId: string;
 }
 
-export interface IExceptionTO {
-    httpStatusCode: number;
-    message: string;
+export interface ICreateOfferResponseTOBuilder {
 }
 
 export interface IOfferDetailsTO {
-    offerId: string;
+    edcOfferId: string;
+    counterPartyAddress: string;
     offerType: string;
     creationDate: Date;
     name: string;
@@ -39,13 +55,81 @@ export interface IOfferDetailsTO {
     contentType: string;
 }
 
+export interface IOfferDetailsTOBuilder {
+}
+
+export interface IParticipantIdTO {
+    participantId: string;
+}
+
+export interface IParticipantIdTOBuilder {
+}
+
 export interface ISelectOfferRequestTO {
-    counterPartyAddress: string;
-    offerId: string;
+    fhCatalogOfferId: string;
+}
+
+export interface ISelectOfferRequestTOBuilder {
 }
 
 export interface ITransferDetailsTO {
     state: ITransferProcessState;
+}
+
+export interface ITransferDetailsTOBuilder {
+}
+
+export interface IPojoCredentialSubject {
+    "@type": "UnknownCredentialSubject" | "gx:DataResource" | "gx:ServiceOffering";
+    id: string;
+}
+
+export interface IUnknownCredentialSubject extends IPojoCredentialSubject {
+    "@type": "UnknownCredentialSubject";
+}
+
+export interface IGxDataAccountExport {
+    "gx:requestType": string;
+    "gx:accessType": string;
+    "gx:formatType": string;
+}
+
+export interface IGxSOTermsAndConditions {
+    "gx:URL": string;
+    "gx:hash": string;
+}
+
+export interface INodeKindIRITypeId {
+    id: string;
+}
+
+export interface IGxDataResourceCredentialSubject extends IPojoCredentialSubject {
+    "@type": "gx:DataResource";
+    "gx:copyrightOwnedBy": INodeKindIRITypeId;
+    "gx:producedBy": INodeKindIRITypeId;
+    "gx:exposedThrough": INodeKindIRITypeId;
+    "gx:policy": string[];
+    "gx:license": string[];
+    "gx:containsPII": boolean;
+    "gx:name": string;
+    "gx:description": string;
+    "gx:obsoleteDateTime": string;
+    "gx:expirationDateTime": string;
+    "@context": { [index: string]: string };
+    type: string;
+}
+
+export interface IGxServiceOfferingCredentialSubject extends IPojoCredentialSubject {
+    "@type": "gx:ServiceOffering";
+    "gx:providedBy": INodeKindIRITypeId;
+    "gx:termsAndConditions": IGxSOTermsAndConditions[];
+    "gx:policy": string[];
+    "gx:dataProtectionRegime": string[];
+    "gx:dataAccountExport": IGxDataAccountExport[];
+    "gx:name": string;
+    "gx:description": string;
+    "@context": { [index: string]: string };
+    type: string;
 }
 
 export interface IPolicy {
@@ -89,17 +173,75 @@ export class RestApplicationClient {
     }
 
     /**
+     * HTTP GET /provider/id
+     * Java method: eu.possiblex.participantportal.application.boundary.ProviderRestApiImpl.getParticipantId
+     */
+    getParticipantId(): RestResponse<IParticipantIdTO> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`provider/id` });
+    }
+
+    /**
      * HTTP POST /provider/offer
      * Java method: eu.possiblex.participantportal.application.boundary.ProviderRestApiImpl.createOffer
      */
     createOffer(createOfferRequestTO: ICreateOfferRequestTO): RestResponse<ICreateOfferResponseTO> {
         return this.httpClient.request({ method: "POST", url: uriEncoding`provider/offer`, data: createOfferRequestTO });
     }
+
+    /**
+     * HTTP GET /shapes/gx/resource/dataresource
+     * Java method: eu.possiblex.participantportal.application.boundary.ShapeRestApiImpl.getGxDataResourceShape
+     */
+    getGxDataResourceShape(): RestResponse<string> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`shapes/gx/resource/dataresource` });
+    }
+
+    /**
+     * HTTP GET /shapes/gx/resource/instantiatedvirtualresource
+     * Java method: eu.possiblex.participantportal.application.boundary.ShapeRestApiImpl.getGxInstantiatedVirtualResourceShape
+     */
+    getGxInstantiatedVirtualResourceShape(): RestResponse<string> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`shapes/gx/resource/instantiatedvirtualresource` });
+    }
+
+    /**
+     * HTTP GET /shapes/gx/resource/physicalresource
+     * Java method: eu.possiblex.participantportal.application.boundary.ShapeRestApiImpl.getGxPhysicalResourceShape
+     */
+    getGxPhysicalResourceShape(): RestResponse<string> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`shapes/gx/resource/physicalresource` });
+    }
+
+    /**
+     * HTTP GET /shapes/gx/resource/softwareresource
+     * Java method: eu.possiblex.participantportal.application.boundary.ShapeRestApiImpl.getGxSoftwareResourceShape
+     */
+    getGxSoftwareResourceShape(): RestResponse<string> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`shapes/gx/resource/softwareresource` });
+    }
+
+    /**
+     * HTTP GET /shapes/gx/resource/virtualresource
+     * Java method: eu.possiblex.participantportal.application.boundary.ShapeRestApiImpl.getGxVirtualResourceShape
+     */
+    getGxVirtualResourceShape(): RestResponse<string> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`shapes/gx/resource/virtualresource` });
+    }
+
+    /**
+     * HTTP GET /shapes/gx/serviceoffering
+     * Java method: eu.possiblex.participantportal.application.boundary.ShapeRestApiImpl.getGxServiceOfferingShape
+     */
+    getGxServiceOfferingShape(): RestResponse<string> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`shapes/gx/serviceoffering` });
+    }
 }
 
 export type RestResponse<R> = Promise<R>;
 
 export type ITransferProcessState = "INITIAL" | "PROVISIONING" | "PROVISIONING_REQUESTED" | "PROVISIONED" | "REQUESTING" | "REQUESTED" | "STARTING" | "STARTED" | "SUSPENDING" | "SUSPENDED" | "COMPLETING" | "COMPLETED" | "TERMINATING" | "TERMINATED" | "DEPROVISIONING" | "DEPROVISIONING_REQUESTED" | "DEPROVISIONED";
+
+export type IPojoCredentialSubjectUnion = IGxDataResourceCredentialSubject | IGxServiceOfferingCredentialSubject;
 
 function uriEncoding(template: TemplateStringsArray, ...substitutions: any[]): string {
     let result = "";

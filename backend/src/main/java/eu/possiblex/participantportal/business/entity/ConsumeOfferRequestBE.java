@@ -10,6 +10,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ConsumeOfferRequestBE {
+    /**
+     * @see eu.possiblex.participantportal.application.entity.OfferDetailsTO#counterPartyAddress
+     */
     private String counterPartyAddress;
-    private String offerId;
+    /**
+     * @see eu.possiblex.participantportal.application.entity.OfferDetailsTO#edcOfferId
+     */
+    private String edcOfferId;
 }

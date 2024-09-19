@@ -3,12 +3,14 @@ package eu.possiblex.participantportal.application.boundary;
 import eu.possiblex.participantportal.application.control.ProviderApiMapper;
 import eu.possiblex.participantportal.application.entity.CreateOfferRequestTO;
 import eu.possiblex.participantportal.application.entity.CreateOfferResponseTO;
+import eu.possiblex.participantportal.application.entity.ParticipantIdTO;
 import eu.possiblex.participantportal.business.control.ProviderService;
 import eu.possiblex.participantportal.business.entity.edc.CreateEdcOfferBE;
 import eu.possiblex.participantportal.business.entity.exception.EdcOfferCreationException;
 import eu.possiblex.participantportal.business.entity.exception.FhOfferCreationException;
 import eu.possiblex.participantportal.business.entity.fh.CreateFhOfferBE;
 import eu.possiblex.participantportal.utilities.PossibleXException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -21,9 +23,11 @@ import org.springframework.web.server.ResponseStatusException;
  */
 @RestController
 @CrossOrigin("*") // TODO replace this with proper CORS configuration
+@Slf4j
 public class ProviderRestApiImpl implements ProviderRestApi {
 
     private final ProviderService providerService;
+
     private final ProviderApiMapper providerApiMapper;
 
     /**
@@ -34,6 +38,7 @@ public class ProviderRestApiImpl implements ProviderRestApi {
      */
     @Autowired
     public ProviderRestApiImpl(ProviderService providerService, ProviderApiMapper providerApiMapper) {
+
         this.providerService = providerService;
         this.providerApiMapper = providerApiMapper;
     }
@@ -46,13 +51,31 @@ public class ProviderRestApiImpl implements ProviderRestApi {
      */
     @Override
     public CreateOfferResponseTO createOffer(@RequestBody CreateOfferRequestTO createOfferRequestTO) {
-        CreateFhOfferBE createFhOfferBE = providerApiMapper.getCreateDatasetEntryDTOFromCreateOfferRequestTO(createOfferRequestTO);
-        CreateEdcOfferBE createEdcOfferBE = providerApiMapper.getCreateEdcOfferDTOFromCreateOfferRequestTO(createOfferRequestTO);
 
-        CreateOfferResponseTO response = providerService.createOffer(createFhOfferBE, createEdcOfferBE);
-        if (response == null) {
-            throw new PossibleXException("Couldn't create offer", HttpStatus.BAD_REQUEST);
+        log.info("CreateOfferRequestTO: {}", createOfferRequestTO);
+
+        CreateFhOfferBE createFhOfferBE = providerApiMapper.getCreateDatasetEntryDTOFromCreateOfferRequestTO(
+            createOfferRequestTO);
+        CreateEdcOfferBE createEdcOfferBE = providerApiMapper.getCreateEdcOfferDTOFromCreateOfferRequestTO(
+            createOfferRequestTO);
+
+        try {
+            return providerService.createOffer(createFhOfferBE, createEdcOfferBE);
+        } catch (EdcOfferCreationException e) {
+            throw new PossibleXException("EDC offer creation failed: " + e, HttpStatus.BAD_REQUEST);
+        } catch (FhOfferCreationException e) {
+            throw new PossibleXException("Fraunhofer catalog offer creation failed: " + e, HttpStatus.BAD_REQUEST);
         }
-        return response;
+    }
+
+    /**
+     * GET endpoint to retrieve the participant's id
+     *
+     * @return participant id
+     */
+    @Override
+    public ParticipantIdTO getParticipantId() {
+
+        return providerService.getParticipantId();
     }
 }

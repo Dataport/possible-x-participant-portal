@@ -2,6 +2,7 @@ package eu.possiblex.participantportal.business.control;
 
 import eu.possiblex.participantportal.business.entity.ConsumeOfferRequestBE;
 import eu.possiblex.participantportal.business.entity.SelectOfferRequestBE;
+import eu.possiblex.participantportal.business.entity.SelectOfferResponseBE;
 import eu.possiblex.participantportal.business.entity.edc.asset.DataAddress;
 import eu.possiblex.participantportal.business.entity.edc.asset.ionoss3extension.IonosS3DataDestination;
 import eu.possiblex.participantportal.business.entity.edc.catalog.CatalogRequest;
@@ -20,12 +21,14 @@ import eu.possiblex.participantportal.business.entity.exception.NegotiationFaile
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
 import eu.possiblex.participantportal.utilities.PossibleXException;
+import eu.possiblex.participantportal.business.entity.fh.FhCatalogOffer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -35,106 +38,83 @@ public class ConsumerServiceImpl implements ConsumerService {
 
     private final EdcClient edcClient;
 
-    public ConsumerServiceImpl(@Autowired EdcClient edcClient) {
+    private final FhCatalogClient fhCatalogClient;
+
+    private final TaskScheduler taskScheduler;
+
+    public ConsumerServiceImpl(@Autowired EdcClient edcClient, @Autowired FhCatalogClient fhCatalogClient,
+        @Autowired TaskScheduler taskScheduler) {
 
         this.edcClient = edcClient;
+        this.fhCatalogClient = fhCatalogClient;
+        this.taskScheduler = taskScheduler;
     }
 
-    /**
-     * Given a request for an offer, select it and return the details of this offer from the EDC catalog.
-     *
-     * @param request request for selecting the offer
-     * @return details of the offer
-     */
     @Override
-    public DcatDataset selectContractOffer(SelectOfferRequestBE request) {
-        try {
-            DcatCatalog catalog = queryEdcCatalog(CatalogRequest
-                    .builder()
-                    .counterPartyAddress(request.getCounterPartyAddress())
-                    .build());
-            return catalog.getDataset().get(0);
-        } catch (Exception e) {
-            throw new PossibleXException("Failed to select offer :" + e, HttpStatus.NOT_FOUND);
-        }
+    public SelectOfferResponseBE selectContractOffer(SelectOfferRequestBE request) throws OfferNotFoundException {
+        // get offer from FH Catalog and parse the attributes needed to get the offer from EDC Catalog
+        FhCatalogOffer fhCatalogOffer = fhCatalogClient.getFhCatalogOffer(request.getFhCatalogOfferId());
+        log.info("got fh catalog offer " + fhCatalogOffer);
+
+        // get offer from EDC Catalog
+        DcatCatalog edcCatalog = queryEdcCatalog(
+            CatalogRequest.builder().counterPartyAddress(fhCatalogOffer.getCounterPartyAddress()).build());
+        log.info("got edc catalog: " + edcCatalog);
+        DcatDataset edcCatalogOffer = getDatasetById(edcCatalog, fhCatalogOffer.getAssetId());
+
+        SelectOfferResponseBE response = new SelectOfferResponseBE();
+        response.setEdcOffer(edcCatalogOffer);
+        response.setCounterPartyAddress(fhCatalogOffer.getCounterPartyAddress());
+
+        return response;
     }
 
-    /**
-     * Given a request for an offer, accept the offer on the EDC and perform the transfer.
-     *
-     * @param request request for consuming an offer
-     * @exception OfferNotFoundException could not find the offer from the request
-     * @exception NegotiationFailedException failed to negotiate over the offer
-     * @exception TransferFailedException failed to transfer the data
-     * @return final result of the transfer
-     */
     @Override
-    public TransferProcess acceptContractOffer(ConsumeOfferRequestBE request) {
-        try {
-            // query catalog
-            DcatCatalog catalog = queryEdcCatalog(CatalogRequest
-                .builder()
-                .counterPartyAddress(request.getCounterPartyAddress())
-                .build());
-            DcatDataset dataset = getDatasetById(catalog, request.getOfferId());
+    public TransferProcess acceptContractOffer(ConsumeOfferRequestBE request)
+        throws OfferNotFoundException, NegotiationFailedException, TransferFailedException {
 
-            // initiate negotiation
-            NegotiationInitiateRequest negotiationInitiateRequest = NegotiationInitiateRequest
-                .builder()
-                .counterPartyAddress(request.getCounterPartyAddress())
-                .providerId(catalog.getParticipantId())
-                .offer(ContractOffer
-                    .builder()
-                    .offerId(dataset.getHasPolicy().get(0).getId())
-                    .assetId(dataset.getAssetId())
-                    .policy(dataset.getHasPolicy().get(0))
-                    .build())
-                .build();
-            ContractNegotiation contractNegotiation = negotiateOffer(negotiationInitiateRequest);
+        // query edcOffer
+        DcatCatalog edcOffer = queryEdcCatalog(
+            CatalogRequest.builder().counterPartyAddress(request.getCounterPartyAddress()).build());
+        DcatDataset dataset = getDatasetById(edcOffer, request.getEdcOfferId());
 
-            // initiate transfer
-            DataAddress dataAddress = IonosS3DataDestination
-                .builder()
-                .storage("s3-eu-central-2.ionoscloud.com")
-                .bucketName("dev-consumer-edc-bucket-possible-31952746")
-                .path("s3HatGeklappt/")
-                .keyName("myKey")
-                .build();
-            TransferRequest transferRequest = TransferRequest
-                .builder()
-                .connectorId(catalog.getParticipantId())
-                .counterPartyAddress(request.getCounterPartyAddress())
-                .assetId(dataset.getAssetId())
-                .contractId(contractNegotiation.getContractAgreementId())
-                .dataDestination(dataAddress)
-                .build();
-            return performTransfer(transferRequest);
-        } catch (Exception e) {
-            throw new PossibleXException("Failed to accept offer with offerId" + request.getOfferId() + ": " + e, HttpStatus.NOT_FOUND);
-        }
+        // initiate negotiation
+        NegotiationInitiateRequest negotiationInitiateRequest = NegotiationInitiateRequest.builder()
+            .counterPartyAddress(request.getCounterPartyAddress()).providerId(edcOffer.getParticipantId()).offer(
+                ContractOffer.builder().offerId(dataset.getHasPolicy().get(0).getId()).assetId(dataset.getAssetId())
+                    .policy(dataset.getHasPolicy().get(0)).build()).build();
+        ContractNegotiation contractNegotiation = negotiateOffer(negotiationInitiateRequest);
+
+        // initiate transfer
+        DataAddress dataAddress = IonosS3DataDestination.builder().storage("s3-eu-central-2.ionoscloud.com")
+            .bucketName("dev-consumer-edc-bucket-possible-31952746").path("s3HatGeklappt/").keyName("myKey").build();
+        TransferRequest transferRequest = TransferRequest.builder().connectorId(edcOffer.getParticipantId())
+            .counterPartyAddress(request.getCounterPartyAddress()).assetId(dataset.getAssetId())
+            .contractId(contractNegotiation.getContractAgreementId()).dataDestination(dataAddress).build();
+        return performTransfer(transferRequest);
     }
 
     private DcatCatalog queryEdcCatalog(CatalogRequest catalogRequest) {
-        // query catalog
+
         log.info("Query Catalog with Request {}", catalogRequest);
         return edcClient.queryCatalog(catalogRequest);
     }
 
-    private DcatDataset getDatasetById(DcatCatalog catalog, String offerId) throws OfferNotFoundException {
-        List<DcatDataset> datasets = catalog.getDataset()
-            .stream()
-            .filter(d -> d.getAssetId().equals(offerId))
-            .toList();
+    private DcatDataset getDatasetById(DcatCatalog catalog, String assetId) throws OfferNotFoundException {
+
+        List<DcatDataset> datasets = catalog.getDataset().stream().filter(d -> d.getAssetId().equals(assetId)).toList();
 
         if (datasets.size() == 1) {
             return datasets.get(0);
         } else {
-            throw new OfferNotFoundException("Offer with given ID not found or ambiguous.");
+            throw new OfferNotFoundException(
+                "Offer with given ID " + assetId + " not found or ambiguous. Nr of offers: " + datasets.size());
         }
     }
 
     private ContractNegotiation negotiateOffer(NegotiationInitiateRequest negotiationInitiateRequest)
         throws NegotiationFailedException {
+
         log.info("Initiate Negotiation with Request {}", negotiationInitiateRequest);
         IdResponse negotiation = edcClient.negotiateOffer(negotiationInitiateRequest);
 
@@ -154,6 +134,7 @@ public class ConsumerServiceImpl implements ConsumerService {
     }
 
     private TransferProcess performTransfer(TransferRequest transferRequest) throws TransferFailedException {
+
         log.info("Initiate Transfer {}", transferRequest);
         IdResponse transfer = edcClient.initiateTransfer(transferRequest);
 
@@ -165,15 +146,21 @@ public class ConsumerServiceImpl implements ConsumerService {
             transferProcess = edcClient.checkTransferStatus(transfer.getId());
             log.info("Transfer Process {}", transferProcess);
             transferCheckAttempts += 1;
-            if (transferCheckAttempts >= 15 || transferProcess.getState().equals(TransferProcessState.TERMINATED)) {
-                edcClient.deprovisionTransfer(transferProcess.getId());
+            if (transferCheckAttempts >= 30 || transferProcess.getState().equals(TransferProcessState.TERMINATED)) {
+
+                deprovisionTransfer(transferProcess.getId());
                 throw new TransferFailedException("Transfer never reached COMPLETED state.");
             }
         } while (!transferProcess.getState().equals(TransferProcessState.COMPLETED));
 
-        edcClient.deprovisionTransfer(transferProcess.getId());
+        deprovisionTransfer(transferProcess.getId());
 
         return transferProcess;
+    }
+
+    private void deprovisionTransfer(String transferId) {
+
+        taskScheduler.schedule(new EdcTransferDeprovisionTask(edcClient, transferId), Instant.now().plusSeconds(5));
     }
 
     private void delayOneSecond() {

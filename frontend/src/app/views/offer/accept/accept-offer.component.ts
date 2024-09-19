@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { ApiService } from '../../../services/mgmt/api/api.service';
-import { environment } from '../../../../environments/environment';
 import { HttpErrorResponse } from '@angular/common/http';
 import { StatusMessageComponent } from '../../common-views/status-message/status-message.component';
 import { IOfferDetailsTO } from '../../../services/mgmt/api/backend';
@@ -21,8 +20,8 @@ export class AcceptOfferComponent {
     console.log("'Accept Contract Offer' button pressed");
 
     this.apiService.acceptContractOffer({
-      counterPartyAddress: environment.counter_party_address,
-      offerId: this.offer == undefined ? "" : this.offer.offerId
+      counterPartyAddress: this.offer == undefined ? "" : this.offer.counterPartyAddress,
+      edcOfferId: this.offer == undefined ? "" : this.offer.edcOfferId
     }).then(response => {
       console.log(response);
       this.acceptOfferStatusMessage.showSuccessMessage("Check console for details.", 20000);

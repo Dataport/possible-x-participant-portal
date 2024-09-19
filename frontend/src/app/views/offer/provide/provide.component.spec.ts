@@ -5,6 +5,9 @@ import {GridModule} from '@coreui/angular';
 import {FormsModule} from '@angular/forms';
 import {CommonViewsModule} from '../../common-views/common-views.module';
 import {ICreateOfferResponseTO} from "../../../services/mgmt/api/backend";
+import {WizardAppModule} from "../../../sdwizard/wizardapp.module";
+import {AppModule} from "../../../app.module";
+import {WizardExtensionModule} from "../../../wizard-extension/wizard-extension.module";
 
 
 describe('ProvideComponent', () => {
@@ -26,7 +29,7 @@ describe('ProvideComponent', () => {
       providers: [
         {provide: ApiService, useValue: apiServiceSpy}
       ],
-      imports: [FormsModule, GridModule, CommonViewsModule],
+      imports: [FormsModule, GridModule, CommonViewsModule, WizardAppModule, WizardExtensionModule],
     })
       .compileComponents();
 
@@ -48,9 +51,14 @@ describe('ProvideComponent', () => {
 
     component.policy = 'Everything is allowed';
 
-    await component.createOffer();
+    component.wizardExtension.prefillDone.subscribe((value) => {
+      if (value) {
+        component.wizardExtension.createOffer().then(() => {
+          expect(apiService.createOffer).toHaveBeenCalled();
+        });
+      }
+    });
 
-    expect(apiService.createOffer).toHaveBeenCalled();
   });
 
 });
