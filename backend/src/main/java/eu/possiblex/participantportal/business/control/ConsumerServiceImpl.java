@@ -55,7 +55,7 @@ public class ConsumerServiceImpl implements ConsumerService {
                     .build());
             return catalog.getDataset().get(0);
         } catch (Exception e) {
-            throw new PossibleXException("Failed to select offer.", HttpStatus.NOT_FOUND);
+            throw new PossibleXException("Failed to select offer :" + e, HttpStatus.NOT_FOUND);
         }
     }
 
@@ -110,7 +110,7 @@ public class ConsumerServiceImpl implements ConsumerService {
                 .build();
             return performTransfer(transferRequest);
         } catch (Exception e) {
-            throw new PossibleXException("Failed to accept offer with offerId" + request.getOfferId() + ": " + e.getMessage(), HttpStatus.NOT_FOUND);
+            throw new PossibleXException("Failed to accept offer with offerId" + request.getOfferId() + ": " + e, HttpStatus.NOT_FOUND);
         }
     }
 

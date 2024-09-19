@@ -75,7 +75,7 @@ public class ProviderServiceImpl implements ProviderService {
             IdResponse edcResponseId = createEdcOffer(requestBuilder);
             return new CreateOfferResponseTO(edcResponseId.getId(), fhResponseId.getId());
         } catch (Exception e) {
-            throw new PossibleXException("Failed to create offer: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+            throw new PossibleXException("Failed to create offer: " + e, HttpStatus.BAD_REQUEST);
         }
 
     }
@@ -111,8 +111,7 @@ public class ProviderServiceImpl implements ProviderService {
 
             return edcClient.createContractDefinition(contractDefinitionCreateRequest);
         } catch (Exception e) {
-            log.error("An error occurred: {}", e.getMessage(), e);
-            throw new EdcOfferCreationException("An error occurred: " + e.getMessage());
+            throw new EdcOfferCreationException("An error occurred during Edc offer creation: " + e.getMessage());
         }
     }
 
@@ -131,8 +130,7 @@ public class ProviderServiceImpl implements ProviderService {
             Map<String, String> auth = Map.of("Content-Type", "application/json", "Authorization", "Bearer " + fhCatalogSecretKey);
             return fhCatalogClient.addDatasetToFhCatalog(auth, dcatDataset, catalogName, "identifiers");
         } catch (Exception e) {
-            log.error("An error occurred: {}", e.getMessage(), e);
-            throw new FhOfferCreationException("An error occurred: " + e.getMessage());
+            throw new FhOfferCreationException("An error occurred during Fh offer creation: " + e.getMessage());
         }
     }
 

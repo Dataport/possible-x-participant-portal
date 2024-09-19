@@ -25,9 +25,10 @@ public class ExceptionHandlingFilter implements Filter {
             if (isPossibleXException(e)) {
                 PossibleXException ex = getPossibleXException(e);
                 ((HttpServletResponse) response).setStatus(ex.getStatus().value());
-                log.error("PossibleXException: {}", ex);
+                log.error("PossibleXException: {}", ex.getMessage(), ex);
             } else {
                 ((HttpServletResponse) response).setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+                log.error("Exception: {}", e.getMessage(), e);
             }
 
         }
