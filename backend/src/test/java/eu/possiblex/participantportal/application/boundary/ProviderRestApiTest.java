@@ -2,11 +2,11 @@ package eu.possiblex.participantportal.application.boundary;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.possiblex.participantportal.application.control.ProviderApiMapper;
-import eu.possiblex.participantportal.application.entity.CreateOfferRequestTO;
+import eu.possiblex.participantportal.application.entity.CreateServiceOfferingRequestTO;
 import eu.possiblex.participantportal.business.control.ProviderService;
 import eu.possiblex.participantportal.business.control.ProviderServiceFake;
 import eu.possiblex.participantportal.business.entity.edc.CreateEdcOfferBE;
-import eu.possiblex.participantportal.business.entity.fh.CreateFhOfferBE;
+import eu.possiblex.participantportal.business.entity.fh.CreateFhServiceOfferingBE;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import org.mockito.ArgumentCaptor;
@@ -42,9 +42,10 @@ class ProviderRestApiTest {
     private ObjectMapper objectMapper;
 
     @Test
-    void shouldReturnMessageOnCreateOffer() throws Exception {
+    void shouldReturnMessageOnCreateServiceOffering() throws Exception {
         //given
-        CreateOfferRequestTO request = objectMapper.readValue(getCreateOfferTOJsonString(), CreateOfferRequestTO.class);
+        CreateServiceOfferingRequestTO request = objectMapper.readValue(getCreateServiceOfferingTOJsonString(),
+            CreateServiceOfferingRequestTO.class);
 
         //when
         //then
@@ -53,17 +54,19 @@ class ProviderRestApiTest {
             .andExpect(jsonPath("$.edcResponseId").value(ProviderServiceFake.CREATE_OFFER_RESPONSE_ID))
             .andExpect(jsonPath("$.fhResponseId").value(ProviderServiceFake.CREATE_OFFER_RESPONSE_ID));
 
-        ArgumentCaptor<CreateFhOfferBE> createDatasetEntryCaptor = ArgumentCaptor.forClass(CreateFhOfferBE.class);
+        ArgumentCaptor<CreateFhServiceOfferingBE> createDatasetEntryCaptor = ArgumentCaptor.forClass(
+            CreateFhServiceOfferingBE.class);
         ArgumentCaptor<CreateEdcOfferBE> createEdcOfferCaptor = ArgumentCaptor.forClass(CreateEdcOfferBE.class);
 
-        verify(providerService).createOffer(createDatasetEntryCaptor.capture(), createEdcOfferCaptor.capture());
+        verify(providerService).createServiceOffering(createDatasetEntryCaptor.capture(),
+            createEdcOfferCaptor.capture());
 
-        CreateFhOfferBE createFhOfferBE = createDatasetEntryCaptor.getValue();
+        CreateFhServiceOfferingBE createFhServiceOfferingBE = createDatasetEntryCaptor.getValue();
         CreateEdcOfferBE createEdcOfferBE = createEdcOfferCaptor.getValue();
         //check if request is mapped correctly
-        assertThat(request.getPolicy()).usingRecursiveComparison().isEqualTo(createFhOfferBE.getPolicy());
-        assertEquals("Test Service Offering", createFhOfferBE.getOfferName());
-        assertEquals("This is the service offering description.", createFhOfferBE.getOfferDescription());
+        assertThat(request.getPolicy()).usingRecursiveComparison().isEqualTo(createFhServiceOfferingBE.getPolicy());
+        assertEquals("Test Service Offering", createFhServiceOfferingBE.getOfferName());
+        assertEquals("This is the service offering description.", createFhServiceOfferingBE.getOfferDescription());
         assertThat(request.getPolicy()).usingRecursiveComparison().isEqualTo(createEdcOfferBE.getPolicy());
         assertEquals(request.getFileName(), createEdcOfferBE.getFileName());
         assertEquals("Test Service Offering", createEdcOfferBE.getAssetName());
@@ -78,7 +81,7 @@ class ProviderRestApiTest {
             .andExpect(jsonPath("$.participantId").value(ProviderServiceFake.PARTICIPANT_ID));
     }
 
-    String getCreateOfferTOJsonString() {
+    String getCreateServiceOfferingTOJsonString() {
 
         return """
             {

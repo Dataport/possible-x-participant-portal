@@ -104,24 +104,6 @@ export class BaseWizardExtensionComponent {
     didField.patchValue(id);
   }
 
-  protected adaptGxShape(shapeSource: any, shapeName: string, excludedFields: string[]) {
-    if (typeof shapeSource !== 'object' || shapeSource === null) {
-      console.error("Invalid input: shape is not of expected type.");
-      return null;
-    }
-
-    shapeSource.shapes.forEach((shape: any) => {
-      if (shape.targetClassName === shapeName) {
-        shape.constraints = shape.constraints.filter((constraint: any) => {
-          return !(constraint.path.prefix === "gx" && excludedFields.includes(constraint.path.value));
-        });
-      }
-    });
-
-    console.log(shapeSource);
-    return shapeSource;
-  }
-
   private selectShape(shaclFile: ShaclFile, credentialSubjectId: string): void {
     this.shaclFile = shaclFile;
     this.filteredShapes = this.formFieldService.updateFilteredShapes(this.shaclFile);

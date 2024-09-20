@@ -10,7 +10,7 @@ import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyCreateRequest;
 import eu.possiblex.participantportal.business.entity.exception.EdcOfferCreationException;
 import eu.possiblex.participantportal.business.entity.exception.FhOfferCreationException;
-import eu.possiblex.participantportal.business.entity.fh.CreateFhOfferBE;
+import eu.possiblex.participantportal.business.entity.fh.CreateFhServiceOfferingBE;
 import eu.possiblex.participantportal.business.entity.fh.catalog.DcatDataset;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -64,15 +64,16 @@ class ProviderServiceTest {
     ObjectMapper objectMapper;
 
     @Test
-    void testCreateOffer() throws JsonProcessingException, EdcOfferCreationException, FhOfferCreationException {
+    void testCreateServiceOffering()
+        throws JsonProcessingException, EdcOfferCreationException, FhOfferCreationException {
         //given
         CreateEdcOfferBE createEdcOfferBE = CreateEdcOfferBE.builder().fileName(FILE_NAME)
             .policy(objectMapper.readValue(POLICY_JSON_STRING, Policy.class)).build();
-        CreateFhOfferBE createFhOfferBE = CreateFhOfferBE.builder()
+        CreateFhServiceOfferingBE createFhServiceOfferingBE = CreateFhServiceOfferingBE.builder()
             .policy(objectMapper.readValue(POLICY_JSON_STRING, Policy.class)).build();
 
         //when
-        var response = providerService.createOffer(createFhOfferBE, createEdcOfferBE);
+        var response = providerService.createServiceOffering(createFhServiceOfferingBE, createEdcOfferBE);
 
         //then
         ArgumentCaptor<AssetCreateRequest> assetCreateRequestCaptor = forClass(AssetCreateRequest.class);

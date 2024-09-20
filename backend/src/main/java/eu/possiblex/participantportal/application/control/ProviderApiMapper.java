@@ -1,51 +1,33 @@
 package eu.possiblex.participantportal.application.control;
 
-import eu.possiblex.participantportal.application.entity.CreateOfferRequestTO;
+import eu.possiblex.participantportal.application.entity.CreateDataOfferingRequestTO;
+import eu.possiblex.participantportal.application.entity.CreateServiceOfferingRequestTO;
 import eu.possiblex.participantportal.business.entity.edc.CreateEdcOfferBE;
-import eu.possiblex.participantportal.business.entity.fh.CreateFhOfferBE;
-import eu.possiblex.participantportal.business.entity.selfdescriptions.PojoCredentialSubject;
-import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.serviceofferings.GxServiceOfferingCredentialSubject;
+import eu.possiblex.participantportal.business.entity.fh.CreateFhServiceOfferingBE;
+import eu.possiblex.participantportal.business.entity.fh.catalog.CreateFhDataOfferingBE;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Named;
-
-import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface ProviderApiMapper {
 
-    @Mapping(target = "assetName", source = "credentialSubjectList", qualifiedByName = "customOfferNameMapping")
-    @Mapping(target = "assetDescription", source = "credentialSubjectList", qualifiedByName = "customOfferDescriptionMapping")
+    @Mapping(target = "assetName", source = "serviceOfferingCredentialSubject.name")
+    @Mapping(target = "assetDescription", source = "serviceOfferingCredentialSubject.description")
+    @Mapping(target = "fileName", constant = "")
+    @Mapping(target = "policy", source = "policy")
+    CreateEdcOfferBE getCreateEdcOfferBE(CreateServiceOfferingRequestTO createServiceOfferingRequestTO);
+
+    @Mapping(target = "assetName", source = "serviceOfferingCredentialSubject.name")
+    @Mapping(target = "assetDescription", source = "serviceOfferingCredentialSubject.description")
     @Mapping(target = "fileName", source = "fileName")
     @Mapping(target = "policy", source = "policy")
-    CreateEdcOfferBE getCreateEdcOfferDTOFromCreateOfferRequestTO(CreateOfferRequestTO createOfferRequestTO);
+    CreateEdcOfferBE getCreateEdcOfferBE(CreateDataOfferingRequestTO createDataOfferingRequestTO);
 
-    @Mapping(target = "offerName", source = "credentialSubjectList", qualifiedByName = "customOfferNameMapping")
-    @Mapping(target = "offerDescription", source = "credentialSubjectList", qualifiedByName = "customOfferDescriptionMapping")
-    @Mapping(target = "policy", source = "policy")
-    CreateFhOfferBE getCreateDatasetEntryDTOFromCreateOfferRequestTO(CreateOfferRequestTO createOfferRequestTO);
+    @Mapping(target = "serviceOfferingCredentialSubject", source = "serviceOfferingCredentialSubject")
+    CreateFhServiceOfferingBE getCreateFhServiceOfferingBE(
+        CreateServiceOfferingRequestTO createServiceOfferingRequestTO);
 
-    @Named("customOfferNameMapping")
-    default String customOfferNameMapping(List<PojoCredentialSubject> credentialSubjectList) {
-
-        GxServiceOfferingCredentialSubject credentialSubject = CredentialSubjectUtils.findFirstCredentialSubjectByType(
-            GxServiceOfferingCredentialSubject.class, credentialSubjectList);
-
-        if (credentialSubject == null) {
-            return "";
-        }
-        return credentialSubject.getName();
-    }
-
-    @Named("customOfferDescriptionMapping")
-    default String customOfferDescriptionMapping(List<PojoCredentialSubject> credentialSubjectList) {
-
-        GxServiceOfferingCredentialSubject credentialSubject = CredentialSubjectUtils.findFirstCredentialSubjectByType(
-            GxServiceOfferingCredentialSubject.class, credentialSubjectList);
-
-        if (credentialSubject == null) {
-            return "";
-        }
-        return credentialSubject.getDescription();
-    }
+    @Mapping(target = "serviceOfferingCredentialSubject", source = "serviceOfferingCredentialSubject")
+    @Mapping(target = "dataResourceCredentialSubject", source = "dataResourceCredentialSubject")
+    CreateFhDataOfferingBE getCreateFhDataOfferingBE(CreateDataOfferingRequestTO createDataOfferingRequestTO);
 }

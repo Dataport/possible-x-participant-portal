@@ -1,9 +1,8 @@
 package eu.possiblex.participantportal.application.control;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.possiblex.participantportal.application.entity.CreateOfferRequestTO;
+import eu.possiblex.participantportal.application.entity.CreateServiceOfferingRequestTO;
 import eu.possiblex.participantportal.business.entity.selfdescriptions.PojoCredentialSubject;
 import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.serviceofferings.GxServiceOfferingCredentialSubject;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,8 +24,8 @@ class CredentialSubjectUtilsTest {
     @Test
     void testFindAllCredentialSubjectsByType() throws JsonProcessingException {
 
-        CreateOfferRequestTO requestTO = objectMapper.readValue(getCreateOfferTOJsonString(),
-            CreateOfferRequestTO.class);
+        CreateServiceOfferingRequestTO requestTO = objectMapper.readValue(getCreateOfferTOJsonString(),
+            CreateServiceOfferingRequestTO.class);
         List<PojoCredentialSubject> credentialSubjectList = requestTO.getCredentialSubjectList();
 
         List<GxServiceOfferingCredentialSubject> serviceOfferingCredentialSubjects = CredentialSubjectUtils.findAllCredentialSubjectsByType(
@@ -39,8 +38,8 @@ class CredentialSubjectUtilsTest {
     @Test
     void testFindFirstCredentialSubjectByType() throws JsonProcessingException {
 
-        CreateOfferRequestTO requestTO = objectMapper.readValue(getCreateOfferTOJsonString(),
-            CreateOfferRequestTO.class);
+        CreateServiceOfferingRequestTO requestTO = objectMapper.readValue(getCreateOfferTOJsonString(),
+            CreateServiceOfferingRequestTO.class);
         List<PojoCredentialSubject> credentialSubjectList = requestTO.getCredentialSubjectList();
 
         GxServiceOfferingCredentialSubject serviceOfferingCredentialSubject = CredentialSubjectUtils.findFirstCredentialSubjectByType(

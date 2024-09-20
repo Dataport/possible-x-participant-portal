@@ -1,14 +1,16 @@
 package eu.possiblex.participantportal.application.boundary;
 
 import eu.possiblex.participantportal.application.control.ProviderApiMapper;
-import eu.possiblex.participantportal.application.entity.CreateOfferRequestTO;
+import eu.possiblex.participantportal.application.entity.CreateDataOfferingRequestTO;
 import eu.possiblex.participantportal.application.entity.CreateOfferResponseTO;
+import eu.possiblex.participantportal.application.entity.CreateServiceOfferingRequestTO;
 import eu.possiblex.participantportal.application.entity.ParticipantIdTO;
 import eu.possiblex.participantportal.business.control.ProviderService;
 import eu.possiblex.participantportal.business.entity.edc.CreateEdcOfferBE;
 import eu.possiblex.participantportal.business.entity.exception.EdcOfferCreationException;
 import eu.possiblex.participantportal.business.entity.exception.FhOfferCreationException;
-import eu.possiblex.participantportal.business.entity.fh.CreateFhOfferBE;
+import eu.possiblex.participantportal.business.entity.fh.CreateFhServiceOfferingBE;
+import eu.possiblex.participantportal.business.entity.fh.catalog.CreateFhDataOfferingBE;
 import eu.possiblex.participantportal.utilities.PossibleXException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +18,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 /**
  * REST controller for managing provider-related operations.
@@ -46,21 +47,45 @@ public class ProviderRestApiImpl implements ProviderRestApi {
     /**
      * POST endpoint to create an offer.
      *
-     * @param createOfferRequestTO the create offer request transfer object
+     * @param createServiceOfferingRequestTO the create offering request transfer object
      * @return the response transfer object containing offer IDs
      */
     @Override
-    public CreateOfferResponseTO createOffer(@RequestBody CreateOfferRequestTO createOfferRequestTO) {
+    public CreateOfferResponseTO createServiceOffering(
+        @RequestBody CreateServiceOfferingRequestTO createServiceOfferingRequestTO) {
 
-        log.info("CreateOfferRequestTO: {}", createOfferRequestTO);
+        log.info("CreateServiceOfferingRequestTO: {}", createServiceOfferingRequestTO);
 
-        CreateFhOfferBE createFhOfferBE = providerApiMapper.getCreateDatasetEntryDTOFromCreateOfferRequestTO(
-            createOfferRequestTO);
-        CreateEdcOfferBE createEdcOfferBE = providerApiMapper.getCreateEdcOfferDTOFromCreateOfferRequestTO(
-            createOfferRequestTO);
+        CreateFhServiceOfferingBE createFhServiceOfferingBE = providerApiMapper.getCreateFhServiceOfferingBE(
+            createServiceOfferingRequestTO);
+        CreateEdcOfferBE createEdcOfferBE = providerApiMapper.getCreateEdcOfferBE(createServiceOfferingRequestTO);
 
         try {
-            return providerService.createOffer(createFhOfferBE, createEdcOfferBE);
+            return providerService.createServiceOffering(createFhServiceOfferingBE, createEdcOfferBE);
+        } catch (EdcOfferCreationException e) {
+            throw new PossibleXException("EDC offer creation failed: " + e, HttpStatus.BAD_REQUEST);
+        } catch (FhOfferCreationException e) {
+            throw new PossibleXException("Fraunhofer catalog offer creation failed: " + e, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    /**
+     * POST endpoint to create a data offering
+     *
+     * @param createDataOfferingRequestTO the create offering request transfer object
+     * @return create offer response object
+     */
+    @Override
+    public CreateOfferResponseTO createDataOffering(CreateDataOfferingRequestTO createDataOfferingRequestTO) {
+
+        log.info("CreateDataOfferingRequestTO: {}", createDataOfferingRequestTO);
+
+        CreateFhDataOfferingBE createFhDataOfferingBE = providerApiMapper.getCreateFhDataOfferingBE(
+            createDataOfferingRequestTO);
+        CreateEdcOfferBE createEdcOfferBE = providerApiMapper.getCreateEdcOfferBE(createDataOfferingRequestTO);
+
+        try {
+            return providerService.createDataOffering(createFhDataOfferingBE, createEdcOfferBE);
         } catch (EdcOfferCreationException e) {
             throw new PossibleXException("EDC offer creation failed: " + e, HttpStatus.BAD_REQUEST);
         } catch (FhOfferCreationException e) {

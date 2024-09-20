@@ -118,6 +118,7 @@ export class OfferingWizardExtensionComponent {
     this.offerCreationStatusMessage.hideAllMessages();
 
     let gxOfferingJsonSd: IGxServiceOfferingCredentialSubject = this.gxServiceOfferingWizard.generateJsonCs();
+    gxOfferingJsonSd["gx:policy"] = [JSON.stringify(this.policyMap[this.selectedPolicy].policy)];
 
     let createOfferTo: any = {
       credentialSubjectList: [
@@ -129,6 +130,10 @@ export class OfferingWizardExtensionComponent {
 
     if (this.isOfferingDataOffering()) {
       let gxDataResourceJsonSd: IGxDataResourceCredentialSubject = this.gxDataResourceWizard.generateJsonCs();
+      gxDataResourceJsonSd["gx:name"] = gxOfferingJsonSd["gx:name"];
+      gxOfferingJsonSd["gx:description"] = gxOfferingJsonSd["gx:description"];
+      gxOfferingJsonSd["gx:policy"] = gxOfferingJsonSd["gx:policy"];
+
       createOfferTo.credentialSubjectList.push(gxDataResourceJsonSd);
     }
 

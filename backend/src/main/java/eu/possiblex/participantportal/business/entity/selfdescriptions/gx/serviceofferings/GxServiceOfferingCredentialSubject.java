@@ -16,7 +16,10 @@
 
 package eu.possiblex.participantportal.business.entity.selfdescriptions.gx.serviceofferings;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import eu.possiblex.participantportal.business.entity.selfdescriptions.PojoCredentialSubject;
@@ -38,7 +41,7 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true, value = { "type", "@context" }, allowGetters = true)
 public class GxServiceOfferingCredentialSubject extends PojoCredentialSubject {
-    
+
     @Getter(AccessLevel.NONE)
     public static final String TYPE_NAMESPACE = "gx";
 
@@ -57,7 +60,10 @@ public class GxServiceOfferingCredentialSubject extends PojoCredentialSubject {
     @NotNull
     private NodeKindIRITypeId providedBy;
 
-    // aggregationOf and dependsOn are not yet mapped as they are optional
+    @JsonProperty("gs:aggregationOf")
+    private List<NodeKindIRITypeId> aggregationOf;
+
+    // dependsOn not yet mapped as it is optional
 
     @JsonProperty("gx:termsAndConditions")
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)

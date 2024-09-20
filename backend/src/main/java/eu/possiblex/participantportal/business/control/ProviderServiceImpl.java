@@ -9,8 +9,9 @@ import eu.possiblex.participantportal.business.entity.edc.contractdefinition.Con
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyCreateRequest;
 import eu.possiblex.participantportal.business.entity.exception.EdcOfferCreationException;
 import eu.possiblex.participantportal.business.entity.exception.FhOfferCreationException;
-import eu.possiblex.participantportal.business.entity.fh.CreateFhOfferBE;
+import eu.possiblex.participantportal.business.entity.fh.CreateFhServiceOfferingBE;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
+import eu.possiblex.participantportal.business.entity.fh.catalog.CreateFhDataOfferingBE;
 import eu.possiblex.participantportal.business.entity.fh.catalog.DcatDataset;
 import eu.possiblex.participantportal.utilities.PossibleXException;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +20,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -50,35 +50,67 @@ public class ProviderServiceImpl implements ProviderService {
      */
     @Autowired
     public ProviderServiceImpl(EdcClient edcClient, FhCatalogClient fhCatalogClient) {
+
         this.edcClient = edcClient;
         this.fhCatalogClient = fhCatalogClient;
     }
 
     /**
-     * Creates an offer by interacting with both FH catalog and EDC.
+     * Creates a service offering by interacting with both FH catalog and EDC.
      *
-     * @param createFhOfferBE the FH offer business entity
+     * @param createFhServiceOfferingBE the FH offer business entity
      * @param createEdcOfferBE the EDC offer business entity
      * @return the response transfer object containing offer IDs
-     * @throws FhOfferCreationException if FH offer creation fails
-     * @throws EdcOfferCreationException if EDC offer creation fails
      */
     @Override
-    public CreateOfferResponseTO createOffer(CreateFhOfferBE createFhOfferBE, CreateEdcOfferBE createEdcOfferBE) {
-
+    public CreateOfferResponseTO createServiceOffering(CreateFhServiceOfferingBE createFhServiceOfferingBE,
+        CreateEdcOfferBE createEdcOfferBE) {
 
         String assetId = generateAssetId();
-        ProviderRequestBuilder requestBuilder = new ProviderRequestBuilder(assetId, createFhOfferBE, createEdcOfferBE,
-            edcProtocolUrl);
+
+        ProviderRequestBuilder requestBuilder = new ProviderRequestBuilder(assetId, createFhServiceOfferingBE,
+            createEdcOfferBE, edcProtocolUrl);
 
         try {
             FhCatalogIdResponse fhResponseId = createFhCatalogOffer(requestBuilder);
             IdResponse edcResponseId = createEdcOffer(requestBuilder);
             return new CreateOfferResponseTO(edcResponseId.getId(), fhResponseId.getId());
         } catch (EdcOfferCreationException e) {
-            throw new PossibleXException("Failed to create offer. EdcOfferCreationException: " + e, HttpStatus.BAD_REQUEST);
+            throw new PossibleXException("Failed to create offer. EdcOfferCreationException: " + e,
+                HttpStatus.BAD_REQUEST);
         } catch (FhOfferCreationException e) {
-            throw new PossibleXException("Failed to create offer. FhOfferCreationException: " + e, HttpStatus.BAD_REQUEST);
+            throw new PossibleXException("Failed to create offer. FhOfferCreationException: " + e,
+                HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            throw new PossibleXException("Failed to create offer. Other Exception: " + e);
+        }
+    }
+
+    /**
+     * Creates a data offering by interacting with both FH catalog and EDC.
+     *
+     * @param createFhDataOfferingBE the FH offer business entity
+     * @param createEdcOfferBE the EDC offer business entity
+     * @return the response transfer object containing offer IDs
+     */
+    @Override
+    public CreateOfferResponseTO createDataOffering(CreateFhDataOfferingBE createFhDataOfferingBE,
+        CreateEdcOfferBE createEdcOfferBE) {
+
+        String assetId = generateAssetId();
+        ProviderRequestBuilder requestBuilder = new ProviderRequestBuilder(assetId, createFhDataOfferingBE,
+            createEdcOfferBE, edcProtocolUrl);
+
+        try {
+            FhCatalogIdResponse fhResponseId = createFhCatalogOffer(requestBuilder);
+            IdResponse edcResponseId = createEdcOffer(requestBuilder);
+            return new CreateOfferResponseTO(edcResponseId.getId(), fhResponseId.getId());
+        } catch (EdcOfferCreationException e) {
+            throw new PossibleXException("Failed to create offer. EdcOfferCreationException: " + e,
+                HttpStatus.BAD_REQUEST);
+        } catch (FhOfferCreationException e) {
+            throw new PossibleXException("Failed to create offer. FhOfferCreationException: " + e,
+                HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             throw new PossibleXException("Failed to create offer. Other Exception: " + e);
         }
@@ -140,7 +172,9 @@ public class ProviderServiceImpl implements ProviderService {
      * @return the ID response from FH catalog
      * @throws FhOfferCreationException if FH offer creation fails
      */
-    private FhCatalogIdResponse createFhCatalogOffer(ProviderRequestBuilder requestBuilder) throws FhOfferCreationException {
+    private FhCatalogIdResponse createFhCatalogOffer(ProviderRequestBuilder requestBuilder)
+        throws FhOfferCreationException {
+
         try {
             DcatDataset dcatDataset = requestBuilder.buildFhCatalogOfferRequest();
             log.info("Adding Dataset to Fraunhofer Catalog {}", dcatDataset);
