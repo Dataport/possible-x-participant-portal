@@ -16,54 +16,65 @@
 
 <div class="mb-3 flex-1">
   <div class="flex pb-3 text-3xl font-bold text-brand-800">
-      Gaia-X Service Offering Fields
+    Gaia-X Service Offering Fields
   </div>
   <app-base-wizard-extension #gxServiceOfferingWizard></app-base-wizard-extension>
 
-  <div *ngIf="isDataOffering">
-    <div class="flex pb-3 text-3xl font-bold text-brand-800">
-        Gaia-X Data Resource Fields
-    </div>
-    <app-base-wizard-extension #gxDataResourceWizard></app-base-wizard-extension>
-  </div>
-
-  <div class="flex pb-3 text-3xl font-bold text-brand-800">
-      POSSIBLE-specific Fields
-  </div>
-
-  <label class="form-label">Policy*</label>
+  <label class="form-label">Policy* <span class="field-key">&nbsp;&nbsp;policy</span></label>
   <select [(ngModel)]="selectedPolicy" class="form-select rounded-none w-full">
     <option disabled hidden selected value="">Please select ...</option>
     <option *ngFor="let policy of getPolicyNames()" [value]="policy">{{ policy }}</option>
   </select>
+  <div cFormText style="color: #7f7f7f;">
+    A list of policy expressed using a DSL (e.g., Rego or ODRL) (access control, throttling, usage, retention,
+    …).
+  </div>
   <div *ngIf="isInvalidPolicy" class="text-error pt-2">
     <small>Policy is required.</small>
   </div>
   <br>
   <div *ngIf="selectedPolicy">
     <label>Policy Details</label>
-    <textarea [value]="getPolicyDetails(selectedPolicy)" readonly class="form-control" rows="10" disabled></textarea>
+    <textarea [value]="getPolicyDetails(selectedPolicy)" class="form-control" disabled readonly rows="10"></textarea>
     <br>
   </div>
-  <label class="form-label">File Name*</label>
-  <input [(ngModel)]="selectedFileName" type="text" class="form-control rounded-none w-full" placeholder="e.g. MyFile.json">
-  <div *ngIf="isInvalidFileName" class="text-error pt-2">
-    <small>Filename is required.</small>
+
+  <div *ngIf="isDataOffering">
+    <div class="flex pb-3 text-3xl font-bold text-brand-800">
+      Gaia-X Data Resource Fields
+    </div>
+    <app-base-wizard-extension #gxDataResourceWizard></app-base-wizard-extension>
+
+    <br/>
+
+    <div class="flex pb-3 text-3xl font-bold text-brand-800">
+      POSSIBLE-specific Fields
+    </div>
+    <label class="form-label">File Name*</label>
+    <input [(ngModel)]="selectedFileName" class="form-control rounded-none w-full" placeholder="e.g. MyFile.json"
+           type="text">
+    <div cFormText style="color: #7f7f7f;">
+      Name of the file to transfer.
+    </div>
+    <div *ngIf="isInvalidFileName" class="text-error pt-2">
+      <small>Filename is required.</small>
+    </div>
   </div>
 </div>
 
 <div class="text-right mt-3t">
-    <button [disabled]="isWizardFormInvalid() || isPossibleSpecificFormInvalid()" cButton color="primary" (click)="createOffer()" shape="rounded-0"
-        type="submit">
-        Create Offer
-    </button>
+  <button (click)="createOffer()" [disabled]="isWizardFormInvalid() || isPossibleSpecificFormInvalid()" cButton
+          color="primary" shape="rounded-0"
+          type="submit">
+    Create Offer
+  </button>
 </div>
 
 <div class="flex justify-center mt-3">
-    <app-status-message
-          #offerCreationStatusMessage
-          [errorMessage]="'Offer creation failed.'"
-          [infoMessage]="'Offer creation ongoing.'"
-          [successMessage]="'Offer creation successful.'">
-        </app-status-message>
+  <app-status-message
+    #offerCreationStatusMessage
+    [errorMessage]="'Offer creation failed.'"
+    [infoMessage]="'Offer creation ongoing.'"
+    [successMessage]="'Offer creation successful.'">
+  </app-status-message>
 </div>
