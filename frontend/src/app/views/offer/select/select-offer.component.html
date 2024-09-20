@@ -1,20 +1,22 @@
 <div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
   <div class="p-6 w-full max-w-3xl"> <!-- Centered form container with fixed max width -->
-    <div class="form-group row pb-6 min-h-32 justify-start">
-      <form [formGroup]="selectionForm">
-        <label class="form-label">Offer ID (as provided in Fraunhofer Catalogue):</label>
-        <input formControlName="offerId" type="text" placeholder="e.g. stadtwerke-netz-44ff-b685" class="form-control rounded-none">
+    <form [formGroup]="selectionForm" (submit)="selectOffer(selectionForm.controls.offerId.value)">
+      <div class="form-group row pb-6 min-h-32 justify-start">
+        <div class="max-h-20">
+          <label class="form-label">Offer ID (as provided in Fraunhofer Catalogue):</label>
+          <input formControlName="offerId" type="text" placeholder="e.g. stadtwerke-netz-44ff-b685" class="form-control rounded-none">
+        </div>
         <div *ngIf="isInvalidOfferId" class="text-warning pt-2">
           The Offer ID can not contain special characters other than - (hyphen).
         </div>
-      </form>
-    </div>
+      </div>
 
-    <div class="flex justify-center">
-      <button (click)="selectOffer()" [disabled]="selectionForm.invalid" cButton color="primary" shape="rounded-0" type="submit">
-        Select offer
-      </button>
-    </div>
+      <div class="flex justify-center">
+        <button [disabled]="selectionForm.invalid" cButton color="primary" shape="rounded-0" type="submit">
+          Select offer
+        </button>
+      </div>
+    </form>
 
     <div class="flex justify-center mt-3">
       <app-status-message

@@ -30,7 +30,6 @@ interface SelectionFormModel {
 export class SelectOfferComponent implements ControlValueAccessor {
   @ViewChild('queryCatalogStatusMessage') private queryCatalogStatusMessage!: StatusMessageComponent;
   selectionForm: FormGroup<SelectionFormModel>;
-  selectedOfferId = '';
   @Output() selectedOffer = new EventEmitter<IOfferDetailsTO>();
 
   private onChange = (offerId: string) => {};
@@ -42,21 +41,21 @@ export class SelectOfferComponent implements ControlValueAccessor {
     });
   }
 
-  async selectOffer() {
+  async selectOffer(offerId: string) {
     this.queryCatalogStatusMessage.showInfoMessage();
     this.apiService.selectContractOffer({
-      fhCatalogOfferId: this.selectionForm.controls.offerId.value
+      fhCatalogOfferId: offerId
     }).then(response => {
       console.log(response);
-      this.queryCatalogStatusMessage.showSuccessMessage("Check console for details.", 20000);
+      this.queryCatalogStatusMessage.showSuccessMessage("Check console for details.");
       this.selectedOffer.emit(response);
     }).catch((e: HttpErrorResponse) => {
-      this.queryCatalogStatusMessage.showErrorMessage(e.error.detail, 20000);
+      this.queryCatalogStatusMessage.showErrorMessage(e.error.detail);
     });
   }
 
-  registerOnChange(fn: (offerId: string) => void): void {
-    this.onChange = fn;
+  registerOnChange(fn: (value: Partial<{ offerId: string; }>) => void ): void {
+    this.selectionForm.valueChanges.subscribe(fn);
   }
 
   registerOnTouched(fn: () => void): void {
@@ -64,7 +63,7 @@ export class SelectOfferComponent implements ControlValueAccessor {
   }
 
   writeValue(offerId: string): void {
-    this.selectedOfferId = offerId;
+    offerId ? this.selectionForm.controls.offerId.setValue(offerId) : this.selectionForm.reset();
   }
 
   get isInvalidOfferId(): boolean {

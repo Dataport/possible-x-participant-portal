@@ -49,13 +49,13 @@ export class OfferingWizardExtensionComponent {
 
   public async loadShape(offerType: string, serviceOfferingId: string, dataResourceId: string): Promise<void> {
     this.isDataOffering = offerType === "data";
-    
+
     this.prefillDone.next(false);
-    console.log("Loading service offering shape"); 
+    console.log("Loading service offering shape");
     await this.gxServiceOfferingWizard.loadShape(this.apiService.getGxServiceOfferingShape(), serviceOfferingId);
 
     if(this.isOfferingDataOffering()) {
-      console.log("Loading data resource shape"); 
+      console.log("Loading data resource shape");
       await this.gxDataResourceWizard.loadShape(this.apiService.getGxDataResourceShape(), dataResourceId);
     }
   }
@@ -129,16 +129,16 @@ export class OfferingWizardExtensionComponent {
     }
 
     console.log(createOfferTo);
-    
+
     this.apiService.createOffer(createOfferTo).then(response => {
       console.log(response);
-      this.offerCreationStatusMessage.showSuccessMessage("", 20000);
+      this.offerCreationStatusMessage.showSuccessMessage("");
     }).catch((e: HttpErrorResponse) => {
       this.offerCreationStatusMessage.showErrorMessage(e.error.detail);
     }).catch(_ => {
       this.offerCreationStatusMessage.showErrorMessage("Unbekannter Fehler");
     });
-    
+
   }
 
   protected getPolicyNames() {
@@ -160,7 +160,7 @@ export class OfferingWizardExtensionComponent {
   protected isWizardFormInvalid(): boolean {
     let serviceOfferingWizardInvalid = this.gxServiceOfferingWizard?.isWizardFormInvalid();
     let dataResourceWizardInvalid = this.isOfferingDataOffering() ? this.gxDataResourceWizard?.isWizardFormInvalid() : false;
-  
+
     return serviceOfferingWizardInvalid || dataResourceWizardInvalid;
   }
 
