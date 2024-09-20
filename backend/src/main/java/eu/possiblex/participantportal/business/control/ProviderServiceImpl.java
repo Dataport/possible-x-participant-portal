@@ -9,10 +9,13 @@ import eu.possiblex.participantportal.business.entity.edc.contractdefinition.Con
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyCreateRequest;
 import eu.possiblex.participantportal.business.entity.exception.EdcOfferCreationException;
 import eu.possiblex.participantportal.business.entity.exception.FhOfferCreationException;
+import eu.possiblex.participantportal.business.entity.fh.CreateFhDataOfferingBE;
 import eu.possiblex.participantportal.business.entity.fh.CreateFhServiceOfferingBE;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
-import eu.possiblex.participantportal.business.entity.fh.catalog.CreateFhDataOfferingBE;
-import eu.possiblex.participantportal.business.entity.fh.catalog.DcatDataset;
+import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.datatypes.NodeKindIRITypeId;
+import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.resources.GxDataResourceCredentialSubject;
+import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.serviceofferings.GxServiceOfferingCredentialSubject;
+import eu.possiblex.participantportal.business.entity.selfdescriptions.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.utilities.PossibleXException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +45,8 @@ public class ProviderServiceImpl implements ProviderService {
     @Value("${participant-id}")
     private String participantId;
 
+    private ProviderServiceMapper providerServiceMapper;
+
     /**
      * Constructor for ProviderServiceImpl.
      *
@@ -49,7 +54,8 @@ public class ProviderServiceImpl implements ProviderService {
      * @param fhCatalogClient the FH catalog client
      */
     @Autowired
-    public ProviderServiceImpl(EdcClient edcClient, FhCatalogClient fhCatalogClient) {
+    public ProviderServiceImpl(EdcClient edcClient, FhCatalogClient fhCatalogClient,
+        ProviderServiceMapper providerServiceMapper) {
 
         this.edcClient = edcClient;
         this.fhCatalogClient = fhCatalogClient;
@@ -67,13 +73,23 @@ public class ProviderServiceImpl implements ProviderService {
         CreateEdcOfferBE createEdcOfferBE) {
 
         String assetId = generateAssetId();
+        String serviceOfferingId = UUID.randomUUID().toString();
 
-        ProviderRequestBuilder requestBuilder = new ProviderRequestBuilder(assetId, createFhServiceOfferingBE,
-            createEdcOfferBE, edcProtocolUrl);
+        GxServiceOfferingCredentialSubject serviceOfferingCredentialSubject = createFhServiceOfferingBE.getServiceOfferingCredentialSubject();
+        serviceOfferingCredentialSubject.setId(serviceOfferingId);
+
+        PxExtendedServiceOfferingCredentialSubject pxExtendedServiceOfferingCs = providerServiceMapper.getExtendedServiceOfferingCredentialSubject(
+            serviceOfferingCredentialSubject, assetId, edcProtocolUrl);
+
+        return createFhCatalogOfferAndEdcOffer(createEdcOfferBE, assetId, pxExtendedServiceOfferingCs);
+    }
+
+    private CreateOfferResponseTO createFhCatalogOfferAndEdcOffer(CreateEdcOfferBE createEdcOfferBE, String assetId,
+        PxExtendedServiceOfferingCredentialSubject pxExtendedServiceOfferingCs) {
 
         try {
-            FhCatalogIdResponse fhResponseId = createFhCatalogOffer(requestBuilder);
-            IdResponse edcResponseId = createEdcOffer(requestBuilder);
+            FhCatalogIdResponse fhResponseId = createFhCatalogOffer(pxExtendedServiceOfferingCs);
+            IdResponse edcResponseId = createEdcOffer(assetId, createEdcOfferBE);
             return new CreateOfferResponseTO(edcResponseId.getId(), fhResponseId.getId());
         } catch (EdcOfferCreationException e) {
             throw new PossibleXException("Failed to create offer. EdcOfferCreationException: " + e,
@@ -98,22 +114,19 @@ public class ProviderServiceImpl implements ProviderService {
         CreateEdcOfferBE createEdcOfferBE) {
 
         String assetId = generateAssetId();
-        ProviderRequestBuilder requestBuilder = new ProviderRequestBuilder(assetId, createFhDataOfferingBE,
-            createEdcOfferBE, edcProtocolUrl);
+        String serviceOfferingId = UUID.randomUUID().toString();
+        String datasetId = UUID.randomUUID().toString();
 
-        try {
-            FhCatalogIdResponse fhResponseId = createFhCatalogOffer(requestBuilder);
-            IdResponse edcResponseId = createEdcOffer(requestBuilder);
-            return new CreateOfferResponseTO(edcResponseId.getId(), fhResponseId.getId());
-        } catch (EdcOfferCreationException e) {
-            throw new PossibleXException("Failed to create offer. EdcOfferCreationException: " + e,
-                HttpStatus.BAD_REQUEST);
-        } catch (FhOfferCreationException e) {
-            throw new PossibleXException("Failed to create offer. FhOfferCreationException: " + e,
-                HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            throw new PossibleXException("Failed to create offer. Other Exception: " + e);
-        }
+        GxServiceOfferingCredentialSubject serviceOfferingCredentialSubject = createFhDataOfferingBE.getServiceOfferingCredentialSubject();
+        serviceOfferingCredentialSubject.setId(serviceOfferingId);
+
+        GxDataResourceCredentialSubject dataResourceCredentialSubject = createFhDataOfferingBE.getDataResourceCredentialSubject();
+        dataResourceCredentialSubject.setId(datasetId);
+        dataResourceCredentialSubject.setExposedThrough(new NodeKindIRITypeId(serviceOfferingId));
+
+        PxExtendedServiceOfferingCredentialSubject pxExtendedServiceOfferingCs = providerServiceMapper.getExtendedServiceOfferingCredentialSubject(
+            serviceOfferingCredentialSubject, dataResourceCredentialSubject, assetId, edcProtocolUrl);
+        return createFhCatalogOfferAndEdcOffer(createEdcOfferBE, assetId, pxExtendedServiceOfferingCs);
     }
 
     /**
@@ -140,11 +153,15 @@ public class ProviderServiceImpl implements ProviderService {
     /**
      * Creates an EDC offer by building and sending the necessary requests.
      *
-     * @param requestBuilder the request builder
+     * @param assetId the asset ID
+     * @param createEdcOfferBE the EDC offer business entity
      * @return the ID response from EDC
      * @throws EdcOfferCreationException if EDC offer creation fails
      */
-    private IdResponse createEdcOffer(ProviderRequestBuilder requestBuilder) throws EdcOfferCreationException {
+    private IdResponse createEdcOffer(String assetId, CreateEdcOfferBE createEdcOfferBE)
+        throws EdcOfferCreationException {
+
+        ProviderRequestBuilder requestBuilder = new ProviderRequestBuilder(assetId, createEdcOfferBE);
 
         try {
             AssetCreateRequest assetCreateRequest = requestBuilder.buildAssetRequest();
@@ -166,20 +183,19 @@ public class ProviderServiceImpl implements ProviderService {
     }
 
     /**
-     * Creates an FH catalog offer by building and sending the necessary requests.
+     * Creates an FH catalog offer by sending the service offering creation requests.
      *
-     * @param requestBuilder the request builder
+     * @param serviceOfferingCredentialSubject the service offering credential subject
      * @return the ID response from FH catalog
      * @throws FhOfferCreationException if FH offer creation fails
      */
-    private FhCatalogIdResponse createFhCatalogOffer(ProviderRequestBuilder requestBuilder)
-        throws FhOfferCreationException {
+    private FhCatalogIdResponse createFhCatalogOffer(
+        PxExtendedServiceOfferingCredentialSubject serviceOfferingCredentialSubject) throws FhOfferCreationException {
 
         try {
-            DcatDataset dcatDataset = requestBuilder.buildFhCatalogOfferRequest();
-            log.info("Adding Dataset to Fraunhofer Catalog {}", dcatDataset);
+            log.info("Adding Service Offering to Fraunhofer Catalog {}", serviceOfferingCredentialSubject);
 
-            return fhCatalogClient.addDatasetToFhCatalog(dcatDataset);
+            return fhCatalogClient.addServiceOfferingToFhCatalog(serviceOfferingCredentialSubject);
         } catch (Exception e) {
             throw new FhOfferCreationException("An error occurred during Fh offer creation: " + e.getMessage());
         }

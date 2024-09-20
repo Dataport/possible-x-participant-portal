@@ -9,9 +9,6 @@ import eu.possiblex.participantportal.business.entity.edc.common.IdResponse;
 import eu.possiblex.participantportal.business.entity.edc.contractdefinition.ContractDefinitionCreateRequest;
 import eu.possiblex.participantportal.business.entity.edc.contractdefinition.Criterion;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyCreateRequest;
-import eu.possiblex.participantportal.business.entity.fh.CreateFhServiceOfferingBE;
-import eu.possiblex.participantportal.business.entity.fh.catalog.DcatDataset;
-import eu.possiblex.participantportal.business.entity.fh.catalog.DcatDistribution;
 
 import java.util.List;
 import java.util.UUID;
@@ -24,39 +21,18 @@ public class ProviderRequestBuilder {
 
     private final String assetId;
 
-    private final CreateFhServiceOfferingBE createFhServiceOfferingBE;
-
     private final CreateEdcOfferBE createEdcOfferBE;
-
-    private final String edcProtocolUrl;
 
     /**
      * Constructor for ProviderRequestBuilder.
      *
      * @param assetId the asset ID
-     * @param createFhServiceOfferingBE the FH offer business entity
      * @param createEdcOfferBE the EDC offer business entity
      */
-    public ProviderRequestBuilder(String assetId, CreateFhServiceOfferingBE createFhServiceOfferingBE,
-        CreateEdcOfferBE createEdcOfferBE, String edcProtocolUrl) {
+    public ProviderRequestBuilder(String assetId, CreateEdcOfferBE createEdcOfferBE) {
 
         this.assetId = assetId;
-        this.createFhServiceOfferingBE = createFhServiceOfferingBE;
         this.createEdcOfferBE = createEdcOfferBE;
-        this.edcProtocolUrl = edcProtocolUrl;
-    }
-
-    /**
-     * Builds a DcatDataset for the FH catalog offer request.
-     *
-     * @return the DcatDataset
-     */
-    public DcatDataset buildFhCatalogOfferRequest() {
-
-        return DcatDataset.builder().id(assetId).hasPolicy(createFhServiceOfferingBE.getPolicy())
-            .title(createFhServiceOfferingBE.getOfferName())
-            .description(createFhServiceOfferingBE.getOfferDescription()).assetId(assetId)
-            .distribution(List.of(DcatDistribution.builder().id("testId").accessUrl(edcProtocolUrl).build())).build();
     }
 
     /**

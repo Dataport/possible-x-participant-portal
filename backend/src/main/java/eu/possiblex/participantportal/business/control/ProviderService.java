@@ -5,8 +5,8 @@ import eu.possiblex.participantportal.application.entity.ParticipantIdTO;
 import eu.possiblex.participantportal.business.entity.edc.CreateEdcOfferBE;
 import eu.possiblex.participantportal.business.entity.exception.EdcOfferCreationException;
 import eu.possiblex.participantportal.business.entity.exception.FhOfferCreationException;
+import eu.possiblex.participantportal.business.entity.fh.CreateFhDataOfferingBE;
 import eu.possiblex.participantportal.business.entity.fh.CreateFhServiceOfferingBE;
-import eu.possiblex.participantportal.business.entity.fh.catalog.CreateFhDataOfferingBE;
 
 public interface ProviderService {
     /**

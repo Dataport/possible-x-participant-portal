@@ -3,8 +3,8 @@ package eu.possiblex.participantportal.application.control;
 import eu.possiblex.participantportal.application.entity.CreateDataOfferingRequestTO;
 import eu.possiblex.participantportal.application.entity.CreateServiceOfferingRequestTO;
 import eu.possiblex.participantportal.business.entity.edc.CreateEdcOfferBE;
+import eu.possiblex.participantportal.business.entity.fh.CreateFhDataOfferingBE;
 import eu.possiblex.participantportal.business.entity.fh.CreateFhServiceOfferingBE;
-import eu.possiblex.participantportal.business.entity.fh.catalog.CreateFhDataOfferingBE;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
