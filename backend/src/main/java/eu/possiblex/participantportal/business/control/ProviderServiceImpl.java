@@ -75,31 +75,10 @@ public class ProviderServiceImpl implements ProviderService {
         String assetId = generateAssetId();
         String serviceOfferingId = UUID.randomUUID().toString();
 
-        GxServiceOfferingCredentialSubject serviceOfferingCredentialSubject = createFhServiceOfferingBE.getServiceOfferingCredentialSubject();
-        serviceOfferingCredentialSubject.setId(serviceOfferingId);
-
-        PxExtendedServiceOfferingCredentialSubject pxExtendedServiceOfferingCs = providerServiceMapper.getExtendedServiceOfferingCredentialSubject(
-            serviceOfferingCredentialSubject, assetId, edcProtocolUrl);
+        PxExtendedServiceOfferingCredentialSubject pxExtendedServiceOfferingCs = getFhCatalogRequest(assetId,
+            createFhServiceOfferingBE, serviceOfferingId);
 
         return createFhCatalogOfferAndEdcOffer(createEdcOfferBE, assetId, pxExtendedServiceOfferingCs);
-    }
-
-    private CreateOfferResponseTO createFhCatalogOfferAndEdcOffer(CreateEdcOfferBE createEdcOfferBE, String assetId,
-        PxExtendedServiceOfferingCredentialSubject pxExtendedServiceOfferingCs) {
-
-        try {
-            FhCatalogIdResponse fhResponseId = createFhCatalogOffer(pxExtendedServiceOfferingCs);
-            IdResponse edcResponseId = createEdcOffer(assetId, createEdcOfferBE);
-            return new CreateOfferResponseTO(edcResponseId.getId(), fhResponseId.getId());
-        } catch (EdcOfferCreationException e) {
-            throw new PossibleXException("Failed to create offer. EdcOfferCreationException: " + e,
-                HttpStatus.BAD_REQUEST);
-        } catch (FhOfferCreationException e) {
-            throw new PossibleXException("Failed to create offer. FhOfferCreationException: " + e,
-                HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            throw new PossibleXException("Failed to create offer. Other Exception: " + e);
-        }
     }
 
     /**
@@ -115,17 +94,9 @@ public class ProviderServiceImpl implements ProviderService {
 
         String assetId = generateAssetId();
         String serviceOfferingId = UUID.randomUUID().toString();
-        String datasetId = UUID.randomUUID().toString();
 
-        GxServiceOfferingCredentialSubject serviceOfferingCredentialSubject = createFhDataOfferingBE.getServiceOfferingCredentialSubject();
-        serviceOfferingCredentialSubject.setId(serviceOfferingId);
-
-        GxDataResourceCredentialSubject dataResourceCredentialSubject = createFhDataOfferingBE.getDataResourceCredentialSubject();
-        dataResourceCredentialSubject.setId(datasetId);
-        dataResourceCredentialSubject.setExposedThrough(new NodeKindIRITypeId(serviceOfferingId));
-
-        PxExtendedServiceOfferingCredentialSubject pxExtendedServiceOfferingCs = providerServiceMapper.getExtendedServiceOfferingCredentialSubject(
-            serviceOfferingCredentialSubject, dataResourceCredentialSubject, assetId, edcProtocolUrl);
+        PxExtendedServiceOfferingCredentialSubject pxExtendedServiceOfferingCs = getFhCatalogRequest(assetId,
+            createFhDataOfferingBE, serviceOfferingId);
         return createFhCatalogOfferAndEdcOffer(createEdcOfferBE, assetId, pxExtendedServiceOfferingCs);
     }
 
@@ -198,6 +169,52 @@ public class ProviderServiceImpl implements ProviderService {
             return fhCatalogClient.addServiceOfferingToFhCatalog(serviceOfferingCredentialSubject);
         } catch (Exception e) {
             throw new FhOfferCreationException("An error occurred during Fh offer creation: " + e.getMessage());
+        }
+    }
+
+    private PxExtendedServiceOfferingCredentialSubject getFhCatalogRequest(String assetId,
+        CreateFhServiceOfferingBE createFhServiceOfferingBE, String serviceOfferingId) {
+
+        GxServiceOfferingCredentialSubject serviceOfferingCredentialSubject = createFhServiceOfferingBE.getServiceOfferingCredentialSubject();
+        serviceOfferingCredentialSubject.setId(serviceOfferingId);
+
+        return providerServiceMapper.getExtendedServiceOfferingCredentialSubject(serviceOfferingCredentialSubject,
+            assetId, edcProtocolUrl);
+
+    }
+
+    private PxExtendedServiceOfferingCredentialSubject getFhCatalogRequest(String assetId,
+        CreateFhDataOfferingBE createFhDataOfferingBE, String serviceOfferingId) {
+
+        String datasetId = UUID.randomUUID().toString();
+
+        GxServiceOfferingCredentialSubject serviceOfferingCredentialSubject = createFhDataOfferingBE.getServiceOfferingCredentialSubject();
+        serviceOfferingCredentialSubject.setId(serviceOfferingId);
+
+        GxDataResourceCredentialSubject dataResourceCredentialSubject = createFhDataOfferingBE.getDataResourceCredentialSubject();
+        dataResourceCredentialSubject.setId(datasetId);
+        dataResourceCredentialSubject.setExposedThrough(new NodeKindIRITypeId(serviceOfferingId));
+
+        return providerServiceMapper.getExtendedServiceOfferingCredentialSubject(serviceOfferingCredentialSubject,
+            dataResourceCredentialSubject, assetId, edcProtocolUrl);
+
+    }
+
+    private CreateOfferResponseTO createFhCatalogOfferAndEdcOffer(CreateEdcOfferBE createEdcOfferBE, String assetId,
+        PxExtendedServiceOfferingCredentialSubject pxExtendedServiceOfferingCs) {
+
+        try {
+            FhCatalogIdResponse fhResponseId = createFhCatalogOffer(pxExtendedServiceOfferingCs);
+            IdResponse edcResponseId = createEdcOffer(assetId, createEdcOfferBE);
+            return new CreateOfferResponseTO(edcResponseId.getId(), fhResponseId.getId());
+        } catch (EdcOfferCreationException e) {
+            throw new PossibleXException("Failed to create offer. EdcOfferCreationException: " + e,
+                HttpStatus.BAD_REQUEST);
+        } catch (FhOfferCreationException e) {
+            throw new PossibleXException("Failed to create offer. FhOfferCreationException: " + e,
+                HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            throw new PossibleXException("Failed to create offer. Other Exception: " + e);
         }
     }
 
