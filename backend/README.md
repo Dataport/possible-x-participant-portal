@@ -22,8 +22,8 @@ after which the built jar can be found at `backend/build/libs/backend-x.y.z.jar`
 
 ## Run
 
-Add the following environment variables by exporting them in the terminal. 
-Replace the right hand side with the actual values from the `application.yml` files.
+The following environment variables can be set as needed. 
+Replace the right hand side with the actual values.
 ```
 export EDC_XAPIKEY="EDC X-API-Key"
 export EDC_MGMTBASEURL="EDC management URL"
