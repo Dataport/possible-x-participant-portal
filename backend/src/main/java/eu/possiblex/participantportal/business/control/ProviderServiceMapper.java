@@ -19,7 +19,8 @@ public interface ProviderServiceMapper {
     @Mapping(target = "description", source = "gxServiceOfferingCredentialSubject.description")
     @Mapping(target = "assetId", source = "assetId")
     @Mapping(target = "providerUrl", source = "providerUrl")
-    PxExtendedServiceOfferingCredentialSubject getExtendedServiceOfferingCredentialSubject(
+    @Mapping(target = "id", source = "gxServiceOfferingCredentialSubject.id")
+    PxExtendedServiceOfferingCredentialSubject getPxExtendedServiceOfferingCredentialSubject(
         GxServiceOfferingCredentialSubject gxServiceOfferingCredentialSubject, String assetId, String providerUrl);
 
     @Mapping(target = "providedBy", source = "gxServiceOfferingCredentialSubject.providedBy")
@@ -32,7 +33,8 @@ public interface ProviderServiceMapper {
     @Mapping(target = "description", source = "gxServiceOfferingCredentialSubject.description")
     @Mapping(target = "assetId", source = "assetId")
     @Mapping(target = "providerUrl", source = "providerUrl")
-    PxExtendedServiceOfferingCredentialSubject getExtendedServiceOfferingCredentialSubject(
+    @Mapping(target = "id", source = "gxServiceOfferingCredentialSubject.id")
+    PxExtendedServiceOfferingCredentialSubject getPxExtendedServiceOfferingCredentialSubject(
         GxServiceOfferingCredentialSubject gxServiceOfferingCredentialSubject,
         GxDataResourceCredentialSubject gxDataResourceCredentialSubject, String assetId, String providerUrl);
 }

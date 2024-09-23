@@ -28,13 +28,15 @@ export interface IConsumeOfferRequestTO {
 export interface IConsumeOfferRequestTOBuilder {
 }
 
-export interface ICreateOfferRequestTO {
-    credentialSubjectList: IPojoCredentialSubjectUnion[];
+export interface ICreateDataOfferingRequestTO extends ICreateServiceOfferingRequestTO {
+    dataResourceCredentialSubject: IGxDataResourceCredentialSubject;
     fileName: string;
-    policy: IPolicy;
 }
 
-export interface ICreateOfferRequestTOBuilder {
+export interface ICreateDataOfferingRequestTOBuilder<C, B> extends ICreateServiceOfferingRequestTOBuilder<C, B> {
+}
+
+export interface ICreateDataOfferingRequestTOBuilderImpl extends ICreateDataOfferingRequestTOBuilder<ICreateDataOfferingRequestTO, ICreateDataOfferingRequestTOBuilderImpl> {
 }
 
 export interface ICreateOfferResponseTO {
@@ -43,6 +45,17 @@ export interface ICreateOfferResponseTO {
 }
 
 export interface ICreateOfferResponseTOBuilder {
+}
+
+export interface ICreateServiceOfferingRequestTO {
+    serviceOfferingCredentialSubject: IGxServiceOfferingCredentialSubject;
+    policy: IPolicy;
+}
+
+export interface ICreateServiceOfferingRequestTOBuilder<C, B> {
+}
+
+export interface ICreateServiceOfferingRequestTOBuilderImpl extends ICreateServiceOfferingRequestTOBuilder<ICreateServiceOfferingRequestTO, ICreateServiceOfferingRequestTOBuilderImpl> {
 }
 
 export interface IOfferDetailsTO {
@@ -80,12 +93,21 @@ export interface ITransferDetailsTOBuilder {
 }
 
 export interface IPojoCredentialSubject {
-    "@type": "UnknownCredentialSubject" | "gx:DataResource" | "gx:ServiceOffering";
+    "@type": "UnknownCredentialSubject" | "gx:DataResource" | "gx:ServiceOffering" | "PxExtendedServiceOfferingCredentialSubject";
     id: string;
+}
+
+export interface IPojoCredentialSubjectBuilder<C, B> {
 }
 
 export interface IUnknownCredentialSubject extends IPojoCredentialSubject {
     "@type": "UnknownCredentialSubject";
+}
+
+export interface IUnknownCredentialSubjectBuilder<C, B> extends IPojoCredentialSubjectBuilder<C, B> {
+}
+
+export interface IUnknownCredentialSubjectBuilderImpl extends IUnknownCredentialSubjectBuilder<IUnknownCredentialSubject, IUnknownCredentialSubjectBuilderImpl> {
 }
 
 export interface IGxDataAccountExport {
@@ -94,7 +116,18 @@ export interface IGxDataAccountExport {
     "gx:formatType": string;
 }
 
+export interface IGxDataAccountExportBuilder {
+    "gx:requestType": string;
+    "gx:accessType": string;
+    "gx:formatType": string;
+}
+
 export interface IGxSOTermsAndConditions {
+    "gx:URL": string;
+    "gx:hash": string;
+}
+
+export interface IGxSOTermsAndConditionsBuilder {
     "gx:URL": string;
     "gx:hash": string;
 }
@@ -113,15 +146,28 @@ export interface IGxDataResourceCredentialSubject extends IPojoCredentialSubject
     "gx:containsPII": boolean;
     "gx:name": string;
     "gx:description": string;
-    "gx:obsoleteDateTime": string;
-    "gx:expirationDateTime": string;
     "@context": { [index: string]: string };
     type: string;
+}
+
+export interface IGxDataResourceCredentialSubjectBuilder<C, B> extends IPojoCredentialSubjectBuilder<C, B> {
+}
+
+export interface IGxDataResourceCredentialSubjectBuilderImpl extends IGxDataResourceCredentialSubjectBuilder<IGxDataResourceCredentialSubject, IGxDataResourceCredentialSubjectBuilderImpl> {
+    "gx:copyrightOwnedBy": INodeKindIRITypeId;
+    "gx:producedBy": INodeKindIRITypeId;
+    "gx:exposedThrough": INodeKindIRITypeId;
+    "gx:policy": string[];
+    "gx:license": string[];
+    "gx:containsPII": boolean;
+    "gx:name": string;
+    "gx:description": string;
 }
 
 export interface IGxServiceOfferingCredentialSubject extends IPojoCredentialSubject {
     "@type": "gx:ServiceOffering";
     "gx:providedBy": INodeKindIRITypeId;
+    "gx:aggregationOf": INodeKindIRITypeId[];
     "gx:termsAndConditions": IGxSOTermsAndConditions[];
     "gx:policy": string[];
     "gx:dataProtectionRegime": string[];
@@ -130,6 +176,52 @@ export interface IGxServiceOfferingCredentialSubject extends IPojoCredentialSubj
     "gx:description": string;
     "@context": { [index: string]: string };
     type: string;
+}
+
+export interface IGxServiceOfferingCredentialSubjectBuilder<C, B> extends IPojoCredentialSubjectBuilder<C, B> {
+}
+
+export interface IGxServiceOfferingCredentialSubjectBuilderImpl extends IGxServiceOfferingCredentialSubjectBuilder<IGxServiceOfferingCredentialSubject, IGxServiceOfferingCredentialSubjectBuilderImpl> {
+    "gx:providedBy": INodeKindIRITypeId;
+    "gx:aggregationOf": INodeKindIRITypeId[];
+    "gx:termsAndConditions": IGxSOTermsAndConditions[];
+    "gx:policy": string[];
+    "gx:dataProtectionRegime": string[];
+    "gx:dataAccountExport": IGxDataAccountExport[];
+    "gx:name": string;
+    "gx:description": string;
+}
+
+export interface IPxExtendedServiceOfferingCredentialSubject extends IPojoCredentialSubject {
+    "@type": "PxExtendedServiceOfferingCredentialSubject";
+    "gx:providedBy": INodeKindIRITypeId;
+    "gx:aggregationOf": IGxDataResourceCredentialSubject[];
+    "gx:termsAndConditions": IGxSOTermsAndConditions[];
+    "gx:policy": string[];
+    "gx:dataProtectionRegime": string[];
+    "gx:dataAccountExport": IGxDataAccountExport[];
+    "gx:name": string;
+    "gx:description": string;
+    "px:assetId": string;
+    "px:providerUrl": string;
+    "@context": { [index: string]: string };
+    type: string[];
+}
+
+export interface IPxExtendedServiceOfferingCredentialSubjectBuilder<C, B> extends IPojoCredentialSubjectBuilder<C, B> {
+}
+
+export interface IPxExtendedServiceOfferingCredentialSubjectBuilderImpl extends IPxExtendedServiceOfferingCredentialSubjectBuilder<IPxExtendedServiceOfferingCredentialSubject, IPxExtendedServiceOfferingCredentialSubjectBuilderImpl> {
+    "gx:providedBy": INodeKindIRITypeId;
+    "gx:aggregationOf": IGxDataResourceCredentialSubject[];
+    "gx:termsAndConditions": IGxSOTermsAndConditions[];
+    "gx:policy": string[];
+    "gx:dataProtectionRegime": string[];
+    "gx:dataAccountExport": IGxDataAccountExport[];
+    "gx:name": string;
+    "gx:description": string;
+    "px:assetId": string;
+    "px:providerUrl": string;
 }
 
 export interface IPolicy {
@@ -181,11 +273,19 @@ export class RestApplicationClient {
     }
 
     /**
-     * HTTP POST /provider/offer
-     * Java method: eu.possiblex.participantportal.application.boundary.ProviderRestApiImpl.createOffer
+     * HTTP POST /provider/offer/data
+     * Java method: eu.possiblex.participantportal.application.boundary.ProviderRestApiImpl.createDataOffering
      */
-    createOffer(createOfferRequestTO: ICreateOfferRequestTO): RestResponse<ICreateOfferResponseTO> {
-        return this.httpClient.request({ method: "POST", url: uriEncoding`provider/offer`, data: createOfferRequestTO });
+    createDataOffering(createDataOfferingRequestTO: ICreateDataOfferingRequestTO): RestResponse<ICreateOfferResponseTO> {
+        return this.httpClient.request({ method: "POST", url: uriEncoding`provider/offer/data`, data: createDataOfferingRequestTO });
+    }
+
+    /**
+     * HTTP POST /provider/offer/service
+     * Java method: eu.possiblex.participantportal.application.boundary.ProviderRestApiImpl.createServiceOffering
+     */
+    createServiceOffering(createServiceOfferingRequestTO: ICreateServiceOfferingRequestTO): RestResponse<ICreateOfferResponseTO> {
+        return this.httpClient.request({ method: "POST", url: uriEncoding`provider/offer/service`, data: createServiceOfferingRequestTO });
     }
 
     /**

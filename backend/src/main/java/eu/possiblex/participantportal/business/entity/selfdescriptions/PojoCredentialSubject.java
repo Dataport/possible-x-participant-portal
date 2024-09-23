@@ -16,22 +16,25 @@
 
 package eu.possiblex.participantportal.business.entity.selfdescriptions;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.resources.GxDataResourceCredentialSubject;
 import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.serviceofferings.GxServiceOfferingCredentialSubject;
-import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.Map;
+import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
+@SuperBuilder
+@AllArgsConstructor
+@NoArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, defaultImpl = UnknownCredentialSubject.class)
 @JsonSubTypes({
     @JsonSubTypes.Type(value = GxDataResourceCredentialSubject.class, name = GxDataResourceCredentialSubject.TYPE),
-    @JsonSubTypes.Type(value = GxServiceOfferingCredentialSubject.class, name = GxServiceOfferingCredentialSubject.TYPE),
-})
+    @JsonSubTypes.Type(value = GxServiceOfferingCredentialSubject.class, name = GxServiceOfferingCredentialSubject.TYPE), })
 public abstract class PojoCredentialSubject {
     // base fields
     private String id;

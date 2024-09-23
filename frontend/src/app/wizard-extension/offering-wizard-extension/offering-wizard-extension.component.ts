@@ -121,25 +121,28 @@ export class OfferingWizardExtensionComponent {
     gxOfferingJsonSd["gx:policy"] = [JSON.stringify(this.policyMap[this.selectedPolicy].policy)];
 
     let createOfferTo: any = {
-      credentialSubjectList: [
-        gxOfferingJsonSd,
-      ],
-      fileName: this.selectedFileName,
+      serviceOfferingCredentialSubject: gxOfferingJsonSd,
       policy: this.policyMap[this.selectedPolicy].policy
     }
+
+    let createOfferMethod: (offer: any) => Promise<any>;
+    createOfferMethod = this.apiService.createServiceOffering.bind(this.apiService)
 
     if (this.isOfferingDataOffering()) {
       let gxDataResourceJsonSd: IGxDataResourceCredentialSubject = this.gxDataResourceWizard.generateJsonCs();
       gxDataResourceJsonSd["gx:name"] = gxOfferingJsonSd["gx:name"];
-      gxOfferingJsonSd["gx:description"] = gxOfferingJsonSd["gx:description"];
-      gxOfferingJsonSd["gx:policy"] = gxOfferingJsonSd["gx:policy"];
+      gxDataResourceJsonSd["gx:description"] = gxOfferingJsonSd["gx:description"];
+      gxDataResourceJsonSd["gx:policy"] = gxOfferingJsonSd["gx:policy"];
 
-      createOfferTo.credentialSubjectList.push(gxDataResourceJsonSd);
+      createOfferTo.dataResourceCredentialSubject = gxDataResourceJsonSd;
+      createOfferTo.fileName = this.selectedFileName;
+
+      createOfferMethod = this.apiService.createDataOffering.bind(this.apiService);
     }
 
     console.log(createOfferTo);
 
-    this.apiService.createOffer(createOfferTo).then(response => {
+    createOfferMethod(createOfferTo).then(response => {
       console.log(response);
       this.offerCreationStatusMessage.showSuccessMessage("", 20000);
     }).catch((e: HttpErrorResponse) => {
@@ -147,7 +150,6 @@ export class OfferingWizardExtensionComponent {
     }).catch(_ => {
       this.offerCreationStatusMessage.showErrorMessage("Unbekannter Fehler");
     });
-
   }
 
   public ngOnDestroy() {

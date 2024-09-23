@@ -42,7 +42,8 @@ public class ProviderServiceFake implements ProviderService {
     public CreateOfferResponseTO createDataOffering(CreateFhDataOfferingBE createFhDataOfferingBE,
         CreateEdcOfferBE createEdcOfferBE) throws FhOfferCreationException, EdcOfferCreationException {
 
-        return null;
+        return CreateOfferResponseTO.builder().edcResponseId(CREATE_OFFER_RESPONSE_ID)
+            .fhResponseId(CREATE_OFFER_RESPONSE_ID).build();
     }
 
     /**

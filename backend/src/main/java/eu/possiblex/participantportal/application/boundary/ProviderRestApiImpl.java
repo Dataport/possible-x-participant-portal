@@ -76,7 +76,8 @@ public class ProviderRestApiImpl implements ProviderRestApi {
      * @return create offer response object
      */
     @Override
-    public CreateOfferResponseTO createDataOffering(CreateDataOfferingRequestTO createDataOfferingRequestTO) {
+    public CreateOfferResponseTO createDataOffering(
+        @RequestBody CreateDataOfferingRequestTO createDataOfferingRequestTO) {
 
         log.info("CreateDataOfferingRequestTO: {}", createDataOfferingRequestTO);
 

@@ -14,10 +14,20 @@ import eu.possiblex.participantportal.business.entity.serialization.StringSerial
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This is the class which will be sent to the FH catalog.
+ */
+@Getter
+@Setter
+@SuperBuilder
+@ToString
 public class PxExtendedServiceOfferingCredentialSubject extends PojoCredentialSubject {
     @Getter(AccessLevel.NONE)
     public static final List<String> TYPE = List.of("gx:ServiceOffering", "px:PossibleXServiceOfferingExtension");

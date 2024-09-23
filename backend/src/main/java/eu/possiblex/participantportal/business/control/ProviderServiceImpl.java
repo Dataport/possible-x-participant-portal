@@ -36,6 +36,8 @@ public class ProviderServiceImpl implements ProviderService {
 
     private final FhCatalogClient fhCatalogClient;
 
+    private final ProviderServiceMapper providerServiceMapper;
+
     @Value("${fh.catalog.secret-key}")
     private String fhCatalogSecretKey;
 
@@ -44,8 +46,6 @@ public class ProviderServiceImpl implements ProviderService {
 
     @Value("${participant-id}")
     private String participantId;
-
-    private ProviderServiceMapper providerServiceMapper;
 
     /**
      * Constructor for ProviderServiceImpl.
@@ -59,6 +59,7 @@ public class ProviderServiceImpl implements ProviderService {
 
         this.edcClient = edcClient;
         this.fhCatalogClient = fhCatalogClient;
+        this.providerServiceMapper = providerServiceMapper;
     }
 
     /**
@@ -75,8 +76,8 @@ public class ProviderServiceImpl implements ProviderService {
         String assetId = generateAssetId();
         String serviceOfferingId = UUID.randomUUID().toString();
 
-        PxExtendedServiceOfferingCredentialSubject pxExtendedServiceOfferingCs = getFhCatalogRequest(assetId,
-            createFhServiceOfferingBE, serviceOfferingId);
+        PxExtendedServiceOfferingCredentialSubject pxExtendedServiceOfferingCs = getFhCatalogRequestForServiceOffering(
+            assetId, createFhServiceOfferingBE, serviceOfferingId);
 
         return createFhCatalogOfferAndEdcOffer(createEdcOfferBE, assetId, pxExtendedServiceOfferingCs);
     }
@@ -95,8 +96,8 @@ public class ProviderServiceImpl implements ProviderService {
         String assetId = generateAssetId();
         String serviceOfferingId = UUID.randomUUID().toString();
 
-        PxExtendedServiceOfferingCredentialSubject pxExtendedServiceOfferingCs = getFhCatalogRequest(assetId,
-            createFhDataOfferingBE, serviceOfferingId);
+        PxExtendedServiceOfferingCredentialSubject pxExtendedServiceOfferingCs = getFhCatalogRequestForDataOffering(
+            assetId, createFhDataOfferingBE, serviceOfferingId);
         return createFhCatalogOfferAndEdcOffer(createEdcOfferBE, assetId, pxExtendedServiceOfferingCs);
     }
 
@@ -172,18 +173,18 @@ public class ProviderServiceImpl implements ProviderService {
         }
     }
 
-    private PxExtendedServiceOfferingCredentialSubject getFhCatalogRequest(String assetId,
+    private PxExtendedServiceOfferingCredentialSubject getFhCatalogRequestForServiceOffering(String assetId,
         CreateFhServiceOfferingBE createFhServiceOfferingBE, String serviceOfferingId) {
 
         GxServiceOfferingCredentialSubject serviceOfferingCredentialSubject = createFhServiceOfferingBE.getServiceOfferingCredentialSubject();
         serviceOfferingCredentialSubject.setId(serviceOfferingId);
 
-        return providerServiceMapper.getExtendedServiceOfferingCredentialSubject(serviceOfferingCredentialSubject,
+        return providerServiceMapper.getPxExtendedServiceOfferingCredentialSubject(serviceOfferingCredentialSubject,
             assetId, edcProtocolUrl);
 
     }
 
-    private PxExtendedServiceOfferingCredentialSubject getFhCatalogRequest(String assetId,
+    private PxExtendedServiceOfferingCredentialSubject getFhCatalogRequestForDataOffering(String assetId,
         CreateFhDataOfferingBE createFhDataOfferingBE, String serviceOfferingId) {
 
         String datasetId = UUID.randomUUID().toString();
@@ -195,7 +196,7 @@ public class ProviderServiceImpl implements ProviderService {
         dataResourceCredentialSubject.setId(datasetId);
         dataResourceCredentialSubject.setExposedThrough(new NodeKindIRITypeId(serviceOfferingId));
 
-        return providerServiceMapper.getExtendedServiceOfferingCredentialSubject(serviceOfferingCredentialSubject,
+        return providerServiceMapper.getPxExtendedServiceOfferingCredentialSubject(serviceOfferingCredentialSubject,
             dataResourceCredentialSubject, assetId, edcProtocolUrl);
 
     }

@@ -47,7 +47,7 @@ public class FhCatalogClientImpl implements FhCatalogClient {
     public FhCatalogIdResponse addServiceOfferingToFhCatalog(
         PxExtendedServiceOfferingCredentialSubject serviceOfferingCredentialSubject) {
 
-        return null;
+        return new FhCatalogIdResponse("dummy");
     }
 
     @Override
