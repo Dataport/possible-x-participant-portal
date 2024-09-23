@@ -63,18 +63,21 @@ public class FhCatalogClientImpl implements FhCatalogClient {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode offerJson = mapper.readTree(offerJsonContent);
 
-            String assetId = getValueForAttribute("assetId", offerJson);
-            String accessURL = getValueForAttribute("accessURL", offerJson);
-            log.info("parsed fh catalog offer id assetId: " + assetId);
-            log.info("parsed fh catalog offer id accessURL: " + accessURL);
+            String assetId = getValueForAttribute("px:assetId", offerJson);
+            String providerURL = getValueForAttribute("px:providerUrl", offerJson);
+            int aggregrationOfSize = getListSizeForAttribute("gx:aggregrationOf", offerJson);
+            log.info("parsed fh catalog offer id px:assetId: " + assetId);
+            log.info("parsed fh catalog offer id px:providerUrl: " + providerURL);
+            log.info("parsed fh catalog offer id size(gx:aggregrationOf): " + aggregrationOfSize);
 
-            if ((assetId == null) || (accessURL == null) || assetId.isEmpty() || accessURL.isEmpty()) {
-                throw new RuntimeException("FH catalog offer did not contain all expected infos! asset-ID: " + assetId + ", access URL: " + accessURL);
+            if ((assetId == null) || (providerURL == null) || assetId.isEmpty() || providerURL.isEmpty() || aggregrationOfSize <= 0) {
+                throw new RuntimeException("FH catalog offer did not contain all expected infos! asset-ID: "
+                        + assetId + ", provider URL: " + providerURL + ", size of aggregrationOf: " + aggregrationOfSize);
             }
 
             fhCatalogOffer = new FhCatalogOffer();
             fhCatalogOffer.setAssetId(assetId);
-            fhCatalogOffer.setCounterPartyAddress(accessURL);
+            fhCatalogOffer.setCounterPartyAddress(providerURL);
 
         } catch (Exception e) {
             throw new RuntimeException("failed to parse fh catalog offer json: " + offerJsonContent, e);
@@ -128,6 +131,43 @@ public class FhCatalogClientImpl implements FhCatalogClient {
         }
 
         return null;
+    }
+
+    private int getListSizeForAttribute(String attribute, JsonNode jsonNode) {
+
+        if (jsonNode.isArray()) {
+            for (int i = 0; i < jsonNode.size(); i++) {
+                JsonNode child = jsonNode.get(i);
+
+                int size = getListSizeForAttribute(attribute, child);
+
+                if (size != 0) {
+                    return size;
+                }
+            }
+            return 0;
+        }
+
+        for (Iterator<Map.Entry<String, JsonNode>> iter = jsonNode.fields(); iter.hasNext(); ) {
+            Map.Entry<String, JsonNode> entry = iter.next();
+
+            String key = entry.getKey();
+            if (key.equals(attribute) || key.endsWith("#" + attribute) || key.endsWith(":" + attribute)) {
+                if (entry.getValue().isArray()) {
+                    return entry.getValue().size();
+                } else {
+                    return 0;
+                }
+            }
+
+            int size = getListSizeForAttribute(attribute, entry.getValue());
+
+            if (size != 0) {
+                return size;
+            }
+        }
+
+        return 0;
     }
 
     private Map<String, String> createHeaders() {
