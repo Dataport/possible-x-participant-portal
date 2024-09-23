@@ -13,7 +13,7 @@
     {
       "@id": "file:///usr/verticles/testId",
       "dct:identifier": "testIdentifier",
-      "dcat:accessURL": "EXPECTED_ACCESS_URL_VALUE",
+      "dcat:accessURL": "EXPECTED_PROVIDER_URL_VALUE",
       "@type": "dcat:distribution"
     },
     {

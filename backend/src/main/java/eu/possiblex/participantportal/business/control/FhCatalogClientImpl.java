@@ -65,14 +65,14 @@ public class FhCatalogClientImpl implements FhCatalogClient {
 
             String assetId = getValueForAttribute("px:assetId", offerJson);
             String providerURL = getValueForAttribute("px:providerUrl", offerJson);
-            int aggregrationOfSize = getListSizeForAttribute("gx:aggregrationOf", offerJson);
+            int aggregationOfSize = getListSizeForAttribute("gx:aggregationOf", offerJson);
             log.info("parsed fh catalog offer id px:assetId: " + assetId);
             log.info("parsed fh catalog offer id px:providerUrl: " + providerURL);
-            log.info("parsed fh catalog offer id size(gx:aggregrationOf): " + aggregrationOfSize);
+            log.info("parsed fh catalog offer id size(gx:aggregationOf): " + aggregationOfSize);
 
-            if ((assetId == null) || (providerURL == null) || assetId.isEmpty() || providerURL.isEmpty() || aggregrationOfSize <= 0) {
+            if ((assetId == null) || (providerURL == null) || assetId.isEmpty() || providerURL.isEmpty() || aggregationOfSize <= 0) {
                 throw new RuntimeException("FH catalog offer did not contain all expected infos! asset-ID: "
-                        + assetId + ", provider URL: " + providerURL + ", size of aggregrationOf: " + aggregrationOfSize);
+                        + assetId + ", provider URL: " + providerURL + ", size of aggregationOf: " + aggregationOfSize);
             }
 
             fhCatalogOffer = new FhCatalogOffer();
@@ -153,10 +153,8 @@ public class FhCatalogClientImpl implements FhCatalogClient {
 
             String key = entry.getKey();
             if (key.equals(attribute) || key.endsWith("#" + attribute) || key.endsWith(":" + attribute)) {
-                if (entry.getValue().isArray()) {
+                if (entry.getValue().isArray() && !entry.getValue().isEmpty()) {
                     return entry.getValue().size();
-                } else {
-                    return 0;
                 }
             }
 

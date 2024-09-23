@@ -1,60 +1,48 @@
 {
-  "@graph": [
+  "@type": "PxExtendedServiceOfferingCredentialSubject",
+  "id": "b27e4a49-4eda-4958-ac6d-a13906bbb558",
+  "gx:providedBy": { "id": "did:web:example-organization.eu" },
+  "gx:aggregationOf": [
     {
-      "@id": "_:b0",
-      "http://www.w3.org/ns/odrl/2/action": {
-        "@id": "_:b1"
-      }
-    },
-    {
-      "@id": "_:b1",
-      "http://www.w3.org/ns/odrl/2/type": "http://www.w3.org/ns/odrl/2/use"
-    },
-    {
-      "@id": "file:///usr/verticles/testId",
-      "dct:identifier": "testIdentifier",
-      "dcat:accessURL": "EXPECTED_ACCESS_URL_VALUE",
-      "@type": "dcat:distribution"
-    },
-    {
-      "@id": "_:b2",
-      "http://www.w3.org/ns/odrl/2/type": "http://www.w3.org/ns/odrl/2/transfer"
-    },
-    {
-      "@id": "https://piveau.io/set/data/87ff3e97-8545-4e01-8a61-27d6c78130cb",
-      "@type": "dcat:Dataset",
-      "dct:title": "test",
-      "dcat:distribution": {
-        "@id": "file:///usr/verticles/testId"
-      },
-      "odrl:hasPolicy": {
-        "@id": "_:b3"
-      },
-      "https://possible-gaia-x.de/ns/#assetId": "EXPECTED_ASSET_ID_VALUE",
-      "dct:description": "test"
-    },
-    {
-      "@id": "_:b3",
-      "http://www.w3.org/ns/odrl/2/permission": [
-        {
-          "@id": "_:b4"
-        },
-        {
-          "@id": "_:b0"
-        }
+      "@type": "gx:DataResource",
+      "id": "0364b5ad-96bc-4b86-9281-f2c8bd3d0cba",
+      "gx:copyrightOwnedBy": { "id": "did:web:example-organization.eu" },
+      "gx:producedBy": { "id": "did:web:example-organization.eu" },
+      "gx:exposedThrough": { "id": "b27e4a49-4eda-4958-ac6d-a13906bbb558" },
+      "gx:policy": [
+        "{\n  \"@type\": \"odrl:Set\",\n  \"odrl:permission\": [\n    {\n      \"odrl:action\": {\n        \"odrl:type\": \"http://www.w3.org/ns/odrl/2/use\"\n      }\n    },\n    {\n      \"odrl:action\": {\n        \"odrl:type\": \"http://www.w3.org/ns/odrl/2/transfer\"\n      }\n    }\n  ],\n  \"odrl:prohibition\": [],\n  \"odrl:obligation\": []\n}"
       ],
-      "@type": "http://www.w3.org/ns/odrl/2/Set"
-    },
-    {
-      "@id": "_:b4",
-      "http://www.w3.org/ns/odrl/2/action": {
-        "@id": "_:b2"
-      }
+      "gx:license": ["AGPL-1.0-only"],
+      "gx:containsPII": true,
+      "gx:name": "Test Dataset",
+      "gx:description": "This is the data resource description.",
+      "@context": {
+        "xsd": "http://www.w3.org/2001/XMLSchema#",
+        "gx": "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#"
+      },
+      "type": "gx:DataResource"
     }
   ],
+  "gx:termsAndConditions": [{ "gx:URL": "test.eu/tnc", "gx:hash": "hash123" }],
+  "gx:policy": [
+    "{\n  \"@type\": \"odrl:Set\",\n  \"odrl:permission\": [\n    {\n      \"odrl:action\": {\n        \"odrl:type\": \"http://www.w3.org/ns/odrl/2/use\"\n      }\n    },\n    {\n      \"odrl:action\": {\n        \"odrl:type\": \"http://www.w3.org/ns/odrl/2/transfer\"\n      }\n    }\n  ],\n  \"odrl:prohibition\": [],\n  \"odrl:obligation\": []\n}"
+  ],
+  "gx:dataProtectionRegime": null,
+  "gx:dataAccountExport": [
+    {
+      "gx:requestType": "API",
+      "gx:accessType": "digital",
+      "gx:formatType": "application/json"
+    }
+  ],
+  "gx:name": "Test Service Offering",
+  "gx:description": "This is the service offering description.",
+  "px:assetId": "EXPECTED_ASSET_ID_VALUE",
+  "px:providerUrl": "EXPECTED_PROVIDER_URL_VALUE",
   "@context": {
-    "dct": "http://purl.org/dc/terms/",
-    "dcat": "http://www.w3.org/ns/dcat#",
-    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-  }
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "px": "http://w3id.org/gaia-x/possible-x#",
+    "gx": "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#"
+  },
+  "type": ["gx:ServiceOffering", "px:PossibleXServiceOfferingExtension"]
 }

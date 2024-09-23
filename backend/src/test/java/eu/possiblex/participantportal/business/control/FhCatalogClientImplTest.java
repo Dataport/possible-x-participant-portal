@@ -27,6 +27,6 @@ public class FhCatalogClientImplTest {
 
         Assertions.assertNotNull(offer);
         Assertions.assertEquals("EXPECTED_ASSET_ID_VALUE", offer.getAssetId());
-        Assertions.assertEquals("EXPECTED_ACCESS_URL_VALUE", offer.getCounterPartyAddress());
+        Assertions.assertEquals("EXPECTED_PROVIDER_URL_VALUE", offer.getCounterPartyAddress());
     }
 }

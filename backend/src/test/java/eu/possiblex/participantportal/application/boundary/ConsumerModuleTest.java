@@ -139,8 +139,8 @@ public class ConsumerModuleTest {
         Mockito.when(technicalFhCatalogClientMock.getFhCatalogOffer(Mockito.eq(ConsumerServiceMock.VALID_FH_OFFER_ID)))
             .thenReturn(fhCatalogOfferContent);
 
-        String expectedEdcProviderUrl = "EXPECTED_ACCESS_URL_VALUE"; // from the "dcat:accessURL" attribute in the test data offer
-        String expectedAssetId = "EXPECTED_ASSET_ID_VALUE"; // from the "https://possible-gaia-x.de/ns/#assetId" attribute in the test data offer
+        String expectedEdcProviderUrl = "EXPECTED_PROVIDER_URL_VALUE"; // from the "px:providerURL" attribute in the test data offer
+        String expectedAssetId = "EXPECTED_ASSET_ID_VALUE"; // from the "px:assetId" attribute in the test data offer
 
         // let the EDC provide the test data catalog
         DcatDataset mockDatasetWrongOne = new DcatDataset(); // an offer in the EDC Catalog which the user does not look for
