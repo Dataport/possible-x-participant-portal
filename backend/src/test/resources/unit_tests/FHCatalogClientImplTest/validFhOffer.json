@@ -1,48 +1,135 @@
 {
-  "@type": "PxExtendedServiceOfferingCredentialSubject",
-  "id": "b27e4a49-4eda-4958-ac6d-a13906bbb558",
-  "gx:providedBy": { "id": "did:web:example-organization.eu" },
-  "gx:aggregationOf": [
+  "@graph": [
     {
-      "@type": "gx:DataResource",
-      "id": "0364b5ad-96bc-4b86-9281-f2c8bd3d0cba",
-      "gx:copyrightOwnedBy": { "id": "did:web:example-organization.eu" },
-      "gx:producedBy": { "id": "did:web:example-organization.eu" },
-      "gx:exposedThrough": { "id": "b27e4a49-4eda-4958-ac6d-a13906bbb558" },
-      "gx:policy": [
-        "{\n  \"@type\": \"odrl:Set\",\n  \"odrl:permission\": [\n    {\n      \"odrl:action\": {\n        \"odrl:type\": \"http://www.w3.org/ns/odrl/2/use\"\n      }\n    },\n    {\n      \"odrl:action\": {\n        \"odrl:type\": \"http://www.w3.org/ns/odrl/2/transfer\"\n      }\n    }\n  ],\n  \"odrl:prohibition\": [],\n  \"odrl:obligation\": []\n}"
-      ],
-      "gx:license": ["AGPL-1.0-only"],
-      "gx:containsPII": true,
-      "gx:name": "Test Dataset",
-      "gx:description": "This is the data resource description.",
-      "@context": {
-        "xsd": "http://www.w3.org/2001/XMLSchema#",
-        "gx": "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#"
+      "@id": "https://piveau.io/set/resource/service-offering/myOfferingTest",
+      "gx:description": "This is the service offering description.",
+      "gx:policy": {
+        "@id": "_:b0"
       },
-      "type": "gx:DataResource"
-    }
-  ],
-  "gx:termsAndConditions": [{ "gx:URL": "test.eu/tnc", "gx:hash": "hash123" }],
-  "gx:policy": [
-    "{\n  \"@type\": \"odrl:Set\",\n  \"odrl:permission\": [\n    {\n      \"odrl:action\": {\n        \"odrl:type\": \"http://www.w3.org/ns/odrl/2/use\"\n      }\n    },\n    {\n      \"odrl:action\": {\n        \"odrl:type\": \"http://www.w3.org/ns/odrl/2/transfer\"\n      }\n    }\n  ],\n  \"odrl:prohibition\": [],\n  \"odrl:obligation\": []\n}"
-  ],
-  "gx:dataProtectionRegime": null,
-  "gx:dataAccountExport": [
+      "@type": [
+        "http://w3id.org/gaia-x/possible-x#PossibleXServiceOfferingExtension",
+        "gx:ServiceOffering"
+      ],
+      "schema:name": "MyServiceOfferingTest999",
+      "http://w3id.org/gaia-x/possible-x#providerUrl": "EXPECTED_PROVIDER_URL_VALUE",
+      "http://w3id.org/gaia-x/possible-x#assetId": "EXPECTED_ASSET_ID_VALUE",
+      "gx:aggregationOf": {
+        "@id": "_:b1"
+      },
+      "gx:providedBy": {
+        "@id": "_:b2"
+      },
+      "gx:name": "ServiceOfferTest999",
+      "gx:termsAndConditions": {
+        "@id": "_:b3"
+      },
+      "schema:description": "test service offer",
+      "gx:dataAccountExport": {
+        "@id": "_:b4"
+      }
+    },
     {
-      "gx:requestType": "API",
+      "@id": "_:b0",
+      "@type": "odrl:Set",
+      "odrl:permission": [
+        {
+          "@id": "_:b7"
+        },
+        {
+          "@id": "_:b5"
+        }
+      ]
+    },
+    {
+      "@id": "_:b1",
+      "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#license": "AGPL-1.0-only",
+      "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#exposedThrough": {
+        "@id": "_:b10"
+      },
+      "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#policy": {
+        "@id": "_:b11"
+      },
+      "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#copyrightOwnedBy": {
+        "@id": "_:b12"
+      },
+      "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#containsPII": {
+        "@value": "true",
+        "@type": "http://www.w3.org/2001/XMLSchema#boolean"
+      },
+      "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#description": "This is the data resource description.",
+      "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#name": "Test Dataset",
+      "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#producedBy": {
+        "@id": "_:b13"
+      },
+      "@type": "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#DataResource"
+    },
+    {
+      "@id": "_:b3",
+      "gx:URL": "test.eu/tnc",
+      "gx:hash": "hash123"
+    },
+    {
+      "@id": "_:b4",
       "gx:accessType": "digital",
+      "gx:requestType": "API",
       "gx:formatType": "application/json"
+    },
+    {
+      "@id": "_:b5",
+      "odrl:action": {
+        "@id": "_:b6"
+      }
+    },
+    {
+      "@id": "_:b6",
+      "odrl:type": "http://www.w3.org/ns/odrl/2/transfer"
+    },
+    {
+      "@id": "_:b7",
+      "odrl:action": {
+        "@id": "_:b8"
+      }
+    },
+    {
+      "@id": "_:b8",
+      "odrl:type": "http://www.w3.org/ns/odrl/2/use"
+    },
+    {
+      "@id": "_:b9",
+      "odrl:type": "http://www.w3.org/ns/odrl/2/use"
+    },
+    {
+      "@id": "_:b11",
+      "odrl:permission": [
+        {
+          "@id": "_:b14"
+        },
+        {
+          "@id": "_:b15"
+        }
+      ],
+      "@type": "odrl:Set"
+    },
+    {
+      "@id": "_:b14",
+      "odrl:action": {
+        "@id": "_:b9"
+      }
+    },
+    {
+      "@id": "_:b15",
+      "odrl:action": {
+        "@id": "_:b16"
+      }
+    },
+    {
+      "@id": "_:b16",
+      "odrl:type": "http://www.w3.org/ns/odrl/2/transfer"
     }
   ],
-  "gx:name": "Test Service Offering",
-  "gx:description": "This is the service offering description.",
-  "px:assetId": "EXPECTED_ASSET_ID_VALUE",
-  "px:providerUrl": "EXPECTED_PROVIDER_URL_VALUE",
   "@context": {
-    "xsd": "http://www.w3.org/2001/XMLSchema#",
-    "px": "http://w3id.org/gaia-x/possible-x#",
-    "gx": "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#"
-  },
-  "type": ["gx:ServiceOffering", "px:PossibleXServiceOfferingExtension"]
+    "schema": "https://schema.org/",
+    "gx": "https://w3id.org/gaia-x/development#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  }
 }

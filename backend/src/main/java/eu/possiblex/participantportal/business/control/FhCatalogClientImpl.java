@@ -63,16 +63,16 @@ public class FhCatalogClientImpl implements FhCatalogClient {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode offerJson = mapper.readTree(offerJsonContent);
 
-            String assetId = getValueForAttribute("px:assetId", offerJson);
-            String providerURL = getValueForAttribute("px:providerUrl", offerJson);
-            int aggregationOfSize = getListSizeForAttribute("gx:aggregationOf", offerJson);
+            String assetId = getValueForAttribute("assetId", offerJson);
+            String providerURL = getValueForAttribute("providerUrl", offerJson);
+            int aggregationOfSize = countKeyValuePairs("@type", "DataResource", offerJson);
             log.info("parsed fh catalog offer id px:assetId: " + assetId);
             log.info("parsed fh catalog offer id px:providerUrl: " + providerURL);
-            log.info("parsed fh catalog offer id size(gx:aggregationOf): " + aggregationOfSize);
+            log.info("parsed fh catalog offer id number of dataResources): " + aggregationOfSize);
 
             if ((assetId == null) || (providerURL == null) || assetId.isEmpty() || providerURL.isEmpty() || aggregationOfSize <= 0) {
                 throw new RuntimeException("FH catalog offer did not contain all expected infos! asset-ID: "
-                        + assetId + ", provider URL: " + providerURL + ", size of aggregationOf: " + aggregationOfSize);
+                        + assetId + ", provider URL: " + providerURL + ", number of dataResources: " + aggregationOfSize);
             }
 
             fhCatalogOffer = new FhCatalogOffer();
@@ -131,6 +131,32 @@ public class FhCatalogClientImpl implements FhCatalogClient {
         }
 
         return null;
+    }
+
+    private int countKeyValuePairs(String key, String value, JsonNode jsonNode) {
+        int count = 0;
+        if (jsonNode.isArray()) {
+            for (int i = 0; i < jsonNode.size(); i++) {
+                JsonNode child = jsonNode.get(i);
+                count += countKeyValuePairs(key, value, child);
+            }
+            return count;
+        }
+
+        for (Iterator<Map.Entry<String, JsonNode>> iter = jsonNode.fields(); iter.hasNext(); ) {
+            Map.Entry<String, JsonNode> entry = iter.next();
+
+            String currKey = entry.getKey();
+            if (currKey.equals(key)) {
+                String currValue = entry.getValue().asText();
+                if (currValue.equals(value) || currValue.endsWith("#" + value) || currValue.endsWith(":" + value)) {
+                    count++;
+                }
+            }
+            count += countKeyValuePairs(key, value, entry.getValue());
+        }
+
+        return count;
     }
 
     private int getListSizeForAttribute(String attribute, JsonNode jsonNode) {

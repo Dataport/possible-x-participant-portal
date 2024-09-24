@@ -1,60 +1,134 @@
 {
   "@graph": [
     {
-      "@id": "_:b0",
-      "http://www.w3.org/ns/odrl/2/action": {
+      "@id": "https://piveau.io/set/resource/service-offering/myOfferingTest",
+      "gx:description": "This is the service offering description.",
+      "gx:policy": {
+        "@id": "_:b0"
+      },
+      "@type": [
+        "http://w3id.org/gaia-x/possible-x#PossibleXServiceOfferingExtension",
+        "gx:ServiceOffering"
+      ],
+      "schema:name": "MyServiceOfferingTest999",
+      "http://w3id.org/gaia-x/possible-x#assetId": "EXPECTED_ASSET_ID_VALUE",
+      "gx:aggregationOf": {
         "@id": "_:b1"
+      },
+      "gx:providedBy": {
+        "@id": "_:b2"
+      },
+      "gx:name": "ServiceOfferTest999",
+      "gx:termsAndConditions": {
+        "@id": "_:b3"
+      },
+      "schema:description": "test service offer",
+      "gx:dataAccountExport": {
+        "@id": "_:b4"
       }
+    },
+    {
+      "@id": "_:b0",
+      "@type": "odrl:Set",
+      "odrl:permission": [
+        {
+          "@id": "_:b7"
+        },
+        {
+          "@id": "_:b5"
+        }
+      ]
     },
     {
       "@id": "_:b1",
-      "http://www.w3.org/ns/odrl/2/type": "http://www.w3.org/ns/odrl/2/use"
-    },
-    {
-      "@id": "file:///usr/verticles/testId",
-      "dct:identifier": "testIdentifier",
-      "dcat:accessURL": "",
-      "@type": "dcat:distribution"
-    },
-    {
-      "@id": "_:b2",
-      "http://www.w3.org/ns/odrl/2/type": "http://www.w3.org/ns/odrl/2/transfer"
-    },
-    {
-      "@id": "https://piveau.io/set/data/87ff3e97-8545-4e01-8a61-27d6c78130cb",
-      "@type": "dcat:Dataset",
-      "dct:title": "test",
-      "dcat:distribution": {
-        "@id": "file:///usr/verticles/testId"
+      "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#license": "AGPL-1.0-only",
+      "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#exposedThrough": {
+        "@id": "_:b10"
       },
-      "odrl:hasPolicy": {
-        "@id": "_:b3"
+      "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#policy": {
+        "@id": "_:b11"
       },
-      "https://possible-gaia-x.de/ns/#assetId": "EXPECTED_ASSET_ID_VALUE",
-      "dct:description": "test"
+      "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#copyrightOwnedBy": {
+        "@id": "_:b12"
+      },
+      "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#containsPII": {
+        "@value": "true",
+        "@type": "http://www.w3.org/2001/XMLSchema#boolean"
+      },
+      "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#description": "This is the data resource description.",
+      "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#name": "Test Dataset",
+      "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#producedBy": {
+        "@id": "_:b13"
+      },
+      "@type": "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#DataResource"
     },
     {
       "@id": "_:b3",
-      "http://www.w3.org/ns/odrl/2/permission": [
-        {
-          "@id": "_:b4"
-        },
-        {
-          "@id": "_:b0"
-        }
-      ],
-      "@type": "http://www.w3.org/ns/odrl/2/Set"
+      "gx:URL": "test.eu/tnc",
+      "gx:hash": "hash123"
     },
     {
       "@id": "_:b4",
-      "http://www.w3.org/ns/odrl/2/action": {
-        "@id": "_:b2"
+      "gx:accessType": "digital",
+      "gx:requestType": "API",
+      "gx:formatType": "application/json"
+    },
+    {
+      "@id": "_:b5",
+      "odrl:action": {
+        "@id": "_:b6"
       }
+    },
+    {
+      "@id": "_:b6",
+      "odrl:type": "http://www.w3.org/ns/odrl/2/transfer"
+    },
+    {
+      "@id": "_:b7",
+      "odrl:action": {
+        "@id": "_:b8"
+      }
+    },
+    {
+      "@id": "_:b8",
+      "odrl:type": "http://www.w3.org/ns/odrl/2/use"
+    },
+    {
+      "@id": "_:b9",
+      "odrl:type": "http://www.w3.org/ns/odrl/2/use"
+    },
+    {
+      "@id": "_:b11",
+      "odrl:permission": [
+        {
+          "@id": "_:b14"
+        },
+        {
+          "@id": "_:b15"
+        }
+      ],
+      "@type": "odrl:Set"
+    },
+    {
+      "@id": "_:b14",
+      "odrl:action": {
+        "@id": "_:b9"
+      }
+    },
+    {
+      "@id": "_:b15",
+      "odrl:action": {
+        "@id": "_:b16"
+      }
+    },
+    {
+      "@id": "_:b16",
+      "odrl:type": "http://www.w3.org/ns/odrl/2/transfer"
     }
   ],
   "@context": {
-    "dct": "http://purl.org/dc/terms/",
-    "dcat": "http://www.w3.org/ns/dcat#",
+    "schema": "https://schema.org/",
+    "gx": "https://w3id.org/gaia-x/development#",
     "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
   }
 }
