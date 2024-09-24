@@ -32,7 +32,7 @@ public class PxExtendedServiceOfferingCredentialSubject {
     public static final List<String> TYPE = List.of("gx:ServiceOffering", "px:PossibleXServiceOfferingExtension");
 
     @Getter(AccessLevel.NONE)
-    public static final Map<String, String> CONTEXT = Map.of("gx", "https://w3id.org/gaia-x/development#%22", "xsd",
+    public static final Map<String, String> CONTEXT = Map.of("gx", "https://w3id.org/gaia-x/development#", "xsd",
         "http://www.w3.org/2001/XMLSchema#", "px", "http://w3id.org/gaia-x/possible-x#");
 
     @NotNull
