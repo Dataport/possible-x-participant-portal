@@ -107,7 +107,7 @@ class ProviderServiceTest {
         //check if assetId exists and provider url is set correctly
         assertNotNull(pxExtSoCs);
         assertTrue(pxExtSoCs.getAssetId()
-            .matches("assetId_[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"));
+            .matches("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"));
         assertEquals("test", pxExtSoCs.getProviderUrl());
 
         verify(edcClient).createAsset(assetCreateRequestCaptor.capture());
@@ -169,7 +169,7 @@ class ProviderServiceTest {
         assertEquals(serviceOfferingId, dataResource.getExposedThrough().getId());
         //check if assetId exists and provider url is set correctly
         assertTrue(pxExtSoCs.getAssetId()
-            .matches("assetId_[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"));
+            .matches("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"));
         assertEquals("test", pxExtSoCs.getProviderUrl());
 
         verify(edcClient).createAsset(assetCreateRequestCaptor.capture());
