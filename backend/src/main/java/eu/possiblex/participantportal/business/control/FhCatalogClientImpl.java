@@ -159,41 +159,6 @@ public class FhCatalogClientImpl implements FhCatalogClient {
         return count;
     }
 
-    private int getListSizeForAttribute(String attribute, JsonNode jsonNode) {
-
-        if (jsonNode.isArray()) {
-            for (int i = 0; i < jsonNode.size(); i++) {
-                JsonNode child = jsonNode.get(i);
-
-                int size = getListSizeForAttribute(attribute, child);
-
-                if (size != 0) {
-                    return size;
-                }
-            }
-            return 0;
-        }
-
-        for (Iterator<Map.Entry<String, JsonNode>> iter = jsonNode.fields(); iter.hasNext(); ) {
-            Map.Entry<String, JsonNode> entry = iter.next();
-
-            String key = entry.getKey();
-            if (key.equals(attribute) || key.endsWith("#" + attribute) || key.endsWith(":" + attribute)) {
-                if (entry.getValue().isArray() && !entry.getValue().isEmpty()) {
-                    return entry.getValue().size();
-                }
-            }
-
-            int size = getListSizeForAttribute(attribute, entry.getValue());
-
-            if (size != 0) {
-                return size;
-            }
-        }
-
-        return 0;
-    }
-
     private Map<String, String> createHeaders() {
         return Map.of("Content-Type", "application/json", "Authorization", "Bearer " + fhCatalogSecretKey);
     }
