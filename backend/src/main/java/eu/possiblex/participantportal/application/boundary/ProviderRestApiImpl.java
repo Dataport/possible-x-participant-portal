@@ -6,11 +6,10 @@ import eu.possiblex.participantportal.application.entity.CreateOfferResponseTO;
 import eu.possiblex.participantportal.application.entity.CreateServiceOfferingRequestTO;
 import eu.possiblex.participantportal.application.entity.ParticipantIdTO;
 import eu.possiblex.participantportal.business.control.ProviderService;
-import eu.possiblex.participantportal.business.entity.edc.CreateEdcOfferBE;
+import eu.possiblex.participantportal.business.entity.CreateDataOfferingRequestBE;
+import eu.possiblex.participantportal.business.entity.CreateServiceOfferingRequestBE;
 import eu.possiblex.participantportal.business.entity.exception.EdcOfferCreationException;
 import eu.possiblex.participantportal.business.entity.exception.FhOfferCreationException;
-import eu.possiblex.participantportal.business.entity.fh.CreateFhDataOfferingBE;
-import eu.possiblex.participantportal.business.entity.fh.CreateFhServiceOfferingBE;
 import eu.possiblex.participantportal.utilities.PossibleXException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,12 +55,11 @@ public class ProviderRestApiImpl implements ProviderRestApi {
 
         log.info("CreateServiceOfferingRequestTO: {}", createServiceOfferingRequestTO);
 
-        CreateFhServiceOfferingBE createFhServiceOfferingBE = providerApiMapper.getCreateFhServiceOfferingBE(
+        CreateServiceOfferingRequestBE createOfferingRequestBE = providerApiMapper.getCreateOfferingRequestBE(
             createServiceOfferingRequestTO);
-        CreateEdcOfferBE createEdcOfferBE = providerApiMapper.getCreateEdcOfferBE(createServiceOfferingRequestTO);
 
         try {
-            return providerService.createServiceOffering(createFhServiceOfferingBE, createEdcOfferBE);
+            return providerService.createOffering(createOfferingRequestBE);
         } catch (EdcOfferCreationException e) {
             throw new PossibleXException("EDC offer creation failed: " + e, HttpStatus.BAD_REQUEST);
         } catch (FhOfferCreationException e) {
@@ -81,12 +79,11 @@ public class ProviderRestApiImpl implements ProviderRestApi {
 
         log.info("CreateDataOfferingRequestTO: {}", createDataOfferingRequestTO);
 
-        CreateFhDataOfferingBE createFhDataOfferingBE = providerApiMapper.getCreateFhDataOfferingBE(
+        CreateDataOfferingRequestBE createOfferingRequestBE = providerApiMapper.getCreateOfferingRequestBE(
             createDataOfferingRequestTO);
-        CreateEdcOfferBE createEdcOfferBE = providerApiMapper.getCreateEdcOfferBE(createDataOfferingRequestTO);
 
         try {
-            return providerService.createDataOffering(createFhDataOfferingBE, createEdcOfferBE);
+            return providerService.createOffering(createOfferingRequestBE);
         } catch (EdcOfferCreationException e) {
             throw new PossibleXException("EDC offer creation failed: " + e, HttpStatus.BAD_REQUEST);
         } catch (FhOfferCreationException e) {

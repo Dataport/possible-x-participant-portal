@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import eu.possiblex.participantportal.business.entity.selfdescriptions.PojoCredentialSubject;
 import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.datatypes.GxDataAccountExport;
 import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.datatypes.GxSOTermsAndConditions;
 import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.datatypes.NodeKindIRITypeId;
@@ -28,14 +27,16 @@ import java.util.Map;
 @Setter
 @SuperBuilder
 @ToString
-public class PxExtendedServiceOfferingCredentialSubject extends PojoCredentialSubject {
+public class PxExtendedServiceOfferingCredentialSubject {
     @Getter(AccessLevel.NONE)
     public static final List<String> TYPE = List.of("gx:ServiceOffering", "px:PossibleXServiceOfferingExtension");
 
     @Getter(AccessLevel.NONE)
-    public static final Map<String, String> CONTEXT = Map.of("gx",
-        "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#", "xsd",
+    public static final Map<String, String> CONTEXT = Map.of("gx", "https://w3id.org/gaia-x/development#", "xsd",
         "http://www.w3.org/2001/XMLSchema#", "px", "http://w3id.org/gaia-x/possible-x#");
+
+    @NotNull
+    private String id;
 
     @JsonProperty("gx:providedBy")
     @NotNull
@@ -87,7 +88,7 @@ public class PxExtendedServiceOfferingCredentialSubject extends PojoCredentialSu
     @JsonDeserialize(using = StringDeserializer.class)
     private String providerUrl;
 
-    @JsonProperty("type")
+    @JsonProperty("@type")
     public List<String> getType() {
 
         return TYPE;

@@ -3,15 +3,14 @@ package eu.possiblex.participantportal.business.control;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.possiblex.participantportal.business.entity.edc.CreateEdcOfferBE;
+import eu.possiblex.participantportal.business.entity.CreateDataOfferingRequestBE;
+import eu.possiblex.participantportal.business.entity.CreateServiceOfferingRequestBE;
 import eu.possiblex.participantportal.business.entity.edc.asset.AssetCreateRequest;
 import eu.possiblex.participantportal.business.entity.edc.asset.ionoss3extension.IonosS3DataSource;
 import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyCreateRequest;
 import eu.possiblex.participantportal.business.entity.exception.EdcOfferCreationException;
 import eu.possiblex.participantportal.business.entity.exception.FhOfferCreationException;
-import eu.possiblex.participantportal.business.entity.fh.CreateFhDataOfferingBE;
-import eu.possiblex.participantportal.business.entity.fh.CreateFhServiceOfferingBE;
 import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.datatypes.GxDataAccountExport;
 import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.datatypes.GxSOTermsAndConditions;
 import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.datatypes.NodeKindIRITypeId;
@@ -81,13 +80,17 @@ class ProviderServiceTest {
         reset(edcClient);
 
         //given
-        CreateEdcOfferBE createEdcOfferBE = CreateEdcOfferBE.builder().fileName("")
-            .policy(objectMapper.readValue(POLICY_JSON_STRING, Policy.class)).build();
-        CreateFhServiceOfferingBE createFhServiceOfferingBE = CreateFhServiceOfferingBE.builder()
-            .serviceOfferingCredentialSubject(getGxServiceOfferingCredentialSubject()).build();
+
+        GxServiceOfferingCredentialSubject offeringCs = getGxServiceOfferingCredentialSubject();
+
+        CreateServiceOfferingRequestBE be = CreateServiceOfferingRequestBE.builder()
+            .policy(objectMapper.readValue(POLICY_JSON_STRING, Policy.class)).providedBy(offeringCs.getProvidedBy())
+            .name(offeringCs.getName()).description(offeringCs.getDescription())
+            .termsAndConditions(offeringCs.getTermsAndConditions()).dataAccountExport(offeringCs.getDataAccountExport())
+            .dataProtectionRegime(offeringCs.getDataProtectionRegime()).build();
 
         //when
-        var response = providerService.createServiceOffering(createFhServiceOfferingBE, createEdcOfferBE);
+        var response = providerService.createOffering(be);
 
         //then
         ArgumentCaptor<AssetCreateRequest> assetCreateRequestCaptor = forClass(AssetCreateRequest.class);
@@ -134,14 +137,17 @@ class ProviderServiceTest {
         reset(edcClient);
 
         //given
-        CreateEdcOfferBE createEdcOfferBE = CreateEdcOfferBE.builder().fileName(FILE_NAME)
-            .policy(objectMapper.readValue(POLICY_JSON_STRING, Policy.class)).build();
-        CreateFhDataOfferingBE createFhDataOfferingBE = CreateFhDataOfferingBE.builder()
-            .serviceOfferingCredentialSubject(getGxServiceOfferingCredentialSubject())
-            .dataResourceCredentialSubject(getGxDataResourceCredentialSubject()).build();
+        GxServiceOfferingCredentialSubject offeringCs = getGxServiceOfferingCredentialSubject();
+        GxDataResourceCredentialSubject resourceCs = getGxDataResourceCredentialSubject();
+
+        CreateDataOfferingRequestBE be = CreateDataOfferingRequestBE.builder().fileName(FILE_NAME)
+            .policy(objectMapper.readValue(POLICY_JSON_STRING, Policy.class)).providedBy(offeringCs.getProvidedBy())
+            .name(offeringCs.getName()).description(offeringCs.getDescription())
+            .termsAndConditions(offeringCs.getTermsAndConditions()).dataAccountExport(offeringCs.getDataAccountExport())
+            .dataProtectionRegime(offeringCs.getDataProtectionRegime()).dataResource(resourceCs).build();
 
         //when
-        var response = providerService.createDataOffering(createFhDataOfferingBE, createEdcOfferBE);
+        var response = providerService.createOffering(be);
 
         //then
         ArgumentCaptor<AssetCreateRequest> assetCreateRequestCaptor = forClass(AssetCreateRequest.class);
