@@ -24,6 +24,6 @@ public interface ProviderApiMapper {
     @InheritConfiguration
     @Mapping(target = "dataResource", source = "dataResourceCredentialSubject")
     @Mapping(target = "fileName", source = "fileName")
-    CreateDataOfferingRequestBE getCreateOfferingRequestBE(CreateDataOfferingRequestTO createServiceOfferingRequestTO);
+    CreateDataOfferingRequestBE getCreateOfferingRequestBE(CreateDataOfferingRequestTO createDataOfferingRequestTO);
 
 }

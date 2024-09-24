@@ -162,12 +162,12 @@ public class ProviderServiceImpl implements ProviderService {
         String serviceOfferingId = UUID.randomUUID().toString();
         String dataResourceId = UUID.randomUUID().toString();
 
-        if (request instanceof CreateDataOfferingRequestBE dataRequest) { // data offering
-            dataRequest.getDataResource().setId(dataResourceId);
-            dataRequest.getDataResource().setExposedThrough(new NodeKindIRITypeId(serviceOfferingId));
+        if (request instanceof CreateDataOfferingRequestBE dataOfferingRequest) { // data offering
+            dataOfferingRequest.getDataResource().setId(dataResourceId);
+            dataOfferingRequest.getDataResource().setExposedThrough(new NodeKindIRITypeId(serviceOfferingId));
 
-            return providerServiceMapper.getPxExtendedServiceOfferingCredentialSubject(dataRequest, serviceOfferingId,
-                assetId, edcProtocolUrl);
+            return providerServiceMapper.getPxExtendedServiceOfferingCredentialSubject(dataOfferingRequest,
+                serviceOfferingId, assetId, edcProtocolUrl);
         } else { // base service offering
             return providerServiceMapper.getPxExtendedServiceOfferingCredentialSubject(request, serviceOfferingId,
                 assetId, edcProtocolUrl);
@@ -183,8 +183,8 @@ public class ProviderServiceImpl implements ProviderService {
      */
     private CreateEdcOfferBE createEdcBEFromRequest(CreateServiceOfferingRequestBE request) {
 
-        if (request instanceof CreateDataOfferingRequestBE dataRequest) { // data offering
-            return providerServiceMapper.getCreateEdcOfferBE(dataRequest);
+        if (request instanceof CreateDataOfferingRequestBE dataOfferingRequest) { // data offering
+            return providerServiceMapper.getCreateEdcOfferBE(dataOfferingRequest);
         } else { // base service offering
             return providerServiceMapper.getCreateEdcOfferBE(request);
         }
