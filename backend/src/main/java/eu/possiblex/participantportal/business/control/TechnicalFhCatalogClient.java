@@ -32,6 +32,7 @@ import java.util.Map;
  * The technical class to access the FH Catalog via REST.
  */
 public interface TechnicalFhCatalogClient {
+    // TODO Adapt return type when catalog call returns ID
     @PostExchange("/resources/service-offering")
     void addServiceOfferingToFhCatalog(@RequestHeader Map<String, String> auth,
         @RequestBody PxExtendedServiceOfferingCredentialSubject serviceOfferingCs);
