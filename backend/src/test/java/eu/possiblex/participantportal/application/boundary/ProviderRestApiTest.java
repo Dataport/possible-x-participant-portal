@@ -6,10 +6,9 @@ import eu.possiblex.participantportal.application.entity.CreateDataOfferingReque
 import eu.possiblex.participantportal.application.entity.CreateServiceOfferingRequestTO;
 import eu.possiblex.participantportal.business.control.ProviderService;
 import eu.possiblex.participantportal.business.control.ProviderServiceFake;
-import eu.possiblex.participantportal.business.entity.edc.CreateEdcOfferBE;
+import eu.possiblex.participantportal.business.entity.CreateDataOfferingRequestBE;
+import eu.possiblex.participantportal.business.entity.CreateServiceOfferingRequestBE;
 import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
-import eu.possiblex.participantportal.business.entity.fh.CreateFhDataOfferingBE;
-import eu.possiblex.participantportal.business.entity.fh.CreateFhServiceOfferingBE;
 import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.datatypes.GxDataAccountExport;
 import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.datatypes.GxSOTermsAndConditions;
 import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.datatypes.NodeKindIRITypeId;
@@ -31,6 +30,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -53,6 +53,9 @@ class ProviderRestApiTest {
 
     @Test
     void shouldReturnMessageOnCreateServiceOffering() throws Exception {
+
+        reset(providerService);
+
         //given
         CreateServiceOfferingRequestTO request = objectMapper.readValue(getCreateServiceOfferingTOJsonString(),
             CreateServiceOfferingRequestTO.class);
@@ -66,30 +69,34 @@ class ProviderRestApiTest {
             .andExpect(jsonPath("$.edcResponseId").value(ProviderServiceFake.CREATE_OFFER_RESPONSE_ID))
             .andExpect(jsonPath("$.fhResponseId").value(ProviderServiceFake.CREATE_OFFER_RESPONSE_ID));
 
-        ArgumentCaptor<CreateFhServiceOfferingBE> createServiceOfferingCaptor = ArgumentCaptor.forClass(
-            CreateFhServiceOfferingBE.class);
-        ArgumentCaptor<CreateEdcOfferBE> createEdcOfferCaptor = ArgumentCaptor.forClass(CreateEdcOfferBE.class);
+        ArgumentCaptor<CreateServiceOfferingRequestBE> createServiceOfferingCaptor = ArgumentCaptor.forClass(
+            CreateServiceOfferingRequestBE.class);
 
-        verify(providerService).createServiceOffering(createServiceOfferingCaptor.capture(),
-            createEdcOfferCaptor.capture());
+        verify(providerService).createOffering(createServiceOfferingCaptor.capture());
 
-        CreateFhServiceOfferingBE createFhServiceOfferingBE = createServiceOfferingCaptor.getValue();
-        CreateEdcOfferBE createEdcOfferBE = createEdcOfferCaptor.getValue();
+        CreateServiceOfferingRequestBE createServiceOfferingBE = createServiceOfferingCaptor.getValue();
 
-        Policy serviceOfferingPolicy = objectMapper.readValue(
-            createFhServiceOfferingBE.getServiceOfferingCredentialSubject().getPolicy().get(0), Policy.class);
+        Policy serviceOfferingPolicy = createServiceOfferingBE.getPolicy();
 
         //check if request is mapped correctly
         assertThat(request.getPolicy()).usingRecursiveComparison().isEqualTo(serviceOfferingPolicy);
-        assertThat(expectedServiceOfferingCS).usingRecursiveComparison()
-            .isEqualTo(createFhServiceOfferingBE.getServiceOfferingCredentialSubject());
-        assertThat(request.getPolicy()).usingRecursiveComparison().isEqualTo(createEdcOfferBE.getPolicy());
-        assertEquals("Test Service Offering", createEdcOfferBE.getAssetName());
-        assertEquals("This is the service offering description.", createEdcOfferBE.getAssetDescription());
+        assertThat(expectedServiceOfferingCS.getProvidedBy()).usingRecursiveComparison()
+            .isEqualTo(createServiceOfferingBE.getProvidedBy());
+        assertThat(expectedServiceOfferingCS.getDataAccountExport()).usingRecursiveComparison()
+            .isEqualTo(createServiceOfferingBE.getDataAccountExport());
+        assertThat(expectedServiceOfferingCS.getDataProtectionRegime()).usingRecursiveComparison()
+            .isEqualTo(createServiceOfferingBE.getDataProtectionRegime());
+        assertThat(expectedServiceOfferingCS.getTermsAndConditions()).usingRecursiveComparison()
+            .isEqualTo(createServiceOfferingBE.getTermsAndConditions());
+        assertEquals(expectedServiceOfferingCS.getName(), createServiceOfferingBE.getName());
+        assertEquals(expectedServiceOfferingCS.getDescription(), createServiceOfferingBE.getDescription());
     }
 
     @Test
     void shouldReturnMessageOnCreateDataOffering() throws Exception {
+
+        reset(providerService);
+
         //given
         CreateDataOfferingRequestTO request = objectMapper.readValue(getCreateDataOfferingTOJsonString(),
             CreateDataOfferingRequestTO.class);
@@ -104,31 +111,30 @@ class ProviderRestApiTest {
             .andExpect(jsonPath("$.edcResponseId").value(ProviderServiceFake.CREATE_OFFER_RESPONSE_ID))
             .andExpect(jsonPath("$.fhResponseId").value(ProviderServiceFake.CREATE_OFFER_RESPONSE_ID));
 
-        ArgumentCaptor<CreateFhDataOfferingBE> createDataOfferingCaptor = ArgumentCaptor.forClass(
-            CreateFhDataOfferingBE.class);
-        ArgumentCaptor<CreateEdcOfferBE> createEdcOfferCaptor = ArgumentCaptor.forClass(CreateEdcOfferBE.class);
+        ArgumentCaptor<CreateDataOfferingRequestBE> createDataOfferingRequestBEArgumentCaptor = ArgumentCaptor.forClass(
+            CreateDataOfferingRequestBE.class);
 
-        verify(providerService).createDataOffering(createDataOfferingCaptor.capture(), createEdcOfferCaptor.capture());
+        verify(providerService).createOffering(createDataOfferingRequestBEArgumentCaptor.capture());
 
-        CreateFhDataOfferingBE createFhDataOfferingBE = createDataOfferingCaptor.getValue();
-        CreateEdcOfferBE createEdcOfferBE = createEdcOfferCaptor.getValue();
-
-        Policy serviceOfferingPolicy = objectMapper.readValue(
-            createFhDataOfferingBE.getServiceOfferingCredentialSubject().getPolicy().get(0), Policy.class);
-
-        Policy dataOfferingPolicy = objectMapper.readValue(
-            createFhDataOfferingBE.getDataResourceCredentialSubject().getPolicy().get(0), Policy.class);
+        CreateDataOfferingRequestBE createDataOfferingRequestBE = createDataOfferingRequestBEArgumentCaptor.getValue();
+        Policy serviceOfferingPolicy = createDataOfferingRequestBE.getPolicy();
 
         //check if request is mapped correctly
         assertThat(request.getPolicy()).usingRecursiveComparison().isEqualTo(serviceOfferingPolicy);
-        assertThat(request.getPolicy()).usingRecursiveComparison().isEqualTo(dataOfferingPolicy);
-        assertThat(expectedServiceOfferingCS).usingRecursiveComparison()
-            .isEqualTo(createFhDataOfferingBE.getServiceOfferingCredentialSubject());
+        assertThat(expectedServiceOfferingCS.getProvidedBy()).usingRecursiveComparison()
+            .isEqualTo(createDataOfferingRequestBE.getProvidedBy());
+        assertThat(expectedServiceOfferingCS.getDataAccountExport()).usingRecursiveComparison()
+            .isEqualTo(createDataOfferingRequestBE.getDataAccountExport());
+        assertThat(expectedServiceOfferingCS.getDataProtectionRegime()).usingRecursiveComparison()
+            .isEqualTo(createDataOfferingRequestBE.getDataProtectionRegime());
+        assertThat(expectedServiceOfferingCS.getTermsAndConditions()).usingRecursiveComparison()
+            .isEqualTo(createDataOfferingRequestBE.getTermsAndConditions());
+        assertEquals(expectedServiceOfferingCS.getName(), createDataOfferingRequestBE.getName());
+        assertEquals(expectedServiceOfferingCS.getDescription(), createDataOfferingRequestBE.getDescription());
+        assertEquals(request.getFileName(), createDataOfferingRequestBE.getFileName());
+
         assertThat(expectedDataResourceCS).usingRecursiveComparison()
-            .isEqualTo(createFhDataOfferingBE.getDataResourceCredentialSubject());
-        assertThat(request.getPolicy()).usingRecursiveComparison().isEqualTo(createEdcOfferBE.getPolicy());
-        assertEquals("Test Service Offering", createEdcOfferBE.getAssetName());
-        assertEquals("This is the service offering description.", createEdcOfferBE.getAssetDescription());
+            .isEqualTo(createDataOfferingRequestBE.getDataResource());
     }
 
     @Test
