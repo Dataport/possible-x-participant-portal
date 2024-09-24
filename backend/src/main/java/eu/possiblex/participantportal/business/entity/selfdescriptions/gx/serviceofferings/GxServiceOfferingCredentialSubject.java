@@ -40,6 +40,7 @@ import java.util.Map;
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true, value = { "type", "@context" }, allowGetters = true)
 public class GxServiceOfferingCredentialSubject extends PojoCredentialSubject {

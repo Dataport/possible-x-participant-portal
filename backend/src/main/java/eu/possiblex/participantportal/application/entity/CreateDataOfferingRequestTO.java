@@ -9,7 +9,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @Getter
 @Setter
-@ToString
+@ToString(callSuper = true)
 public class CreateDataOfferingRequestTO extends CreateServiceOfferingRequestTO {
 
     private GxDataResourceCredentialSubject dataResourceCredentialSubject;
