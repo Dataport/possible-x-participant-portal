@@ -59,7 +59,7 @@ public class ProviderRestApiImpl implements ProviderRestApi {
             createServiceOfferingRequestTO);
 
         try {
-            return providerService.createServiceOffering(createOfferingRequestBE);
+            return providerService.createOffering(createOfferingRequestBE);
         } catch (EdcOfferCreationException e) {
             throw new PossibleXException("EDC offer creation failed: " + e, HttpStatus.BAD_REQUEST);
         } catch (FhOfferCreationException e) {
@@ -83,7 +83,7 @@ public class ProviderRestApiImpl implements ProviderRestApi {
             createDataOfferingRequestTO);
 
         try {
-            return providerService.createDataOffering(createOfferingRequestBE);
+            return providerService.createOffering(createOfferingRequestBE);
         } catch (EdcOfferCreationException e) {
             throw new PossibleXException("EDC offer creation failed: " + e, HttpStatus.BAD_REQUEST);
         } catch (FhOfferCreationException e) {
