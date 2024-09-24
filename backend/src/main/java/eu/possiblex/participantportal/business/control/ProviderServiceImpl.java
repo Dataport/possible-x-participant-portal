@@ -2,6 +2,8 @@ package eu.possiblex.participantportal.business.control;
 
 import eu.possiblex.participantportal.application.entity.CreateOfferResponseTO;
 import eu.possiblex.participantportal.application.entity.ParticipantIdTO;
+import eu.possiblex.participantportal.business.entity.CreateDataOfferingRequestBE;
+import eu.possiblex.participantportal.business.entity.CreateServiceOfferingRequestBE;
 import eu.possiblex.participantportal.business.entity.edc.CreateEdcOfferBE;
 import eu.possiblex.participantportal.business.entity.edc.asset.AssetCreateRequest;
 import eu.possiblex.participantportal.business.entity.edc.common.IdResponse;
@@ -9,12 +11,8 @@ import eu.possiblex.participantportal.business.entity.edc.contractdefinition.Con
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyCreateRequest;
 import eu.possiblex.participantportal.business.entity.exception.EdcOfferCreationException;
 import eu.possiblex.participantportal.business.entity.exception.FhOfferCreationException;
-import eu.possiblex.participantportal.business.entity.fh.CreateFhDataOfferingBE;
-import eu.possiblex.participantportal.business.entity.fh.CreateFhServiceOfferingBE;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
 import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.datatypes.NodeKindIRITypeId;
-import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.resources.GxDataResourceCredentialSubject;
-import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.serviceofferings.GxServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.selfdescriptions.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.utilities.PossibleXException;
 import lombok.extern.slf4j.Slf4j;
@@ -63,42 +61,30 @@ public class ProviderServiceImpl implements ProviderService {
     }
 
     /**
-     * Creates a service offering by interacting with both FH catalog and EDC.
+     * Creates an offering by interacting with both FH catalog and EDC.
      *
-     * @param createFhServiceOfferingBE the FH offer business entity
-     * @param createEdcOfferBE the EDC offer business entity
+     * @param request the service offering creation request
      * @return the response transfer object containing offer IDs
      */
     @Override
-    public CreateOfferResponseTO createServiceOffering(CreateFhServiceOfferingBE createFhServiceOfferingBE,
-        CreateEdcOfferBE createEdcOfferBE) {
+    public CreateOfferResponseTO createOffering(CreateServiceOfferingRequestBE request) {
 
-        String assetId = generateAssetId();
-        String serviceOfferingId = UUID.randomUUID().toString();
+        PxExtendedServiceOfferingCredentialSubject pxExtendedServiceOfferingCs = createCombinedCsFromRequest(request);
+        CreateEdcOfferBE createEdcOfferBE = createEdcBEFromRequest(request);
 
-        PxExtendedServiceOfferingCredentialSubject pxExtendedServiceOfferingCs = getFhCatalogRequestForServiceOffering(
-            assetId, createFhServiceOfferingBE, serviceOfferingId);
-
-        return createFhCatalogOfferAndEdcOffer(createEdcOfferBE, assetId, pxExtendedServiceOfferingCs);
-    }
-
-    /**
-     * Creates a data offering by interacting with both FH catalog and EDC.
-     *
-     * @param createFhDataOfferingBE the FH offer business entity
-     * @param createEdcOfferBE the EDC offer business entity
-     * @return the response transfer object containing offer IDs
-     */
-    @Override
-    public CreateOfferResponseTO createDataOffering(CreateFhDataOfferingBE createFhDataOfferingBE,
-        CreateEdcOfferBE createEdcOfferBE) {
-
-        String assetId = generateAssetId();
-        String serviceOfferingId = UUID.randomUUID().toString();
-
-        PxExtendedServiceOfferingCredentialSubject pxExtendedServiceOfferingCs = getFhCatalogRequestForDataOffering(
-            assetId, createFhDataOfferingBE, serviceOfferingId);
-        return createFhCatalogOfferAndEdcOffer(createEdcOfferBE, assetId, pxExtendedServiceOfferingCs);
+        try {
+            FhCatalogIdResponse fhResponseId = createFhCatalogOffer(pxExtendedServiceOfferingCs);
+            IdResponse edcResponseId = createEdcOffer(pxExtendedServiceOfferingCs.getAssetId(), createEdcOfferBE);
+            return new CreateOfferResponseTO(edcResponseId.getId(), fhResponseId.getId());
+        } catch (EdcOfferCreationException e) {
+            throw new PossibleXException("Failed to create offer. EdcOfferCreationException: " + e,
+                HttpStatus.BAD_REQUEST);
+        } catch (FhOfferCreationException e) {
+            throw new PossibleXException("Failed to create offer. FhOfferCreationException: " + e,
+                HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            throw new PossibleXException("Failed to create offer. Other Exception: " + e);
+        }
     }
 
     /**
@@ -110,16 +96,6 @@ public class ProviderServiceImpl implements ProviderService {
     public ParticipantIdTO getParticipantId() {
 
         return new ParticipantIdTO(participantId);
-    }
-
-    /**
-     * Generates a unique asset ID.
-     *
-     * @return the generated asset ID
-     */
-    private String generateAssetId() {
-
-        return "assetId_" + UUID.randomUUID();
     }
 
     /**
@@ -173,49 +149,44 @@ public class ProviderServiceImpl implements ProviderService {
         }
     }
 
-    private PxExtendedServiceOfferingCredentialSubject getFhCatalogRequestForServiceOffering(String assetId,
-        CreateFhServiceOfferingBE createFhServiceOfferingBE, String serviceOfferingId) {
+    /**
+     * Creates a combined credential subject for the offering from the request.
+     *
+     * @param request the offering creation request
+     * @return the combined credential subject
+     */
+    private PxExtendedServiceOfferingCredentialSubject createCombinedCsFromRequest(
+        CreateServiceOfferingRequestBE request) {
 
-        GxServiceOfferingCredentialSubject serviceOfferingCredentialSubject = createFhServiceOfferingBE.getServiceOfferingCredentialSubject();
-        serviceOfferingCredentialSubject.setId(serviceOfferingId);
+        String assetId = UUID.randomUUID().toString();
+        String serviceOfferingId = UUID.randomUUID().toString();
+        String dataResourceId = UUID.randomUUID().toString();
 
-        return providerServiceMapper.getPxExtendedServiceOfferingCredentialSubject(serviceOfferingCredentialSubject,
-            assetId, edcProtocolUrl);
+        if (request instanceof CreateDataOfferingRequestBE dataRequest) { // data offering
+            dataRequest.getDataResource().setId(dataResourceId);
+            dataRequest.getDataResource().setExposedThrough(new NodeKindIRITypeId(serviceOfferingId));
 
-    }
-
-    private PxExtendedServiceOfferingCredentialSubject getFhCatalogRequestForDataOffering(String assetId,
-        CreateFhDataOfferingBE createFhDataOfferingBE, String serviceOfferingId) {
-
-        String datasetId = UUID.randomUUID().toString();
-
-        GxServiceOfferingCredentialSubject serviceOfferingCredentialSubject = createFhDataOfferingBE.getServiceOfferingCredentialSubject();
-        serviceOfferingCredentialSubject.setId(serviceOfferingId);
-
-        GxDataResourceCredentialSubject dataResourceCredentialSubject = createFhDataOfferingBE.getDataResourceCredentialSubject();
-        dataResourceCredentialSubject.setId(datasetId);
-        dataResourceCredentialSubject.setExposedThrough(new NodeKindIRITypeId(serviceOfferingId));
-
-        return providerServiceMapper.getPxExtendedServiceOfferingCredentialSubject(serviceOfferingCredentialSubject,
-            dataResourceCredentialSubject, assetId, edcProtocolUrl);
+            return providerServiceMapper.getPxExtendedServiceOfferingCredentialSubject(dataRequest, serviceOfferingId,
+                assetId, edcProtocolUrl);
+        } else { // base service offering
+            return providerServiceMapper.getPxExtendedServiceOfferingCredentialSubject(request, serviceOfferingId,
+                assetId, edcProtocolUrl);
+        }
 
     }
 
-    private CreateOfferResponseTO createFhCatalogOfferAndEdcOffer(CreateEdcOfferBE createEdcOfferBE, String assetId,
-        PxExtendedServiceOfferingCredentialSubject pxExtendedServiceOfferingCs) {
+    /**
+     * Creates the payload for the EDC offer from the request.
+     *
+     * @param request the offering creation request
+     * @return the EDC offer business entity
+     */
+    private CreateEdcOfferBE createEdcBEFromRequest(CreateServiceOfferingRequestBE request) {
 
-        try {
-            FhCatalogIdResponse fhResponseId = createFhCatalogOffer(pxExtendedServiceOfferingCs);
-            IdResponse edcResponseId = createEdcOffer(assetId, createEdcOfferBE);
-            return new CreateOfferResponseTO(edcResponseId.getId(), fhResponseId.getId());
-        } catch (EdcOfferCreationException e) {
-            throw new PossibleXException("Failed to create offer. EdcOfferCreationException: " + e,
-                HttpStatus.BAD_REQUEST);
-        } catch (FhOfferCreationException e) {
-            throw new PossibleXException("Failed to create offer. FhOfferCreationException: " + e,
-                HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            throw new PossibleXException("Failed to create offer. Other Exception: " + e);
+        if (request instanceof CreateDataOfferingRequestBE dataRequest) { // data offering
+            return providerServiceMapper.getCreateEdcOfferBE(dataRequest);
+        } else { // base service offering
+            return providerServiceMapper.getCreateEdcOfferBE(request);
         }
     }
 
