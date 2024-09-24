@@ -34,27 +34,22 @@ import {
   styleUrls: ['./offering-wizard-extension.component.scss']
 })
 export class OfferingWizardExtensionComponent {
+  @ViewChild("gxServiceOfferingWizard") private gxServiceOfferingWizard: BaseWizardExtensionComponent;
+  @ViewChild("gxDataResourceWizard") private gxDataResourceWizard: BaseWizardExtensionComponent;
   @ViewChild("offerCreationStatusMessage") public offerCreationStatusMessage!: StatusMessageComponent;
+
   selectedFileName: string = "";
   policyMap = POLICY_MAP;
   selectedPolicy: string = "";
+
+
   public prefillDone: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+
   protected isDataOffering: boolean = true;
-  @ViewChild("gxServiceOfferingWizard") private gxServiceOfferingWizard: BaseWizardExtensionComponent;
-  @ViewChild("gxDataResourceWizard") private gxDataResourceWizard: BaseWizardExtensionComponent;
 
   constructor(
     private apiService: ApiService
-  ) {
-  }
-
-  get isInvalidFileName(): boolean {
-    return !this.isFieldFilled(this.selectedFileName);
-  }
-
-  get isInvalidPolicy(): boolean {
-    return !this.isFieldFilled(this.selectedPolicy);
-  }
+  ) {}
 
   public async loadShape(offerType: string, serviceOfferingId: string, dataResourceId: string): Promise<void> {
     this.isDataOffering = offerType === "data";
@@ -75,6 +70,15 @@ export class OfferingWizardExtensionComponent {
 
   public isShapeLoaded(): boolean {
     return this.gxServiceOfferingWizard?.isShapeLoaded() && this.isOfferingDataOffering() ? this.gxDataResourceWizard?.isShapeLoaded() : true;
+  }
+
+  private prefillHandleCs(cs: IPojoCredentialSubject) {
+    if (isGxServiceOfferingCs(cs)) {
+      this.gxServiceOfferingWizard.prefillFields(cs, ["gx:providedBy"]);
+    }
+    if (isDataResourceCs(cs)) {
+      this.gxDataResourceWizard.prefillFields(cs, ["gx:producedBy", "gx:exposedThrough", "gx:copyrightOwnedBy"]);
+    }
   }
 
   public prefillFields(csList: IPojoCredentialSubject[]) {
@@ -144,12 +148,22 @@ export class OfferingWizardExtensionComponent {
 
     createOfferMethod(createOfferTo).then(response => {
       console.log(response);
-      this.offerCreationStatusMessage.showSuccessMessage("", 20000);
+      this.offerCreationStatusMessage.showSuccessMessage("");
     }).catch((e: HttpErrorResponse) => {
       this.offerCreationStatusMessage.showErrorMessage(e.error.detail);
     }).catch(_ => {
       this.offerCreationStatusMessage.showErrorMessage("Unbekannter Fehler");
     });
+
+  }
+
+  protected getPolicyNames() {
+    return Object.keys(this.policyMap);
+  }
+
+  protected getPolicyDetails(policy: string): string {
+    const policyDetails = this.policyMap[policy];
+    return policyDetails ? JSON.stringify(policyDetails, null, 2) : '';
   }
 
   public ngOnDestroy() {
@@ -159,12 +173,35 @@ export class OfferingWizardExtensionComponent {
     this.offerCreationStatusMessage.hideAllMessages();
   }
 
-  public isFieldFilled(str: string) {
+  protected isWizardFormInvalid(): boolean {
+    let serviceOfferingWizardInvalid = this.gxServiceOfferingWizard?.isWizardFormInvalid();
+    let dataResourceWizardInvalid = this.isOfferingDataOffering() ? this.gxDataResourceWizard?.isWizardFormInvalid() : false;
+
+    return serviceOfferingWizardInvalid || dataResourceWizardInvalid;
+  }
+
+  protected isOfferingDataOffering() {
+    return this.isDataOffering;
+  }
+
+  public isFieldFilled(str: string){
     if (!str || str.trim().length === 0) {
       return false;
     }
 
     return true;
+  }
+
+  protected isPossibleSpecificFormInvalid(): boolean {
+    return this.isInvalidFileName || this.isInvalidPolicy;
+  }
+
+  get isInvalidFileName(): boolean {
+    return !this.isFieldFilled(this.selectedFileName);
+  }
+
+  get isInvalidPolicy(): boolean {
+    return !this.isFieldFilled(this.selectedPolicy);
   }
 
   public resetPossibleSpecificFormValues() {
@@ -188,40 +225,5 @@ export class OfferingWizardExtensionComponent {
 
     console.log(shapeSource);
     return shapeSource;
-  }
-
-  protected getPolicyNames() {
-    return Object.keys(this.policyMap);
-  }
-
-  protected getPolicyDetails(policy: string): string {
-    const policyDetails = this.policyMap[policy];
-    return policyDetails ? JSON.stringify(policyDetails, null, 2) : '';
-  }
-
-  protected isWizardFormInvalid(): boolean {
-    let serviceOfferingWizardInvalid = this.gxServiceOfferingWizard?.isWizardFormInvalid();
-    let dataResourceWizardInvalid = this.isOfferingDataOffering() ? this.gxDataResourceWizard?.isWizardFormInvalid() : false;
-
-    return serviceOfferingWizardInvalid || dataResourceWizardInvalid;
-  }
-
-  protected isOfferingDataOffering() {
-    return this.isDataOffering;
-  }
-
-  protected isPossibleSpecificFormInvalid(): boolean {
-    let serviceOfferingPossibleSpecificFormInvalid = this.isInvalidPolicy;
-    let dataResourcePossibleSpecificFormInvalid = this.isOfferingDataOffering() ? this.isInvalidFileName : false;
-    return serviceOfferingPossibleSpecificFormInvalid || dataResourcePossibleSpecificFormInvalid;
-  }
-
-  private prefillHandleCs(cs: IPojoCredentialSubject) {
-    if (isGxServiceOfferingCs(cs)) {
-      this.gxServiceOfferingWizard.prefillFields(cs, ["gx:providedBy"]);
-    }
-    if (isDataResourceCs(cs)) {
-      this.gxDataResourceWizard.prefillFields(cs, ["gx:producedBy", "gx:exposedThrough", "gx:copyrightOwnedBy"]);
-    }
   }
 }
