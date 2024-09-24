@@ -33,7 +33,8 @@ public class PxExtendedServiceOfferingCredentialSubject {
 
     @Getter(AccessLevel.NONE)
     public static final Map<String, String> CONTEXT = Map.of("gx", "https://w3id.org/gaia-x/development#", "xsd",
-        "http://www.w3.org/2001/XMLSchema#", "px", "http://w3id.org/gaia-x/possible-x#");
+        "http://www.w3.org/2001/XMLSchema#", "px", "http://w3id.org/gaia-x/possible-x#", "schema",
+        "https://schema.org/");
 
     @NotNull
     private String id;
@@ -87,6 +88,18 @@ public class PxExtendedServiceOfferingCredentialSubject {
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)
     private String providerUrl;
+
+    // TODO: Remove this when FH catalog UI is adjusted, currently needed to show the name
+    @JsonProperty("schema:name")
+    @JsonSerialize(using = StringSerializer.class)
+    @JsonDeserialize(using = StringDeserializer.class)
+    private String schemaName;
+
+    // TODO: Remove this when FH catalog UI is adjusted, currently needed to show the description
+    @JsonProperty("schema:description")
+    @JsonSerialize(using = StringSerializer.class)
+    @JsonDeserialize(using = StringDeserializer.class)
+    private String schemaDescription;
 
     @JsonProperty("@type")
     public List<String> getType() {

@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogOffer;
-import eu.possiblex.participantportal.business.entity.fh.catalog.DcatDataset;
 import eu.possiblex.participantportal.business.entity.selfdescriptions.px.PxExtendedServiceOfferingCredentialSubject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,29 +24,19 @@ public class FhCatalogClientImpl implements FhCatalogClient {
     @Value("${fh.catalog.secret-key}")
     private String fhCatalogSecretKey;
 
-    @Value("${fh.catalog.catalog-name}")
-    private String catalogName;
-
     public FhCatalogClientImpl(@Autowired TechnicalFhCatalogClient technicalFhCatalogClient) {
 
         this.technicalFhCatalogClient = technicalFhCatalogClient;
     }
 
     @Override
-    public FhCatalogIdResponse addDatasetToFhCatalog(DcatDataset datasetToCatalogRequest) {
-
-        log.info("using catalog with name: " + catalogName);
-        FhCatalogIdResponse response = technicalFhCatalogClient.addDatasetToFhCatalog(createHeaders(),
-            datasetToCatalogRequest, catalogName, "identifiers");
-        log.info("got offer id: " + response.getId());
-        return response;
-    }
-
-    @Override
     public FhCatalogIdResponse addServiceOfferingToFhCatalog(
         PxExtendedServiceOfferingCredentialSubject serviceOfferingCredentialSubject) {
 
-        return new FhCatalogIdResponse("dummy");
+        FhCatalogIdResponse response = new FhCatalogIdResponse("TBR"); //TODO adapt when catalog call returns ID
+        technicalFhCatalogClient.addServiceOfferingToFhCatalog(createHeaders(), serviceOfferingCredentialSubject);
+        log.info("got offer id: {}", response.getId());
+        return response;
     }
 
     @Override

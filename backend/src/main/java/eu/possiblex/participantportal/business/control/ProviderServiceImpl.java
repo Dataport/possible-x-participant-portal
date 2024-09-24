@@ -36,9 +36,6 @@ public class ProviderServiceImpl implements ProviderService {
 
     private final ProviderServiceMapper providerServiceMapper;
 
-    @Value("${fh.catalog.secret-key}")
-    private String fhCatalogSecretKey;
-
     @Value("${edc.protocol-base-url}")
     private String edcProtocolUrl;
 
