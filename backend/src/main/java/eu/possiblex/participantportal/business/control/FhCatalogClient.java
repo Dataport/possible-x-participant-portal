@@ -12,5 +12,5 @@ public interface FhCatalogClient {
     FhCatalogIdResponse addServiceOfferingToFhCatalog(
         PxExtendedServiceOfferingCredentialSubject serviceOfferingCredentialSubject);
 
-    FhCatalogOffer getFhCatalogOffer(String datasetId) throws OfferNotFoundException;
+    FhCatalogOffer getFhCatalogOffer(String offeringId) throws OfferNotFoundException;
 }

@@ -40,7 +40,7 @@ public interface TechnicalFhCatalogClient {
                                               @RequestBody DcatDataset datasetToCatalogRequest, @PathVariable String cat_name,
                                               @RequestParam String value_type);
 
-    @GetExchange("/resources/service-offering/{dataset_id}")
-    String getFhCatalogOffer(@PathVariable String dataset_id);
+    @GetExchange("/resources/service-offering/{offering_id}")
+    String getFhCatalogOffer(@PathVariable String offering_id);
 }
 

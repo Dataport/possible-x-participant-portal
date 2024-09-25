@@ -51,15 +51,15 @@ public class FhCatalogClientImpl implements FhCatalogClient {
     }
 
     @Override
-    public FhCatalogOffer getFhCatalogOffer(String datasetId) throws OfferNotFoundException {
+    public FhCatalogOffer getFhCatalogOffer(String offeringId) throws OfferNotFoundException {
 
-        log.info("fetching offer for fh catalog ID " + datasetId);
+        log.info("fetching offer for fh catalog ID " + offeringId);
         String offerJsonContent = null;
         try {
-            offerJsonContent = technicalFhCatalogClient.getFhCatalogOffer(datasetId);
+            offerJsonContent = technicalFhCatalogClient.getFhCatalogOffer(offeringId);
         } catch (WebClientResponseException e) {
             if (e.getStatusCode().value() == 404) {
-                throw new OfferNotFoundException("no FH Catalog offer found with ID " + datasetId);
+                throw new OfferNotFoundException("no FH Catalog offer found with ID " + offeringId);
             }
             throw e;
         }
@@ -77,14 +77,14 @@ public class FhCatalogClientImpl implements FhCatalogClient {
 
             String assetId = getValueForAttribute("assetId", offerJson);
             String providerURL = getValueForAttribute("providerUrl", offerJson);
-            int aggregationOfSize = countKeyValuePairs("@type", "DataResource", offerJson);
+            int dataResourceCount = countKeyValuePairs("@type", "DataResource", offerJson);
             log.info("parsed fh catalog offer id px:assetId: " + assetId);
             log.info("parsed fh catalog offer id px:providerUrl: " + providerURL);
-            log.info("parsed fh catalog offer id number of dataResources): " + aggregationOfSize);
+            log.info("parsed fh catalog offer id number of dataResources): " + dataResourceCount);
 
-            if ((assetId == null) || (providerURL == null) || assetId.isEmpty() || providerURL.isEmpty() || aggregationOfSize <= 0) {
+            if ((assetId == null) || (providerURL == null) || assetId.isEmpty() || providerURL.isEmpty() || dataResourceCount <= 0) {
                 throw new RuntimeException("FH catalog offer did not contain all expected infos! asset-ID: "
-                        + assetId + ", provider URL: " + providerURL + ", number of dataResources: " + aggregationOfSize);
+                        + assetId + ", provider URL: " + providerURL + ", number of dataResources: " + dataResourceCount);
             }
 
             fhCatalogOffer = new FhCatalogOffer();
