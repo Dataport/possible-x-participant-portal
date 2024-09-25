@@ -1,5 +1,6 @@
 package eu.possiblex.participantportal.business.control;
 
+import eu.possiblex.participantportal.business.entity.AcceptOfferResponseBE;
 import eu.possiblex.participantportal.business.entity.ConsumeOfferRequestBE;
 import eu.possiblex.participantportal.business.entity.SelectOfferRequestBE;
 import eu.possiblex.participantportal.business.entity.SelectOfferResponseBE;
@@ -8,6 +9,8 @@ import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProce
 import eu.possiblex.participantportal.business.entity.exception.NegotiationFailedException;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
+
+import java.util.Optional;
 
 public interface ConsumerService {
     /**
@@ -28,5 +31,5 @@ public interface ConsumerService {
      * @exception TransferFailedException failed to transfer the data
      * @return final result of the transfer
      */
-    TransferProcess acceptContractOffer(ConsumeOfferRequestBE request) throws OfferNotFoundException, NegotiationFailedException, TransferFailedException;
+    AcceptOfferResponseBE acceptContractOffer(ConsumeOfferRequestBE request) throws OfferNotFoundException, NegotiationFailedException, TransferFailedException;
 }

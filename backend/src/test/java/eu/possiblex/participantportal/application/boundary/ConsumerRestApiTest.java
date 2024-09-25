@@ -103,7 +103,7 @@ public class ConsumerRestApiTest {
                          .edcOfferId(ConsumerServiceMock.VALID_EDC_OFFER_ID)
                     .build()))
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print())
-            .andExpect(status().isOk()).andExpect(jsonPath("$.state").value(TransferProcessState.COMPLETED.name()));
+            .andExpect(status().isOk()).andExpect(jsonPath("$.transferProcessState").value(TransferProcessState.COMPLETED.name()));
 
         ArgumentCaptor<ConsumeOfferRequestBE> requestCaptor = ArgumentCaptor.forClass(ConsumeOfferRequestBE.class);
 

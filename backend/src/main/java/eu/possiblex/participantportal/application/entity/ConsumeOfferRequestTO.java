@@ -19,4 +19,9 @@ public class ConsumeOfferRequestTO {
      * @see eu.possiblex.participantportal.application.entity.OfferDetailsTO#edcOfferId
      */
     private String edcOfferId;
+
+    /**
+     * The number of data resources in the offer.
+     */
+    private int dataResourceCount;
 }

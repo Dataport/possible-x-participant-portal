@@ -19,4 +19,9 @@ public class SelectOfferResponseBE {
      * The URL of the EDC Connector of the provider.
      */
     private String counterPartyAddress;
+
+    /**
+     * The number of data resources in the offer.
+     */
+    private int dataResourceCount;
 }

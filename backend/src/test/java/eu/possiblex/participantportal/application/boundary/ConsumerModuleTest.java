@@ -118,9 +118,9 @@ public class ConsumerModuleTest {
         // WHEN/THEN
 
         this.mockMvc.perform(post("/consumer/offer/accept").content(RestApiHelper.asJsonString(
-                    ConsumeOfferRequestTO.builder().edcOfferId(edcOfferId).counterPartyAddress(counterPartyAddress).build()))
+                    ConsumeOfferRequestTO.builder().edcOfferId(edcOfferId).counterPartyAddress(counterPartyAddress).dataResourceCount(1).build()))
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
-            .andExpect(jsonPath("$.state").value(TransferProcessState.COMPLETED.name()));
+            .andExpect(jsonPath("$.transferProcessState").value(TransferProcessState.COMPLETED.name()));
 
         // THEN
 

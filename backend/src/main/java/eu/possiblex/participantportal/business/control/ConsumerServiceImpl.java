@@ -1,5 +1,6 @@
 package eu.possiblex.participantportal.business.control;
 
+import eu.possiblex.participantportal.business.entity.AcceptOfferResponseBE;
 import eu.possiblex.participantportal.business.entity.ConsumeOfferRequestBE;
 import eu.possiblex.participantportal.business.entity.SelectOfferRequestBE;
 import eu.possiblex.participantportal.business.entity.SelectOfferResponseBE;
@@ -30,6 +31,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -65,12 +67,13 @@ public class ConsumerServiceImpl implements ConsumerService {
         SelectOfferResponseBE response = new SelectOfferResponseBE();
         response.setEdcOffer(edcCatalogOffer);
         response.setCounterPartyAddress(fhCatalogOffer.getCounterPartyAddress());
+        response.setDataResourceCount(fhCatalogOffer.getDataResourceCount());
 
         return response;
     }
 
     @Override
-    public TransferProcess acceptContractOffer(ConsumeOfferRequestBE request)
+    public AcceptOfferResponseBE acceptContractOffer(ConsumeOfferRequestBE request)
         throws OfferNotFoundException, NegotiationFailedException, TransferFailedException {
 
         // query edcOffer
@@ -85,13 +88,19 @@ public class ConsumerServiceImpl implements ConsumerService {
                     .policy(dataset.getHasPolicy().get(0)).build()).build();
         ContractNegotiation contractNegotiation = negotiateOffer(negotiationInitiateRequest);
 
-        // initiate transfer
-        DataAddress dataAddress = IonosS3DataDestination.builder().storage("s3-eu-central-2.ionoscloud.com")
-            .bucketName("dev-consumer-edc-bucket-possible-31952746").path("s3HatGeklappt/").keyName("myKey").build();
-        TransferRequest transferRequest = TransferRequest.builder().connectorId(edcOffer.getParticipantId())
-            .counterPartyAddress(request.getCounterPartyAddress()).assetId(dataset.getAssetId())
-            .contractId(contractNegotiation.getContractAgreementId()).dataDestination(dataAddress).build();
-        return performTransfer(transferRequest);
+        TransferProcessState transferProcessState = TransferProcessState.INITIAL;
+        if (request.getDataResourceCount() > 0) {
+            // initiate transfer
+            DataAddress dataAddress = IonosS3DataDestination.builder().storage("s3-eu-central-2.ionoscloud.com")
+                    .bucketName("dev-consumer-edc-bucket-possible-31952746").path("s3HatGeklappt/").keyName("myKey").build();
+            TransferRequest transferRequest = TransferRequest.builder().connectorId(edcOffer.getParticipantId())
+                    .counterPartyAddress(request.getCounterPartyAddress()).assetId(dataset.getAssetId())
+                    .contractId(contractNegotiation.getContractAgreementId()).dataDestination(dataAddress).build();
+            transferProcessState = performTransfer(transferRequest).getState();
+        }
+        AcceptOfferResponseBE be = new AcceptOfferResponseBE(transferProcessState, contractNegotiation.getState(),
+            request.getDataResourceCount());
+        return be;
     }
 
     private DcatCatalog queryEdcCatalog(CatalogRequest catalogRequest) {

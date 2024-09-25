@@ -25,4 +25,8 @@ public class OfferDetailsTO {
     private String name;
     private String description;
     private String contentType;
+    /**
+     * The number of data resources in the offer.
+     */
+    private int dataResourceCount;
 }

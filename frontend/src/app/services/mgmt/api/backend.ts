@@ -85,11 +85,13 @@ export interface ISelectOfferRequestTO {
 export interface ISelectOfferRequestTOBuilder {
 }
 
-export interface ITransferDetailsTO {
-    state: ITransferProcessState;
+export interface IAcceptOfferResponseTO {
+    transferProcessState: ITransferProcessState;
+    negotiationState: INegotiationState;
+    dataResourceCount: number;
 }
 
-export interface ITransferDetailsTOBuilder {
+export interface IAcceptOfferResponseTOBuilder {
 }
 
 export interface IPojoCredentialSubject {
@@ -252,7 +254,7 @@ export class RestApplicationClient {
      * HTTP POST /consumer/offer/accept
      * Java method: eu.possiblex.participantportal.application.boundary.ConsumerRestApiImpl.acceptContractOffer
      */
-    acceptContractOffer(request: IConsumeOfferRequestTO): RestResponse<ITransferDetailsTO> {
+    acceptContractOffer(request: IConsumeOfferRequestTO): RestResponse<IAcceptOfferResponseTO> {
         return this.httpClient.request({ method: "POST", url: uriEncoding`consumer/offer/accept`, data: request });
     }
 
@@ -340,6 +342,8 @@ export class RestApplicationClient {
 export type RestResponse<R> = Promise<R>;
 
 export type ITransferProcessState = "INITIAL" | "PROVISIONING" | "PROVISIONING_REQUESTED" | "PROVISIONED" | "REQUESTING" | "REQUESTED" | "STARTING" | "STARTED" | "SUSPENDING" | "SUSPENDED" | "COMPLETING" | "COMPLETED" | "TERMINATING" | "TERMINATED" | "DEPROVISIONING" | "DEPROVISIONING_REQUESTED" | "DEPROVISIONED";
+
+export type INegotiationState = "INITIAL" | "REQUESTING" | "REQUESTED" | "OFFERING" | "OFFERED" | "ACCEPTING" | "ACCEPTED" | "AGREEING" | "AGREED" | "VERIFYING" | "VERIFIED" | "FINALIZING" | "FINALIZED" | "TERMINATING" | "TERMINATED";
 
 export type IPojoCredentialSubjectUnion = IGxDataResourceCredentialSubject | IGxServiceOfferingCredentialSubject;
 

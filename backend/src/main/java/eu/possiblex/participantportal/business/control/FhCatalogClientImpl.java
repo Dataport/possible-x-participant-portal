@@ -82,14 +82,15 @@ public class FhCatalogClientImpl implements FhCatalogClient {
             log.info("parsed fh catalog offer id px:providerUrl: " + providerURL);
             log.info("parsed fh catalog offer id number of dataResources): " + dataResourceCount);
 
-            if ((assetId == null) || (providerURL == null) || assetId.isEmpty() || providerURL.isEmpty() || dataResourceCount <= 0) {
+            if ((assetId == null) || (providerURL == null) || assetId.isEmpty() || providerURL.isEmpty()) {
                 throw new RuntimeException("FH catalog offer did not contain all expected infos! asset-ID: "
-                        + assetId + ", provider URL: " + providerURL + ", number of dataResources: " + dataResourceCount);
+                        + assetId + ", provider URL: " + providerURL);
             }
 
             fhCatalogOffer = new FhCatalogOffer();
             fhCatalogOffer.setAssetId(assetId);
             fhCatalogOffer.setCounterPartyAddress(providerURL);
+            fhCatalogOffer.setDataResourceCount(dataResourceCount);
 
         } catch (Exception e) {
             throw new RuntimeException("failed to parse fh catalog offer json: " + offerJsonContent, e);

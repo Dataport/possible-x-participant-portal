@@ -3,6 +3,7 @@ package eu.possiblex.participantportal.business.control;
 import eu.possiblex.participantportal.business.entity.ConsumeOfferRequestBE;
 import eu.possiblex.participantportal.business.entity.SelectOfferRequestBE;
 import eu.possiblex.participantportal.business.entity.SelectOfferResponseBE;
+import eu.possiblex.participantportal.business.entity.AcceptOfferResponseBE;
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcess;
 import eu.possiblex.participantportal.business.entity.exception.NegotiationFailedException;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
@@ -70,8 +71,8 @@ class ConsumerServiceTest {
 
         // WHEN
 
-        TransferProcess response = sut.acceptContractOffer(
-            ConsumeOfferRequestBE.builder().counterPartyAddress("http://example.com").edcOfferId(EdcClientFake.FAKE_ID)
+        AcceptOfferResponseBE response = sut.acceptContractOffer(
+            ConsumeOfferRequestBE.builder().counterPartyAddress("http://example.com").edcOfferId(EdcClientFake.FAKE_ID).dataResourceCount(1)
                 .build());
 
         // THEN
@@ -109,7 +110,7 @@ class ConsumerServiceTest {
         reset(fhCatalogClient);
         assertThrows(TransferFailedException.class, () -> sut.acceptContractOffer(
             ConsumeOfferRequestBE.builder().counterPartyAddress("http://example.com")
-                .edcOfferId(EdcClientFake.BAD_TRANSFER_ID).build()));
+                .edcOfferId(EdcClientFake.BAD_TRANSFER_ID).dataResourceCount(1).build()));
     }
 
     // Test-specific configuration to provide mocks
