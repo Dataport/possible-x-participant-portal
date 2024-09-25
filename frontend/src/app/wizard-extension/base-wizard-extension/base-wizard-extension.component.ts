@@ -14,18 +14,18 @@
  *  limitations under the License.
  */
 
-import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
-import { ShaclFile } from '@models/shacl-file';
-import { Shape } from '@models/shape';
-import { FormfieldControlService } from '@services/form-field.service';
-import { DynamicFormComponent } from '../../sdwizard/core/dynamic-form/dynamic-form.component';
-import { ExpandedFieldsComponent } from '@components/expanded-fields/expanded-fields.component';
-import { AbstractControl, FormControl } from '@angular/forms';
-import { DynamicFormInputComponent } from '@components/dynamic-form-input/dynamic-form-input.component';
-import { DynamicFormArrayComponent } from '@components/dynamic-form-array/dynamic-form-array.component';
-import { BehaviorSubject, takeWhile } from 'rxjs';
-import { ExportService } from '@services/export.service';
-import { Mutex } from 'async-mutex';
+import {ChangeDetectorRef, Component, ViewChild} from '@angular/core';
+import {ShaclFile} from '@models/shacl-file';
+import {Shape} from '@models/shape';
+import {FormfieldControlService} from '@services/form-field.service';
+import {DynamicFormComponent} from '../../sdwizard/core/dynamic-form/dynamic-form.component';
+import {ExpandedFieldsComponent} from '@components/expanded-fields/expanded-fields.component';
+import {AbstractControl} from '@angular/forms';
+import {DynamicFormInputComponent} from '@components/dynamic-form-input/dynamic-form-input.component';
+import {DynamicFormArrayComponent} from '@components/dynamic-form-array/dynamic-form-array.component';
+import {BehaviorSubject, takeWhile} from 'rxjs';
+import {ExportService} from '@services/export.service';
+import {Mutex} from 'async-mutex';
 
 @Component({
   selector: 'app-base-wizard-extension',
@@ -33,23 +33,76 @@ import { Mutex } from 'async-mutex';
   styleUrls: ['./base-wizard-extension.component.scss']
 })
 export class BaseWizardExtensionComponent {
-  @ViewChild("wizard") private wizard: DynamicFormComponent;
-
   public orgaIdFields: AbstractControl[] = [];
-
+  prefillDone: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   protected shaclFile: ShaclFile;
   protected filteredShapes: Shape[];
   protected wizardVisible: boolean = false;
-
+  @ViewChild("wizard") private wizard: DynamicFormComponent;
   private shapeInitialized: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  prefillDone: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   private wizardMutex: Mutex = new Mutex();
 
   private disabledFields: string[] = [];
+  private createDateTimer: NodeJS.Timeout = undefined;
 
   constructor(protected formFieldService: FormfieldControlService,
-    protected exportService: ExportService,
-    protected changeDetectorRef: ChangeDetectorRef) {}
+              protected exportService: ExportService,
+              protected changeDetectorRef: ChangeDetectorRef) {
+  }
+
+  public async loadShape(shapeSource: Promise<any>, id: string): Promise<void> {
+    await this.wizardMutex.runExclusive(async () => {
+      this.reinitWizard();
+      let shape = await shapeSource;
+      this.selectShape(this.formFieldService.readShaclFile(shape), id);
+      this.shapeInitialized.next(true);
+    });
+  }
+
+  public isShapeLoaded(): boolean {
+    return this.shapeInitialized.value;
+  }
+
+  public prefillFields(selfDescriptionFields: any, disabledFields: string[]) {
+    console.log("prefillFields", selfDescriptionFields)
+    if (this.createDateTimer) {
+      clearInterval(this.createDateTimer);
+    }
+    // prefill self-description
+    this.disabledFields = disabledFields;
+    this.prefillWaitForShape(selfDescriptionFields);
+  }
+
+  public generateJsonCs(): any {
+    this.wizard.shape.userPrefix = this.wizard.form.get('user_prefix').value;
+    this.wizard.shape.downloadFormat = this.wizard.form.get('download_format').value;
+    this.wizard.shape.fields = this.wizard.updateFormFieldsValues(this.wizard.formFields, this.wizard.form);
+    this.wizard.shape.fields = this.wizard.emptyChildrenFields(this.wizard.shape.fields);
+    let jsonCs = this.exportService.saveFile(this.wizard.file);
+
+    jsonCs["id"] = jsonCs["@id"]
+    delete jsonCs["@id"]
+    //jsonCs["type"] = jsonCs["@type"]
+    //delete jsonCs["@type"]
+    delete jsonCs[""]
+
+    return jsonCs;
+  }
+
+  public ngOnDestroy() {
+    if (this.wizard) {
+      this.wizard.ngOnDestroy();
+    }
+  }
+
+  public isWizardFormInvalid() {
+    return this.wizard?.form.invalid;
+  }
+
+  public setCredentialId(id: string): void {
+    let didField = this.wizard.form.get("user_prefix");
+    didField.patchValue(id);
+  }
 
   private selectShape(shaclFile: ShaclFile, credentialSubjectId: string): void {
     this.shaclFile = shaclFile;
@@ -58,8 +111,7 @@ export class BaseWizardExtensionComponent {
     console.log(this.filteredShapes);
     if (this.filteredShapes.length > 1) {
       console.log("too many shapes selected");
-    }
-    else {
+    } else {
       // add a field containing the id to avoid creating a new offering
       this.filteredShapes[0].fields.push({
         id: 'user_prefix',
@@ -107,22 +159,7 @@ export class BaseWizardExtensionComponent {
     this.prefillDone.next(false);
     this.wizardVisible = true;
     this.changeDetectorRef.detectChanges();
-}
-
-  public async loadShape(shapeSource: Promise<any>, id: string): Promise<void> {
-    await this.wizardMutex.runExclusive(async () => {
-      this.reinitWizard();
-      let shape = await shapeSource;
-      this.selectShape(this.formFieldService.readShaclFile(shape), id);
-      this.shapeInitialized.next(true);
-    });
   }
-
-  public isShapeLoaded(): boolean {
-    return this.shapeInitialized.value;
-  }
-
-  private createDateTimer: NodeJS.Timeout = undefined;
 
   private prefillWaitForWizard(selfDescriptionFields: any) {
     this.wizard.finishedLoading
@@ -131,15 +168,15 @@ export class BaseWizardExtensionComponent {
         if (!finishedLoading) {
           console.log("Wizard not yet ready, waiting for init.");
           return;
-        } 
+        }
 
         console.log("Wizard initialized");
         console.log("start prefilling fields");
-        
+
         this.wizardMutex.runExclusive(() => {
           for (let expandedField of this.wizard.expandedFieldsViewChildren) {
             this.processExpandedField(expandedField, selfDescriptionFields);
-            }
+          }
           for (let formInput of this.wizard.formInputViewChildren) {
             this.processFormInput(formInput, selfDescriptionFields);
           }
@@ -163,16 +200,6 @@ export class BaseWizardExtensionComponent {
         console.log("Shape initialized");
         this.prefillWaitForWizard(selfDescriptionFields);
       });
-  }
-
-  public prefillFields(selfDescriptionFields: any, disabledFields: string[]) {
-    console.log("prefillFields", selfDescriptionFields)
-    if (this.createDateTimer) {
-      clearInterval(this.createDateTimer);
-    }
-    // prefill self-description
-    this.disabledFields = disabledFields;
-    this.prefillWaitForShape(selfDescriptionFields);
   }
 
   private processFormArray(formArray: DynamicFormArrayComponent, prefillFields: any) {
@@ -215,8 +242,8 @@ export class BaseWizardExtensionComponent {
 
     if (fullKey === "gx:providedBy") {
       this.orgaIdFields.push(formInput.form.controls[formInput.input.id]); // save for later reference
-    } 
-    
+    }
+
     if (Object.keys(prefillFields).includes(fullKey)) {
       let fieldValue = this.unpackValueFromField(prefillFields[fullKey]);
       formInput.form.controls[formInput.input.id].patchValue(fieldValue);
@@ -277,7 +304,7 @@ export class BaseWizardExtensionComponent {
     }
 
     // fill up array up to the expected count of inputs
-    for (let i = 0; i < (expandedField.inputs.length-prefillFields[parentKey].length); i++) {
+    for (let i = 0; i < (expandedField.inputs.length - prefillFields[parentKey].length); i++) {
       prefillFields[parentKey].push({});
     }
 
@@ -314,36 +341,4 @@ export class BaseWizardExtensionComponent {
       return field["id"]
     }
   }
-
-  public generateJsonCs(): any {
-    this.wizard.shape.userPrefix = this.wizard.form.get('user_prefix').value;
-    this.wizard.shape.downloadFormat = this.wizard.form.get('download_format').value;
-    this.wizard.shape.fields = this.wizard.updateFormFieldsValues(this.wizard.formFields, this.wizard.form);
-    this.wizard.shape.fields = this.wizard.emptyChildrenFields(this.wizard.shape.fields);
-    let jsonCs = this.exportService.saveFile(this.wizard.file);
-
-    jsonCs["id"] = jsonCs["@id"]
-    delete jsonCs["@id"]
-    //jsonCs["type"] = jsonCs["@type"]
-    //delete jsonCs["@type"]
-    delete jsonCs[""]
-
-    return jsonCs;
-  }
-
-  public ngOnDestroy() {
-    if (this.wizard) {
-      this.wizard.ngOnDestroy();
-    }
-  }
-
-  public isWizardFormInvalid() {
-    return this.wizard?.form.invalid;
-  }
-
-  public setCredentialId(id: string) : void{
-    let didField = this.wizard.form.get("user_prefix");
-      didField.patchValue(id);
-  }
-
 }

@@ -24,9 +24,9 @@ export class AcceptOfferComponent {
       edcOfferId: this.offer == undefined ? "" : this.offer.edcOfferId
     }).then(response => {
       console.log(response);
-      this.acceptOfferStatusMessage.showSuccessMessage("Check console for details.", 20000);
+      this.acceptOfferStatusMessage.showSuccessMessage("Check console for details.");
     }).catch((e: HttpErrorResponse) => {
-      this.acceptOfferStatusMessage.showErrorMessage(e.error.detail, 20000);
+      this.acceptOfferStatusMessage.showErrorMessage(e.error.detail);
     });
   };
 

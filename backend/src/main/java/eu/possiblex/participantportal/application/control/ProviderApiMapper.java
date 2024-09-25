@@ -1,51 +1,29 @@
 package eu.possiblex.participantportal.application.control;
 
-import eu.possiblex.participantportal.application.entity.CreateOfferRequestTO;
-import eu.possiblex.participantportal.business.entity.edc.CreateEdcOfferBE;
-import eu.possiblex.participantportal.business.entity.fh.CreateFhOfferBE;
-import eu.possiblex.participantportal.business.entity.selfdescriptions.PojoCredentialSubject;
-import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.serviceofferings.GxServiceOfferingCredentialSubject;
+import eu.possiblex.participantportal.application.entity.CreateDataOfferingRequestTO;
+import eu.possiblex.participantportal.application.entity.CreateServiceOfferingRequestTO;
+import eu.possiblex.participantportal.business.entity.CreateDataOfferingRequestBE;
+import eu.possiblex.participantportal.business.entity.CreateServiceOfferingRequestBE;
+import org.mapstruct.InheritConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Named;
-
-import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface ProviderApiMapper {
 
-    @Mapping(target = "assetName", source = "credentialSubjectList", qualifiedByName = "customOfferNameMapping")
-    @Mapping(target = "assetDescription", source = "credentialSubjectList", qualifiedByName = "customOfferDescriptionMapping")
+    @Mapping(target = "policy", source = "policy")
+    @Mapping(target = "name", source = "serviceOfferingCredentialSubject.name")
+    @Mapping(target = "description", source = "serviceOfferingCredentialSubject.description")
+    @Mapping(target = "providedBy", source = "serviceOfferingCredentialSubject.providedBy")
+    @Mapping(target = "termsAndConditions", source = "serviceOfferingCredentialSubject.termsAndConditions")
+    @Mapping(target = "dataProtectionRegime", source = "serviceOfferingCredentialSubject.dataProtectionRegime")
+    @Mapping(target = "dataAccountExport", source = "serviceOfferingCredentialSubject.dataAccountExport")
+    CreateServiceOfferingRequestBE getCreateOfferingRequestBE(
+        CreateServiceOfferingRequestTO createServiceOfferingRequestTO);
+
+    @InheritConfiguration
+    @Mapping(target = "dataResource", source = "dataResourceCredentialSubject")
     @Mapping(target = "fileName", source = "fileName")
-    @Mapping(target = "policy", source = "policy")
-    CreateEdcOfferBE getCreateEdcOfferDTOFromCreateOfferRequestTO(CreateOfferRequestTO createOfferRequestTO);
+    CreateDataOfferingRequestBE getCreateOfferingRequestBE(CreateDataOfferingRequestTO createDataOfferingRequestTO);
 
-    @Mapping(target = "offerName", source = "credentialSubjectList", qualifiedByName = "customOfferNameMapping")
-    @Mapping(target = "offerDescription", source = "credentialSubjectList", qualifiedByName = "customOfferDescriptionMapping")
-    @Mapping(target = "policy", source = "policy")
-    CreateFhOfferBE getCreateDatasetEntryDTOFromCreateOfferRequestTO(CreateOfferRequestTO createOfferRequestTO);
-
-    @Named("customOfferNameMapping")
-    default String customOfferNameMapping(List<PojoCredentialSubject> credentialSubjectList) {
-
-        GxServiceOfferingCredentialSubject credentialSubject = CredentialSubjectUtils.findFirstCredentialSubjectByType(
-            GxServiceOfferingCredentialSubject.class, credentialSubjectList);
-
-        if (credentialSubject == null) {
-            return "";
-        }
-        return credentialSubject.getName();
-    }
-
-    @Named("customOfferDescriptionMapping")
-    default String customOfferDescriptionMapping(List<PojoCredentialSubject> credentialSubjectList) {
-
-        GxServiceOfferingCredentialSubject credentialSubject = CredentialSubjectUtils.findFirstCredentialSubjectByType(
-            GxServiceOfferingCredentialSubject.class, credentialSubjectList);
-
-        if (credentialSubject == null) {
-            return "";
-        }
-        return credentialSubject.getDescription();
-    }
 }

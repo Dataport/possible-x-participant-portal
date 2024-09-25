@@ -1,6 +1,9 @@
 package eu.possiblex.participantportal.business.entity.selfdescriptions.gx.resources;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import eu.possiblex.participantportal.business.entity.selfdescriptions.PojoCredentialSubject;
@@ -8,15 +11,18 @@ import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.dataty
 import eu.possiblex.participantportal.business.entity.serialization.StringDeserializer;
 import eu.possiblex.participantportal.business.entity.serialization.StringSerializer;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 import java.util.Map;
 
 @Getter
 @Setter
+@SuperBuilder
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true, value = { "type", "@context" }, allowGetters = true)
 public class GxDataResourceCredentialSubject extends PojoCredentialSubject {
@@ -47,7 +53,7 @@ public class GxDataResourceCredentialSubject extends PojoCredentialSubject {
     @NotNull
     private NodeKindIRITypeId exposedThrough;
 
-    // aggregationOf are not yet mapped as they are optional
+    // aggregationOf not yet mapped as it is optional
 
     @JsonProperty("gx:policy")
     @JsonSerialize(contentUsing = StringSerializer.class)
@@ -76,17 +82,7 @@ public class GxDataResourceCredentialSubject extends PojoCredentialSubject {
     @JsonDeserialize(using = StringDeserializer.class)
     private String description;
 
-    @NotNull
-    @JsonProperty("gx:obsoleteDateTime")
-    @JsonSerialize(using = StringSerializer.class)
-    @JsonDeserialize(using = StringDeserializer.class)
-    private String obsoleteDateTime;
-
-    @NotNull
-    @JsonProperty("gx:expirationDateTime")
-    @JsonSerialize(using = StringSerializer.class)
-    @JsonDeserialize(using = StringDeserializer.class)
-    private String expirationDateTime;
+    // obsoleteDateTime and expirationDateTime not yet mapped as they are optional
 
     @JsonProperty("type")
     public String getType() {

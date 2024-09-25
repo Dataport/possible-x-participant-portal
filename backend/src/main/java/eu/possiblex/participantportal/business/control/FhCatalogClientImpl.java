@@ -6,6 +6,7 @@ import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundExc
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogOffer;
 import eu.possiblex.participantportal.business.entity.fh.catalog.DcatDataset;
+import eu.possiblex.participantportal.business.entity.selfdescriptions.px.PxExtendedServiceOfferingCredentialSubject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,28 +20,39 @@ import java.util.Map;
 @Slf4j
 public class FhCatalogClientImpl implements FhCatalogClient {
 
+    private final TechnicalFhCatalogClient technicalFhCatalogClient;
+
     @Value("${fh.catalog.secret-key}")
     private String fhCatalogSecretKey;
 
     @Value("${fh.catalog.catalog-name}")
     private String catalogName;
 
-    private TechnicalFhCatalogClient technicalFhCatalogClient;
-
     public FhCatalogClientImpl(@Autowired TechnicalFhCatalogClient technicalFhCatalogClient) {
+
         this.technicalFhCatalogClient = technicalFhCatalogClient;
     }
 
     @Override
     public FhCatalogIdResponse addDatasetToFhCatalog(DcatDataset datasetToCatalogRequest) {
+
         log.info("using catalog with name: " + catalogName);
-        FhCatalogIdResponse response = technicalFhCatalogClient.addDatasetToFhCatalog(createHeaders(), datasetToCatalogRequest, catalogName, "identifiers");
+        FhCatalogIdResponse response = technicalFhCatalogClient.addDatasetToFhCatalog(createHeaders(),
+            datasetToCatalogRequest, catalogName, "identifiers");
         log.info("got offer id: " + response.getId());
         return response;
     }
 
     @Override
+    public FhCatalogIdResponse addServiceOfferingToFhCatalog(
+        PxExtendedServiceOfferingCredentialSubject serviceOfferingCredentialSubject) {
+
+        return new FhCatalogIdResponse("dummy");
+    }
+
+    @Override
     public FhCatalogOffer getFhCatalogOffer(String datasetId) throws OfferNotFoundException {
+
         log.info("fetching offer for fh catalog ID " + datasetId);
         String offerJsonContent = null;
         try {
@@ -87,11 +99,9 @@ public class FhCatalogClientImpl implements FhCatalogClient {
     }
 
     /**
-     * Recursively parses the given JSON object. Looks for the first occurrence of an attribute with the given name and returns its value.
-     * An attribute in the JSON object will match the given attribute name, if:
-     * * it has the same name
-     * * it ends with "#" + the given attribute name
-     * * it ends with ":" + the given attribute name
+     * Recursively parses the given JSON object. Looks for the first occurrence of an attribute with the given name and
+     * returns its value. An attribute in the JSON object will match the given attribute name, if: * it has the same
+     * name * it ends with "#" + the given attribute name * it ends with ":" + the given attribute name
      * <p>
      * This method can be improved to better deal with JSON-LD structures in the future if necessary.
      *
@@ -133,6 +143,15 @@ public class FhCatalogClientImpl implements FhCatalogClient {
         return null;
     }
 
+    /**
+     * Recursively parses the given JSON object. Looks for the all occurrences of a specified key-value pair.
+     * This method can be improved to better deal with JSON-LD structures in the future if necessary.
+     *
+     * @param key
+     * @param value
+     * @param jsonNode
+     * @return
+     */
     private int countKeyValuePairs(String key, String value, JsonNode jsonNode) {
         int count = 0;
         if (jsonNode.isArray()) {
@@ -160,6 +179,7 @@ public class FhCatalogClientImpl implements FhCatalogClient {
     }
 
     private Map<String, String> createHeaders() {
+
         return Map.of("Content-Type", "application/json", "Authorization", "Bearer " + fhCatalogSecretKey);
     }
 
