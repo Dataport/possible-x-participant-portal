@@ -5,9 +5,6 @@ import eu.possiblex.participantportal.business.entity.AcceptOfferResponseBE;
 import eu.possiblex.participantportal.business.entity.ConsumeOfferRequestBE;
 import eu.possiblex.participantportal.business.entity.SelectOfferRequestBE;
 import eu.possiblex.participantportal.business.entity.SelectOfferResponseBE;
-import eu.possiblex.participantportal.business.entity.edc.catalog.DcatDataset;
-import eu.possiblex.participantportal.business.entity.edc.negotiation.ContractNegotiation;
-import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcess;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
