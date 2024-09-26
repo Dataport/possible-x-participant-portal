@@ -80,7 +80,7 @@ public class FhCatalogClientImpl implements FhCatalogClient {
             int dataResourceCount = countKeyValuePairs("@type", "DataResource", offerJson);
             log.info("parsed fh catalog offer id px:assetId: " + assetId);
             log.info("parsed fh catalog offer id px:providerUrl: " + providerURL);
-            log.info("parsed fh catalog offer id number of dataResources): " + dataResourceCount);
+            log.info("parsed fh catalog offer id number of dataResources: " + dataResourceCount);
 
             if ((assetId == null) || (providerURL == null) || assetId.isEmpty() || providerURL.isEmpty()) {
                 throw new RuntimeException("FH catalog offer did not contain all expected infos! asset-ID: "
@@ -90,7 +90,7 @@ public class FhCatalogClientImpl implements FhCatalogClient {
             fhCatalogOffer = new FhCatalogOffer();
             fhCatalogOffer.setAssetId(assetId);
             fhCatalogOffer.setCounterPartyAddress(providerURL);
-            fhCatalogOffer.setDataResourceCount(dataResourceCount);
+            fhCatalogOffer.setDataOffering(dataResourceCount>=1);
 
         } catch (Exception e) {
             throw new RuntimeException("failed to parse fh catalog offer json: " + offerJsonContent, e);

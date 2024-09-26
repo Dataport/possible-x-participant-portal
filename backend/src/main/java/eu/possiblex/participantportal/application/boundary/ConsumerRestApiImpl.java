@@ -70,10 +70,10 @@ public class ConsumerRestApiImpl implements ConsumerRestApi {
             throw new PossibleXException("Failed to select offer with offerId" + request.getEdcOfferId() + ". Other Exception: " + e);
         }
 
-        if (acceptOffer.getDataResourceCount() == 0) {
-            log.info("No dataResource found: Transfer is omitted");
-        } else {
+        if (acceptOffer.isDataOffering()) {
             log.info("DataResource found: Transfer has been initiated");
+        } else {
+            log.info("No dataResource found: Transfer is omitted");
         }
         AcceptOfferResponseTO response = consumerApiMapper.acceptOfferResponseBEtoAcceptOfferResponseTO(acceptOffer);
         log.info("Returning for accepting contract: " + response);

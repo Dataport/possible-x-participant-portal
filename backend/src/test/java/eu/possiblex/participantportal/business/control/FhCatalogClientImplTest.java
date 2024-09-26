@@ -26,6 +26,29 @@ public class FhCatalogClientImplTest {
         // THEN the offer should contain the data parsed from the test FH Catalog offer
 
         Assertions.assertNotNull(offer);
+        Assertions.assertEquals(true, offer.isDataOffering());
+        Assertions.assertEquals("EXPECTED_ASSET_ID_VALUE", offer.getAssetId());
+        Assertions.assertEquals("EXPECTED_PROVIDER_URL_VALUE", offer.getCounterPartyAddress());
+    }
+
+    @Test
+    public void parseDataCorrectlyNoDataOffering() throws OfferNotFoundException {
+        // GIVEN a mocked technical client that returns a test FH Catalog offer
+
+        String fhCatalogOfferContent = TestUtils.loadTextFile("unit_tests/FHCatalogClientImplTest/validFhOfferNoDataResource.json");
+
+        TechnicalFhCatalogClient technicalFhCatalogClientMock = Mockito.mock(TechnicalFhCatalogClient.class);
+        Mockito.when(technicalFhCatalogClientMock.getFhCatalogOffer(Mockito.anyString())).thenReturn(fhCatalogOfferContent);
+        FhCatalogClientImpl sut = new FhCatalogClientImpl(technicalFhCatalogClientMock);
+
+        // WHEN a dataset is retrieved
+
+        FhCatalogOffer offer = sut.getFhCatalogOffer("some ID");
+
+        // THEN the offer should contain the data parsed from the test FH Catalog offer
+
+        Assertions.assertNotNull(offer);
+        Assertions.assertEquals(false, offer.isDataOffering());
         Assertions.assertEquals("EXPECTED_ASSET_ID_VALUE", offer.getAssetId());
         Assertions.assertEquals("EXPECTED_PROVIDER_URL_VALUE", offer.getCounterPartyAddress());
     }

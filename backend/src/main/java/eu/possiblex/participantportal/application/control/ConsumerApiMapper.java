@@ -24,7 +24,7 @@ public interface ConsumerApiMapper {
     @Mapping(target = "description", source = "edcOffer.description")
     @Mapping(target = "contentType", source = "edcOffer.contenttype")
     @Mapping(target = "counterPartyAddress", source = "counterPartyAddress")
-    @Mapping(target = "dataResourceCount", source = "dataResourceCount")
+    @Mapping(target = "dataOffering", source = "dataOffering")
     OfferDetailsTO selectOfferResponseBEToOfferDetailsTO(SelectOfferResponseBE selectOfferResponseBE);
 
     AcceptOfferResponseTO acceptOfferResponseBEtoAcceptOfferResponseTO(AcceptOfferResponseBE acceptOfferResponseBE);

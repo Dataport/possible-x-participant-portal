@@ -70,7 +70,7 @@ public class ConsumerServiceMock implements ConsumerService {
             case MISSING_OFFER_ID -> throw new OfferNotFoundException("not found");
             case BAD_EDC_OFFER_ID -> throw new NegotiationFailedException("negotiation failed");
             case BAD_TRANSFER_OFFER_ID -> throw new TransferFailedException("transfer failed");
-            default -> AcceptOfferResponseBE.builder().transferProcessState(TransferProcessState.COMPLETED).negotiationState(NegotiationState.FINALIZED).dataResourceCount(1).build();
+            default -> AcceptOfferResponseBE.builder().transferProcessState(TransferProcessState.COMPLETED).negotiationState(NegotiationState.FINALIZED).dataOffering(true).build();
             //IonosS3TransferProcess.builder().state(TransferProcessState.COMPLETED).build();
         };
 

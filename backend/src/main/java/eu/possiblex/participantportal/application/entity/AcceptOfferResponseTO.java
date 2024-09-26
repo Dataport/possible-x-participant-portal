@@ -16,9 +16,8 @@ public class AcceptOfferResponseTO {
     private TransferProcessState transferProcessState;
 
     private NegotiationState negotiationState;
-    /*
-     * The number of data resources in the offer.
-     * If zero, no transfer will be performed.
+    /**
+     * Does this offer contain Data Resources.
      */
-    private int dataResourceCount;
+    private boolean dataOffering;
 }

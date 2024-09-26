@@ -72,13 +72,36 @@ class ConsumerServiceTest {
         // WHEN
 
         AcceptOfferResponseBE response = sut.acceptContractOffer(
-            ConsumeOfferRequestBE.builder().counterPartyAddress("http://example.com").edcOfferId(EdcClientFake.FAKE_ID).dataResourceCount(1)
+            ConsumeOfferRequestBE.builder().counterPartyAddress("http://example.com").edcOfferId(EdcClientFake.FAKE_ID).dataOffering(true)
                 .build());
 
         // THEN
 
         verify(edcClient).negotiateOffer(any());
         verify(edcClient).initiateTransfer(any());
+
+        assertNotNull(response);
+    }
+
+    @Test
+    void acceptContractOfferSucceedsNoTransfer()
+            throws NegotiationFailedException, TransferFailedException, OfferNotFoundException {
+
+        // GIVEN
+
+        reset(edcClient);
+        reset(fhCatalogClient);
+
+        // WHEN
+
+        AcceptOfferResponseBE response = sut.acceptContractOffer(
+                ConsumeOfferRequestBE.builder().counterPartyAddress("http://example.com").edcOfferId(EdcClientFake.FAKE_ID).dataOffering(false)
+                        .build());
+
+        // THEN
+
+        verify(edcClient).negotiateOffer(any());
+        verify(edcClient, never()).initiateTransfer(any());
 
         assertNotNull(response);
     }
@@ -110,7 +133,7 @@ class ConsumerServiceTest {
         reset(fhCatalogClient);
         assertThrows(TransferFailedException.class, () -> sut.acceptContractOffer(
             ConsumeOfferRequestBE.builder().counterPartyAddress("http://example.com")
-                .edcOfferId(EdcClientFake.BAD_TRANSFER_ID).dataResourceCount(1).build()));
+                .edcOfferId(EdcClientFake.BAD_TRANSFER_ID).dataOffering(true).build()));
     }
 
     // Test-specific configuration to provide mocks

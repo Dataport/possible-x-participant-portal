@@ -21,7 +21,7 @@ public class SelectOfferResponseBE {
     private String counterPartyAddress;
 
     /**
-     * The number of data resources in the offer.
+     * Does this offer contain Data Resources.
      */
-    private int dataResourceCount;
+    private boolean dataOffering;
 }

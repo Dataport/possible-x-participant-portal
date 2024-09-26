@@ -88,7 +88,7 @@ export interface ISelectOfferRequestTOBuilder {
 export interface IAcceptOfferResponseTO {
     transferProcessState: ITransferProcessState;
     negotiationState: INegotiationState;
-    dataResourceCount: number;
+    isDataOffering: boolean;
 }
 
 export interface IAcceptOfferResponseTOBuilder {

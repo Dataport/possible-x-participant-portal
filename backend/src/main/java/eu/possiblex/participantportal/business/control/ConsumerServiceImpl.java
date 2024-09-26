@@ -64,7 +64,7 @@ public class ConsumerServiceImpl implements ConsumerService {
         SelectOfferResponseBE response = new SelectOfferResponseBE();
         response.setEdcOffer(edcCatalogOffer);
         response.setCounterPartyAddress(fhCatalogOffer.getCounterPartyAddress());
-        response.setDataResourceCount(fhCatalogOffer.getDataResourceCount());
+        response.setDataOffering(fhCatalogOffer.isDataOffering());
 
         return response;
     }
@@ -86,7 +86,7 @@ public class ConsumerServiceImpl implements ConsumerService {
         ContractNegotiation contractNegotiation = negotiateOffer(negotiationInitiateRequest);
 
         TransferProcessState transferProcessState = TransferProcessState.INITIAL;
-        if (request.getDataResourceCount() > 0) {
+        if (request.isDataOffering()) {
             // initiate transfer
             DataAddress dataAddress = IonosS3DataDestination.builder().storage("s3-eu-central-2.ionoscloud.com")
                     .bucketName("dev-consumer-edc-bucket-possible-31952746").path("s3HatGeklappt/").keyName("myKey").build();
@@ -96,7 +96,7 @@ public class ConsumerServiceImpl implements ConsumerService {
             transferProcessState = performTransfer(transferRequest).getState();
         }
         AcceptOfferResponseBE be = new AcceptOfferResponseBE(transferProcessState, contractNegotiation.getState(),
-            request.getDataResourceCount());
+            request.isDataOffering());
         return be;
     }
 
