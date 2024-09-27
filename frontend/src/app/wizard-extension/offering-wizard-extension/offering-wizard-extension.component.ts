@@ -68,7 +68,8 @@ export class OfferingWizardExtensionComponent {
     if (this.isOfferingDataOffering()) {
       console.log("Loading data resource shape");
       let dataResourceShapeSource = await this.apiService.getGxDataResourceShape();
-      dataResourceShapeSource = this.adaptGxShape(dataResourceShapeSource, "DataResource", ["name", "description", "policy"]);
+      dataResourceShapeSource = this.adaptGxShape(dataResourceShapeSource, "DataResource",
+        ["name", "description", "policy", "producedBy", "exposedThrough", "copyrightOwnedBy"]);
       await this.gxDataResourceWizard.loadShape(Promise.resolve(dataResourceShapeSource), dataResourceId);
     }
   }
