@@ -7,11 +7,7 @@ import eu.possiblex.participantportal.application.entity.credentials.gx.datatype
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
 import eu.possiblex.participantportal.application.entity.credentials.gx.serviceofferings.GxServiceOfferingCredentialSubject;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import lombok.experimental.SuperBuilder;
+import lombok.*;
 
 import java.util.List;
 import java.util.Map;
@@ -21,7 +17,7 @@ import java.util.Map;
  */
 @Getter
 @Setter
-@SuperBuilder
+@Builder
 @ToString
 public class PxExtendedServiceOfferingCredentialSubject {
     @Getter(AccessLevel.NONE)
