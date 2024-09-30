@@ -1,4 +1,4 @@
-package eu.possiblex.participantportal.business.entity.selfdescriptions;
+package eu.possiblex.participantportal.application.entity.credentials;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;

@@ -1,18 +1,13 @@
-package eu.possiblex.participantportal.business.entity.selfdescriptions.px;
+package eu.possiblex.participantportal.business.entity.credentials.px;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.datatypes.GxDataAccountExport;
-import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.datatypes.GxSOTermsAndConditions;
-import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.datatypes.NodeKindIRITypeId;
-import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.resources.GxDataResourceCredentialSubject;
-import eu.possiblex.participantportal.business.entity.serialization.StringDeserializer;
-import eu.possiblex.participantportal.business.entity.serialization.StringSerializer;
+import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.GxDataAccountExport;
+import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.GxSOTermsAndConditions;
+import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
+import eu.possiblex.participantportal.application.entity.credentials.gx.serviceofferings.GxServiceOfferingCredentialSubject;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 import java.util.Map;
@@ -24,11 +19,12 @@ import java.util.Map;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@SuperBuilder
+@Builder
 @ToString
 public class PxExtendedServiceOfferingCredentialSubject {
     @Getter(AccessLevel.NONE)
-    public static final List<String> TYPE = List.of("gx:ServiceOffering", "px:PossibleXServiceOfferingExtension");
+    public static final List<String> TYPE = List.of(GxServiceOfferingCredentialSubject.TYPE,
+        "px:PossibleXServiceOfferingExtension");
 
     @Getter(AccessLevel.NONE)
     public static final Map<String, String> CONTEXT = Map.of("gx", "https://w3id.org/gaia-x/development#", "xsd",
@@ -43,7 +39,7 @@ public class PxExtendedServiceOfferingCredentialSubject {
     private NodeKindIRITypeId providedBy;
 
     @JsonProperty("gx:aggregationOf")
-    private List<GxDataResourceCredentialSubject> aggregationOf;
+    private List<PxExtendedDataResourceCredentialSubject> aggregationOf;
 
     @JsonProperty("gx:termsAndConditions")
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
@@ -51,15 +47,11 @@ public class PxExtendedServiceOfferingCredentialSubject {
     private List<GxSOTermsAndConditions> termsAndConditions;
 
     @JsonProperty("gx:policy")
-    @JsonSerialize(contentUsing = StringSerializer.class)
-    @JsonDeserialize(contentUsing = StringDeserializer.class)
     @NotNull
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     private List<String> policy;
 
     @JsonProperty("gx:dataProtectionRegime")
-    @JsonSerialize(contentUsing = StringSerializer.class)
-    @JsonDeserialize(contentUsing = StringDeserializer.class)
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     private List<String> dataProtectionRegime;
 
@@ -69,35 +61,23 @@ public class PxExtendedServiceOfferingCredentialSubject {
     private List<GxDataAccountExport> dataAccountExport;
 
     @JsonProperty("gx:name")
-    @JsonSerialize(using = StringSerializer.class)
-    @JsonDeserialize(using = StringDeserializer.class)
     private String name;
 
     @JsonProperty("gx:description")
-    @JsonSerialize(using = StringSerializer.class)
-    @JsonDeserialize(using = StringDeserializer.class)
     private String description;
 
     @JsonProperty("px:assetId")
-    @JsonSerialize(using = StringSerializer.class)
-    @JsonDeserialize(using = StringDeserializer.class)
     private String assetId;
 
     @JsonProperty("px:providerUrl")
-    @JsonSerialize(using = StringSerializer.class)
-    @JsonDeserialize(using = StringDeserializer.class)
     private String providerUrl;
 
     // TODO: Remove this when FH catalog UI is adjusted, currently needed to show the name
     @JsonProperty("schema:name")
-    @JsonSerialize(using = StringSerializer.class)
-    @JsonDeserialize(using = StringDeserializer.class)
     private String schemaName;
 
     // TODO: Remove this when FH catalog UI is adjusted, currently needed to show the description
     @JsonProperty("schema:description")
-    @JsonSerialize(using = StringSerializer.class)
-    @JsonDeserialize(using = StringDeserializer.class)
     private String schemaDescription;
 
     @JsonProperty("@type")

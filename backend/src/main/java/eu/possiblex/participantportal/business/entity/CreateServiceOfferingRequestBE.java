@@ -1,9 +1,9 @@
 package eu.possiblex.participantportal.business.entity;
 
+import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.GxDataAccountExport;
+import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.GxSOTermsAndConditions;
+import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
 import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
-import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.datatypes.GxDataAccountExport;
-import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.datatypes.GxSOTermsAndConditions;
-import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.datatypes.NodeKindIRITypeId;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 

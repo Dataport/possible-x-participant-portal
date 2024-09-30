@@ -5,7 +5,8 @@
       <div class="mb-3">
         <label class="form-label">{{input.name}}<span *ngIf="input.required" aria-required="true" class="required">*</span><span class="field-key">&nbsp;&nbsp;{{ input.key }}</span>
         </label>
-        <input [type]="input.datatype" class="form-control" [formControlName]="input.id" placeholder="{{input.example}}">
+        <input *ngIf="input.name != 'Description'" [type]="input.datatype" class="form-control" [formControlName]="input.id" placeholder="{{input.example}}">
+        <textarea *ngIf="input.name == 'Description'" class="form-control" [formControlName]="input.id" rows="3" placeholder="{{input.example}}"></textarea>
         <div cFormText>
           {{input.description[this.translate.currentLang]}}
         </div>

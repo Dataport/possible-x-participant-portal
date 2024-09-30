@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package eu.possiblex.participantportal.business.entity.selfdescriptions.gx.serviceofferings;
+package eu.possiblex.participantportal.application.entity.credentials.gx.serviceofferings;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -22,10 +22,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import eu.possiblex.participantportal.business.entity.selfdescriptions.PojoCredentialSubject;
-import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.datatypes.GxDataAccountExport;
-import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.datatypes.GxSOTermsAndConditions;
-import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.datatypes.NodeKindIRITypeId;
+import eu.possiblex.participantportal.application.entity.credentials.PojoCredentialSubject;
+import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.GxDataAccountExport;
+import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.GxSOTermsAndConditions;
+import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
 import eu.possiblex.participantportal.business.entity.serialization.StringDeserializer;
 import eu.possiblex.participantportal.business.entity.serialization.StringSerializer;
 import jakarta.validation.constraints.NotNull;

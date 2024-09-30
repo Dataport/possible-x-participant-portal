@@ -14,10 +14,20 @@
   limitations under the License.
 -->
 
-<div class="mb-3 flex-1">
-  <div class="flex pb-3 text-3xl font-bold text-brand-800">
-    Gaia-X Service Offering Fields
+<div class="mb-3 flex-1" xmlns="http://www.w3.org/1999/html">
+  <div *ngIf="isDataOffering">
+    <label class="form-label">File Name*</label>
+    <input [(ngModel)]="selectedFileName" class="form-control rounded-none w-full" placeholder="e.g. MyFile.json"
+           type="text">
+    <div cFormText style="color: #7f7f7f;">
+      Please enter the file name of the file in the S3-Bucket.
+    </div>
+    <div *ngIf="isInvalidFileName" class="text-error pt-2">
+      <small>Filename is required.</small>
+    </div>
+    <br/>
   </div>
+
   <app-base-wizard-extension #gxServiceOfferingWizard></app-base-wizard-extension>
 
   <label class="form-label">Policy* <span class="field-key">&nbsp;&nbsp;policy</span></label>
@@ -39,27 +49,7 @@
     <br>
   </div>
 
-  <div *ngIf="isDataOffering">
-    <div class="flex pb-3 text-3xl font-bold text-brand-800">
-      Gaia-X Data Resource Fields
-    </div>
-    <app-base-wizard-extension #gxDataResourceWizard></app-base-wizard-extension>
-
-    <br/>
-
-    <div class="flex pb-3 text-3xl font-bold text-brand-800">
-      POSSIBLE-specific Fields
-    </div>
-    <label class="form-label">File Name*</label>
-    <input [(ngModel)]="selectedFileName" class="form-control rounded-none w-full" placeholder="e.g. MyFile.json"
-           type="text">
-    <div cFormText style="color: #7f7f7f;">
-      Name of the file to transfer.
-    </div>
-    <div *ngIf="isInvalidFileName" class="text-error pt-2">
-      <small>Filename is required.</small>
-    </div>
-  </div>
+  <app-base-wizard-extension #gxDataResourceWizard *ngIf="isDataOffering"></app-base-wizard-extension>
 </div>
 
 <div class="text-right mt-3t">

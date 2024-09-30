@@ -1,6 +1,6 @@
 package eu.possiblex.participantportal.business.entity;
 
-import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.resources.GxDataResourceCredentialSubject;
+import eu.possiblex.participantportal.application.entity.credentials.gx.resources.GxDataResourceCredentialSubject;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 

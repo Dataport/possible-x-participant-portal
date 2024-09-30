@@ -25,6 +25,7 @@ import {POLICY_MAP} from '../../constants';
 import {
   IGxDataResourceCredentialSubject,
   IGxServiceOfferingCredentialSubject,
+  INodeKindIRITypeId,
   IPojoCredentialSubject
 } from '../../services/mgmt/api/backend';
 
@@ -68,7 +69,8 @@ export class OfferingWizardExtensionComponent {
     if (this.isOfferingDataOffering()) {
       console.log("Loading data resource shape");
       let dataResourceShapeSource = await this.apiService.getGxDataResourceShape();
-      dataResourceShapeSource = this.adaptGxShape(dataResourceShapeSource, "DataResource", ["name", "description", "policy"]);
+      dataResourceShapeSource = this.adaptGxShape(dataResourceShapeSource, "DataResource",
+        ["name", "description", "policy", "producedBy", "exposedThrough", "copyrightOwnedBy"]);
       await this.gxDataResourceWizard.loadShape(Promise.resolve(dataResourceShapeSource), dataResourceId);
     }
   }
@@ -133,6 +135,9 @@ export class OfferingWizardExtensionComponent {
       gxDataResourceJsonSd["gx:name"] = gxOfferingJsonSd["gx:name"];
       gxDataResourceJsonSd["gx:description"] = gxOfferingJsonSd["gx:description"];
       gxDataResourceJsonSd["gx:policy"] = gxOfferingJsonSd["gx:policy"];
+      gxDataResourceJsonSd["gx:producedBy"] = gxOfferingJsonSd["gx:providedBy"];
+      gxDataResourceJsonSd["gx:exposedThrough"] = {id: gxOfferingJsonSd.id} as INodeKindIRITypeId;
+      gxDataResourceJsonSd["gx:copyrightOwnedBy"] = gxOfferingJsonSd["gx:providedBy"];
 
       createOfferTo.dataResourceCredentialSubject = gxDataResourceJsonSd;
       createOfferTo.fileName = this.selectedFileName;
@@ -221,7 +226,7 @@ export class OfferingWizardExtensionComponent {
       this.gxServiceOfferingWizard.prefillFields(cs, ["gx:providedBy"]);
     }
     if (isDataResourceCs(cs)) {
-      this.gxDataResourceWizard.prefillFields(cs, ["gx:producedBy", "gx:exposedThrough", "gx:copyrightOwnedBy"]);
+      this.gxDataResourceWizard.prefillFields(cs, []);
     }
   }
 }
