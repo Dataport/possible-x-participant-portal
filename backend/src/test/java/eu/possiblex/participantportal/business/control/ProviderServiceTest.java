@@ -14,6 +14,7 @@ import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedD
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.edc.asset.AssetCreateRequest;
 import eu.possiblex.participantportal.business.entity.edc.asset.ionoss3extension.IonosS3DataSource;
+import eu.possiblex.participantportal.business.entity.edc.asset.possible.PossibleAssetProperties;
 import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyCreateRequest;
 import eu.possiblex.participantportal.business.entity.exception.EdcOfferCreationException;
@@ -30,6 +31,7 @@ import org.springframework.test.context.ContextConfiguration;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentCaptor.forClass;
 import static org.mockito.ArgumentMatchers.any;
@@ -116,6 +118,17 @@ class ProviderServiceTest {
         verify(edcClient).createContractDefinition(any());
 
         AssetCreateRequest assetCreateRequest = assetCreateRequestCaptor.getValue();
+        //validate asset properties
+        PossibleAssetProperties properties = (PossibleAssetProperties) assetCreateRequest.getProperties();
+        assertEquals(offeringCs.getName(), properties.getName());
+        assertEquals(offeringCs.getDescription(), properties.getDescription());
+        assertEquals(offeringCs.getProvidedBy().getId(), properties.getProvidedBy().getId());
+        assertThat(offeringCs.getTermsAndConditions()).usingRecursiveComparison()
+            .isEqualTo(properties.getTermsAndConditions());
+        assertThat(offeringCs.getDataProtectionRegime()).containsExactlyInAnyOrderElementsOf(
+            properties.getDataProtectionRegime());
+        assertThat(offeringCs.getDataAccountExport()).usingRecursiveComparison()
+            .isEqualTo(properties.getDataAccountExport());
         //check if file name is set correctly
         assertEquals("", assetCreateRequest.getDataAddress().getKeyName());
         assertEquals("", ((IonosS3DataSource) assetCreateRequest.getDataAddress()).getBlobName());
@@ -178,6 +191,22 @@ class ProviderServiceTest {
         verify(edcClient).createContractDefinition(any());
 
         AssetCreateRequest assetCreateRequest = assetCreateRequestCaptor.getValue();
+        //validate asset properties
+        PossibleAssetProperties properties = (PossibleAssetProperties) assetCreateRequest.getProperties();
+        assertEquals(offeringCs.getName(), properties.getName());
+        assertEquals(offeringCs.getDescription(), properties.getDescription());
+        assertEquals(offeringCs.getProvidedBy().getId(), properties.getProvidedBy().getId());
+        assertThat(offeringCs.getTermsAndConditions()).usingRecursiveComparison()
+            .isEqualTo(properties.getTermsAndConditions());
+        assertThat(offeringCs.getDataProtectionRegime()).containsExactlyInAnyOrderElementsOf(
+            properties.getDataProtectionRegime());
+        assertThat(offeringCs.getDataAccountExport()).usingRecursiveComparison()
+            .isEqualTo(properties.getDataAccountExport());
+        assertEquals(resourceCs.getCopyrightOwnedBy().getId(), properties.getCopyrightOwnedBy().getId());
+        assertEquals(resourceCs.getProducedBy().getId(), properties.getProducedBy().getId());
+        assertEquals(resourceCs.getExposedThrough().getId(), properties.getExposedThrough().getId());
+        assertThat(resourceCs.getLicense()).containsExactlyInAnyOrderElementsOf(properties.getLicense());
+        assertEquals(resourceCs.isContainsPII(), properties.isContainsPII());
         //check if file name is set correctly
         assertEquals(FILE_NAME, assetCreateRequest.getDataAddress().getKeyName());
         assertEquals(FILE_NAME, ((IonosS3DataSource) assetCreateRequest.getDataAddress()).getBlobName());
@@ -226,7 +255,7 @@ class ProviderServiceTest {
                   "odrl:obligation": []
                 }""")).dataAccountExport(List.of(
                 GxDataAccountExport.builder().formatType("application/json").accessType("digital").requestType("API")
-                    .build()))
+                    .build())).dataProtectionRegime(List.of("GDPR"))
             .termsAndConditions(List.of(GxSOTermsAndConditions.builder().url("test.eu/tnc").hash("hash123").build()))
             .id("urn:uuid:GENERATED_SERVICE_OFFERING_ID").build();
     }
