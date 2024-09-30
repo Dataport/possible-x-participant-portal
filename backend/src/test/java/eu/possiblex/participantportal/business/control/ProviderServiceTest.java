@@ -102,8 +102,8 @@ class ProviderServiceTest {
         verify(fhCatalogClient).addServiceOfferingToFhCatalog(serviceOfferingCaptor.capture());
 
         PxExtendedServiceOfferingCredentialSubject pxExtSoCs = serviceOfferingCaptor.getValue();
-        assertTrue(
-            pxExtSoCs.getId().matches("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"));
+        assertTrue(pxExtSoCs.getId()
+            .matches("urn:uuid:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"));
         //check if assetId exists and provider url is set correctly
         assertNotNull(pxExtSoCs);
         assertTrue(pxExtSoCs.getAssetId()
@@ -122,7 +122,7 @@ class ProviderServiceTest {
         PolicyCreateRequest policyCreateRequest = policyCreateRequestCaptor.getValue();
         //check if policyId is set correctly
         assertTrue(policyCreateRequest.getId()
-            .matches("policyDefinitionId_[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"));
+            .matches("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"));
         assertEquals("GENERATED_POLICY_ID", policyCreateRequest.getPolicy().getId());
 
         assertNotNull(response);
@@ -162,10 +162,10 @@ class ProviderServiceTest {
         assertNotNull(pxExtSoCs);
         String serviceOfferingId = pxExtSoCs.getId();
         GxDataResourceCredentialSubject dataResource = pxExtSoCs.getAggregationOf().get(0);
-        assertTrue(
-            serviceOfferingId.matches("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"));
+        assertTrue(serviceOfferingId.matches(
+            "urn:uuid:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"));
         assertTrue(dataResource.getId()
-            .matches("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"));
+            .matches("urn:uuid:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"));
         assertEquals(serviceOfferingId, dataResource.getExposedThrough().getId());
         //check if assetId exists and provider url is set correctly
         assertTrue(pxExtSoCs.getAssetId()
@@ -184,7 +184,7 @@ class ProviderServiceTest {
         PolicyCreateRequest policyCreateRequest = policyCreateRequestCaptor.getValue();
         //check if policyId is set correctly
         assertTrue(policyCreateRequest.getId()
-            .matches("policyDefinitionId_[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"));
+            .matches("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"));
         assertEquals("GENERATED_POLICY_ID", policyCreateRequest.getPolicy().getId());
 
         assertNotNull(response);

@@ -1,6 +1,9 @@
 package eu.possiblex.participantportal.application.control;
 
-import eu.possiblex.participantportal.application.entity.*;
+import eu.possiblex.participantportal.application.entity.AcceptOfferResponseTO;
+import eu.possiblex.participantportal.application.entity.ConsumeOfferRequestTO;
+import eu.possiblex.participantportal.application.entity.OfferDetailsTO;
+import eu.possiblex.participantportal.application.entity.SelectOfferRequestTO;
 import eu.possiblex.participantportal.business.entity.AcceptOfferResponseBE;
 import eu.possiblex.participantportal.business.entity.ConsumeOfferRequestBE;
 import eu.possiblex.participantportal.business.entity.SelectOfferRequestBE;
@@ -19,7 +22,7 @@ public interface ConsumerApiMapper {
 
     @Mapping(target = "edcOfferId", source = "edcOffer.assetId")
     @Mapping(target = "offerType", source = "offerType")
-    @Mapping(target = "creationDate", expression = "java(OffsetDateTime.now())") // TODO pass actual data
+    @Mapping(target = "creationDate", expression = "java(OffsetDateTime.now())")
     @Mapping(target = "name", source = "edcOffer.name")
     @Mapping(target = "description", source = "edcOffer.description")
     @Mapping(target = "contentType", source = "edcOffer.contenttype")

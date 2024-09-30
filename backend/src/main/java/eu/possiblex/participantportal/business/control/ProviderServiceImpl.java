@@ -67,11 +67,12 @@ public class ProviderServiceImpl implements ProviderService {
     public CreateOfferResponseTO createOffering(CreateServiceOfferingRequestBE request) {
 
         PxExtendedServiceOfferingCredentialSubject pxExtendedServiceOfferingCs = createCombinedCsFromRequest(request);
-        CreateEdcOfferBE createEdcOfferBE = createEdcBEFromRequest(request);
+        CreateEdcOfferBE createEdcOfferBE = createEdcBEFromRequest(request, pxExtendedServiceOfferingCs.getId(),
+            pxExtendedServiceOfferingCs.getAssetId());
 
         try {
             FhCatalogIdResponse fhResponseId = createFhCatalogOffer(pxExtendedServiceOfferingCs);
-            IdResponse edcResponseId = createEdcOffer(pxExtendedServiceOfferingCs.getAssetId(), createEdcOfferBE);
+            IdResponse edcResponseId = createEdcOffer(createEdcOfferBE);
             return new CreateOfferResponseTO(edcResponseId.getId(), fhResponseId.getId());
         } catch (EdcOfferCreationException e) {
             throw new PossibleXException("Failed to create offer. EdcOfferCreationException: " + e,
@@ -98,15 +99,13 @@ public class ProviderServiceImpl implements ProviderService {
     /**
      * Creates an EDC offer by building and sending the necessary requests.
      *
-     * @param assetId the asset ID
      * @param createEdcOfferBE the EDC offer business entity
      * @return the ID response from EDC
      * @throws EdcOfferCreationException if EDC offer creation fails
      */
-    private IdResponse createEdcOffer(String assetId, CreateEdcOfferBE createEdcOfferBE)
-        throws EdcOfferCreationException {
+    private IdResponse createEdcOffer(CreateEdcOfferBE createEdcOfferBE) throws EdcOfferCreationException {
 
-        ProviderRequestBuilder requestBuilder = new ProviderRequestBuilder(assetId, createEdcOfferBE);
+        ProviderRequestBuilder requestBuilder = new ProviderRequestBuilder(createEdcOfferBE);
 
         try {
             AssetCreateRequest assetCreateRequest = requestBuilder.buildAssetRequest();
@@ -156,8 +155,8 @@ public class ProviderServiceImpl implements ProviderService {
         CreateServiceOfferingRequestBE request) {
 
         String assetId = UUID.randomUUID().toString();
-        String serviceOfferingId = UUID.randomUUID().toString();
-        String dataResourceId = UUID.randomUUID().toString();
+        String serviceOfferingId = "urn:uuid:" + UUID.randomUUID();
+        String dataResourceId = "urn:uuid:" + UUID.randomUUID();
 
         if (request instanceof CreateDataOfferingRequestBE dataOfferingRequest) { // data offering
             dataOfferingRequest.getDataResource().setId(dataResourceId);
@@ -176,14 +175,17 @@ public class ProviderServiceImpl implements ProviderService {
      * Creates the payload for the EDC offer from the request.
      *
      * @param request the offering creation request
+     * @param offerId the id of the created offer
+     * @param assetId the id of the created asset
      * @return the EDC offer business entity
      */
-    private CreateEdcOfferBE createEdcBEFromRequest(CreateServiceOfferingRequestBE request) {
+    private CreateEdcOfferBE createEdcBEFromRequest(CreateServiceOfferingRequestBE request, String offerId,
+        String assetId) {
 
         if (request instanceof CreateDataOfferingRequestBE dataOfferingRequest) { // data offering
-            return providerServiceMapper.getCreateEdcOfferBE(dataOfferingRequest);
+            return providerServiceMapper.getCreateEdcOfferBE(dataOfferingRequest, offerId, assetId);
         } else { // base service offering
-            return providerServiceMapper.getCreateEdcOfferBE(request);
+            return providerServiceMapper.getCreateEdcOfferBE(request, offerId, assetId);
         }
     }
 

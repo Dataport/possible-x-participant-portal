@@ -11,10 +11,7 @@ import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.resour
 import eu.possiblex.participantportal.business.entity.serialization.StringDeserializer;
 import eu.possiblex.participantportal.business.entity.serialization.StringSerializer;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.util.List;
@@ -25,6 +22,8 @@ import java.util.Map;
  */
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @SuperBuilder
 @ToString
 public class PxExtendedServiceOfferingCredentialSubject {

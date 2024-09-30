@@ -2,7 +2,6 @@ package eu.possiblex.participantportal.business.control;
 
 import eu.possiblex.participantportal.business.entity.edc.CreateEdcOfferBE;
 import eu.possiblex.participantportal.business.entity.edc.asset.AssetCreateRequest;
-import eu.possiblex.participantportal.business.entity.edc.asset.AssetProperties;
 import eu.possiblex.participantportal.business.entity.edc.asset.DataAddress;
 import eu.possiblex.participantportal.business.entity.edc.asset.ionoss3extension.IonosS3DataSource;
 import eu.possiblex.participantportal.business.entity.edc.common.IdResponse;
@@ -19,19 +18,15 @@ import java.util.UUID;
  */
 public class ProviderRequestBuilder {
 
-    private final String assetId;
-
     private final CreateEdcOfferBE createEdcOfferBE;
 
     /**
      * Constructor for ProviderRequestBuilder.
      *
-     * @param assetId the asset ID
      * @param createEdcOfferBE the EDC offer business entity
      */
-    public ProviderRequestBuilder(String assetId, CreateEdcOfferBE createEdcOfferBE) {
+    public ProviderRequestBuilder(CreateEdcOfferBE createEdcOfferBE) {
 
-        this.assetId = assetId;
         this.createEdcOfferBE = createEdcOfferBE;
     }
 
@@ -46,10 +41,8 @@ public class ProviderRequestBuilder {
             .blobName(createEdcOfferBE.getFileName()).keyName(createEdcOfferBE.getFileName())
             .storage("s3-eu-central-2.ionoscloud.com").build();
 
-        return AssetCreateRequest.builder().id(assetId).properties(
-                AssetProperties.builder().name(createEdcOfferBE.getAssetName())
-                    .description(createEdcOfferBE.getAssetDescription()).contenttype("application/json").build())
-            .dataAddress(dataAddress).build();
+        return AssetCreateRequest.builder().id(createEdcOfferBE.getAssetId())
+            .properties(createEdcOfferBE.getProperties()).dataAddress(dataAddress).build();
     }
 
     /**
@@ -59,8 +52,8 @@ public class ProviderRequestBuilder {
      */
     public PolicyCreateRequest buildPolicyRequest() {
 
-        return PolicyCreateRequest.builder().id("policyDefinitionId_" + UUID.randomUUID())
-            .policy(createEdcOfferBE.getPolicy()).build();
+        return PolicyCreateRequest.builder().id(UUID.randomUUID().toString()).policy(createEdcOfferBE.getPolicy())
+            .build();
     }
 
     /**
@@ -73,7 +66,7 @@ public class ProviderRequestBuilder {
     public ContractDefinitionCreateRequest buildContractDefinitionRequest(IdResponse policyIdResponse,
         IdResponse assetIdResponse) {
 
-        return ContractDefinitionCreateRequest.builder().id("contractDefinitionId_" + UUID.randomUUID())
+        return ContractDefinitionCreateRequest.builder().id(UUID.randomUUID().toString())
             .contractPolicyId(policyIdResponse.getId()).accessPolicyId(policyIdResponse.getId()).assetsSelector(List.of(
                 Criterion.builder().operandLeft("https://w3id.org/edc/v0.0.1/ns/id").operator("=")
                     .operandRight(assetIdResponse.getId()).build())).build();
