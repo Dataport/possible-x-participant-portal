@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.GxDataAccountExport;
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.GxSOTermsAndConditions;
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
-import eu.possiblex.participantportal.application.entity.credentials.gx.resources.GxDataResourceCredentialSubject;
+import eu.possiblex.participantportal.application.entity.credentials.gx.serviceofferings.GxServiceOfferingCredentialSubject;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -25,7 +25,7 @@ import java.util.Map;
 @ToString
 public class PxExtendedServiceOfferingCredentialSubject {
     @Getter(AccessLevel.NONE)
-    public static final List<String> TYPE = List.of(GxDataResourceCredentialSubject.TYPE,
+    public static final List<String> TYPE = List.of(GxServiceOfferingCredentialSubject.TYPE,
         "px:PossibleXServiceOfferingExtension");
 
     @Getter(AccessLevel.NONE)
