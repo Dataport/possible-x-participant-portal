@@ -1,20 +1,4 @@
-/*
- *  Copyright 2024 Dataport. All rights reserved. Developed as part of the MERLOT project.
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
-
-package eu.possiblex.participantportal.business.entity.selfdescriptions.gx.serviceofferings;
+package eu.possiblex.participantportal.application.entity.credentials.gx.resources;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -22,10 +6,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import eu.possiblex.participantportal.business.entity.selfdescriptions.PojoCredentialSubject;
-import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.datatypes.GxDataAccountExport;
-import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.datatypes.GxSOTermsAndConditions;
-import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.datatypes.NodeKindIRITypeId;
+import eu.possiblex.participantportal.application.entity.credentials.PojoCredentialSubject;
+import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
 import eu.possiblex.participantportal.business.entity.serialization.StringDeserializer;
 import eu.possiblex.participantportal.business.entity.serialization.StringSerializer;
 import jakarta.validation.constraints.NotNull;
@@ -43,13 +25,13 @@ import java.util.Map;
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true, value = { "type", "@context" }, allowGetters = true)
-public class GxServiceOfferingCredentialSubject extends PojoCredentialSubject {
+public class GxDataResourceCredentialSubject extends PojoCredentialSubject {
 
     @Getter(AccessLevel.NONE)
     public static final String TYPE_NAMESPACE = "gx";
 
     @Getter(AccessLevel.NONE)
-    public static final String TYPE_CLASS = "ServiceOffering";
+    public static final String TYPE_CLASS = "DataResource";
 
     @Getter(AccessLevel.NONE)
     public static final String TYPE = TYPE_NAMESPACE + ":" + TYPE_CLASS;
@@ -59,19 +41,19 @@ public class GxServiceOfferingCredentialSubject extends PojoCredentialSubject {
         "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#", "xsd",
         "http://www.w3.org/2001/XMLSchema#");
 
-    @JsonProperty("gx:providedBy")
+    @JsonProperty("gx:copyrightOwnedBy")
     @NotNull
-    private NodeKindIRITypeId providedBy;
+    private NodeKindIRITypeId copyrightOwnedBy;
 
-    @JsonProperty("gx:aggregationOf")
-    private List<NodeKindIRITypeId> aggregationOf;
-
-    // dependsOn not yet mapped as it is optional
-
-    @JsonProperty("gx:termsAndConditions")
-    @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+    @JsonProperty("gx:producedBy")
     @NotNull
-    private List<GxSOTermsAndConditions> termsAndConditions;
+    private NodeKindIRITypeId producedBy;
+
+    @JsonProperty("gx:exposedThrough")
+    @NotNull
+    private NodeKindIRITypeId exposedThrough;
+
+    // aggregationOf not yet mapped as it is optional
 
     @JsonProperty("gx:policy")
     @JsonSerialize(contentUsing = StringSerializer.class)
@@ -80,16 +62,15 @@ public class GxServiceOfferingCredentialSubject extends PojoCredentialSubject {
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     private List<String> policy;
 
-    @JsonProperty("gx:dataProtectionRegime")
+    @JsonProperty("gx:license")
     @JsonSerialize(contentUsing = StringSerializer.class)
     @JsonDeserialize(contentUsing = StringDeserializer.class)
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-    private List<String> dataProtectionRegime;
+    private List<String> license;
 
-    @JsonProperty("gx:dataAccountExport")
-    @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+    @JsonProperty("gx:containsPII")
     @NotNull
-    private List<GxDataAccountExport> dataAccountExport;
+    private boolean containsPII;
 
     @JsonProperty("gx:name")
     @JsonSerialize(using = StringSerializer.class)
@@ -100,6 +81,8 @@ public class GxServiceOfferingCredentialSubject extends PojoCredentialSubject {
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)
     private String description;
+
+    // obsoleteDateTime and expirationDateTime not yet mapped as they are optional
 
     @JsonProperty("type")
     public String getType() {
@@ -112,5 +95,4 @@ public class GxServiceOfferingCredentialSubject extends PojoCredentialSubject {
 
         return CONTEXT;
     }
-
 }

@@ -1,8 +1,8 @@
 package eu.possiblex.participantportal.business.control;
 
+import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogOffer;
-import eu.possiblex.participantportal.business.entity.selfdescriptions.px.PxExtendedServiceOfferingCredentialSubject;
 
 public class FhCatalogClientMock implements FhCatalogClient {
     @Override

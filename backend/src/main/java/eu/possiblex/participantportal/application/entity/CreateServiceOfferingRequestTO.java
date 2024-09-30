@@ -1,7 +1,7 @@
 package eu.possiblex.participantportal.application.entity;
 
+import eu.possiblex.participantportal.application.entity.credentials.gx.serviceofferings.GxServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
-import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.serviceofferings.GxServiceOfferingCredentialSubject;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 

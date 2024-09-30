@@ -2,10 +2,10 @@ package eu.possiblex.participantportal.business.control;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogOffer;
-import eu.possiblex.participantportal.business.entity.selfdescriptions.px.PxExtendedServiceOfferingCredentialSubject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -72,14 +72,15 @@ public class FhCatalogClientImpl implements FhCatalogClient {
             log.info("parsed fh catalog offer id number of dataResources: " + dataResourceCount);
 
             if ((assetId == null) || (providerURL == null) || assetId.isEmpty() || providerURL.isEmpty()) {
-                throw new RuntimeException("FH catalog offer did not contain all expected infos! asset-ID: "
-                        + assetId + ", provider URL: " + providerURL);
+                throw new RuntimeException(
+                    "FH catalog offer did not contain all expected infos! asset-ID: " + assetId + ", provider URL: "
+                        + providerURL);
             }
 
             fhCatalogOffer = new FhCatalogOffer();
             fhCatalogOffer.setAssetId(assetId);
             fhCatalogOffer.setCounterPartyAddress(providerURL);
-            fhCatalogOffer.setDataOffering(dataResourceCount>=1);
+            fhCatalogOffer.setDataOffering(dataResourceCount >= 1);
 
         } catch (Exception e) {
             throw new RuntimeException("failed to parse fh catalog offer json: " + offerJsonContent, e);
@@ -134,8 +135,8 @@ public class FhCatalogClientImpl implements FhCatalogClient {
     }
 
     /**
-     * Recursively parses the given JSON object. Looks for the all occurrences of a specified key-value pair.
-     * This method can be improved to better deal with JSON-LD structures in the future if necessary.
+     * Recursively parses the given JSON object. Looks for the all occurrences of a specified key-value pair. This
+     * method can be improved to better deal with JSON-LD structures in the future if necessary.
      *
      * @param key
      * @param value
@@ -143,6 +144,7 @@ public class FhCatalogClientImpl implements FhCatalogClient {
      * @return
      */
     private int countKeyValuePairs(String key, String value, JsonNode jsonNode) {
+
         int count = 0;
         if (jsonNode.isArray()) {
             for (int i = 0; i < jsonNode.size(); i++) {

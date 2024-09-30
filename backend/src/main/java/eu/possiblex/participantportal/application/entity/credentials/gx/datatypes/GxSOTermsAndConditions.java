@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package eu.possiblex.participantportal.business.entity.selfdescriptions.gx.datatypes;
+package eu.possiblex.participantportal.application.entity.credentials.gx.datatypes;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;

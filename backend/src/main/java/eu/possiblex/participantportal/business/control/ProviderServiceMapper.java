@@ -2,11 +2,13 @@ package eu.possiblex.participantportal.business.control;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.possiblex.participantportal.application.entity.credentials.gx.resources.GxDataResourceCredentialSubject;
 import eu.possiblex.participantportal.business.entity.CreateDataOfferingRequestBE;
 import eu.possiblex.participantportal.business.entity.CreateServiceOfferingRequestBE;
+import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedDataResourceCredentialSubject;
+import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.edc.CreateEdcOfferBE;
 import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
-import eu.possiblex.participantportal.business.entity.selfdescriptions.px.PxExtendedServiceOfferingCredentialSubject;
 import org.mapstruct.InheritConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -35,7 +37,7 @@ public interface ProviderServiceMapper {
         CreateServiceOfferingRequestBE request, String offeringId, String assetId, String providerUrl);
 
     @InheritConfiguration
-    @Mapping(target = "aggregationOf", expression = "java(java.util.List.of(request.getDataResource()))")
+    @Mapping(target = "aggregationOf", source = "request.dataResource", qualifiedByName = "gxDataResourceToPxDataResourceList")
     PxExtendedServiceOfferingCredentialSubject getPxExtendedServiceOfferingCredentialSubject(
         CreateDataOfferingRequestBE request, String offeringId, String assetId, String providerUrl);
 
@@ -48,6 +50,16 @@ public interface ProviderServiceMapper {
     @InheritConfiguration
     @Mapping(target = "fileName", source = "fileName")
     CreateEdcOfferBE getCreateEdcOfferBE(CreateDataOfferingRequestBE request);
+
+    PxExtendedDataResourceCredentialSubject gxDataResourceToPxDataResource(
+        GxDataResourceCredentialSubject dataResource);
+
+    @Named("gxDataResourceToPxDataResourceList")
+    default List<PxExtendedDataResourceCredentialSubject> gxDataResourceToPxDataResourceList(
+        GxDataResourceCredentialSubject dataResource) {
+
+        return List.of(gxDataResourceToPxDataResource(dataResource));
+    }
 
     @Named("policyToStringList")
     default List<String> policyToStringList(Policy policy) {

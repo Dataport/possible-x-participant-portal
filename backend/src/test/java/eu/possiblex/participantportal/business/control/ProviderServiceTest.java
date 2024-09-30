@@ -3,20 +3,21 @@ package eu.possiblex.participantportal.business.control;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.GxDataAccountExport;
+import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.GxSOTermsAndConditions;
+import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
+import eu.possiblex.participantportal.application.entity.credentials.gx.resources.GxDataResourceCredentialSubject;
+import eu.possiblex.participantportal.application.entity.credentials.gx.serviceofferings.GxServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.CreateDataOfferingRequestBE;
 import eu.possiblex.participantportal.business.entity.CreateServiceOfferingRequestBE;
+import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedDataResourceCredentialSubject;
+import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.edc.asset.AssetCreateRequest;
 import eu.possiblex.participantportal.business.entity.edc.asset.ionoss3extension.IonosS3DataSource;
 import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyCreateRequest;
 import eu.possiblex.participantportal.business.entity.exception.EdcOfferCreationException;
 import eu.possiblex.participantportal.business.entity.exception.FhOfferCreationException;
-import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.datatypes.GxDataAccountExport;
-import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.datatypes.GxSOTermsAndConditions;
-import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.datatypes.NodeKindIRITypeId;
-import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.resources.GxDataResourceCredentialSubject;
-import eu.possiblex.participantportal.business.entity.selfdescriptions.gx.serviceofferings.GxServiceOfferingCredentialSubject;
-import eu.possiblex.participantportal.business.entity.selfdescriptions.px.PxExtendedServiceOfferingCredentialSubject;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import org.mockito.ArgumentCaptor;
@@ -161,7 +162,7 @@ class ProviderServiceTest {
         PxExtendedServiceOfferingCredentialSubject pxExtSoCs = serviceOfferingCaptor.getValue();
         assertNotNull(pxExtSoCs);
         String serviceOfferingId = pxExtSoCs.getId();
-        GxDataResourceCredentialSubject dataResource = pxExtSoCs.getAggregationOf().get(0);
+        PxExtendedDataResourceCredentialSubject dataResource = pxExtSoCs.getAggregationOf().get(0);
         assertTrue(
             serviceOfferingId.matches("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"));
         assertTrue(dataResource.getId()

@@ -20,6 +20,15 @@ export interface IServiceOfferingShapeRestApi {
     gxServiceOfferingShape: string;
 }
 
+export interface IAcceptOfferResponseTO {
+    transferProcessState: ITransferProcessState;
+    negotiationState: INegotiationState;
+    dataOffering: boolean;
+}
+
+export interface IAcceptOfferResponseTOBuilder {
+}
+
 export interface IConsumeOfferRequestTO {
     counterPartyAddress: string;
     edcOfferId: string;
@@ -85,15 +94,6 @@ export interface ISelectOfferRequestTO {
 }
 
 export interface ISelectOfferRequestTOBuilder {
-}
-
-export interface IAcceptOfferResponseTO {
-    transferProcessState: ITransferProcessState;
-    negotiationState: INegotiationState;
-    dataOffering: boolean;
-}
-
-export interface IAcceptOfferResponseTOBuilder {
 }
 
 export interface IPojoCredentialSubject {
@@ -194,42 +194,6 @@ export interface IGxServiceOfferingCredentialSubjectBuilderImpl extends IGxServi
     "gx:dataAccountExport": IGxDataAccountExport[];
     "gx:name": string;
     "gx:description": string;
-}
-
-export interface IPxExtendedServiceOfferingCredentialSubject {
-    id: string;
-    "gx:providedBy": INodeKindIRITypeId;
-    "gx:aggregationOf": IGxDataResourceCredentialSubject[];
-    "gx:termsAndConditions": IGxSOTermsAndConditions[];
-    "gx:policy": string[];
-    "gx:dataProtectionRegime": string[];
-    "gx:dataAccountExport": IGxDataAccountExport[];
-    "gx:name": string;
-    "gx:description": string;
-    "px:assetId": string;
-    "px:providerUrl": string;
-    "schema:name": string;
-    "schema:description": string;
-    "@context": { [index: string]: string };
-    "@type": string[];
-}
-
-export interface IPxExtendedServiceOfferingCredentialSubjectBuilder<C, B> {
-}
-
-export interface IPxExtendedServiceOfferingCredentialSubjectBuilderImpl extends IPxExtendedServiceOfferingCredentialSubjectBuilder<IPxExtendedServiceOfferingCredentialSubject, IPxExtendedServiceOfferingCredentialSubjectBuilderImpl> {
-    "gx:providedBy": INodeKindIRITypeId;
-    "gx:aggregationOf": IGxDataResourceCredentialSubject[];
-    "gx:termsAndConditions": IGxSOTermsAndConditions[];
-    "gx:policy": string[];
-    "gx:dataProtectionRegime": string[];
-    "gx:dataAccountExport": IGxDataAccountExport[];
-    "gx:name": string;
-    "gx:description": string;
-    "px:assetId": string;
-    "px:providerUrl": string;
-    "schema:name": string;
-    "schema:description": string;
 }
 
 export interface IPolicy {
