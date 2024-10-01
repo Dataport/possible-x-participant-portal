@@ -49,6 +49,10 @@ export class ProvideComponent implements AfterViewInit {
       });
     } else {
       let gxDataResourceCs = {
+        "gx:producedBy": {
+          "@id": this.participantId
+        },
+        "gx:copyrightOwnedBy": [this.participantId],
         "gx:containsPII": false,
         "@type": "gx:DataResource"
       }

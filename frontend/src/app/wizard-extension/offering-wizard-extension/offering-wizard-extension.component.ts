@@ -70,7 +70,7 @@ export class OfferingWizardExtensionComponent {
       console.log("Loading data resource shape");
       let dataResourceShapeSource = await this.apiService.getGxDataResourceShape();
       dataResourceShapeSource = this.adaptGxShape(dataResourceShapeSource, "DataResource",
-        ["name", "description", "policy", "producedBy", "exposedThrough", "copyrightOwnedBy"]);
+        ["name", "description", "policy", "exposedThrough"]);
       await this.gxDataResourceWizard.loadShape(Promise.resolve(dataResourceShapeSource), dataResourceId);
     }
   }
@@ -135,9 +135,7 @@ export class OfferingWizardExtensionComponent {
       gxDataResourceJsonSd["gx:name"] = gxOfferingJsonSd["gx:name"];
       gxDataResourceJsonSd["gx:description"] = gxOfferingJsonSd["gx:description"];
       gxDataResourceJsonSd["gx:policy"] = gxOfferingJsonSd["gx:policy"];
-      gxDataResourceJsonSd["gx:producedBy"] = gxOfferingJsonSd["gx:providedBy"];
       gxDataResourceJsonSd["gx:exposedThrough"] = {id: gxOfferingJsonSd.id} as INodeKindIRITypeId;
-      gxDataResourceJsonSd["gx:copyrightOwnedBy"] = gxOfferingJsonSd["gx:providedBy"];
 
       createOfferTo.dataResourceCredentialSubject = gxDataResourceJsonSd;
       createOfferTo.fileName = this.selectedFileName;
@@ -226,7 +224,7 @@ export class OfferingWizardExtensionComponent {
       this.gxServiceOfferingWizard.prefillFields(cs, ["gx:providedBy"]);
     }
     if (isDataResourceCs(cs)) {
-      this.gxDataResourceWizard.prefillFields(cs, []);
+      this.gxDataResourceWizard.prefillFields(cs, ["gx:producedBy", "gx:copyrightOwnedBy"]);
     }
   }
 }
