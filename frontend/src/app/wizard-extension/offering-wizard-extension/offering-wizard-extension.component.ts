@@ -224,7 +224,7 @@ export class OfferingWizardExtensionComponent {
       this.gxServiceOfferingWizard.prefillFields(cs, ["gx:providedBy"]);
     }
     if (isDataResourceCs(cs)) {
-      this.gxDataResourceWizard.prefillFields(cs, ["gx:producedBy", "gx:copyrightOwnedBy"]);
+      this.gxDataResourceWizard.prefillFields(cs, []);
     }
   }
 }
