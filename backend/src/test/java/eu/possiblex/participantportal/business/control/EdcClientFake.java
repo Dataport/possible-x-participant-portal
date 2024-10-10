@@ -160,22 +160,28 @@ public class EdcClientFake implements EdcClient {
     @Override
     public List<ContractAgreement> queryContractAgreements() {
 
-        return List.of(
-            ContractAgreement.builder().contractSigningDate(BigInteger.valueOf(1728549145)).id(FAKE_ID).assetId(FAKE_ID)
-                .consumerId(FAKE_ID).providerId(FAKE_ID)
-                .policy(Policy.builder().target(PolicyTarget.builder().id(FAKE_ID).build()).build()).build());
+        Policy policy = Policy.builder().target(PolicyTarget.builder().id(FAKE_ID).build()).build();
+
+        ContractAgreement contractAgreement = ContractAgreement.builder()
+            .contractSigningDate(BigInteger.valueOf(1728549145)).id(FAKE_ID).assetId(FAKE_ID).consumerId(FAKE_ID)
+            .providerId(FAKE_ID).policy(policy).build();
+
+        return List.of(contractAgreement);
     }
 
     @Override
     public PossibleAsset queryPossibleAsset(String assetId) {
 
-        PossibleAssetProperties properties = PossibleAssetProperties.builder()
-            .termsAndConditions(List.of(PossibleAssetTnC.builder().url("https://example.com").hash("hash1234").build()))
+        PossibleAssetTnC assetTnC = PossibleAssetTnC.builder().url("https://example.com").hash("hash1234").build();
+
+        PossibleAssetDataAccountExport dataAccountExport = PossibleAssetDataAccountExport.builder()
+            .accessType("digital").requestType("API").formatType("application/json").build();
+
+        PossibleAssetProperties properties = PossibleAssetProperties.builder().termsAndConditions(List.of(assetTnC))
             .producedBy(new NodeKindIRITypeId(FAKE_ID)).providedBy(new NodeKindIRITypeId(FAKE_ID))
             .license(List.of("MIT")).copyrightOwnedBy(new NodeKindIRITypeId(FAKE_ID))
             .exposedThrough(new NodeKindIRITypeId(FAKE_ID)).offerId(FAKE_ID).name("name").description("description")
-            .dataAccountExport(List.of(PossibleAssetDataAccountExport.builder().accessType("digital").requestType("API")
-                .formatType("application/json").build())).build();
+            .dataAccountExport(List.of(dataAccountExport)).build();
 
         Map<String, String> context = Map.of("edc", "https://w3id.org/edc/v0.0.1/ns/", "odrl",
             "http://www.w3.org/ns/odrl/2/", "@vocab", "https://w3id.org/edc/v0.0.1/ns/");
