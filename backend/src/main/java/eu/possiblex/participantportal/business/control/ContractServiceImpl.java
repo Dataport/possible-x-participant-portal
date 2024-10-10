@@ -34,7 +34,7 @@ public class ContractServiceImpl implements ContractService {
 
         contractAgreements.forEach(c -> {
             PossibleAsset asset = null;
-            try {
+            try { // TODO find out if participant is consumer or provider and get asset accordingly
                 asset = edcClient.queryPossibleAsset(c.getAssetId());
 
                 if (!asset.getId().equals(c.getAssetId())) {
