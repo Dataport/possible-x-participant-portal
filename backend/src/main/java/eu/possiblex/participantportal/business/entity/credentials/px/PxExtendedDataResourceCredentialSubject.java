@@ -1,9 +1,17 @@
 package eu.possiblex.participantportal.business.entity.credentials.px;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
 import eu.possiblex.participantportal.application.entity.credentials.gx.resources.GxDataResourceCredentialSubject;
+import eu.possiblex.participantportal.business.entity.serialization.BooleanDeserializer;
+import eu.possiblex.participantportal.business.entity.serialization.BooleanSerializer;
+import eu.possiblex.participantportal.business.entity.serialization.StringDeserializer;
+import eu.possiblex.participantportal.business.entity.serialization.StringSerializer;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -16,6 +24,7 @@ import java.util.Map;
 @AllArgsConstructor
 @Builder
 @ToString
+@JsonIgnoreProperties(ignoreUnknown = true, value = { "@type", "@context" }, allowGetters = true)
 public class PxExtendedDataResourceCredentialSubject {
     @Getter(AccessLevel.NONE)
     public static final List<String> TYPE = List.of(GxDataResourceCredentialSubject.TYPE,
@@ -27,6 +36,7 @@ public class PxExtendedDataResourceCredentialSubject {
         "https://schema.org/");
 
     @NotNull
+    @JsonAlias("@id")
     private String id;
 
     @JsonProperty("gx:copyrightOwnedBy")
@@ -46,20 +56,30 @@ public class PxExtendedDataResourceCredentialSubject {
     @JsonProperty("gx:policy")
     @NotNull
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+    @JsonSerialize(contentUsing = StringSerializer.class)
+    @JsonDeserialize(contentUsing = StringDeserializer.class)
     private List<String> policy;
 
     @JsonProperty("gx:license")
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+    @JsonSerialize(contentUsing = StringSerializer.class)
+    @JsonDeserialize(contentUsing = StringDeserializer.class)
     private List<String> license;
 
     @JsonProperty("gx:containsPII")
+    @JsonSerialize(using = BooleanSerializer.class)
+    @JsonDeserialize(using = BooleanDeserializer.class)
     @NotNull
     private boolean containsPII;
 
     @JsonProperty("gx:name")
+    @JsonSerialize(using = StringSerializer.class)
+    @JsonDeserialize(using = StringDeserializer.class)
     private String name;
 
     @JsonProperty("gx:description")
+    @JsonSerialize(using = StringSerializer.class)
+    @JsonDeserialize(using = StringDeserializer.class)
     private String description;
 
     // obsoleteDateTime and expirationDateTime not yet mapped as they are optional

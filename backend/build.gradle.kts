@@ -33,6 +33,8 @@ dependencies {
   implementation(libs.springBootStarterWeb)
   implementation(libs.springBootStarterWebflux)
   implementation(libs.openApi)
+  implementation(libs.titaniumJsonLd)
+  implementation(libs.jakartaJson)
   compileOnly(libs.lombok)
   annotationProcessor(libs.lombokMapStructBinding)
   implementation(libs.mapStruct)

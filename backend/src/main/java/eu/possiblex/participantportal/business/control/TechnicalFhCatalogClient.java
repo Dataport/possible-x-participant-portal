@@ -22,11 +22,8 @@ package eu.possiblex.participantportal.business.control;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.service.annotation.GetExchange;
 import org.springframework.web.service.annotation.PostExchange;
-
-import java.util.Map;
 
 /**
  * The technical class to access the FH Catalog via REST.
@@ -34,8 +31,7 @@ import java.util.Map;
 public interface TechnicalFhCatalogClient {
     // TODO Adapt return type when catalog call returns ID
     @PostExchange("/resources/service-offering")
-    void addServiceOfferingToFhCatalog(@RequestHeader Map<String, String> auth,
-        @RequestBody PxExtendedServiceOfferingCredentialSubject serviceOfferingCs);
+    void addServiceOfferingToFhCatalog(@RequestBody PxExtendedServiceOfferingCredentialSubject serviceOfferingCs);
 
     @GetExchange("/resources/service-offering/{offering_id}")
     String getFhCatalogOffer(@PathVariable String offering_id);

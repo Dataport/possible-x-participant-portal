@@ -4,6 +4,7 @@ import eu.possiblex.participantportal.business.entity.AcceptOfferResponseBE;
 import eu.possiblex.participantportal.business.entity.ConsumeOfferRequestBE;
 import eu.possiblex.participantportal.business.entity.SelectOfferRequestBE;
 import eu.possiblex.participantportal.business.entity.SelectOfferResponseBE;
+import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.edc.asset.DataAddress;
 import eu.possiblex.participantportal.business.entity.edc.asset.ionoss3extension.IonosS3DataDestination;
 import eu.possiblex.participantportal.business.entity.edc.catalog.CatalogRequest;
@@ -21,7 +22,6 @@ import eu.possiblex.participantportal.business.entity.edc.transfer.TransferReque
 import eu.possiblex.participantportal.business.entity.exception.NegotiationFailedException;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
-import eu.possiblex.participantportal.business.entity.fh.FhCatalogOffer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.TaskScheduler;
@@ -52,20 +52,22 @@ public class ConsumerServiceImpl implements ConsumerService {
     @Override
     public SelectOfferResponseBE selectContractOffer(SelectOfferRequestBE request) throws OfferNotFoundException {
         // get offer from FH Catalog and parse the attributes needed to get the offer from EDC Catalog
-        FhCatalogOffer fhCatalogOffer = fhCatalogClient.getFhCatalogOffer(request.getFhCatalogOfferId());
+        PxExtendedServiceOfferingCredentialSubject fhCatalogOffer = fhCatalogClient.getFhCatalogOffer(
+            request.getFhCatalogOfferId());
+        boolean isDataOffering = !fhCatalogOffer.getAggregationOf().isEmpty();
         log.info("got fh catalog offer " + fhCatalogOffer);
 
         // get offer from EDC Catalog
         DcatCatalog edcCatalog = queryEdcCatalog(
-            CatalogRequest.builder().counterPartyAddress(fhCatalogOffer.getCounterPartyAddress()).build());
+            CatalogRequest.builder().counterPartyAddress(fhCatalogOffer.getProviderUrl()).build());
         log.info("got edc catalog: " + edcCatalog);
         DcatDataset edcCatalogOffer = getDatasetById(edcCatalog, fhCatalogOffer.getAssetId());
 
         SelectOfferResponseBE response = new SelectOfferResponseBE();
         response.setEdcOffer(edcCatalogOffer);
-        response.setCounterPartyAddress(fhCatalogOffer.getCounterPartyAddress());
-        response.setDataOffering(fhCatalogOffer.isDataOffering());
-        if (fhCatalogOffer.isDataOffering()) {
+        response.setCounterPartyAddress(fhCatalogOffer.getProviderUrl());
+        response.setDataOffering(isDataOffering);
+        if (isDataOffering) {
             response.setOfferType("Data Offering");
         } else {
             response.setOfferType("Service Offering");
@@ -94,10 +96,11 @@ public class ConsumerServiceImpl implements ConsumerService {
         if (request.isDataOffering()) {
             // initiate transfer
             DataAddress dataAddress = IonosS3DataDestination.builder().storage("s3-eu-central-2.ionoscloud.com")
-                    .bucketName("dev-consumer-edc-bucket-possible-31952746").path("s3HatGeklappt/").keyName("myKey").build();
+                .bucketName("dev-consumer-edc-bucket-possible-31952746").path("s3HatGeklappt/").keyName("myKey")
+                .build();
             TransferRequest transferRequest = TransferRequest.builder().connectorId(edcOffer.getParticipantId())
-                    .counterPartyAddress(request.getCounterPartyAddress()).assetId(dataset.getAssetId())
-                    .contractId(contractNegotiation.getContractAgreementId()).dataDestination(dataAddress).build();
+                .counterPartyAddress(request.getCounterPartyAddress()).assetId(dataset.getAssetId())
+                .contractId(contractNegotiation.getContractAgreementId()).dataDestination(dataAddress).build();
             transferProcessState = performTransfer(transferRequest).getState();
         }
         AcceptOfferResponseBE be = new AcceptOfferResponseBE(transferProcessState, contractNegotiation.getState(),

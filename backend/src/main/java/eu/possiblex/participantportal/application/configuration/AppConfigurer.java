@@ -33,6 +33,9 @@ public class AppConfigurer {
     @Value("${sd-creation-wizard-api.base-url}")
     private String sdCreationWizardApiBaseUri;
 
+    @Value("${fh.catalog.secret-key}")
+    private String fhCatalogSecretKey;
+
     @Bean
     public EdcClient edcClient() {
 
@@ -45,7 +48,10 @@ public class AppConfigurer {
     @Bean
     public TechnicalFhCatalogClient technicalFhCatalogClient() {
 
-        WebClient webClient = WebClient.builder().baseUrl(fhCatalogUrl).build();
+        WebClient webClient = WebClient.builder().baseUrl(fhCatalogUrl).defaultHeaders(httpHeaders -> {
+            httpHeaders.set("Content-Type", "application/json");
+            httpHeaders.set("Authorization", "Bearer " + fhCatalogSecretKey);
+        }).build();
         HttpServiceProxyFactory httpServiceProxyFactory = HttpServiceProxyFactory.builder()
             .exchangeAdapter(WebClientAdapter.create(webClient)).build();
         return httpServiceProxyFactory.createClient(TechnicalFhCatalogClient.class);

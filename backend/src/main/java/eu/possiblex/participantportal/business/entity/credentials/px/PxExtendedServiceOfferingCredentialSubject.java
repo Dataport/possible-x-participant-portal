@@ -1,11 +1,17 @@
 package eu.possiblex.participantportal.business.entity.credentials.px;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.GxDataAccountExport;
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.GxSOTermsAndConditions;
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
 import eu.possiblex.participantportal.application.entity.credentials.gx.serviceofferings.GxServiceOfferingCredentialSubject;
+import eu.possiblex.participantportal.business.entity.serialization.StringDeserializer;
+import eu.possiblex.participantportal.business.entity.serialization.StringSerializer;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -21,6 +27,7 @@ import java.util.Map;
 @AllArgsConstructor
 @Builder
 @ToString
+@JsonIgnoreProperties(ignoreUnknown = true, value = { "@type", "@context" }, allowGetters = true)
 public class PxExtendedServiceOfferingCredentialSubject {
     @Getter(AccessLevel.NONE)
     public static final List<String> TYPE = List.of(GxServiceOfferingCredentialSubject.TYPE,
@@ -32,6 +39,7 @@ public class PxExtendedServiceOfferingCredentialSubject {
         "https://schema.org/");
 
     @NotNull
+    @JsonAlias("@id")
     private String id;
 
     @JsonProperty("gx:providedBy")
@@ -39,6 +47,7 @@ public class PxExtendedServiceOfferingCredentialSubject {
     private NodeKindIRITypeId providedBy;
 
     @JsonProperty("gx:aggregationOf")
+    @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     private List<PxExtendedDataResourceCredentialSubject> aggregationOf;
 
     @JsonProperty("gx:termsAndConditions")
@@ -49,10 +58,14 @@ public class PxExtendedServiceOfferingCredentialSubject {
     @JsonProperty("gx:policy")
     @NotNull
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+    @JsonSerialize(contentUsing = StringSerializer.class)
+    @JsonDeserialize(contentUsing = StringDeserializer.class)
     private List<String> policy;
 
     @JsonProperty("gx:dataProtectionRegime")
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+    @JsonSerialize(contentUsing = StringSerializer.class)
+    @JsonDeserialize(contentUsing = StringDeserializer.class)
     private List<String> dataProtectionRegime;
 
     @JsonProperty("gx:dataAccountExport")
@@ -61,23 +74,35 @@ public class PxExtendedServiceOfferingCredentialSubject {
     private List<GxDataAccountExport> dataAccountExport;
 
     @JsonProperty("gx:name")
+    @JsonSerialize(using = StringSerializer.class)
+    @JsonDeserialize(using = StringDeserializer.class)
     private String name;
 
     @JsonProperty("gx:description")
+    @JsonSerialize(using = StringSerializer.class)
+    @JsonDeserialize(using = StringDeserializer.class)
     private String description;
 
     @JsonProperty("px:assetId")
+    @JsonSerialize(using = StringSerializer.class)
+    @JsonDeserialize(using = StringDeserializer.class)
     private String assetId;
 
     @JsonProperty("px:providerUrl")
+    @JsonSerialize(using = StringSerializer.class)
+    @JsonDeserialize(using = StringDeserializer.class)
     private String providerUrl;
 
     // TODO: Remove this when FH catalog UI is adjusted, currently needed to show the name
     @JsonProperty("schema:name")
+    @JsonSerialize(using = StringSerializer.class)
+    @JsonDeserialize(using = StringDeserializer.class)
     private String schemaName;
 
     // TODO: Remove this when FH catalog UI is adjusted, currently needed to show the description
     @JsonProperty("schema:description")
+    @JsonSerialize(using = StringSerializer.class)
+    @JsonDeserialize(using = StringDeserializer.class)
     private String schemaDescription;
 
     @JsonProperty("@type")
