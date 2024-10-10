@@ -1,14 +1,13 @@
 package eu.possiblex.participantportal.business.control;
 
+import eu.possiblex.participantportal.business.entity.AcceptOfferResponseBE;
 import eu.possiblex.participantportal.business.entity.ConsumeOfferRequestBE;
 import eu.possiblex.participantportal.business.entity.SelectOfferRequestBE;
 import eu.possiblex.participantportal.business.entity.SelectOfferResponseBE;
-import eu.possiblex.participantportal.business.entity.AcceptOfferResponseBE;
-import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcess;
+import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.exception.NegotiationFailedException;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
-import eu.possiblex.participantportal.business.entity.fh.FhCatalogOffer;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.test.context.ContextConfiguration;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -43,7 +43,7 @@ class ConsumerServiceTest {
 
         reset(edcClient);
         reset(fhCatalogClient);
-        FhCatalogOffer fhCatalogOffer = new FhCatalogOffer();
+        PxExtendedServiceOfferingCredentialSubject fhCatalogOffer = new PxExtendedServiceOfferingCredentialSubject();
         fhCatalogOffer.setAssetId(EdcClientFake.FAKE_ID);
         Mockito.when(fhCatalogClient.getFhCatalogOffer(Mockito.eq(EdcClientFake.FAKE_ID))).thenReturn(fhCatalogOffer);
 
@@ -72,8 +72,8 @@ class ConsumerServiceTest {
         // WHEN
 
         AcceptOfferResponseBE response = sut.acceptContractOffer(
-            ConsumeOfferRequestBE.builder().counterPartyAddress("http://example.com").edcOfferId(EdcClientFake.FAKE_ID).dataOffering(true)
-                .build());
+            ConsumeOfferRequestBE.builder().counterPartyAddress("http://example.com").edcOfferId(EdcClientFake.FAKE_ID)
+                .dataOffering(true).build());
 
         // THEN
 
@@ -85,7 +85,7 @@ class ConsumerServiceTest {
 
     @Test
     void acceptContractOfferSucceedsNoTransfer()
-            throws NegotiationFailedException, TransferFailedException, OfferNotFoundException {
+        throws NegotiationFailedException, TransferFailedException, OfferNotFoundException {
 
         // GIVEN
 
@@ -95,8 +95,8 @@ class ConsumerServiceTest {
         // WHEN
 
         AcceptOfferResponseBE response = sut.acceptContractOffer(
-                ConsumeOfferRequestBE.builder().counterPartyAddress("http://example.com").edcOfferId(EdcClientFake.FAKE_ID).dataOffering(false)
-                        .build());
+            ConsumeOfferRequestBE.builder().counterPartyAddress("http://example.com").edcOfferId(EdcClientFake.FAKE_ID)
+                .dataOffering(false).build());
 
         // THEN
 

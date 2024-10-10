@@ -54,7 +54,8 @@ public class ConsumerServiceImpl implements ConsumerService {
         // get offer from FH Catalog and parse the attributes needed to get the offer from EDC Catalog
         PxExtendedServiceOfferingCredentialSubject fhCatalogOffer = fhCatalogClient.getFhCatalogOffer(
             request.getFhCatalogOfferId());
-        boolean isDataOffering = !fhCatalogOffer.getAggregationOf().isEmpty();
+        boolean isDataOffering = !(fhCatalogOffer.getAggregationOf() == null || fhCatalogOffer.getAggregationOf()
+            .isEmpty());
         log.info("got fh catalog offer " + fhCatalogOffer);
 
         // get offer from EDC Catalog
