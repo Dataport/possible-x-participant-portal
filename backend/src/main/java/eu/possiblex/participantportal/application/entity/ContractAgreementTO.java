@@ -15,7 +15,9 @@ import java.time.OffsetDateTime;
 public class ContractAgreementTO {
     private String id;
 
-    private PossibleAssetTO asset;
+    private String assetId;
+
+    private AssetDetailsTO assetDetails;
 
     private Policy policy;
 

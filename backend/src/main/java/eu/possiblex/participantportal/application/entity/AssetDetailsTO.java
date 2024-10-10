@@ -9,9 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PossibleAssetTO {
-    private String id;
-
+public class AssetDetailsTO {
     private String name;
 
     private String description;

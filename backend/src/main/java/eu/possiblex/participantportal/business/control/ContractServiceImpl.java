@@ -33,14 +33,19 @@ public class ContractServiceImpl implements ContractService {
         List<ContractAgreement> contractAgreements = edcClient.queryContractAgreements();
 
         contractAgreements.forEach(c -> {
-            PossibleAsset asset = edcClient.queryPossibleAsset(c.getAssetId());
+            PossibleAsset asset = null;
+            try {
+                asset = edcClient.queryPossibleAsset(c.getAssetId());
 
-            if (!asset.getId().equals(c.getAssetId())) {
-                throw new PossibleXException(
-                    "Failed to retrieve contracts. Asset ID " + asset.getId() + " does not match asset ID "
-                        + c.getAssetId() + " in contract agreement with ID " + c.getId() + ".");
+                if (!asset.getId().equals(c.getAssetId())) {
+                    throw new PossibleXException(
+                        "Failed to retrieve contracts. Asset ID " + asset.getId() + " does not match asset ID "
+                            + c.getAssetId() + " in contract agreement with ID " + c.getId() + ".");
+                }
+            } catch (Exception e) {
+                log.warn("Failed to retrieve asset with ID {} for contract agreement with ID {}.", c.getAssetId(),
+                    c.getId(), e);
             }
-
             contractAgreementBEs.add(ContractAgreementBE.builder().contractAgreement(c).asset(asset).build());
         });
 
