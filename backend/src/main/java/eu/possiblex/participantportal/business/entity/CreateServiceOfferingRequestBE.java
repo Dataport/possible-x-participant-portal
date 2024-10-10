@@ -4,17 +4,17 @@ import eu.possiblex.participantportal.application.entity.credentials.gx.datatype
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.GxSOTermsAndConditions;
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
 import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
-import lombok.*;
-import lombok.experimental.SuperBuilder;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@ToString
-@SuperBuilder
+@Builder
 public class CreateServiceOfferingRequestBE {
     private NodeKindIRITypeId providedBy;
 
