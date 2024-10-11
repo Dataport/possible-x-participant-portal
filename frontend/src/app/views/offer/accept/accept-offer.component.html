@@ -16,21 +16,6 @@
 
   <div class="w-full max-w-3xl pb-6">
     <c-accordion [alwaysOpen]="true" [flush]="true">
-      <c-accordion-item #offeringDetails="cAccordionItem" [visible]="false">
-        <ng-template cTemplateId="accordionHeaderTemplate">
-          <button (click)="offeringDetails.toggleItem()" [collapsed]="!offeringDetails.visible" cAccordionButton>
-            View offering details
-          </button>
-        </ng-template>
-        <ng-template cTemplateId="accordionBodyTemplate">
-          <div class="accordion-body">
-            <b>Offer Type:</b> {{ (offer?.catalogOffering["gx:aggregationOf"] ? "Data" : "Service") + "Offering" }}
-            <br/><br/>
-            <b>Offer Name:</b> {{ offer?.catalogOffering["gx:name"] }} <br/><br/>
-            <b>Offer Description:</b> {{ offer?.catalogOffering["gx:description"] }}
-          </div>
-        </ng-template>
-      </c-accordion-item>
       <c-accordion-item #contractDetails="cAccordionItem" [visible]="false">
         <ng-template cTemplateId="accordionHeaderTemplate">
           <button (click)="contractDetails.toggleItem()" [collapsed]="!contractDetails.visible" cAccordionButton>
@@ -38,12 +23,39 @@
           </button>
         </ng-template>
         <ng-template cTemplateId="accordionBodyTemplate">
-          <div class="accordion-body">
-            Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore
-            magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea
-            commodi consequat. Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit
-            anim id est laborum.
+          <div *ngIf="!offer.dataOffering" class="accordion-body">
+            <b>Offer ID:</b> {{ offer.catalogOffering.id }} <br/>
+            <b>Offer name:</b> {{ offer.catalogOffering["gx:name"] }} <br/>
+            <b>Provided by:</b> {{ offer.catalogOffering["gx:providedBy"].id }} <br/>
+            <b>Publisher:</b> TODO <br/>
+            <b>Description:</b> {{ offer.catalogOffering["gx:description"] }} <br/>
+            <b>Terms & Conditions:</b> {{ offer.catalogOffering["gx:termsAndConditions"] }} <br/>
+            <b>Policy:</b> {{ offer.catalogOffering["gx:policy"] }} <br/>
+            <b>Data Protection Regime:</b> {{ offer.catalogOffering["gx:dataProtectionRegime"] }} <br/>
+            <b>Data Account Export:</b> {{ offer.catalogOffering["gx:dataAccountExport"] }} <br/>
+          </div>
+          <div *ngIf="offer.dataOffering" class="accordion-body">
+            <b>Offer ID:</b> {{ offer.catalogOffering.id }} <br/>
+            <b>Data Ressource Name:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:name"] }} <br/>
+            <b>Provided by:</b> {{ offer.catalogOffering["gx:providedBy"].id }} <br/>
+            <b>Publisher:</b> TODO <br/>
+            <b>Data Ressource Description:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:description"] }}
+            <br/>
+            <b>Data Ressource Policy:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:policy"] }} <br/>
+            <b>License:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:license"] }} <br/>
+            <b>Copyright owned by:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:copyrightOwnedBy"].id }}
+            <br/>
+            <b>Produced by:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:producedBy"].id }} <br/>
+            <b>Exposed through:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:exposedThrough"].id }} <br/>
+            <b>Contains personal identifiable Information
+              (PII):</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:containsPII"] }} <br/>
+            <br/><br/>
+            <b>Offer name:</b> {{ offer.catalogOffering["gx:name"] }} <br/>
+            <b>Description:</b> {{ offer.catalogOffering["gx:description"] }} <br/>
+            <b>Terms & Conditions:</b> {{ offer.catalogOffering["gx:termsAndConditions"] }} <br/>
+            <b>Policy:</b> {{ offer.catalogOffering["gx:policy"] }}
+            <b>Data Protection Regime:</b> {{ offer.catalogOffering["gx:dataProtectionRegime"] }} <br/>
+            <b>Data Account Export:</b> {{ offer.catalogOffering["gx:dataAccountExport"] }} <br/>
           </div>
         </ng-template>
       </c-accordion-item>
