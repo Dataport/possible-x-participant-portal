@@ -48,7 +48,7 @@ public class ContractServiceImpl implements ContractService {
         } catch (WebClientResponseException.NotFound notFound) {
             // For Consumer, this is not a problem, as the asset is not kept in the EDC
             // For Provider, this is a problem, as the asset should be available in the EDC
-            // Unfortunately, we cannot differentiate between the two at the moment
+            // We cannot differentiate between the two at the moment
             log.warn("Failed to retrieve asset with ID {} for contract agreement with ID {}.", c.getAssetId(),
                 c.getId(), notFound);
         }

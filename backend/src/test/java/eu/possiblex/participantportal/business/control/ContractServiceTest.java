@@ -35,11 +35,12 @@ class ContractServiceTest {
     private ContractService contractService;
 
     @Test
-    void testGetContractAgreements() {
+    void testGetContractAgreementsAsProviderOfAssets() {
 
         reset(edcClient);
+        EdcClientFake.setProvider(true);
 
-        List<ContractAgreementBE> expected = getContractAgreementBEs();
+        List<ContractAgreementBE> expected = getContractAgreementBEsAsProviderOfAssets();
         List<ContractAgreementBE> actual = contractService.getContractAgreements();
 
         assertThat(actual.size()).isEqualTo(expected.size()).isEqualTo(1);
@@ -48,15 +49,37 @@ class ContractServiceTest {
 
     }
 
-    private List<ContractAgreementBE> getContractAgreementBEs() {
+    @Test
+    void testGetContractAgreementsNotAsProviderOfAssets() {
 
-        ContractAgreement contractAgreement = ContractAgreement.builder()
-            .contractSigningDate(BigInteger.valueOf(1728549145)).id(EdcClientFake.FAKE_ID)
-            .assetId(EdcClientFake.FAKE_ID).consumerId(EdcClientFake.FAKE_ID).providerId(EdcClientFake.FAKE_ID)
-            .policy(Policy.builder().target(PolicyTarget.builder().id(EdcClientFake.FAKE_ID).build()).build()).build();
+        reset(edcClient);
+        EdcClientFake.setProvider(false);
+
+        List<ContractAgreementBE> expected = getContractAgreementBEsNotAsProviderOfAssets();
+        List<ContractAgreementBE> actual = contractService.getContractAgreements();
+
+        assertThat(actual.size()).isEqualTo(expected.size()).isEqualTo(1);
+        assertThat(actual).hasSize(1);
+        assertThat(actual.get(0)).usingRecursiveComparison().isEqualTo(expected.get(0));
+
+    }
+
+    private List<ContractAgreementBE> getContractAgreementBEsAsProviderOfAssets() {
+
+        ContractAgreement contractAgreement = getContractAgreement();
 
         ContractAgreementBE contractAgreementBE = ContractAgreementBE.builder().contractAgreement(contractAgreement)
             .asset(getPossibleAsset(contractAgreement.getAssetId())).build();
+
+        return List.of(contractAgreementBE);
+    }
+
+    private List<ContractAgreementBE> getContractAgreementBEsNotAsProviderOfAssets() {
+
+        ContractAgreement contractAgreement = getContractAgreement();
+
+        ContractAgreementBE contractAgreementBE = ContractAgreementBE.builder().contractAgreement(contractAgreement)
+            .asset(null).build();
 
         return List.of(contractAgreementBE);
     }
@@ -83,6 +106,13 @@ class ContractServiceTest {
 
         return PossibleAsset.builder().id(assetId).type("Asset").properties(properties).context(context)
             .dataAddress(dataAddress).build();
+    }
+
+    private ContractAgreement getContractAgreement() {
+
+        return ContractAgreement.builder().contractSigningDate(BigInteger.valueOf(1728549145)).id(EdcClientFake.FAKE_ID)
+            .assetId(EdcClientFake.FAKE_ID).consumerId(EdcClientFake.FAKE_ID).providerId(EdcClientFake.FAKE_ID)
+            .policy(Policy.builder().target(PolicyTarget.builder().id(EdcClientFake.FAKE_ID).build()).build()).build();
     }
 
     // Test-specific configuration to provide mocks

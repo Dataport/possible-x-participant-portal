@@ -59,6 +59,8 @@ public class EdcClientFake implements EdcClient {
 
     public static final long FAKE_TIMESTAMP = 1234L;
 
+    public static boolean isProvider = true;
+
     private IdResponse generateFakeIdResponse(String id) {
 
         IdResponse response = new IdResponse();
@@ -172,6 +174,10 @@ public class EdcClientFake implements EdcClient {
     @Override
     public PossibleAsset queryPossibleAsset(String assetId) {
 
+        if (!isProvider()) {
+            return null;
+        }
+
         PossibleAssetTnC assetTnC = PossibleAssetTnC.builder().url("https://example.com").hash("hash1234").build();
 
         PossibleAssetDataAccountExport dataAccountExport = PossibleAssetDataAccountExport.builder()
@@ -191,5 +197,15 @@ public class EdcClientFake implements EdcClient {
 
         return PossibleAsset.builder().id(assetId).type("Asset").properties(properties).context(context)
             .dataAddress(dataAddress).build();
+    }
+
+    public boolean isProvider() {
+
+        return isProvider;
+    }
+
+    public static void setProvider(boolean provider) {
+
+        isProvider = provider;
     }
 }
