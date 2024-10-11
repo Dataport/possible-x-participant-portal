@@ -2,7 +2,7 @@ package eu.possiblex.participantportal.application.boundary;
 
 import eu.possiblex.participantportal.application.control.ContractApiMapper;
 import eu.possiblex.participantportal.business.control.ContractService;
-import eu.possiblex.participantportal.business.control.ContractServiceMock;
+import eu.possiblex.participantportal.business.control.ContractServiceFake;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import org.mockito.Mockito;
@@ -33,14 +33,14 @@ class ContractRestApiTest {
         //then
         this.mockMvc.perform(get("/contract/agreement")).andDo(print()).andExpect(status().isOk())
             .andExpect(jsonPath("$.length()").value(1))
-            .andExpect(jsonPath("$[0].id").value(ContractServiceMock.FAKE_ID_CONTRACT_AGREEMENT)).andExpect(
-                jsonPath("$[0].contractSigningDate").value(ContractServiceMock.getDateAsOffsetDateTime().toString()))
-            .andExpect(jsonPath("$[0].consumerId").value(ContractServiceMock.FAKE_ID_CONSUMER))
-            .andExpect(jsonPath("$[0].providerId").value(ContractServiceMock.FAKE_ID_PROVIDER))
-            .andExpect(jsonPath("$[0].assetId").value(ContractServiceMock.FAKE_ID_ASSET))
-            .andExpect(jsonPath("$[0].assetDetails.name").value(ContractServiceMock.NAME))
-            .andExpect(jsonPath("$[0].assetDetails.description").value(ContractServiceMock.DESCRIPTION))
-            .andExpect(jsonPath("$[0].policy['odrl:target']['@id']").value(ContractServiceMock.FAKE_ID_ASSET))
+            .andExpect(jsonPath("$[0].id").value(ContractServiceFake.FAKE_ID_CONTRACT_AGREEMENT)).andExpect(
+                jsonPath("$[0].contractSigningDate").value(ContractServiceFake.getDateAsOffsetDateTime().toString()))
+            .andExpect(jsonPath("$[0].consumerId").value(ContractServiceFake.FAKE_ID_CONSUMER))
+            .andExpect(jsonPath("$[0].providerId").value(ContractServiceFake.FAKE_ID_PROVIDER))
+            .andExpect(jsonPath("$[0].assetId").value(ContractServiceFake.FAKE_ID_ASSET))
+            .andExpect(jsonPath("$[0].assetDetails.name").value(ContractServiceFake.NAME))
+            .andExpect(jsonPath("$[0].assetDetails.description").value(ContractServiceFake.DESCRIPTION))
+            .andExpect(jsonPath("$[0].policy['odrl:target']['@id']").value(ContractServiceFake.FAKE_ID_ASSET))
             .andExpect(jsonPath("$[0].policy['odrl:prohibition']").isEmpty())
             .andExpect(jsonPath("$[0].policy['odrl:obligation']").isEmpty())
             .andExpect(jsonPath("$[0].policy['odrl:permission']").isEmpty());
@@ -51,7 +51,7 @@ class ContractRestApiTest {
         @Bean
         public ContractService consumerService() {
 
-            return Mockito.spy(new ContractServiceMock());
+            return Mockito.spy(new ContractServiceFake());
         }
 
         @Bean

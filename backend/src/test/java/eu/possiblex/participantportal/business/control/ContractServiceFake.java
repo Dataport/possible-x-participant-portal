@@ -19,7 +19,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 
-public class ContractServiceMock implements ContractService {
+public class ContractServiceFake implements ContractService {
 
     public static final BigInteger DATE_IN_SECONDS = BigInteger.valueOf(1728549145);
 

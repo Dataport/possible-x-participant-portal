@@ -68,10 +68,12 @@ public class ConsumerModuleTest {
 
     @BeforeEach
     void setup() {
-        this.mockMvc = MockMvcBuilders.standaloneSetup(new ConsumerRestApiImpl(consumerService, Mappers.getMapper(ConsumerApiMapper.class)))
-                .addFilters(new ExceptionHandlingFilter())
-                .build();
+
+        this.mockMvc = MockMvcBuilders.standaloneSetup(
+                new ConsumerRestApiImpl(consumerService, Mappers.getMapper(ConsumerApiMapper.class)))
+            .addFilters(new ExceptionHandlingFilter()).build();
     }
+
     @Test
     void acceptContractOfferSucceeds() throws Exception {
 
@@ -118,8 +120,9 @@ public class ConsumerModuleTest {
         // WHEN/THEN
 
         this.mockMvc.perform(post("/consumer/offer/accept").content(RestApiHelper.asJsonString(
-                    ConsumeOfferRequestTO.builder().edcOfferId(edcOfferId).counterPartyAddress(counterPartyAddress).dataOffering(true).build()))
-                .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
+                ConsumeOfferRequestTO.builder().edcOfferId(edcOfferId).counterPartyAddress(counterPartyAddress)
+                    .dataOffering(true).build())).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+            .andExpect(status().isOk())
             .andExpect(jsonPath("$.transferProcessState").value(TransferProcessState.COMPLETED.name()));
 
         // THEN
@@ -172,9 +175,10 @@ public class ConsumerModuleTest {
         // WHEN/THEN
 
         this.mockMvc.perform(post("/consumer/offer/accept").content(RestApiHelper.asJsonString(
-                                ConsumeOfferRequestTO.builder().edcOfferId(edcOfferId).counterPartyAddress(counterPartyAddress).dataOffering(false).build()))
-                        .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
-                .andExpect(jsonPath("$.transferProcessState").value(TransferProcessState.INITIAL.name()));
+                ConsumeOfferRequestTO.builder().edcOfferId(edcOfferId).counterPartyAddress(counterPartyAddress)
+                    .dataOffering(false).build())).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.transferProcessState").value(TransferProcessState.INITIAL.name()));
 
         // THEN
 
@@ -190,7 +194,7 @@ public class ConsumerModuleTest {
 
         // let the FH catalog provide the test data offer
         String fhCatalogOfferContent = TestUtils.loadTextFile(TEST_FILES_PATH + "validFhOffer.json");
-        Mockito.when(technicalFhCatalogClientMock.getFhCatalogOffer(Mockito.eq(ConsumerServiceMock.VALID_FH_OFFER_ID)))
+        Mockito.when(technicalFhCatalogClientMock.getFhCatalogOffer(Mockito.eq(ConsumerServiceFake.VALID_FH_OFFER_ID)))
             .thenReturn(fhCatalogOfferContent);
 
         String expectedEdcProviderUrl = "EXPECTED_PROVIDER_URL_VALUE"; // from the "px:providerURL" attribute in the test data offer
@@ -214,7 +218,7 @@ public class ConsumerModuleTest {
         // WHEN/THEN
 
         this.mockMvc.perform(post("/consumer/offer/select").content(RestApiHelper.asJsonString(
-                    SelectOfferRequestTO.builder().fhCatalogOfferId(ConsumerServiceMock.VALID_FH_OFFER_ID).build()))
+                    SelectOfferRequestTO.builder().fhCatalogOfferId(ConsumerServiceFake.VALID_FH_OFFER_ID).build()))
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
             .andExpect(jsonPath("$.counterPartyAddress").value(expectedEdcProviderUrl))
             .andExpect(jsonPath("$.edcOfferId").value(expectedAssetId))
@@ -225,7 +229,7 @@ public class ConsumerModuleTest {
         // THEN
 
         // FH Catalog should have been queried with the offer ID given in the request
-        verify(technicalFhCatalogClientMock, Mockito.times(1)).getFhCatalogOffer(ConsumerServiceMock.VALID_FH_OFFER_ID);
+        verify(technicalFhCatalogClientMock, Mockito.times(1)).getFhCatalogOffer(ConsumerServiceFake.VALID_FH_OFFER_ID);
     }
 
     @Test
@@ -238,7 +242,7 @@ public class ConsumerModuleTest {
 
         // let the FH catalog provide the test data offer
         String fhCatalogOfferContent = TestUtils.loadTextFile(TEST_FILES_PATH + "validFhOffer.json");
-        Mockito.when(technicalFhCatalogClientMock.getFhCatalogOffer(Mockito.eq(ConsumerServiceMock.VALID_FH_OFFER_ID)))
+        Mockito.when(technicalFhCatalogClientMock.getFhCatalogOffer(Mockito.eq(ConsumerServiceFake.VALID_FH_OFFER_ID)))
             .thenReturn(fhCatalogOfferContent);
 
         // let the EDC provide the test data catalog which does not contain the offer from the user
@@ -254,7 +258,7 @@ public class ConsumerModuleTest {
         // WHEN/THEN
 
         this.mockMvc.perform(post("/consumer/offer/select").content(RestApiHelper.asJsonString(
-                    SelectOfferRequestTO.builder().fhCatalogOfferId(ConsumerServiceMock.VALID_FH_OFFER_ID).build()))
+                    SelectOfferRequestTO.builder().fhCatalogOfferId(ConsumerServiceFake.VALID_FH_OFFER_ID).build()))
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print())
             .andExpect(status().is(HttpStatus.NOT_FOUND.value()));
     }
@@ -270,13 +274,13 @@ public class ConsumerModuleTest {
         // let the FH catalog client throw a 404 error
         WebClientResponseException expectedException = Mockito.mock(WebClientResponseException.class);
         Mockito.when(expectedException.getStatusCode()).thenReturn(HttpStatus.NOT_FOUND);
-        Mockito.when(technicalFhCatalogClientMock.getFhCatalogOffer(Mockito.eq(ConsumerServiceMock.VALID_FH_OFFER_ID)))
+        Mockito.when(technicalFhCatalogClientMock.getFhCatalogOffer(Mockito.eq(ConsumerServiceFake.VALID_FH_OFFER_ID)))
             .thenThrow(expectedException);
 
         // WHEN/THEN
 
         this.mockMvc.perform(post("/consumer/offer/select").content(RestApiHelper.asJsonString(
-                    SelectOfferRequestTO.builder().fhCatalogOfferId(ConsumerServiceMock.VALID_FH_OFFER_ID).build()))
+                    SelectOfferRequestTO.builder().fhCatalogOfferId(ConsumerServiceFake.VALID_FH_OFFER_ID).build()))
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print())
             .andExpect(status().is(HttpStatus.NOT_FOUND.value()));
     }
@@ -291,13 +295,13 @@ public class ConsumerModuleTest {
 
         // let the FH catalog provide the test data offer which does not contain an asset ID
         String fhCatalogOfferContent = TestUtils.loadTextFile(TEST_FILES_PATH + "invalidFhOfferNoAssetId.json");
-        Mockito.when(technicalFhCatalogClientMock.getFhCatalogOffer(Mockito.eq(ConsumerServiceMock.VALID_FH_OFFER_ID)))
+        Mockito.when(technicalFhCatalogClientMock.getFhCatalogOffer(Mockito.eq(ConsumerServiceFake.VALID_FH_OFFER_ID)))
             .thenReturn(fhCatalogOfferContent);
 
         // WHEN/THEN
 
         this.mockMvc.perform(post("/consumer/offer/select").content(RestApiHelper.asJsonString(
-                SelectOfferRequestTO.builder().fhCatalogOfferId(ConsumerServiceMock.VALID_FH_OFFER_ID).build()))
+                SelectOfferRequestTO.builder().fhCatalogOfferId(ConsumerServiceFake.VALID_FH_OFFER_ID).build()))
             .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().is5xxServerError());
     }
 
@@ -311,13 +315,13 @@ public class ConsumerModuleTest {
 
         // let the FH catalog provide the test data offer which does not contain an asset ID
         String fhCatalogOfferContent = TestUtils.loadTextFile(TEST_FILES_PATH + "invalidFhOfferNoAccessUrl.json");
-        Mockito.when(technicalFhCatalogClientMock.getFhCatalogOffer(Mockito.eq(ConsumerServiceMock.VALID_FH_OFFER_ID)))
+        Mockito.when(technicalFhCatalogClientMock.getFhCatalogOffer(Mockito.eq(ConsumerServiceFake.VALID_FH_OFFER_ID)))
             .thenReturn(fhCatalogOfferContent);
 
         // WHEN/THEN
 
         this.mockMvc.perform(post("/consumer/offer/select").content(RestApiHelper.asJsonString(
-                SelectOfferRequestTO.builder().fhCatalogOfferId(ConsumerServiceMock.VALID_FH_OFFER_ID).build()))
+                SelectOfferRequestTO.builder().fhCatalogOfferId(ConsumerServiceFake.VALID_FH_OFFER_ID).build()))
             .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().is5xxServerError());
     }
 
