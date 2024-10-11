@@ -12,3 +12,8 @@ sd-creation-wizard-api:
   base-url: test
 
 participant-id: "did:web:test.eu"
+
+s3:
+  bucket-storage: "something"
+  bucket-name: "something"
+  bucket-target-path: "something/"
