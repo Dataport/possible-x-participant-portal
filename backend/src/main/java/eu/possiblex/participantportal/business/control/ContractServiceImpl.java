@@ -3,10 +3,10 @@ package eu.possiblex.participantportal.business.control;
 import eu.possiblex.participantportal.business.entity.ContractAgreementBE;
 import eu.possiblex.participantportal.business.entity.edc.asset.possible.PossibleAsset;
 import eu.possiblex.participantportal.business.entity.edc.contractagreement.ContractAgreement;
-import eu.possiblex.participantportal.utilities.PossibleXException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,22 +33,25 @@ public class ContractServiceImpl implements ContractService {
         List<ContractAgreement> contractAgreements = edcClient.queryContractAgreements();
 
         contractAgreements.forEach(c -> {
-            PossibleAsset asset = null;
-            try { // TODO find out if participant is consumer or provider and get asset accordingly
-                asset = edcClient.queryPossibleAsset(c.getAssetId());
-
-                if (!asset.getId().equals(c.getAssetId())) {
-                    throw new PossibleXException(
-                        "Failed to retrieve contracts. Asset ID " + asset.getId() + " does not match asset ID "
-                            + c.getAssetId() + " in contract agreement with ID " + c.getId() + ".");
-                }
-            } catch (Exception e) {
-                log.warn("Failed to retrieve asset with ID {} for contract agreement with ID {}.", c.getAssetId(),
-                    c.getId(), e);
-            }
+            PossibleAsset asset = getPossibleAsset(c);
             contractAgreementBEs.add(ContractAgreementBE.builder().contractAgreement(c).asset(asset).build());
         });
 
         return contractAgreementBEs;
+    }
+
+    private PossibleAsset getPossibleAsset(ContractAgreement c) {
+
+        PossibleAsset asset = null;
+        try {
+            asset = edcClient.queryPossibleAsset(c.getAssetId());
+        } catch (WebClientResponseException.NotFound notFound) {
+            // For Consumer, this is not a problem, as the asset is not kept in the EDC
+            // For Provider, this is a problem, as the asset should be available in the EDC
+            // Unfortunately, we cannot differentiate between the two at the moment
+            log.warn("Failed to retrieve asset with ID {} for contract agreement with ID {}.", c.getAssetId(),
+                c.getId(), notFound);
+        }
+        return asset;
     }
 }
