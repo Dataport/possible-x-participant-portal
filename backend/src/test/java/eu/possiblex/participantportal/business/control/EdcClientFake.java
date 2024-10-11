@@ -172,10 +172,10 @@ public class EdcClientFake implements EdcClient {
     }
 
     @Override
-    public PossibleAsset queryPossibleAsset(String assetId) {
+    public List<PossibleAsset> queryPossibleAssets() {
 
         if (!isProvider()) {
-            return null;
+            return List.of();
         }
 
         PossibleAssetTnC assetTnC = PossibleAssetTnC.builder().url("https://example.com").hash("hash1234").build();
@@ -195,8 +195,8 @@ public class EdcClientFake implements EdcClient {
         IonosS3DataSource dataAddress = IonosS3DataSource.builder().bucketName("bucket").blobName("name")
             .keyName("name").storage("storage").build();
 
-        return PossibleAsset.builder().id(assetId).type("Asset").properties(properties).context(context)
-            .dataAddress(dataAddress).build();
+        return List.of(PossibleAsset.builder().id(FAKE_ID).type("Asset").properties(properties).context(context)
+            .dataAddress(dataAddress).build());
     }
 
     public boolean isProvider() {

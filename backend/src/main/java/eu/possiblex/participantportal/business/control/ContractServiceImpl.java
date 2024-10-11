@@ -6,10 +6,12 @@ import eu.possiblex.participantportal.business.entity.edc.contractagreement.Cont
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -31,27 +33,24 @@ public class ContractServiceImpl implements ContractService {
 
         List<ContractAgreementBE> contractAgreementBEs = new ArrayList<>();
         List<ContractAgreement> contractAgreements = edcClient.queryContractAgreements();
+        Map<String, PossibleAsset> assetMap = getPossibleAssetsMap();
 
         contractAgreements.forEach(c -> {
-            PossibleAsset asset = getPossibleAsset(c);
+            // The asset might be null, if it is not available in the EDC
+            // As the consumer, this is not a problem
+            // As the provider, this is a problem, because the asset should be available in the EDC
+            // We cannot differentiate between the two cases at the moment
+            PossibleAsset asset = assetMap.get(c.getAssetId());
             contractAgreementBEs.add(ContractAgreementBE.builder().contractAgreement(c).asset(asset).build());
         });
 
         return contractAgreementBEs;
     }
 
-    private PossibleAsset getPossibleAsset(ContractAgreement c) {
+    private Map<String, PossibleAsset> getPossibleAssetsMap() {
 
-        PossibleAsset asset = null;
-        try {
-            asset = edcClient.queryPossibleAsset(c.getAssetId());
-        } catch (WebClientResponseException.NotFound notFound) {
-            // For Consumer, this is not a problem, as the asset is not kept in the EDC
-            // For Provider, this is a problem, as the asset should be available in the EDC
-            // We cannot differentiate between the two at the moment
-            log.warn("Failed to retrieve asset with ID {} for contract agreement with ID {}.", c.getAssetId(),
-                c.getId(), notFound);
-        }
-        return asset;
+        List<PossibleAsset> assets = edcClient.queryPossibleAssets();
+
+        return assets.stream().collect(Collectors.toMap(PossibleAsset::getId, Function.identity()));
     }
 }
