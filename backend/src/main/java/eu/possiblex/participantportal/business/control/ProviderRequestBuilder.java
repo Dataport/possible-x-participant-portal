@@ -35,11 +35,11 @@ public class ProviderRequestBuilder {
      *
      * @return the AssetCreateRequest
      */
-    public AssetCreateRequest buildAssetRequest(String bucketName, String bucketStorage) {
+    public AssetCreateRequest buildAssetRequest(String bucketName, String bucketStorageRegion) {
 
         DataAddress dataAddress = IonosS3DataSource.builder().bucketName(bucketName)
-            .blobName(createEdcOfferBE.getFileName()).keyName(createEdcOfferBE.getFileName()).storage(bucketStorage)
-            .build();
+            .blobName(createEdcOfferBE.getFileName()).keyName(createEdcOfferBE.getFileName())
+            .regionId(bucketStorageRegion).build();
 
         return AssetCreateRequest.builder().id(createEdcOfferBE.getAssetId())
             .properties(createEdcOfferBE.getProperties()).dataAddress(dataAddress).build();

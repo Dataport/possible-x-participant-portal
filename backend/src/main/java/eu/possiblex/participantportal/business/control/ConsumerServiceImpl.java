@@ -42,20 +42,20 @@ public class ConsumerServiceImpl implements ConsumerService {
 
     private final TaskScheduler taskScheduler;
 
-    private final String bucketStorage;
+    private final String bucketStorageRegion;
 
     private final String bucketName;
 
     private final String bucketTargetPath;
 
     public ConsumerServiceImpl(@Autowired EdcClient edcClient, @Autowired FhCatalogClient fhCatalogClient,
-        @Autowired TaskScheduler taskScheduler, @Value("${s3.bucket-storage}") String bucketStorage,
+        @Autowired TaskScheduler taskScheduler, @Value("${s3.bucket-storage-region}") String bucketStorageRegion,
         @Value("${s3.bucket-name}") String bucketName, @Value("${s3.bucket-target-path}") String bucketTargetPath) {
 
         this.edcClient = edcClient;
         this.fhCatalogClient = fhCatalogClient;
         this.taskScheduler = taskScheduler;
-        this.bucketStorage = bucketStorage;
+        this.bucketStorageRegion = bucketStorageRegion;
         this.bucketName = bucketName;
         this.bucketTargetPath = bucketTargetPath;
     }
@@ -104,8 +104,8 @@ public class ConsumerServiceImpl implements ConsumerService {
         TransferProcessState transferProcessState = TransferProcessState.INITIAL;
         if (request.isDataOffering()) {
             // initiate transfer
-            DataAddress dataAddress = IonosS3DataDestination.builder().storage(bucketStorage).bucketName(bucketName)
-                .path(bucketTargetPath).keyName("myKey").build();
+            DataAddress dataAddress = IonosS3DataDestination.builder().regionId(bucketStorageRegion)
+                .bucketName(bucketName).path(bucketTargetPath).keyName("myKey").build();
             TransferRequest transferRequest = TransferRequest.builder().connectorId(edcOffer.getParticipantId())
                 .counterPartyAddress(request.getCounterPartyAddress()).assetId(dataset.getAssetId())
                 .contractId(contractNegotiation.getContractAgreementId()).dataDestination(dataAddress).build();

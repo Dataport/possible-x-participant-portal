@@ -31,6 +31,6 @@ sd-creation-wizard-api:
 participant-id: "did:web:example-organization.eu"
 
 s3:
-  bucket-storage: "s3-eu-central-2.ionoscloud.com"
+  bucket-storage-region: "eu-central-3"
   bucket-name: "dev-provider-edc-bucket-possible-31952746"
   bucket-target-path: "s3HatGeklappt/"

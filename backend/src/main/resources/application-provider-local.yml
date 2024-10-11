@@ -6,6 +6,6 @@ edc:
   mgmt-base-url: http://localhost:19193/management
 
 s3:
-  bucket-storage: "s3-eu-central-2.ionoscloud.com"
+  bucket-storage-region: "eu-central-3"
   bucket-name: "dev-provider-edc-bucket-possible-31952746"
   bucket-target-path: "s3HatGeklappt/"
