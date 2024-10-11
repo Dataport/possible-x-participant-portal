@@ -10,17 +10,12 @@
 
   <div class="flex justify-between w-full max-w-3xl mb-6 bg-white">
     <div class="font-bold text-lg p-3">
-      {{ offer?.name }}
-    </div>
-    <div class="p-3">
-      <c-badge color="primary" shape="rounded-0">
-        {{ offer?.contentType }}
-      </c-badge>
+      {{ offer?.catalogOffering["gx:name"] }}
     </div>
   </div>
 
   <div class="w-full max-w-3xl pb-6">
-    <c-accordion [flush]="true" [alwaysOpen]="true">
+    <c-accordion [alwaysOpen]="true" [flush]="true">
       <c-accordion-item #offeringDetails="cAccordionItem" [visible]="false">
         <ng-template cTemplateId="accordionHeaderTemplate">
           <button (click)="offeringDetails.toggleItem()" [collapsed]="!offeringDetails.visible" cAccordionButton>
@@ -29,10 +24,10 @@
         </ng-template>
         <ng-template cTemplateId="accordionBodyTemplate">
           <div class="accordion-body">
-            <b>Offer Type:</b> {{ offer?.offerType }} <br/><br/>
-            <b>Creation Date:</b> {{ offer?.creationDate | date:'short' }} <br/><br/>
-            <b>Offer Name:</b> {{ offer?.name }} <br/><br/>
-            <b>Offer Description:</b> {{ offer?.description }}
+            <b>Offer Type:</b> {{ (offer?.catalogOffering["gx:aggregationOf"] ? "Data" : "Service") + "Offering" }}
+            <br/><br/>
+            <b>Offer Name:</b> {{ offer?.catalogOffering["gx:name"] }} <br/><br/>
+            <b>Offer Description:</b> {{ offer?.catalogOffering["gx:description"] }}
           </div>
         </ng-template>
       </c-accordion-item>

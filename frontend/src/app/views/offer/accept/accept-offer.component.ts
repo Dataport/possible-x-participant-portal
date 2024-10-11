@@ -11,9 +11,8 @@ import {IOfferDetailsTO} from '../../../services/mgmt/api/backend';
 export class AcceptOfferComponent implements OnChanges {
   @Input() offer?: IOfferDetailsTO = undefined;
   @Output() dismiss: EventEmitter<any> = new EventEmitter();
-  @ViewChild('acceptOfferStatusMessage') private acceptOfferStatusMessage!: StatusMessageComponent;
-
   buttonLabel: string;
+  @ViewChild('acceptOfferStatusMessage') private acceptOfferStatusMessage!: StatusMessageComponent;
 
   constructor(private apiService: ApiService) {
   }
@@ -28,7 +27,7 @@ export class AcceptOfferComponent implements OnChanges {
     console.log("'Accept Contract Offer' button pressed");
 
     this.apiService.acceptContractOffer({
-      counterPartyAddress: this.offer == undefined ? "" : this.offer.counterPartyAddress,
+      counterPartyAddress: this.offer == undefined ? "" : this.offer.catalogOffering["px:providerUrl"],
       edcOfferId: this.offer == undefined ? "" : this.offer.edcOfferId,
       dataOffering: this.offer == undefined ? false : this.offer.dataOffering
     }).then(response => {
