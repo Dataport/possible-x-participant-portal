@@ -68,10 +68,12 @@ public class ConsumerModuleTest {
 
     @BeforeEach
     void setup() {
-        this.mockMvc = MockMvcBuilders.standaloneSetup(new ConsumerRestApiImpl(consumerService, Mappers.getMapper(ConsumerApiMapper.class)))
-                .addFilters(new ExceptionHandlingFilter())
-                .build();
+
+        this.mockMvc = MockMvcBuilders.standaloneSetup(
+                new ConsumerRestApiImpl(consumerService, Mappers.getMapper(ConsumerApiMapper.class)))
+            .addFilters(new ExceptionHandlingFilter()).build();
     }
+
     @Test
     void acceptContractOfferSucceeds() throws Exception {
 
@@ -118,8 +120,9 @@ public class ConsumerModuleTest {
         // WHEN/THEN
 
         this.mockMvc.perform(post("/consumer/offer/accept").content(RestApiHelper.asJsonString(
-                    ConsumeOfferRequestTO.builder().edcOfferId(edcOfferId).counterPartyAddress(counterPartyAddress).dataOffering(true).build()))
-                .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
+                ConsumeOfferRequestTO.builder().edcOfferId(edcOfferId).counterPartyAddress(counterPartyAddress)
+                    .dataOffering(true).build())).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+            .andExpect(status().isOk())
             .andExpect(jsonPath("$.transferProcessState").value(TransferProcessState.COMPLETED.name()));
 
         // THEN
@@ -172,9 +175,10 @@ public class ConsumerModuleTest {
         // WHEN/THEN
 
         this.mockMvc.perform(post("/consumer/offer/accept").content(RestApiHelper.asJsonString(
-                                ConsumeOfferRequestTO.builder().edcOfferId(edcOfferId).counterPartyAddress(counterPartyAddress).dataOffering(false).build()))
-                        .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
-                .andExpect(jsonPath("$.transferProcessState").value(TransferProcessState.INITIAL.name()));
+                ConsumeOfferRequestTO.builder().edcOfferId(edcOfferId).counterPartyAddress(counterPartyAddress)
+                    .dataOffering(false).build())).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.transferProcessState").value(TransferProcessState.INITIAL.name()));
 
         // THEN
 
@@ -216,11 +220,9 @@ public class ConsumerModuleTest {
         this.mockMvc.perform(post("/consumer/offer/select").content(RestApiHelper.asJsonString(
                     SelectOfferRequestTO.builder().fhCatalogOfferId(ConsumerServiceMock.VALID_FH_OFFER_ID).build()))
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
-            .andExpect(jsonPath("$.counterPartyAddress").value(expectedEdcProviderUrl))
+            .andExpect(jsonPath("$.catalogOffering['px:providerUrl']").value(expectedEdcProviderUrl))
             .andExpect(jsonPath("$.edcOfferId").value(expectedAssetId))
-            .andExpect(jsonPath("$.name").value(mockDatasetCorrectOne.getName()))
-            .andExpect(jsonPath("$.description").value(mockDatasetCorrectOne.getDescription()))
-            .andExpect(jsonPath("$.contentType").value(mockDatasetCorrectOne.getContenttype()));
+            .andExpect(jsonPath("$.dataOffering").value(true));
 
         // THEN
 

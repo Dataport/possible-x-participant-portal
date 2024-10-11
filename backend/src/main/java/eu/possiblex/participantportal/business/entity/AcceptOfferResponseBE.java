@@ -16,6 +16,7 @@ public class AcceptOfferResponseBE {
     private TransferProcessState transferProcessState;
 
     private NegotiationState negotiationState;
+
     /**
      * Does this offer contain Data Resources.
      */

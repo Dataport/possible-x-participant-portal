@@ -1,11 +1,10 @@
 package eu.possiblex.participantportal.application.entity;
 
+import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.OffsetDateTime;
 
 @Data
 @Builder
@@ -13,18 +12,16 @@ import java.time.OffsetDateTime;
 @AllArgsConstructor
 public class OfferDetailsTO {
     /**
-     * The ID which is used to identify the offer in the EDC Catalog. Currently this is the asset-ID, because an asset will only be used in one offer.
+     * The ID which is used to identify the offer in the EDC Catalog. Currently this is the asset-ID, because an asset
+     * will only be used in one offer.
      */
     private String edcOfferId;
+
     /**
-     * The URL of the EDC Connector of the provider.
+     * The content of the offering as retrieved from the catalog.
      */
-    private String counterPartyAddress;
-    private String offerType;
-    private OffsetDateTime creationDate;
-    private String name;
-    private String description;
-    private String contentType;
+    private PxExtendedServiceOfferingCredentialSubject catalogOffering;
+
     /**
      * Does this offer contain Data Resources.
      */

@@ -21,12 +21,7 @@ public interface ConsumerApiMapper {
     ConsumeOfferRequestBE consumeOfferRequestTOtoBE(ConsumeOfferRequestTO to);
 
     @Mapping(target = "edcOfferId", source = "edcOffer.assetId")
-    @Mapping(target = "offerType", source = "offerType")
-    @Mapping(target = "creationDate", expression = "java(OffsetDateTime.now())")
-    @Mapping(target = "name", source = "edcOffer.name")
-    @Mapping(target = "description", source = "edcOffer.description")
-    @Mapping(target = "contentType", source = "edcOffer.contenttype")
-    @Mapping(target = "counterPartyAddress", source = "counterPartyAddress")
+    @Mapping(target = "catalogOffering", source = "catalogOffering")
     @Mapping(target = "dataOffering", source = "dataOffering")
     OfferDetailsTO selectOfferResponseBEToOfferDetailsTO(SelectOfferResponseBE selectOfferResponseBE);
 

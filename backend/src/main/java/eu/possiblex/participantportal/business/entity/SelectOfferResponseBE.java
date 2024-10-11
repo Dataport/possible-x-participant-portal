@@ -1,8 +1,8 @@
 package eu.possiblex.participantportal.business.entity;
 
+import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.edc.catalog.DcatDataset;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -16,16 +16,12 @@ public class SelectOfferResponseBE {
     private DcatDataset edcOffer;
 
     /**
-     * The URL of the EDC Connector of the provider.
+     * The content of the offering as retrieved from the catalog.
      */
-    private String counterPartyAddress;
+    private PxExtendedServiceOfferingCredentialSubject catalogOffering;
 
     /**
      * Does this offer contain Data Resources.
      */
     private boolean dataOffering;
-    /**
-     * Data Offering or Service Offering
-     */
-    private String offerType;
 }
