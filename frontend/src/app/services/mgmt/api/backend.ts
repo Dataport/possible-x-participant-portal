@@ -70,12 +70,7 @@ export interface ICreateServiceOfferingRequestTOBuilderImpl extends ICreateServi
 
 export interface IOfferDetailsTO {
     edcOfferId: string;
-    counterPartyAddress: string;
-    offerType: string;
-    creationDate: Date;
-    name: string;
-    description: string;
-    contentType: string;
+    catalogOffering: IPxExtendedServiceOfferingCredentialSubject;
     dataOffering: boolean;
 }
 
@@ -206,8 +201,40 @@ export interface IPolicy {
     "@type": string;
 }
 
+export interface IPxExtendedServiceOfferingCredentialSubject {
+    id: string;
+    "gx:providedBy": INodeKindIRITypeId;
+    "gx:aggregationOf": IPxExtendedDataResourceCredentialSubject[];
+    "gx:termsAndConditions": IGxSOTermsAndConditions[];
+    "gx:policy": string[];
+    "gx:dataProtectionRegime": string[];
+    "gx:dataAccountExport": IGxDataAccountExport[];
+    "gx:name": string;
+    "gx:description": string;
+    "px:assetId": string;
+    "px:providerUrl": string;
+    "schema:name": string;
+    "schema:description": string;
+    "@context": { [index: string]: string };
+    "@type": string[];
+}
+
 export interface IPolicyTarget {
     "@id": string;
+}
+
+export interface IPxExtendedDataResourceCredentialSubject {
+    id: string;
+    "gx:copyrightOwnedBy": INodeKindIRITypeId;
+    "gx:producedBy": INodeKindIRITypeId;
+    "gx:exposedThrough": INodeKindIRITypeId;
+    "gx:policy": string[];
+    "gx:license": string[];
+    "gx:containsPII": boolean;
+    "gx:name": string;
+    "gx:description": string;
+    "@context": { [index: string]: string };
+    "@type": string[];
 }
 
 export interface HttpClient {
