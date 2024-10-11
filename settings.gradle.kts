@@ -1,11 +1,10 @@
-rootProject.name = "possible-x-participant-portal"
+rootProject.name = "possible-x-edc-management"
 
 dependencyResolutionManagement {
   versionCatalogs {
     create("libs") {
-      from(files("libs.versions.toml"))
-    }
+      from(files("libs.versions.toml")) }
   }
 }
 
-include("backend", "frontend")
+include("edc-orchestrator", "consumer-provider-frontend")

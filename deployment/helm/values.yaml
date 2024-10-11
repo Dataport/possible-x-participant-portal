@@ -14,15 +14,15 @@ imagePullSecrets:
 nameOverride: ""
 fullnameOverride: ""
 
-podAnnotations: { }
+podAnnotations: {}
 
-podSecurityContext: { }
+podSecurityContext: {}
 
-securityContext: { }
+securityContext: {}
 
 service:
   type: NodePort
-  port: 80
+  port: 80 
   targetPort: 8080
 
 ingress:
@@ -41,7 +41,7 @@ ingress:
         - path: /
           portNumber: 80
           pathType: Prefix
-  tls: [ ]
+  tls: []
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local

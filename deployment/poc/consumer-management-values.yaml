@@ -16,7 +16,7 @@ ingress:
   tls:
     - secretName: demo-consumer-edc-management-tls
       hosts:
-        - management.consumer.edc.poc.possible-x.de
+      - management.consumer.edc.poc.possible-x.de
 
 service:
   type: NodePort
@@ -27,9 +27,7 @@ application:
   variables:
     - name: consumer-management-variables
       data:
-        SPRING_PROFILES_ACTIVE: dev
+        SPRING_PROFILES_ACTIVE: dev 
         FH_CATALOG_URL: https://possible.fokus.fraunhofer.de/api/hub/repo
-        EDC_MGMTBASEURL: https://consumer.edc.poc.possible-x.de/management
-        SDCREATIONWIZARDAPI_BASEURL: https://sd-creation-wizard.poc.possible-x.de
   secrets:
     - consumer-management-secrets

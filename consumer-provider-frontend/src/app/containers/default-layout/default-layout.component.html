@@ -1,0 +1,53 @@
+<div class="headerWrapper">
+  <c-navbar expand="lg" class="header border-0">
+    <c-container fluid>
+      <a cNavbarBrand class="logo" [routerLink]="['/']">
+        <img [src]="'assets/images/brand/possible_blue.svg'" [alt]="'POSSIBLE-X Logo'" [width]="142" [height]="36" />
+      </a>
+      <button [cNavbarToggler]="collapseRef"></button>
+      <div #collapseRef="cCollapse" navbar cCollapse>
+        <c-navbar-nav class="navbar-nav">
+          <c-nav-item>
+            <a [routerLink]="['/offer/provide']" cNavLink>Provide Offer</a>
+          </c-nav-item>
+          <c-nav-item>
+            <a [routerLink]="['/offer/consume']" cNavLink>Consume Offer</a>
+          </c-nav-item>
+        </c-navbar-nav>
+      </div>
+    </c-container>
+  </c-navbar>
+</div>
+<div class="page-container">
+  <c-container class="content">
+    <router-outlet></router-outlet>
+  </c-container>
+</div>
+<div>
+  <img src="assets/images/brand/bottom-blue.svg" width="500" alt="" style="margin-left: auto;" />
+  <div class="footerWrapper ">
+    <c-footer class="footer border-0">
+      <div class="logo">
+        <div class="circleVisual"></div>
+        <img src="assets/images/brand/possible_white.svg" width="190" height="49" alt="POSSIBLE-X Logo" />
+      </div>
+      <div>
+        <div class="mb-8">
+          <div class="mb-2 text-2xl">POSSIBLE-X</div>
+          <div class="text-sm">Phoenix Open software stack for interoperable engagement in Dataspaces</div>
+        </div>
+        <div class="text-sm">© 2024 POSSIBLE Consortium</div>
+      </div>
+      <div>
+        <div class="mb-2 text-2xl">Information</div>
+        <div class="text-sm">
+          <ul>
+            <li><a [routerLink]="['/']">POSSIBLE Project</a></li>
+            <li><a [routerLink]="['/']">Impressum</a></li>
+            <li><a [routerLink]="['/']">Datenschutz</a></li>
+          </ul>
+        </div>
+      </div>
+    </c-footer>
+  </div>
+</div>

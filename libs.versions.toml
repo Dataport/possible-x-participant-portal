@@ -2,13 +2,10 @@
 springBoot = "3.3.2"
 springDependencyManagement = "1.1.6"
 lombok = "1.18.34"
-lombokMapStructBinding = "0.2.0"
 openApi = "2.6.0"
-therApi = "0.15.0"
+therApi= "0.15.0"
 reactorTest = "3.6.9"
 jUnit = "1.11.0"
-typescriptGenerator = "3.2.1263"
-mapStruct = "1.6.0"
 
 [libraries]
 springBootStarterActuator = { module = "org.springframework.boot:spring-boot-starter-actuator", version.ref = "springBoot" }
@@ -17,9 +14,6 @@ springBootStarterWebflux = { module = "org.springframework.boot:spring-boot-star
 springBootStarterTest = { module = "org.springframework.boot:spring-boot-starter-test", version.ref = "springBoot" }
 springBootDevtools = { module = "org.springframework.boot:spring-boot-devtools", version.ref = "springBoot" }
 lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
-lombokMapStructBinding = { module = "org.projectlombok:lombok-mapstruct-binding", version.ref = "lombokMapStructBinding" }
-mapStruct = { module = "org.mapstruct:mapstruct", version.ref = "mapStruct" }
-mapStructProcessor = { module = "org.mapstruct:mapstruct-processor", version.ref = "mapStruct" }
 openApi = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "openApi" }
 therApi = { module = "com.github.therapi:therapi-runtime-javadoc", version.ref = "therApi" }
 therApiScribe = { module = "com.github.therapi:therapi-runtime-javadoc-scribe", version.ref = "therApi" }
@@ -29,4 +23,5 @@ jUnit = { module = "org.junit.platform:junit-platform-launcher", version.ref = "
 [plugins]
 springBoot = { id = "org.springframework.boot", version.ref = "springBoot" }
 springDependencyManagement = { id = "io.spring.dependency-management", version.ref = "springDependencyManagement" }
-typescriptGenerator = { id = "cz.habarta.typescript-generator", version.ref = "typescriptGenerator" }
+
+

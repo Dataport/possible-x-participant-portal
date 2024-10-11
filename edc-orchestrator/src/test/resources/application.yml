@@ -1,0 +1,8 @@
+edc:
+  x-api-key: test
+  mgmt-base-url: test
+
+fh:
+  catalog:
+    url: test
+    secret-key: test

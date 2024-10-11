@@ -16,7 +16,7 @@ ingress:
   tls:
     - secretName: dev-provider-edc-management-tls
       hosts:
-        - management.provider.edc.dev.possible-x.de
+      - management.provider.edc.dev.possible-x.de
 
 service:
   type: NodePort
@@ -27,10 +27,7 @@ application:
   variables:
     - name: provider-management-variables
       data:
-        SPRING_PROFILES_ACTIVE: dev
+        SPRING_PROFILES_ACTIVE: dev 
         FH_CATALOG_URL: https://possible.fokus.fraunhofer.de/api/hub/repo
-        EDC_MGMTBASEURL: https://provider.edc.dev.possible-x.de/management
-        EDC_PROTOCOLBASEURL: https://provider.edc.dev.possible-x.de/protocol
-        SDCREATIONWIZARDAPI_BASEURL: https://sd-creation-wizard.dev.possible-x.de
   secrets:
     - provider-management-secrets

@@ -1,0 +1,35 @@
+<div class="flex items-center justify-center min-h-screen"> <!-- Full-page flex container -->
+    <div class="p-6 w-full max-w-3xl"> <!-- Centered form container with fixed max width -->
+        <c-container fluid class="flex justify-center">
+            <div class="flex flex-wrap gap-4">
+                <div class="mb-3 flex-1">
+                    <label class="form-label">Offer Type</label>
+                    <select class="form-select rounded-none w-full" [(ngModel)]="offerType">
+                        <option value="" disabled selected hidden>Please select ...</option>
+                        <option [value]="true">Service</option>
+                        <option [value]="false">Data Asset</option>
+                    </select>
+                </div>
+                <div class="mb-3 flex-1">
+                    <label class="form-label">Offer Name</label>
+                    <input class="form-control rounded-none w-full" [(ngModel)]="offerName">
+                </div>
+            </div>
+
+            <div class="text-right mt-3">
+                <button type="submit" cButton shape="rounded-0" color="primary" (click)="createOffer()">
+                    Create Offer
+                </button>
+            </div>
+
+            <div class="flex justify-center mt-3">
+                <app-status-message
+                    [successMessage]="'Offer creation successful.'"
+                    [errorMessage]="'Offer creation failed.'"
+                    [infoMessage]="'Offer creation ongoing.'"
+                    #offerCreationStatusMessage>
+                </app-status-message>
+            </div>
+        </c-container>
+    </div>
+</div>

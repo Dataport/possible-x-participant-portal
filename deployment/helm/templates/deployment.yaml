@@ -33,10 +33,10 @@ spec:
             - containerPort: 8080
           envFrom:
           {{- range .Values.application.secrets }}
-          - secretRef:
-              name: {{ . }}
+            - secretRef: 
+                name: {{.}}
           {{- end }}
           {{- range .Values.application.variables }}
-          - configMapRef:
-              name: {{ .name }}
+            - configMapRef: 
+                name: {{.name}}
           {{- end }}

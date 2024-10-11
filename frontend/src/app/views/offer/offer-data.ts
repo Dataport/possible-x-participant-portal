@@ -1,2 +1,0 @@
-export const TBR_SERVICE_OFFERING_ID: string = "urn:uuid:GENERATED_SERVICE_OFFERING_ID";
-export const TBR_DATA_RESOURCE_ID: string = "urn:uuid:GENERATED_DATA_RESOURCE_ID";

@@ -1,0 +1,18 @@
+<div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+  <div class="p-6 w-full max-w-3xl"> <!-- Centered form container with fixed max width -->
+    <div class="flex justify-center">
+      <button type="submit" cButton shape="rounded-0" color="primary" (click)="acceptContractOffer()">
+        Accept Contract Offer
+      </button>
+    </div>
+
+    <div class="flex justify-center mt-3">
+      <app-status-message
+        [successMessage]="'Offer successfully consumed.'"
+        [errorMessage]="'Offer consumation failed.'"
+        [infoMessage]="'Offer consumation ongoing.'"
+        #acceptOfferStatusMessage>
+      </app-status-message>
+    </div>
+  </div>
+</div>

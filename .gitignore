@@ -81,6 +81,3 @@ out/
 
 ### Kubernetes Secrets ###
 **/secrets
-**/secret_envs
-
-**/scripts/meta
