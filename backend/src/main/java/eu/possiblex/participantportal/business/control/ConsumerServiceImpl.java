@@ -24,6 +24,7 @@ import eu.possiblex.participantportal.business.entity.exception.TransferFailedEx
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogOffer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 
@@ -41,12 +42,22 @@ public class ConsumerServiceImpl implements ConsumerService {
 
     private final TaskScheduler taskScheduler;
 
+    private final String bucketStorage;
+
+    private final String bucketName;
+
+    private final String bucketTargetPath;
+
     public ConsumerServiceImpl(@Autowired EdcClient edcClient, @Autowired FhCatalogClient fhCatalogClient,
-        @Autowired TaskScheduler taskScheduler) {
+        @Autowired TaskScheduler taskScheduler, @Value("${s3.bucket-storage}") String bucketStorage,
+        @Value("${s3.bucket-name}") String bucketName, @Value("${s3.bucket-target-path}") String bucketTargetPath) {
 
         this.edcClient = edcClient;
         this.fhCatalogClient = fhCatalogClient;
         this.taskScheduler = taskScheduler;
+        this.bucketStorage = bucketStorage;
+        this.bucketName = bucketName;
+        this.bucketTargetPath = bucketTargetPath;
     }
 
     @Override
@@ -93,11 +104,11 @@ public class ConsumerServiceImpl implements ConsumerService {
         TransferProcessState transferProcessState = TransferProcessState.INITIAL;
         if (request.isDataOffering()) {
             // initiate transfer
-            DataAddress dataAddress = IonosS3DataDestination.builder().storage("s3-eu-central-2.ionoscloud.com")
-                    .bucketName("dev-consumer-edc-bucket-possible-31952746").path("s3HatGeklappt/").keyName("myKey").build();
+            DataAddress dataAddress = IonosS3DataDestination.builder().storage(bucketStorage).bucketName(bucketName)
+                .path(bucketTargetPath).keyName("myKey").build();
             TransferRequest transferRequest = TransferRequest.builder().connectorId(edcOffer.getParticipantId())
-                    .counterPartyAddress(request.getCounterPartyAddress()).assetId(dataset.getAssetId())
-                    .contractId(contractNegotiation.getContractAgreementId()).dataDestination(dataAddress).build();
+                .counterPartyAddress(request.getCounterPartyAddress()).assetId(dataset.getAssetId())
+                .contractId(contractNegotiation.getContractAgreementId()).dataDestination(dataAddress).build();
             transferProcessState = performTransfer(transferRequest).getState();
         }
         AcceptOfferResponseBE be = new AcceptOfferResponseBE(transferProcessState, contractNegotiation.getState(),
