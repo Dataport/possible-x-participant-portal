@@ -299,7 +299,7 @@ class ProviderServiceTest {
         @Bean
         public FhCatalogClient fhCatalogClient() {
 
-            return Mockito.spy(new FhCatalogClientMock());
+            return Mockito.spy(new FhCatalogClientFake());
         }
 
         @Bean

@@ -20,9 +20,11 @@
 package eu.possiblex.participantportal.business.control;
 
 import eu.possiblex.participantportal.business.entity.edc.asset.AssetCreateRequest;
+import eu.possiblex.participantportal.business.entity.edc.asset.possible.PossibleAsset;
 import eu.possiblex.participantportal.business.entity.edc.catalog.CatalogRequest;
 import eu.possiblex.participantportal.business.entity.edc.catalog.DcatCatalog;
 import eu.possiblex.participantportal.business.entity.edc.common.IdResponse;
+import eu.possiblex.participantportal.business.entity.edc.contractagreement.ContractAgreement;
 import eu.possiblex.participantportal.business.entity.edc.contractdefinition.ContractDefinitionCreateRequest;
 import eu.possiblex.participantportal.business.entity.edc.negotiation.ContractNegotiation;
 import eu.possiblex.participantportal.business.entity.edc.negotiation.NegotiationInitiateRequest;
@@ -34,6 +36,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.service.annotation.DeleteExchange;
 import org.springframework.web.service.annotation.GetExchange;
 import org.springframework.web.service.annotation.PostExchange;
+
+import java.util.List;
 
 public interface EdcClient {
     @PostExchange("/v3/assets")
@@ -65,5 +69,11 @@ public interface EdcClient {
 
     @DeleteExchange("/v2/contractdefinitions/{contractDefinitionId}")
     void revokeContractDefinition(@PathVariable String contractDefinitionId);
+
+    @PostExchange("/v2/contractagreements/request")
+    List<ContractAgreement> queryContractAgreements();
+
+    @PostExchange("/v3/assets/request")
+    List<PossibleAsset> queryPossibleAssets();
 }
 

@@ -16,7 +16,7 @@ import eu.possiblex.participantportal.business.entity.exception.TransferFailedEx
 import java.util.Collections;
 import java.util.List;
 
-public class ConsumerServiceMock implements ConsumerService {
+public class ConsumerServiceFake implements ConsumerService {
 
     public static final String VALID_FH_OFFER_ID = "validFhCatalogOfferId";
 

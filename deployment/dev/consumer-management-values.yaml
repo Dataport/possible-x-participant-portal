@@ -32,5 +32,7 @@ application:
         EDC_MGMTBASEURL: https://consumer.edc.dev.possible-x.de/management
         EDC_PROTOCOLBASEURL: https://consumer.edc.dev.possible-x.de/protocol
         SDCREATIONWIZARDAPI_BASEURL: https://sd-creation-wizard.dev.possible-x.de
+        S3_BUCKETSTORAGEREGION: eu-central-3 
+        S3_BUCKETNAME: dev-consumer-edc-bucket-possible-31952746
   secrets:
     - consumer-management-secrets

@@ -14,6 +14,6 @@ sd-creation-wizard-api:
 participant-id: "did:web:test.eu"
 
 s3:
-  bucket-storage: "something"
+  bucket-storage-region: "something"
   bucket-name: "something"
   bucket-target-path: "something/"

@@ -29,6 +29,7 @@ public class PossibleAssetProperties extends AssetProperties {
     private List<PossibleAssetTnC> termsAndConditions;
 
     @JsonProperty("https://w3id.org/gaia-x/development#dataProtectionRegime")
+    @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     private List<String> dataProtectionRegime;
 
     @JsonProperty("https://w3id.org/gaia-x/development#dataAccountExport")

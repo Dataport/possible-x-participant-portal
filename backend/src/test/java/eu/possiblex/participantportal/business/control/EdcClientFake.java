@@ -19,25 +19,35 @@
 
 package eu.possiblex.participantportal.business.control;
 
+import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
 import eu.possiblex.participantportal.business.entity.edc.asset.AssetCreateRequest;
 import eu.possiblex.participantportal.business.entity.edc.asset.ionoss3extension.IonosS3DataDestination;
+import eu.possiblex.participantportal.business.entity.edc.asset.ionoss3extension.IonosS3DataSource;
+import eu.possiblex.participantportal.business.entity.edc.asset.possible.PossibleAsset;
+import eu.possiblex.participantportal.business.entity.edc.asset.possible.PossibleAssetDataAccountExport;
+import eu.possiblex.participantportal.business.entity.edc.asset.possible.PossibleAssetProperties;
+import eu.possiblex.participantportal.business.entity.edc.asset.possible.PossibleAssetTnC;
 import eu.possiblex.participantportal.business.entity.edc.catalog.CatalogRequest;
 import eu.possiblex.participantportal.business.entity.edc.catalog.DcatCatalog;
 import eu.possiblex.participantportal.business.entity.edc.catalog.DcatDataset;
 import eu.possiblex.participantportal.business.entity.edc.common.IdResponse;
+import eu.possiblex.participantportal.business.entity.edc.contractagreement.ContractAgreement;
 import eu.possiblex.participantportal.business.entity.edc.contractdefinition.ContractDefinitionCreateRequest;
 import eu.possiblex.participantportal.business.entity.edc.negotiation.ContractNegotiation;
 import eu.possiblex.participantportal.business.entity.edc.negotiation.NegotiationInitiateRequest;
 import eu.possiblex.participantportal.business.entity.edc.negotiation.NegotiationState;
 import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyCreateRequest;
+import eu.possiblex.participantportal.business.entity.edc.policy.PolicyTarget;
 import eu.possiblex.participantportal.business.entity.edc.transfer.DataRequest;
 import eu.possiblex.participantportal.business.entity.edc.transfer.IonosS3TransferProcess;
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcessState;
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferRequest;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class EdcClientFake implements EdcClient {
 
@@ -48,6 +58,8 @@ public class EdcClientFake implements EdcClient {
     public static final String BAD_TRANSFER_ID = "badTransfer";
 
     public static final long FAKE_TIMESTAMP = 1234L;
+
+    public static boolean isProvider = true;
 
     private IdResponse generateFakeIdResponse(String id) {
 
@@ -145,5 +157,55 @@ public class EdcClientFake implements EdcClient {
     @Override
     public void revokeContractDefinition(String contractDefinitionId) {
 
+    }
+
+    @Override
+    public List<ContractAgreement> queryContractAgreements() {
+
+        Policy policy = Policy.builder().target(PolicyTarget.builder().id(FAKE_ID).build()).build();
+
+        ContractAgreement contractAgreement = ContractAgreement.builder()
+            .contractSigningDate(BigInteger.valueOf(1728549145)).id(FAKE_ID).assetId(FAKE_ID).consumerId(FAKE_ID)
+            .providerId(FAKE_ID).policy(policy).build();
+
+        return List.of(contractAgreement);
+    }
+
+    @Override
+    public List<PossibleAsset> queryPossibleAssets() {
+
+        if (!isProvider()) {
+            return List.of();
+        }
+
+        PossibleAssetTnC assetTnC = PossibleAssetTnC.builder().url("https://example.com").hash("hash1234").build();
+
+        PossibleAssetDataAccountExport dataAccountExport = PossibleAssetDataAccountExport.builder()
+            .accessType("digital").requestType("API").formatType("application/json").build();
+
+        PossibleAssetProperties properties = PossibleAssetProperties.builder().termsAndConditions(List.of(assetTnC))
+            .producedBy(new NodeKindIRITypeId(FAKE_ID)).providedBy(new NodeKindIRITypeId(FAKE_ID))
+            .license(List.of("MIT")).copyrightOwnedBy(new NodeKindIRITypeId(FAKE_ID))
+            .exposedThrough(new NodeKindIRITypeId(FAKE_ID)).offerId(FAKE_ID).name("name").description("description")
+            .dataAccountExport(List.of(dataAccountExport)).build();
+
+        Map<String, String> context = Map.of("edc", "https://w3id.org/edc/v0.0.1/ns/", "odrl",
+            "http://www.w3.org/ns/odrl/2/", "@vocab", "https://w3id.org/edc/v0.0.1/ns/");
+
+        IonosS3DataSource dataAddress = IonosS3DataSource.builder().bucketName("bucket").blobName("name")
+            .keyName("name").region("storage").build();
+
+        return List.of(PossibleAsset.builder().id(FAKE_ID).type("Asset").properties(properties).context(context)
+            .dataAddress(dataAddress).build());
+    }
+
+    public boolean isProvider() {
+
+        return isProvider;
+    }
+
+    public static void setProvider(boolean provider) {
+
+        isProvider = provider;
     }
 }
