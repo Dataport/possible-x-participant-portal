@@ -38,7 +38,7 @@ public class IonosS3DataAddress extends DataAddress {
 
     private String bucketName;
 
-    private String storage;
+    private String region;
 
     @JsonProperty("type")
     public String getDataType() {

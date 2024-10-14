@@ -4,16 +4,20 @@
 export interface IConsumerRestApi {
 }
 
+export interface IContractRestApi {
+    contractAgreements: IContractAgreementTO[];
+}
+
 export interface IProviderRestApi {
     participantId: IParticipantIdTO;
 }
 
 export interface IResourceShapeRestApi {
-    gxInstantiatedVirtualResourceShape: string;
     gxDataResourceShape: string;
+    gxInstantiatedVirtualResourceShape: string;
+    gxVirtualResourceShape: string;
     gxPhysicalResourceShape: string;
     gxSoftwareResourceShape: string;
-    gxVirtualResourceShape: string;
 }
 
 export interface IServiceOfferingShapeRestApi {
@@ -29,6 +33,14 @@ export interface IAcceptOfferResponseTO {
 export interface IAcceptOfferResponseTOBuilder {
 }
 
+export interface IAssetDetailsTO {
+    name: string;
+    description: string;
+}
+
+export interface IAssetDetailsTOBuilder {
+}
+
 export interface IConsumeOfferRequestTO {
     counterPartyAddress: string;
     edcOfferId: string;
@@ -36,6 +48,19 @@ export interface IConsumeOfferRequestTO {
 }
 
 export interface IConsumeOfferRequestTOBuilder {
+}
+
+export interface IContractAgreementTO {
+    id: string;
+    assetId: string;
+    assetDetails: IAssetDetailsTO;
+    policy: IPolicy;
+    contractSigningDate: Date;
+    consumerId: string;
+    providerId: string;
+}
+
+export interface IContractAgreementTOBuilder {
 }
 
 export interface ICreateDataOfferingRequestTO extends ICreateServiceOfferingRequestTO {
@@ -234,6 +259,14 @@ export class RestApplicationClient {
      */
     selectContractOffer(request: ISelectOfferRequestTO): RestResponse<IOfferDetailsTO> {
         return this.httpClient.request({ method: "POST", url: uriEncoding`consumer/offer/select`, data: request });
+    }
+
+    /**
+     * HTTP GET /contract/agreement
+     * Java method: eu.possiblex.participantportal.application.boundary.ContractRestApiImpl.getContractAgreements
+     */
+    getContractAgreements(): RestResponse<IContractAgreementTO[]> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`contract/agreement` });
     }
 
     /**

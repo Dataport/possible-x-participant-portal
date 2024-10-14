@@ -36,11 +36,13 @@ public class ProviderServiceImpl implements ProviderService {
 
     private final ProviderServiceMapper providerServiceMapper;
 
-    @Value("${edc.protocol-base-url}")
-    private String edcProtocolUrl;
+    private final String bucketStorageRegion;
 
-    @Value("${participant-id}")
-    private String participantId;
+    private final String bucketName;
+
+    private final String edcProtocolUrl;
+
+    private final String participantId;
 
     /**
      * Constructor for ProviderServiceImpl.
@@ -50,11 +52,18 @@ public class ProviderServiceImpl implements ProviderService {
      */
     @Autowired
     public ProviderServiceImpl(EdcClient edcClient, FhCatalogClient fhCatalogClient,
-        ProviderServiceMapper providerServiceMapper) {
+        ProviderServiceMapper providerServiceMapper, @Value("${edc.protocol-base-url}") String edcProtocolUrl,
+        @Value("${participant-id}") String participantId,
+        @Value("${s3.bucket-storage-region}") String bucketStorageRegion,
+        @Value("${s3.bucket-name}") String bucketName) {
 
         this.edcClient = edcClient;
         this.fhCatalogClient = fhCatalogClient;
         this.providerServiceMapper = providerServiceMapper;
+        this.edcProtocolUrl = edcProtocolUrl;
+        this.participantId = participantId;
+        this.bucketStorageRegion = bucketStorageRegion;
+        this.bucketName = bucketName;
     }
 
     /**
@@ -108,7 +117,7 @@ public class ProviderServiceImpl implements ProviderService {
         ProviderRequestBuilder requestBuilder = new ProviderRequestBuilder(createEdcOfferBE);
 
         try {
-            AssetCreateRequest assetCreateRequest = requestBuilder.buildAssetRequest();
+            AssetCreateRequest assetCreateRequest = requestBuilder.buildAssetRequest(bucketName, bucketStorageRegion);
             log.info("Creating Asset {}", assetCreateRequest);
             IdResponse assetIdResponse = edcClient.createAsset(assetCreateRequest);
 

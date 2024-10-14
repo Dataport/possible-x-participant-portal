@@ -4,3 +4,9 @@ server:
 edc:
   x-api-key: password
   mgmt-base-url: http://localhost:29193/management
+  protocol-base-url: http://localhost:29194/protocol
+
+s3:
+  bucket-storage-region: "eu-central-3"
+  bucket-name: "dev-consumer-edc-bucket-possible-31952746"
+  bucket-target-path: "s3HatGeklappt/"
