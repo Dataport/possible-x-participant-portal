@@ -1,2 +1,46 @@
-<!--<app-select-offer *ngIf="!selectedOffer" (selectedOffer)="setSelectedOffer($event)" ></app-select-offer>-->
-<!--<app-accept-offer *ngIf="selectedOffer" [offer]="selectedOffer" (dismiss)="setSelectedOffer(undefined)"></app-accept-offer>-->
+<div class="flex items-center justify-center min-h-screen"> <!-- Full-page flex container -->
+  <div class="p-6 w-full max-w-3xl"> <!-- Centered form container with fixed max width -->
+    <div class="flex flex-col pb-14">
+      <div class="text-3xl font-bold text-brand-800">
+        Contracts
+      </div>
+      <div class="text-xl font-bold text-brand-400">
+        Contracts ({{ contractAgreements.length }})
+      </div>
+    </div>
+    <table class="table">
+      <thead>
+      <tr>
+        <th>Nr.</th>
+        <th>ContractID</th>
+        <th>AssetID</th>
+        <th></th>
+      </tr>
+      </thead>
+      <tbody>
+      <ng-container *ngFor="let item of contractAgreements; let i = index">
+        <tr>
+          <td>{{ i + 1 }}</td>
+          <td>{{ item.id }}</td>
+          <td><span (click)="copyToClipboard(item.assetId)" class="preview" title="Click to copy">
+    {{ item.assetId | slice:0:10 }}... <!-- Show only the first 10 characters -->
+    <span class="tooltip">{{ item.assetId }}</span> <!-- Full value in tooltip -->
+  </span></td>
+          <td>
+            <button (click)="toggleAccordion(item.id)" cButton>Details</button>
+          </td>
+
+        </tr>
+        <tr *ngIf="item.id === expandedItemId">
+          <td (click)="toggleAccordion(item.id)" colspan="4">
+            <span>Asset Name:</span><br><span>{{ item.assetDetails.name || "-" }}</span><br><br>
+            <span>Asset Details:</span><br><span>{{ item.assetDetails.description || "-" }}</span><br><br>
+            <span>Policy:</span><br>
+            <pre class="custom-pre">{{ getPolicyAsString(item.policy) }}</pre>
+          </td>
+        </tr>
+      </ng-container>
+      </tbody>
+    </table>
+  </div>
+</div>
