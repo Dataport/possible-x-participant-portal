@@ -6,7 +6,8 @@ import {IOfferDetailsTO} from '../../../services/mgmt/api/backend';
 
 @Component({
   selector: 'app-accept-offer',
-  templateUrl: './accept-offer.component.html'
+  templateUrl: './accept-offer.component.html',
+  styleUrls: ['./accept-offer.component.scss']
 })
 export class AcceptOfferComponent implements OnChanges {
   @Input() offer?: IOfferDetailsTO = undefined;
