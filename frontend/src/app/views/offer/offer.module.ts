@@ -25,6 +25,7 @@ import { ConsumeComponent } from './consume/consume.component';
 import { CommonViewsModule } from '../common-views/common-views.module';
 import { AcceptOfferComponent } from './accept/accept-offer.component';
 import { SelectOfferComponent } from './select/select-offer.component';
+import {ContractsComponent} from "./contracts/contracts.component";
 
 @NgModule({
     imports: [
@@ -52,6 +53,6 @@ import { SelectOfferComponent } from './select/select-offer.component';
         BadgeComponent,
         WizardExtensionModule
     ],
-  declarations: [ProvideComponent, ConsumeComponent, AcceptOfferComponent, SelectOfferComponent],
+  declarations: [ProvideComponent, ConsumeComponent, AcceptOfferComponent, SelectOfferComponent, ContractsComponent],
 })
 export class OfferModule {}
