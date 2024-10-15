@@ -12,8 +12,11 @@
       <thead>
       <tr>
         <th>Nr.</th>
-        <th>ContractID</th>
-        <th>AssetID</th>
+        <th>Contract signed</th>
+        <th>Asset ID</th>
+        <th>Provider</th>
+        <th>Consumer</th>
+        <th>Contract Agreement ID</th>
         <th></th>
       </tr>
       </thead>
@@ -21,11 +24,15 @@
       <ng-container *ngFor="let item of contractAgreements; let i = index">
         <tr>
           <td>{{ i + 1 }}</td>
+          <td>{{ item.contractSigningDate | date:'medium' }}</td>
+          <td>{{ item.assetId }}</td>
+          <td>{{ item.providerId }}</td>
+          <td>{{ item.consumerId }}</td>
           <td>{{ item.id }}</td>
-          <td><span (click)="copyToClipboard(item.assetId)" class="preview" title="Click to copy">
-    {{ item.assetId | slice:0:10 }}... <!-- Show only the first 10 characters -->
-    <span class="tooltip">{{ item.assetId }}</span> <!-- Full value in tooltip -->
-  </span></td>
+          <!--td><span (click)="copyToClipboard(item.assetId)" class="preview" title="Click to copy">
+    {{ item.assetId | slice:0:10 }}...
+    <span class="tooltip">{{ item.assetId }}</span>
+  </span></td-->
           <td>
             <button (click)="toggleAccordion(item.id)" cButton>Details</button>
           </td>
@@ -33,8 +40,8 @@
         </tr>
         <tr *ngIf="item.id === expandedItemId">
           <td (click)="toggleAccordion(item.id)" colspan="4">
-            <span>Asset Name:</span><br><span>{{ item.assetDetails.name || "-" }}</span><br><br>
-            <span>Asset Details:</span><br><span>{{ item.assetDetails.description || "-" }}</span><br><br>
+            <span>Asset Name:</span><br><span>{{ item.assetDetails?.name || "-" }}</span><br><br>
+            <span>Asset Details:</span><br><span>{{ item.assetDetails?.description || "-" }}</span><br><br>
             <span>Policy:</span><br>
             <pre class="custom-pre">{{ getPolicyAsString(item.policy) }}</pre>
           </td>
