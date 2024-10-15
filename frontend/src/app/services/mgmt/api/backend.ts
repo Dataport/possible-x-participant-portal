@@ -13,11 +13,11 @@ export interface IProviderRestApi {
 }
 
 export interface IResourceShapeRestApi {
-    gxDataResourceShape: string;
     gxInstantiatedVirtualResourceShape: string;
-    gxVirtualResourceShape: string;
+    gxDataResourceShape: string;
     gxPhysicalResourceShape: string;
     gxSoftwareResourceShape: string;
+    gxVirtualResourceShape: string;
 }
 
 export interface IServiceOfferingShapeRestApi {
@@ -27,6 +27,7 @@ export interface IServiceOfferingShapeRestApi {
 export interface IAcceptOfferResponseTO {
     transferProcessState: ITransferProcessState;
     negotiationState: INegotiationState;
+    contractAgreementId: string;
     dataOffering: boolean;
 }
 

@@ -33,7 +33,7 @@ export class AcceptOfferComponent implements OnChanges {
       dataOffering: this.offer == undefined ? false : this.offer.dataOffering
     }).then(response => {
       console.log(response);
-      this.acceptOfferStatusMessage.showSuccessMessage("Check console for details.");
+      this.acceptOfferStatusMessage.showSuccessMessage("Contract Agreement ID: " + response.contractAgreementId);
     }).catch((e: HttpErrorResponse) => {
       this.acceptOfferStatusMessage.showErrorMessage(e.error.detail || e.error || e.message);
     });

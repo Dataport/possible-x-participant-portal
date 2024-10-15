@@ -43,7 +43,9 @@
             </ul>
             <b>Data Account Export:</b> <br/>
             <ul *ngFor="let e of offer.catalogOffering['gx:dataAccountExport']">
-              <li>{{ e }}</li>
+              <li>Format Type: {{ e["gx:formatType"] }} <br/>Access Type: {{ e["gx:accessType"] }}
+                <br/>Request Type: {{ e["gx:requestType"] }}
+              </li>
             </ul>
           </div>
           <div *ngIf="offer.dataOffering" class="accordion-body">
@@ -84,7 +86,9 @@
             </ul>
             <b>Data Account Export:</b> <br/>
             <ul *ngFor="let e of offer.catalogOffering['gx:dataAccountExport']">
-              <li>{{ e["gx:formatType"] }} - {{ e["gx:accessType"] }} - {{ e["gx:requestType"] }}</li>
+              <li>Format Type: {{ e["gx:formatType"] }} <br/>Access Type: {{ e["gx:accessType"] }}
+                <br/>Request Type: {{ e["gx:requestType"] }}
+              </li>
             </ul>
           </div>
         </ng-template>
@@ -105,9 +109,9 @@
     <div class="flex justify-end mt-3">
       <app-status-message
         #acceptOfferStatusMessage
-        [errorMessage]="'Offer acceptance failed.'"
-        [infoMessage]="'Offer acceptance ongoing.'"
-        [successMessage]="'Offer acceptance successful.'">
+        [errorMessage]="'Contract conclusion failed.'"
+        [infoMessage]="'Contract conclusion ongoing.'"
+        [successMessage]="'Contract conclusion successful.'">
       </app-status-message>
     </div>
   </div>

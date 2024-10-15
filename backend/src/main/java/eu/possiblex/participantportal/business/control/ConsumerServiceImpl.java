@@ -110,7 +110,7 @@ public class ConsumerServiceImpl implements ConsumerService {
             transferProcessState = performTransfer(transferRequest).getState();
         }
         return new AcceptOfferResponseBE(transferProcessState, contractNegotiation.getState(),
-            request.isDataOffering());
+            contractNegotiation.getContractAgreementId(), request.isDataOffering());
     }
 
     private DcatCatalog queryEdcCatalog(CatalogRequest catalogRequest) {

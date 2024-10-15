@@ -17,6 +17,8 @@ public class AcceptOfferResponseTO {
 
     private NegotiationState negotiationState;
 
+    private String contractAgreementId;
+
     /**
      * Does this offer contain Data Resources.
      */
