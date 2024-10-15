@@ -33,13 +33,6 @@ export class ContractsComponent implements OnInit {
     return JSON.stringify(policy, null, 2);
   }
 
-  copyToClipboard(value: string): void {
-    navigator.clipboard.writeText(value).then(() => {
-    }).catch(err => {
-      console.error('Failed to copy: ', err);
-    });
-  }
-
   private handleGetContractAgreements() {
     this.getContractAgreements().catch((e: HttpErrorResponse) => {
       this.requestContractAgreementsStatusMessage.showErrorMessage(e.error.detail);
