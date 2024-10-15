@@ -1,0 +1,52 @@
+<div class="flex items-center justify-center min-h-screen"> <!-- Full-page flex container -->
+  <div class="p-6 w-full"> <!-- Centered form container with fixed max width -->
+    <div class="flex flex-col pb-14">
+      <div class="text-3xl font-bold text-brand-800">
+        Contract Agreements
+      </div>
+      <br/>
+      <div class="text-xl font-bold text-brand-400">
+        Contract Agreements ({{ contractAgreements.length }})
+      </div>
+      <table class="table table-fixed">
+        <thead>
+        <tr>
+          <th class="w-10">Nr.</th>
+          <th class="w-40">Contract signed</th>
+          <th class="w-1/6">Asset ID</th>
+          <th class="w-1/6">Provider</th>
+          <th class="w-1/6">Consumer</th>
+          <th class="w-1/6">Contract Agreement ID</th>
+          <th class="w-16"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <ng-container *ngFor="let item of contractAgreements; let i = index">
+          <tr>
+            <td class="overflow-clip text-nowrap text-ellipsis">{{ i + 1 }}</td>
+            <td class="overflow-clip text-nowrap text-ellipsis">{{ item.contractSigningDate | date:'medium' }}</td>
+            <td [cTooltip]="item.assetId" class="overflow-clip text-nowrap text-ellipsis">{{ item.assetId }}</td>
+            <td [cTooltip]="item.providerId"
+                class="overflow-clip text-nowrap text-ellipsis">{{ item.providerId }}
+            </td>
+            <td [cTooltip]="item.consumerId" class="overflow-clip text-nowrap text-ellipsis">{{ item.consumerId }}</td>
+            <td [cTooltip]="item.id" class="overflow-clip text-nowrap text-ellipsis">{{ item.id }}</td>
+            <td>
+              <button (click)="toggleAccordion(item.id)" cButton class="rounded-none">Details</button>
+            </td>
+
+          </tr>
+          <tr *ngIf="item.id === expandedItemId">
+            <td (click)="toggleAccordion(item.id)" colspan="7">
+              <span *ngIf="item.assetDetails">Asset Name: {{ item.assetDetails.name }}<br><br></span>
+              <span *ngIf="item.assetDetails">Asset Description: {{ item.assetDetails.description }}<br><br></span>
+              <span>Policy:</span><br>
+              <pre class="custom-pre">{{ getPolicyAsString(item.policy) }}</pre>
+            </td>
+          </tr>
+        </ng-container>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
