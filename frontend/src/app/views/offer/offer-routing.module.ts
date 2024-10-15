@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { ProvideComponent } from './provide/provide.component'
 import { ConsumeComponent } from './consume/consume.component'
+import {ContractsComponent} from "./contracts/contracts.component";
 
 const routes: Routes = [
     {
@@ -28,6 +29,13 @@ const routes: Routes = [
                 component: ConsumeComponent,
                 data: {
                     title: 'Consume Offer',
+                },
+            },
+            {
+                path: 'contracts',
+                component: ContractsComponent,
+                data: {
+                    title: 'Contracts',
                 },
             },
         ],
