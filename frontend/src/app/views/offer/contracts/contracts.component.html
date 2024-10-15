@@ -1,5 +1,5 @@
 <div class="flex items-center justify-center min-h-screen"> <!-- Full-page flex container -->
-  <div class="p-6 w-full max-w-3xl"> <!-- Centered form container with fixed max width -->
+  <div class="p-6 w-full"> <!-- Centered form container with fixed max width -->
     <div class="flex flex-col pb-14">
       <div class="text-3xl font-bold text-brand-800">
         Contracts
@@ -8,27 +8,27 @@
         Contracts ({{ contractAgreements.length }})
       </div>
     </div>
-    <table class="table">
+    <table class="table table-fixed">
       <thead>
       <tr>
-        <th>Nr.</th>
-        <th>Contract signed</th>
-        <th>Asset ID</th>
-        <th>Provider</th>
-        <th>Consumer</th>
-        <th>Contract Agreement ID</th>
-        <th></th>
+        <th class="w-10">Nr.</th>
+        <th class="w-48">Contract signed</th>
+        <th class="w-1/6">Asset ID</th>
+        <th class="w-1/6">Provider</th>
+        <th class="w-1/6">Consumer</th>
+        <th class="w-1/6">Contract Agreement ID</th>
+        <th class="w-40"></th>
       </tr>
       </thead>
       <tbody>
       <ng-container *ngFor="let item of contractAgreements; let i = index">
         <tr>
-          <td>{{ i + 1 }}</td>
-          <td>{{ item.contractSigningDate | date:'medium' }}</td>
-          <td>{{ item.assetId }}</td>
-          <td>{{ item.providerId }}</td>
-          <td>{{ item.consumerId }}</td>
-          <td>{{ item.id }}</td>
+          <td class="overflow-clip text-nowrap text-ellipsis">{{ i + 1 }}</td>
+          <td class="overflow-clip text-nowrap text-ellipsis">{{ item.contractSigningDate | date:'medium' }}</td>
+          <td class="overflow-clip text-nowrap text-ellipsis">{{ item.assetId }}</td>
+          <td class="overflow-clip hover:tooltip text-nowrap text-ellipsis">{{ item.providerId }}</td>
+          <td class="overflow-clip text-nowrap text-ellipsis">{{ item.consumerId }}</td>
+          <td class="overflow-clip text-nowrap text-ellipsis">{{ item.id }}</td>
           <!--td><span (click)="copyToClipboard(item.assetId)" class="preview" title="Click to copy">
     {{ item.assetId | slice:0:10 }}...
     <span class="tooltip">{{ item.assetId }}</span>
