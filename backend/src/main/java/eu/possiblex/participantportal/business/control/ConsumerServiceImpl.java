@@ -1,9 +1,6 @@
 package eu.possiblex.participantportal.business.control;
 
-import eu.possiblex.participantportal.business.entity.AcceptOfferResponseBE;
-import eu.possiblex.participantportal.business.entity.ConsumeOfferRequestBE;
-import eu.possiblex.participantportal.business.entity.SelectOfferRequestBE;
-import eu.possiblex.participantportal.business.entity.SelectOfferResponseBE;
+import eu.possiblex.participantportal.business.entity.*;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.edc.asset.DataAddress;
 import eu.possiblex.participantportal.business.entity.edc.asset.ionoss3extension.IonosS3DataDestination;
@@ -35,6 +32,10 @@ import java.util.concurrent.TimeUnit;
 @Service
 @Slf4j
 public class ConsumerServiceImpl implements ConsumerService {
+
+    private static final int MAX_NEGOTIATION_CHECK_ATTEMPTS = 15;
+
+    private static final int MAX_TRANSFER_CHECK_ATTEMPTS = 30;
 
     private final EdcClient edcClient;
 
@@ -85,7 +86,7 @@ public class ConsumerServiceImpl implements ConsumerService {
 
     @Override
     public AcceptOfferResponseBE acceptContractOffer(ConsumeOfferRequestBE request)
-        throws OfferNotFoundException, NegotiationFailedException, TransferFailedException {
+        throws OfferNotFoundException, NegotiationFailedException {
 
         // query edcOffer
         DcatCatalog edcOffer = queryEdcCatalog(
@@ -99,18 +100,28 @@ public class ConsumerServiceImpl implements ConsumerService {
                     .policy(dataset.getHasPolicy().get(0)).build()).build();
         ContractNegotiation contractNegotiation = negotiateOffer(negotiationInitiateRequest);
 
-        TransferProcessState transferProcessState = TransferProcessState.INITIAL;
-        if (request.isDataOffering()) {
-            // initiate transfer
-            DataAddress dataAddress = IonosS3DataDestination.builder().region(bucketStorageRegion)
-                .bucketName(bucketName).path(bucketTargetPath).keyName("myKey").build();
-            TransferRequest transferRequest = TransferRequest.builder().connectorId(edcOffer.getParticipantId())
-                .counterPartyAddress(request.getCounterPartyAddress()).assetId(dataset.getAssetId())
-                .contractId(contractNegotiation.getContractAgreementId()).dataDestination(dataAddress).build();
-            transferProcessState = performTransfer(transferRequest).getState();
-        }
-        return new AcceptOfferResponseBE(transferProcessState, contractNegotiation.getState(),
-            contractNegotiation.getContractAgreementId(), request.isDataOffering());
+        return new AcceptOfferResponseBE(contractNegotiation.getState(), contractNegotiation.getContractAgreementId(),
+            request.isDataOffering());
+    }
+
+    @Override
+    public TransferOfferResponseBE transferDataOffer(TransferOfferRequestBE request)
+        throws OfferNotFoundException, TransferFailedException {
+
+        // query edcOffer
+        DcatCatalog edcOffer = queryEdcCatalog(
+            CatalogRequest.builder().counterPartyAddress(request.getCounterPartyAddress()).build());
+        DcatDataset dataset = getDatasetById(edcOffer, request.getEdcOfferId());
+
+        // initiate transfer
+        DataAddress dataAddress = IonosS3DataDestination.builder().region(bucketStorageRegion).bucketName(bucketName)
+            .path(bucketTargetPath).keyName("myKey").build();
+        TransferRequest transferRequest = TransferRequest.builder().connectorId(edcOffer.getParticipantId())
+            .counterPartyAddress(request.getCounterPartyAddress()).assetId(dataset.getAssetId())
+            .contractId(request.getContractAgreementId()).dataDestination(dataAddress).build();
+        TransferProcessState transferProcessState = performTransfer(transferRequest).getState();
+
+        return new TransferOfferResponseBE(transferProcessState);
     }
 
     private DcatCatalog queryEdcCatalog(CatalogRequest catalogRequest) {
@@ -145,7 +156,8 @@ public class ConsumerServiceImpl implements ConsumerService {
             contractNegotiation = edcClient.checkOfferStatus(negotiation.getId());
             log.info("Negotiation {}", contractNegotiation);
             negotiationCheckAttempts += 1;
-            if (negotiationCheckAttempts >= 15 || contractNegotiation.getState().equals(NegotiationState.TERMINATED)) {
+            if (negotiationCheckAttempts >= MAX_NEGOTIATION_CHECK_ATTEMPTS || contractNegotiation.getState()
+                .equals(NegotiationState.TERMINATED)) {
                 throw new NegotiationFailedException("Negotiation never reached FINALIZED state.");
             }
         } while (!contractNegotiation.getState().equals(NegotiationState.FINALIZED));
@@ -165,7 +177,8 @@ public class ConsumerServiceImpl implements ConsumerService {
             transferProcess = edcClient.checkTransferStatus(transfer.getId());
             log.info("Transfer Process {}", transferProcess);
             transferCheckAttempts += 1;
-            if (transferCheckAttempts >= 30 || transferProcess.getState().equals(TransferProcessState.TERMINATED)) {
+            if (transferCheckAttempts >= MAX_TRANSFER_CHECK_ATTEMPTS || transferProcess.getState()
+                .equals(TransferProcessState.TERMINATED)) {
 
                 deprovisionTransfer(transferProcess.getId());
                 throw new TransferFailedException("Transfer never reached COMPLETED state.");
