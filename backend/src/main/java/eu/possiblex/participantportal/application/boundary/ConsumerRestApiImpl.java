@@ -84,7 +84,7 @@ public class ConsumerRestApiImpl implements ConsumerRestApi {
     }
 
     @Override
-    public TransferOfferResponseTO transferDataOffer(TransferOfferRequestTO request) {
+    public TransferOfferResponseTO transferDataOffer(@RequestBody TransferOfferRequestTO request) {
 
         log.info("transferring data from contract with " + request);
         TransferOfferRequestBE be = consumerApiMapper.transferOfferRequestTOtoBE(request);

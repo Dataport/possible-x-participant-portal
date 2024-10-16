@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {ApiService} from '../../../services/mgmt/api/api.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {StatusMessageComponent} from '../../common-views/status-message/status-message.component';
@@ -9,7 +9,7 @@ import {IAcceptOfferResponseTO, IOfferDetailsTO} from '../../../services/mgmt/ap
   templateUrl: './accept-offer.component.html',
   styleUrls: ['./accept-offer.component.scss']
 })
-export class AcceptOfferComponent implements OnChanges {
+export class AcceptOfferComponent {
   @Input() offer?: IOfferDetailsTO = undefined;
   @Output() dismiss: EventEmitter<any> = new EventEmitter();
   @Output() negotiatedContract: EventEmitter<IAcceptOfferResponseTO> = new EventEmitter();
@@ -17,11 +17,6 @@ export class AcceptOfferComponent implements OnChanges {
   @ViewChild('acceptOfferStatusMessage') private acceptOfferStatusMessage!: StatusMessageComponent;
 
   constructor(private apiService: ApiService) {
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    const offerChanges = changes['offer'].currentValue;
-    this.buttonLabel = offerChanges.dataOffering ? "Accept and transfer" : "Accept";
   }
 
   async acceptContractOffer() {

@@ -308,8 +308,8 @@ export class RestApplicationClient {
      * HTTP POST /consumer/offer/transfer
      * Java method: eu.possiblex.participantportal.application.boundary.ConsumerRestApiImpl.transferDataOffer
      */
-    transferDataOffer(): RestResponse<ITransferOfferResponseTO> {
-        return this.httpClient.request({ method: "POST", url: uriEncoding`consumer/offer/transfer` });
+    transferDataOffer(request: ITransferOfferRequestTO): RestResponse<ITransferOfferResponseTO> {
+        return this.httpClient.request({ method: "POST", url: uriEncoding`consumer/offer/transfer`, data: request });
     }
 
     /**
