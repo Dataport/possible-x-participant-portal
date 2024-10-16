@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewCh
 import {ApiService} from '../../../services/mgmt/api/api.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {StatusMessageComponent} from '../../common-views/status-message/status-message.component';
-import {IOfferDetailsTO} from '../../../services/mgmt/api/backend';
+import {IAcceptOfferResponseTO, IOfferDetailsTO} from '../../../services/mgmt/api/backend';
 
 @Component({
   selector: 'app-accept-offer',
@@ -12,6 +12,7 @@ import {IOfferDetailsTO} from '../../../services/mgmt/api/backend';
 export class AcceptOfferComponent implements OnChanges {
   @Input() offer?: IOfferDetailsTO = undefined;
   @Output() dismiss: EventEmitter<any> = new EventEmitter();
+  @Output() negotiatedContract: EventEmitter<IAcceptOfferResponseTO> = new EventEmitter();
   buttonLabel: string;
   @ViewChild('acceptOfferStatusMessage') private acceptOfferStatusMessage!: StatusMessageComponent;
 
@@ -33,6 +34,7 @@ export class AcceptOfferComponent implements OnChanges {
       dataOffering: this.offer == undefined ? false : this.offer.dataOffering
     }).then(response => {
       console.log(response);
+      this.negotiatedContract.emit(response);
       this.acceptOfferStatusMessage.showSuccessMessage("Contract Agreement ID: " + response.contractAgreementId);
     }).catch((e: HttpErrorResponse) => {
       this.acceptOfferStatusMessage.showErrorMessage(e.error.detail || e.error || e.message);
