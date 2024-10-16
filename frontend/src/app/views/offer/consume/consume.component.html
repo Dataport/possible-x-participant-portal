@@ -3,5 +3,5 @@
 <app-accept-offer (dismiss)="setSelectedOffer(undefined)" (negotiatedContract)="setNegotiatedContract($event)"
                   *ngIf="selectedOffer  && !negotiatedContract"
                   [offer]="selectedOffer"></app-accept-offer>
-<app-transfer *ngIf="negotiatedContract" [contract]="negotiatedContract"></app-transfer>
+<app-transfer *ngIf="negotiatedContract" [contract]="negotiatedContract" [offer]="selectedOffer"></app-transfer>
 <!-- TODO PLS ALEX, FIX IT -->

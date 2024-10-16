@@ -1,5 +1,5 @@
 import {Component, Input, ViewChild} from '@angular/core';
-import {IAcceptOfferResponseTO} from "../../../services/mgmt/api/backend";
+import {IAcceptOfferResponseTO, IOfferDetailsTO} from "../../../services/mgmt/api/backend";
 import {StatusMessageComponent} from "../../common-views/status-message/status-message.component";
 import {ApiService} from "../../../services/mgmt/api/api.service";
 import {HttpErrorResponse} from "@angular/common/http";
@@ -11,6 +11,7 @@ import {HttpErrorResponse} from "@angular/common/http";
 })
 export class TransferComponent {
   @Input() contract?: IAcceptOfferResponseTO = undefined;
+  @Input() offer?: IOfferDetailsTO = undefined;
   @ViewChild('dataTransferStatusMessage') private dataTransferStatusMessage!: StatusMessageComponent;
 
   constructor(private apiService: ApiService) {
@@ -22,12 +23,11 @@ export class TransferComponent {
 
     this.apiService.transferDataOffer({
       contractAgreementId: this.contract.contractAgreementId,
-      counterPartyAddress: "",
-      edcOfferId: ""
+      counterPartyAddress: this.offer.catalogOffering["px:providerUrl"],
+      edcOfferId: this.offer.edcOfferId,
     }).then(response => {
       console.log(response);
-      /*this.negotiatedContract.emit(response);
-      this.acceptOfferStatusMessage.showSuccessMessage("Contract Agreement ID: " + response.contractAgreementId);*/
+      this.dataTransferStatusMessage.showSuccessMessage("Data Transfer successful: " + response.transferProcessState);
     }).catch((e: HttpErrorResponse) => {
       this.dataTransferStatusMessage.showErrorMessage(e.error.detail || e.error || e.message);
     });
