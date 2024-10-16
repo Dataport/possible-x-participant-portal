@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {IAcceptOfferResponseTO, IOfferDetailsTO} from '../../../services/mgmt/api/backend';
 
 @Component({
@@ -10,10 +10,16 @@ export class ConsumeComponent {
   selectedOffer?: IOfferDetailsTO = undefined;
   negotiatedContract?: IAcceptOfferResponseTO = undefined;
 
-  setSelectedOffer(offer: IOfferDetailsTO | undefined): void {
+  setSelectedOffer(offer: IOfferDetailsTO): void {
     this.selectedOffer = offer;
   }
-  setNegotiatedContract(contract: IAcceptOfferResponseTO | undefined): void {
+
+  setNegotiatedContract(contract: IAcceptOfferResponseTO): void {
     this.negotiatedContract = contract;
+  }
+
+  resetSelection() {
+    this.selectedOffer = undefined;
+    this.negotiatedContract = undefined;
   }
 }

@@ -1,4 +1,4 @@
-<div class="flex flex-col items-center min-h-screen"> <!-- Full-page flex container -->
+<div class="flex flex-col items-center"> <!-- Full-page flex container -->
   <div class="pt-10 pb-40">
     <div class="flex justify-center pb-3 text-2xl font-bold text-brand-800">
       Contract Agreement ID
@@ -9,7 +9,10 @@
   </div>
 </div>
 
-<div class="text-right mt-3t">
+<div class="flex justify-between">
+  <button (click)="cancel()" cButton color="secondary" shape="rounded-0">
+    Cancel
+  </button>
   <button (click)="transfer()" cButton
           color="primary" shape="rounded-0"
           type="submit">
@@ -25,4 +28,3 @@
     [successMessage]="'Data Transfer successful.'">
   </app-status-message>
 </div>
-

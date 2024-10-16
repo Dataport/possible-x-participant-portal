@@ -1,7 +1,8 @@
 <app-select-offer (selectedOffer)="setSelectedOffer($event)"
                   *ngIf="!selectedOffer && !negotiatedContract"></app-select-offer>
-<app-accept-offer (dismiss)="setSelectedOffer(undefined)" (negotiatedContract)="setNegotiatedContract($event)"
+<app-accept-offer (dismiss)="resetSelection()" (negotiatedContract)="setNegotiatedContract($event)"
                   *ngIf="selectedOffer  && !negotiatedContract"
                   [offer]="selectedOffer"></app-accept-offer>
-<app-transfer *ngIf="negotiatedContract" [contract]="negotiatedContract" [offer]="selectedOffer"></app-transfer>
+<app-transfer (dismiss)="resetSelection()" *ngIf="negotiatedContract" [contract]="negotiatedContract"
+              [offer]="selectedOffer"></app-transfer>
 <!-- TODO PLS ALEX, FIX IT -->
