@@ -22,11 +22,18 @@ public interface ConsumerService {
      * @return final result of the transfer
      * @throws OfferNotFoundException could not find the offer from the request
      * @throws NegotiationFailedException failed to negotiate over the offer
-     * @throws TransferFailedException failed to transfer the data
      */
     AcceptOfferResponseBE acceptContractOffer(ConsumeOfferRequestBE request)
         throws OfferNotFoundException, NegotiationFailedException;
 
+    /**
+     * Given a request for a transfer, transfer the data using the data transfer component.
+     *
+     * @param request request for transferring the data
+     * @return final result of the transfer
+     * @throws OfferNotFoundException could not find the offer from the request
+     * @throws TransferFailedException failed to transfer the data
+     */
     TransferOfferResponseBE transferDataOffer(TransferOfferRequestBE request)
         throws OfferNotFoundException, TransferFailedException;
 }

@@ -25,7 +25,7 @@ public interface ConsumerRestApi {
     AcceptOfferResponseTO acceptContractOffer(@RequestBody ConsumeOfferRequestTO request);
 
     /**
-     * POST endpoint to accept a contract offer
+     * POST endpoint to trigger a transfer for a contract offer
      *
      * @return finalized transfer details
      */
