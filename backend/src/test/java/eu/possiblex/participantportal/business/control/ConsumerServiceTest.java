@@ -1,9 +1,6 @@
 package eu.possiblex.participantportal.business.control;
 
-import eu.possiblex.participantportal.business.entity.AcceptOfferResponseBE;
-import eu.possiblex.participantportal.business.entity.ConsumeOfferRequestBE;
-import eu.possiblex.participantportal.business.entity.SelectOfferRequestBE;
-import eu.possiblex.participantportal.business.entity.SelectOfferResponseBE;
+import eu.possiblex.participantportal.business.entity.*;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.exception.NegotiationFailedException;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
@@ -61,13 +58,11 @@ class ConsumerServiceTest {
     }
 
     @Test
-    void acceptContractOfferSucceeds()
-        throws NegotiationFailedException, TransferFailedException, OfferNotFoundException {
+    void acceptContractOfferSucceeds() throws NegotiationFailedException, OfferNotFoundException {
 
         // GIVEN
 
         reset(edcClient);
-        reset(fhCatalogClient);
 
         // WHEN
 
@@ -78,19 +73,16 @@ class ConsumerServiceTest {
         // THEN
 
         verify(edcClient).negotiateOffer(any());
-        verify(edcClient).initiateTransfer(any());
 
         assertNotNull(response);
     }
 
     @Test
-    void acceptContractOfferSucceedsNoTransfer()
-        throws NegotiationFailedException, TransferFailedException, OfferNotFoundException {
+    void acceptContractOfferSucceedsNoTransfer() throws NegotiationFailedException, OfferNotFoundException {
 
         // GIVEN
 
         reset(edcClient);
-        reset(fhCatalogClient);
 
         // WHEN
 
@@ -101,7 +93,6 @@ class ConsumerServiceTest {
         // THEN
 
         verify(edcClient).negotiateOffer(any());
-        verify(edcClient, never()).initiateTransfer(any());
 
         assertNotNull(response);
     }
@@ -110,7 +101,6 @@ class ConsumerServiceTest {
     void shouldAcceptContractOfferNotFound() {
 
         reset(edcClient);
-        reset(fhCatalogClient);
         assertThrows(OfferNotFoundException.class, () -> sut.acceptContractOffer(
             ConsumeOfferRequestBE.builder().counterPartyAddress("http://example.com").edcOfferId("someUnknownId")
                 .build()));
@@ -120,20 +110,39 @@ class ConsumerServiceTest {
     void shouldAcceptContractOfferBadNegotiation() {
 
         reset(edcClient);
-        reset(fhCatalogClient);
         assertThrows(NegotiationFailedException.class, () -> sut.acceptContractOffer(
             ConsumeOfferRequestBE.builder().counterPartyAddress("http://example.com")
                 .edcOfferId(EdcClientFake.BAD_NEGOTIATION_ID).build()));
     }
 
     @Test
-    void shouldAcceptContractOfferBadTransfer() {
+    void shouldNotTransfer() {
 
         reset(edcClient);
-        reset(fhCatalogClient);
-        assertThrows(TransferFailedException.class, () -> sut.acceptContractOffer(
-            ConsumeOfferRequestBE.builder().counterPartyAddress("http://example.com")
-                .edcOfferId(EdcClientFake.BAD_TRANSFER_ID).dataOffering(true).build()));
+        assertThrows(TransferFailedException.class, () -> sut.transferDataOffer(
+            TransferOfferRequestBE.builder().counterPartyAddress("http://example.com")
+                .edcOfferId(EdcClientFake.BAD_TRANSFER_ID).contractAgreementId(EdcClientFake.VALID_AGREEMENT_ID)
+                .build()));
+    }
+
+    @Test
+    void shouldTransfer() throws OfferNotFoundException, TransferFailedException {
+
+        // GIVEN
+
+        reset(edcClient);
+
+        // WHEN
+
+        TransferOfferResponseBE response = sut.transferDataOffer(
+            TransferOfferRequestBE.builder().counterPartyAddress("http://example.com").edcOfferId(EdcClientFake.FAKE_ID)
+                .contractAgreementId(EdcClientFake.VALID_AGREEMENT_ID).build());
+
+        // THEN
+
+        verify(edcClient).initiateTransfer(any());
+
+        assertNotNull(response);
     }
 
     // Test-specific configuration to provide mocks
