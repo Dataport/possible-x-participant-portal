@@ -86,6 +86,7 @@ export interface ICreateOfferResponseTOBuilder {
 export interface ICreateServiceOfferingRequestTO {
     serviceOfferingCredentialSubject: IGxServiceOfferingCredentialSubject;
     policy: IPolicy;
+    enforcementPolicy: IEnforcementPolicyUnion;
 }
 
 export interface ICreateServiceOfferingRequestTOBuilder<C, B> {
@@ -215,6 +216,34 @@ export interface IGxServiceOfferingCredentialSubjectBuilderImpl extends IGxServi
     "gx:dataAccountExport": IGxDataAccountExport[];
     "gx:name": string;
     "gx:description": string;
+}
+
+export interface IEnforcementPolicy {
+    "@type": "EverythingAllowedPolicy" | "ParticipantRestrictionPolicy";
+}
+
+export interface IEnforcementPolicyBuilder<C, B> {
+}
+
+export interface IEverythingAllowedPolicy extends IEnforcementPolicy {
+    "@type": "EverythingAllowedPolicy";
+}
+
+export interface IEverythingAllowedPolicyBuilder<C, B> extends IEnforcementPolicyBuilder<C, B> {
+}
+
+export interface IEverythingAllowedPolicyBuilderImpl extends IEverythingAllowedPolicyBuilder<IEverythingAllowedPolicy, IEverythingAllowedPolicyBuilderImpl> {
+}
+
+export interface IParticipantRestrictionPolicy extends IEnforcementPolicy {
+    "@type": "ParticipantRestrictionPolicy";
+    allowedParticipants: string[];
+}
+
+export interface IParticipantRestrictionPolicyBuilder<C, B> extends IEnforcementPolicyBuilder<C, B> {
+}
+
+export interface IParticipantRestrictionPolicyBuilderImpl extends IParticipantRestrictionPolicyBuilder<IParticipantRestrictionPolicy, IParticipantRestrictionPolicyBuilderImpl> {
 }
 
 export interface IPolicy {
@@ -377,6 +406,8 @@ export type ITransferProcessState = "INITIAL" | "PROVISIONING" | "PROVISIONING_R
 export type INegotiationState = "INITIAL" | "REQUESTING" | "REQUESTED" | "OFFERING" | "OFFERED" | "ACCEPTING" | "ACCEPTED" | "AGREEING" | "AGREED" | "VERIFYING" | "VERIFIED" | "FINALIZING" | "FINALIZED" | "TERMINATING" | "TERMINATED";
 
 export type IPojoCredentialSubjectUnion = IGxDataResourceCredentialSubject | IGxServiceOfferingCredentialSubject;
+
+export type IEnforcementPolicyUnion = IEverythingAllowedPolicy | IParticipantRestrictionPolicy;
 
 function uriEncoding(template: TemplateStringsArray, ...substitutions: any[]): string {
     let result = "";
