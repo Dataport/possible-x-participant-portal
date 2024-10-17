@@ -11,9 +11,9 @@
 
 <div class="flex justify-between">
   <button (click)="cancel()" cButton color="secondary" shape="rounded-0">
-    Cancel
+    {{dismissButtonLabel}}
   </button>
-  <button (click)="transfer()" cButton
+  <button *ngIf="contract.dataOffering" (click)="transfer()" cButton
           color="primary" shape="rounded-0"
           type="submit">
     Transfer Data Resource

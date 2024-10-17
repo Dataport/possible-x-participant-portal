@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild} from '@angular/core';
 import {IAcceptOfferResponseTO, IOfferDetailsTO} from "../../../services/mgmt/api/backend";
 import {StatusMessageComponent} from "../../common-views/status-message/status-message.component";
 import {ApiService} from "../../../services/mgmt/api/api.service";
@@ -9,13 +9,19 @@ import {HttpErrorResponse} from "@angular/common/http";
   templateUrl: './transfer.component.html',
   styleUrls: ['./transfer.component.scss']
 })
-export class TransferComponent {
+export class TransferComponent implements OnChanges {
   @Input() contract?: IAcceptOfferResponseTO = undefined;
   @Input() offer?: IOfferDetailsTO = undefined;
   @Output() dismiss: EventEmitter<any> = new EventEmitter();
   @ViewChild('dataTransferStatusMessage') private dataTransferStatusMessage!: StatusMessageComponent;
+  dismissButtonLabel: string;
 
   constructor(private apiService: ApiService) {
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    const contractChanges = changes['contract'].currentValue;
+    this.dismissButtonLabel = contractChanges.dataOffering ? "Cancel" : "Close";
   }
 
   async transfer() {
