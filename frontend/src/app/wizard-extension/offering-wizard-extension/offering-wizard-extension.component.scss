@@ -25,3 +25,17 @@
   color: gray;
   font-style: italic;
 }
+
+.accordion-header {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr auto;
+  margin-left: 10px;
+  align-items: center;
+}
+
+.accordion-body {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 5px;
+}
+

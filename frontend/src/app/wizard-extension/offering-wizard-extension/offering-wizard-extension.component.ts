@@ -43,6 +43,7 @@ export class OfferingWizardExtensionComponent {
   protected isDataOffering: boolean = true;
   @ViewChild("gxServiceOfferingWizard") private gxServiceOfferingWizard: BaseWizardExtensionComponent;
   @ViewChild("gxDataResourceWizard") private gxDataResourceWizard: BaseWizardExtensionComponent;
+  isPolicyChecked: boolean;
 
   constructor(
     private apiService: ApiService
