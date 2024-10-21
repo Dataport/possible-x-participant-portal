@@ -8,8 +8,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @Builder
 @NoArgsConstructor
@@ -24,7 +22,7 @@ public class OdrlConstraint {
 
     private OdrlOperator operator;
 
-    private List<String> rightOperand;
+    private Object rightOperand;
 
     @JsonProperty("@type")
     public String getType() {
