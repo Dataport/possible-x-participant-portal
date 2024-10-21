@@ -49,8 +49,9 @@ public interface ProviderServiceMapper {
     @Mapping(target = "properties.contenttype", ignore = true)
     @Mapping(target = "properties.version", ignore = true)
     @Mapping(target = "fileName", constant = "")
-    @Mapping(target = "policy", source = "request.policy")
-    CreateEdcOfferBE getCreateEdcOfferBE(CreateServiceOfferingRequestBE request, String offerId, String assetId);
+    @Mapping(target = "policy", source = "policy")
+    CreateEdcOfferBE getCreateEdcOfferBE(CreateServiceOfferingRequestBE request, String offerId, String assetId,
+        Policy policy);
 
     @InheritConfiguration
     @Mapping(target = "properties.copyrightOwnedBy", source = "request.dataResource.copyrightOwnedBy")
@@ -59,7 +60,8 @@ public interface ProviderServiceMapper {
     @Mapping(target = "properties.license", source = "request.dataResource.license")
     @Mapping(target = "properties.containsPII", source = "request.dataResource.containsPII")
     @Mapping(target = "fileName", source = "request.fileName")
-    CreateEdcOfferBE getCreateEdcOfferBE(CreateDataOfferingRequestBE request, String offerId, String assetId);
+    CreateEdcOfferBE getCreateEdcOfferBE(CreateDataOfferingRequestBE request, String offerId, String assetId,
+        Policy policy);
 
     @Mapping(target = "type", ignore = true)
     @Mapping(target = "context", ignore = true)

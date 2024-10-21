@@ -3,6 +3,8 @@ package eu.possiblex.participantportal.business.control;
 import eu.possiblex.participantportal.application.entity.CreateOfferResponseTO;
 import eu.possiblex.participantportal.application.entity.ParticipantIdTO;
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
+import eu.possiblex.participantportal.application.entity.policies.EnforcementPolicy;
+import eu.possiblex.participantportal.application.entity.policies.ParticipantRestrictionPolicy;
 import eu.possiblex.participantportal.business.entity.CreateDataOfferingRequestBE;
 import eu.possiblex.participantportal.business.entity.CreateServiceOfferingRequestBE;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
@@ -10,7 +12,7 @@ import eu.possiblex.participantportal.business.entity.edc.CreateEdcOfferBE;
 import eu.possiblex.participantportal.business.entity.edc.asset.AssetCreateRequest;
 import eu.possiblex.participantportal.business.entity.edc.common.IdResponse;
 import eu.possiblex.participantportal.business.entity.edc.contractdefinition.ContractDefinitionCreateRequest;
-import eu.possiblex.participantportal.business.entity.edc.policy.PolicyCreateRequest;
+import eu.possiblex.participantportal.business.entity.edc.policy.*;
 import eu.possiblex.participantportal.business.entity.exception.EdcOfferCreationException;
 import eu.possiblex.participantportal.business.entity.exception.FhOfferCreationException;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
@@ -21,6 +23,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -51,9 +54,9 @@ public class ProviderServiceImpl implements ProviderService {
      * @param fhCatalogClient the FH catalog client
      */
     @Autowired
-    public ProviderServiceImpl(EdcClient edcClient, FhCatalogClient fhCatalogClient,
-        ProviderServiceMapper providerServiceMapper, @Value("${edc.protocol-base-url}") String edcProtocolUrl,
-        @Value("${participant-id}") String participantId,
+    public ProviderServiceImpl(@Autowired EdcClient edcClient, @Autowired FhCatalogClient fhCatalogClient,
+        @Autowired ProviderServiceMapper providerServiceMapper,
+        @Value("${edc.protocol-base-url}") String edcProtocolUrl, @Value("${participant-id}") String participantId,
         @Value("${s3.bucket-storage-region}") String bucketStorageRegion,
         @Value("${s3.bucket-name}") String bucketName) {
 
@@ -191,11 +194,54 @@ public class ProviderServiceImpl implements ProviderService {
     private CreateEdcOfferBE createEdcBEFromRequest(CreateServiceOfferingRequestBE request, String offerId,
         String assetId) {
 
+        Policy policy = createEdcPolicyFromEnforcementPolicies(request.getEnforcementPolicies());
+
         if (request instanceof CreateDataOfferingRequestBE dataOfferingRequest) { // data offering
-            return providerServiceMapper.getCreateEdcOfferBE(dataOfferingRequest, offerId, assetId);
+            return providerServiceMapper.getCreateEdcOfferBE(dataOfferingRequest, offerId, assetId, policy);
         } else { // base service offering
-            return providerServiceMapper.getCreateEdcOfferBE(request, offerId, assetId);
+            return providerServiceMapper.getCreateEdcOfferBE(request, offerId, assetId, policy);
         }
+    }
+
+    /**
+     * Given a list of enforcement policies, convert them to a single policy that can be given to the EDC for
+     * evaluation.
+     *
+     * @param enforcementPolicies list of enforcement policies and their constraints
+     * @return edc policy
+     */
+    private Policy createEdcPolicyFromEnforcementPolicies(List<EnforcementPolicy> enforcementPolicies) {
+
+        Policy policy = new Policy();
+
+        // for now no merging, we will take the first policy...
+        EnforcementPolicy enforcementPolicy = enforcementPolicies.get(0);
+        if (enforcementPolicy instanceof ParticipantRestrictionPolicy participantRestrictionPolicy) { // restrict to participants
+
+            // create constraint
+            OdrlConstraint participantConstraint = OdrlConstraint.builder().leftOperand("connectorId")
+                .operator(OdrlOperator.IN).rightOperand(participantRestrictionPolicy.getAllowedParticipants()).build();
+
+            // create permissions with constraint
+            OdrlPermission usePermission = OdrlPermission.builder().action(OdrlAction.USE)
+                .constraint(participantConstraint).build();
+            OdrlPermission transferPermission = OdrlPermission.builder().action(OdrlAction.TRANSFER)
+                .constraint(participantConstraint).build();
+
+            // add permissions to policy
+            policy.getPermission().add(usePermission);
+            policy.getPermission().add(transferPermission);
+        } else { // unknown or everything allowed
+
+            // create permissions
+            OdrlPermission usePermission = OdrlPermission.builder().action(OdrlAction.USE).build();
+            OdrlPermission transferPermission = OdrlPermission.builder().action(OdrlAction.TRANSFER).build();
+
+            // add permissions to policy
+            policy.getPermission().add(usePermission);
+            policy.getPermission().add(transferPermission);
+        }
+        return policy;
     }
 
 }
