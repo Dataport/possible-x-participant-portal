@@ -44,6 +44,7 @@ export class OfferingWizardExtensionComponent {
   @ViewChild("gxServiceOfferingWizard") private gxServiceOfferingWizard: BaseWizardExtensionComponent;
   @ViewChild("gxDataResourceWizard") private gxDataResourceWizard: BaseWizardExtensionComponent;
   isPolicyChecked: boolean;
+  dapsIDs: string;
 
   constructor(
     private apiService: ApiService

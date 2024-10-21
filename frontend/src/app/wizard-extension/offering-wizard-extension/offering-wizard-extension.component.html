@@ -35,8 +35,8 @@
     <c-accordion-item  #accordionItem="cAccordionItem" [visible]="false">
       <ng-template cTemplateId="accordionHeaderTemplate">
         <div class="accordion-header">
-          <label> Restrict the contractual booking organization(s)</label>
-          <mat-checkbox (click)="accordionItem.toggleItem()" [(ngModel)]="isPolicyChecked" class="m-lg-auto"></mat-checkbox>
+          <label> Restrict the contractual booking to organization(s)</label>
+          <mat-checkbox (click)="accordionItem.toggleItem()" [(ngModel)]="isPolicyChecked"></mat-checkbox>
         </div>
       </ng-template>
       <ng-template cTemplateId="accordionBody">
@@ -44,7 +44,7 @@
           <div cFormText style="color: #7f7f7f;">
             Please enter organizationID
           </div>
-          <input [(ngModel)]="selectedFileName" class="form-control rounded-none w-full" placeholder="did:web:example-organization.eu"
+          <input [(ngModel)]="dapsIDs" class="form-control rounded-none w-full" placeholder="did:web:example-organization.eu"
                  type="text">
         </div>
       </ng-template>

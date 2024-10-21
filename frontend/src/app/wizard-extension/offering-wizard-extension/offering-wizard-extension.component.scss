@@ -27,10 +27,11 @@
 }
 
 .accordion-header {
-  display: grid;
+  display: flex;
   grid-template-columns: 2fr 1fr 1fr auto;
   margin-left: 10px;
   align-items: center;
+  justify-content: space-between;
 }
 
 .accordion-body {
