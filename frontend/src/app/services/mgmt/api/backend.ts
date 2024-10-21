@@ -85,8 +85,7 @@ export interface ICreateOfferResponseTOBuilder {
 
 export interface ICreateServiceOfferingRequestTO {
     serviceOfferingCredentialSubject: IGxServiceOfferingCredentialSubject;
-    policy: IPolicy;
-    enforcementPolicy: IEnforcementPolicyUnion;
+    enforcementPolicies: IEnforcementPolicyUnion[];
 }
 
 export interface ICreateServiceOfferingRequestTOBuilder<C, B> {
@@ -248,7 +247,7 @@ export interface IParticipantRestrictionPolicyBuilderImpl extends IParticipantRe
 
 export interface IPolicy {
     "@id": string;
-    "odrl:permission": any[];
+    "odrl:permission": IOdrlPermission[];
     "odrl:prohibition": any[];
     "odrl:obligation": any[];
     "odrl:target": IPolicyTarget;
@@ -274,6 +273,11 @@ export interface IPxExtendedServiceOfferingCredentialSubject {
     "@type": string[];
 }
 
+export interface IOdrlPermission {
+    "odrl:action": IOdrlAction;
+    "odrl:constraint": IOdrlConstraint;
+}
+
 export interface IPolicyTarget {
     "@id": string;
 }
@@ -290,6 +294,13 @@ export interface IPxExtendedDataResourceCredentialSubject {
     "gx:description": string;
     "@context": { [index: string]: string };
     "@type": string[];
+}
+
+export interface IOdrlConstraint {
+    leftOperand: string;
+    operator: IOdrlOperator;
+    rightOperand: string[];
+    "@type": string;
 }
 
 export interface HttpClient {
@@ -404,6 +415,10 @@ export type RestResponse<R> = Promise<R>;
 export type ITransferProcessState = "INITIAL" | "PROVISIONING" | "PROVISIONING_REQUESTED" | "PROVISIONED" | "REQUESTING" | "REQUESTED" | "STARTING" | "STARTED" | "SUSPENDING" | "SUSPENDED" | "COMPLETING" | "COMPLETED" | "TERMINATING" | "TERMINATED" | "DEPROVISIONING" | "DEPROVISIONING_REQUESTED" | "DEPROVISIONED";
 
 export type INegotiationState = "INITIAL" | "REQUESTING" | "REQUESTED" | "OFFERING" | "OFFERED" | "ACCEPTING" | "ACCEPTED" | "AGREEING" | "AGREED" | "VERIFYING" | "VERIFIED" | "FINALIZING" | "FINALIZED" | "TERMINATING" | "TERMINATED";
+
+export type IOdrlAction = "odrl:use" | "odrl:transfer";
+
+export type IOdrlOperator = "odrl:eq" | "odrl:in";
 
 export type IPojoCredentialSubjectUnion = IGxDataResourceCredentialSubject | IGxServiceOfferingCredentialSubject;
 
