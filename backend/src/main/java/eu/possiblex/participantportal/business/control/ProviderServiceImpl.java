@@ -78,9 +78,12 @@ public class ProviderServiceImpl implements ProviderService {
     @Override
     public CreateOfferResponseTO createOffering(CreateServiceOfferingRequestBE request) {
 
-        PxExtendedServiceOfferingCredentialSubject pxExtendedServiceOfferingCs = createCombinedCsFromRequest(request);
+        Policy policy = createEdcPolicyFromEnforcementPolicies(request.getEnforcementPolicies());
+
+        PxExtendedServiceOfferingCredentialSubject pxExtendedServiceOfferingCs = createCombinedCsFromRequest(request,
+            policy);
         CreateEdcOfferBE createEdcOfferBE = createEdcBEFromRequest(request, pxExtendedServiceOfferingCs.getId(),
-            pxExtendedServiceOfferingCs.getAssetId());
+            pxExtendedServiceOfferingCs.getAssetId(), policy);
 
         try {
             FhCatalogIdResponse fhResponseId = createFhCatalogOffer(pxExtendedServiceOfferingCs);
@@ -161,10 +164,11 @@ public class ProviderServiceImpl implements ProviderService {
      * Creates a combined credential subject for the offering from the request.
      *
      * @param request the offering creation request
+     * @param policy policy for the offering
      * @return the combined credential subject
      */
     private PxExtendedServiceOfferingCredentialSubject createCombinedCsFromRequest(
-        CreateServiceOfferingRequestBE request) {
+        CreateServiceOfferingRequestBE request, Policy policy) {
 
         String assetId = UUID.randomUUID().toString();
         String serviceOfferingId = "urn:uuid:" + UUID.randomUUID();
@@ -175,10 +179,10 @@ public class ProviderServiceImpl implements ProviderService {
             dataOfferingRequest.getDataResource().setExposedThrough(new NodeKindIRITypeId(serviceOfferingId));
 
             return providerServiceMapper.getPxExtendedServiceOfferingCredentialSubject(dataOfferingRequest,
-                serviceOfferingId, assetId, edcProtocolUrl);
+                serviceOfferingId, assetId, edcProtocolUrl, policy);
         } else { // base service offering
             return providerServiceMapper.getPxExtendedServiceOfferingCredentialSubject(request, serviceOfferingId,
-                assetId, edcProtocolUrl);
+                assetId, edcProtocolUrl, policy);
         }
 
     }
@@ -189,12 +193,11 @@ public class ProviderServiceImpl implements ProviderService {
      * @param request the offering creation request
      * @param offerId the id of the created offer
      * @param assetId the id of the created asset
+     * @param policy the policy for the EDC
      * @return the EDC offer business entity
      */
     private CreateEdcOfferBE createEdcBEFromRequest(CreateServiceOfferingRequestBE request, String offerId,
-        String assetId) {
-
-        Policy policy = createEdcPolicyFromEnforcementPolicies(request.getEnforcementPolicies());
+        String assetId, Policy policy) {
 
         if (request instanceof CreateDataOfferingRequestBE dataOfferingRequest) { // data offering
             return providerServiceMapper.getCreateEdcOfferBE(dataOfferingRequest, offerId, assetId, policy);

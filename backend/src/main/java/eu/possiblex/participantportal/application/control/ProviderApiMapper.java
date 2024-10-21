@@ -16,7 +16,7 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface ProviderApiMapper {
 
-    @Mapping(target = "enforcementPolicy", source = "enforcementPolicy", qualifiedByName = "enforcementPolicyMapper")
+    @Mapping(target = "enforcementPolicies", source = "enforcementPolicies", qualifiedByName = "enforcementPolicyMapper")
     @Mapping(target = "name", source = "serviceOfferingCredentialSubject.name")
     @Mapping(target = "description", source = "serviceOfferingCredentialSubject.description")
     @Mapping(target = "providedBy", source = "serviceOfferingCredentialSubject.providedBy")

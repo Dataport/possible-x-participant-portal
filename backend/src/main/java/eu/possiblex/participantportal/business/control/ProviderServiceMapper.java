@@ -20,7 +20,7 @@ public interface ProviderServiceMapper {
     @Mapping(target = "providedBy", source = "request.providedBy")
     @Mapping(target = "aggregationOf", expression = "java(java.util.Collections.emptyList())")
     @Mapping(target = "termsAndConditions", source = "request.termsAndConditions")
-    @Mapping(target = "policy", source = "request.policy", qualifiedByName = "policyToStringList")
+    @Mapping(target = "policy", source = "policy", qualifiedByName = "policyToStringList")
     @Mapping(target = "dataProtectionRegime", source = "request.dataProtectionRegime")
     @Mapping(target = "dataAccountExport", source = "request.dataAccountExport")
     @Mapping(target = "name", source = "request.name")
@@ -30,13 +30,15 @@ public interface ProviderServiceMapper {
     @Mapping(target = "id", source = "offeringId")
     @Mapping(target = "schemaName", source = "request.name")
     @Mapping(target = "schemaDescription", source = "request.description")
+    @Mapping(target = "type", ignore = true)
+    @Mapping(target = "context", ignore = true)
     PxExtendedServiceOfferingCredentialSubject getPxExtendedServiceOfferingCredentialSubject(
-        CreateServiceOfferingRequestBE request, String offeringId, String assetId, String providerUrl);
+        CreateServiceOfferingRequestBE request, String offeringId, String assetId, String providerUrl, Policy policy);
 
     @InheritConfiguration
     @Mapping(target = "aggregationOf", source = "request.dataResource", qualifiedByName = "gxDataResourceToPxDataResourceList")
     PxExtendedServiceOfferingCredentialSubject getPxExtendedServiceOfferingCredentialSubject(
-        CreateDataOfferingRequestBE request, String offeringId, String assetId, String providerUrl);
+        CreateDataOfferingRequestBE request, String offeringId, String assetId, String providerUrl, Policy policy);
 
     @Mapping(target = "assetId", source = "assetId")
     @Mapping(target = "properties.offerId", source = "offerId")
