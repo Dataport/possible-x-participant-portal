@@ -9,11 +9,12 @@ import eu.possiblex.participantportal.application.entity.credentials.gx.datatype
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
 import eu.possiblex.participantportal.application.entity.credentials.gx.resources.GxDataResourceCredentialSubject;
 import eu.possiblex.participantportal.application.entity.credentials.gx.serviceofferings.GxServiceOfferingCredentialSubject;
+import eu.possiblex.participantportal.application.entity.policies.EnforcementPolicy;
+import eu.possiblex.participantportal.application.entity.policies.EverythingAllowedPolicy;
 import eu.possiblex.participantportal.business.control.ProviderService;
 import eu.possiblex.participantportal.business.control.ProviderServiceFake;
 import eu.possiblex.participantportal.business.entity.CreateDataOfferingRequestBE;
 import eu.possiblex.participantportal.business.entity.CreateServiceOfferingRequestBE;
-import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import org.mockito.ArgumentCaptor;
@@ -76,10 +77,10 @@ class ProviderRestApiTest {
 
         CreateServiceOfferingRequestBE createServiceOfferingBE = createServiceOfferingCaptor.getValue();
 
-        Policy serviceOfferingPolicy = createServiceOfferingBE.getPolicy();
+        List<EnforcementPolicy> serviceOfferingPolicy = createServiceOfferingBE.getEnforcementPolicies();
 
         //check if request is mapped correctly
-        assertThat(request.getPolicy()).usingRecursiveComparison().isEqualTo(serviceOfferingPolicy);
+        assertThat(List.of(new EverythingAllowedPolicy())).usingRecursiveComparison().isEqualTo(serviceOfferingPolicy);
         assertThat(expectedServiceOfferingCS.getProvidedBy()).usingRecursiveComparison()
             .isEqualTo(createServiceOfferingBE.getProvidedBy());
         assertThat(expectedServiceOfferingCS.getDataAccountExport()).usingRecursiveComparison()
@@ -117,10 +118,10 @@ class ProviderRestApiTest {
         verify(providerService).createOffering(createDataOfferingRequestBEArgumentCaptor.capture());
 
         CreateDataOfferingRequestBE createDataOfferingRequestBE = createDataOfferingRequestBEArgumentCaptor.getValue();
-        Policy serviceOfferingPolicy = createDataOfferingRequestBE.getPolicy();
+        List<EnforcementPolicy> serviceOfferingPolicy = createDataOfferingRequestBE.getEnforcementPolicies();
 
         //check if request is mapped correctly
-        assertThat(request.getPolicy()).usingRecursiveComparison().isEqualTo(serviceOfferingPolicy);
+        assertThat(List.of(new EverythingAllowedPolicy())).usingRecursiveComparison().isEqualTo(serviceOfferingPolicy);
         assertThat(expectedServiceOfferingCS.getProvidedBy()).usingRecursiveComparison()
             .isEqualTo(createDataOfferingRequestBE.getProvidedBy());
         assertThat(expectedServiceOfferingCS.getDataAccountExport()).usingRecursiveComparison()
@@ -258,23 +259,7 @@ class ProviderRestApiTest {
                     "id": "urn:uuid:GENERATED_SERVICE_OFFERING_ID",
                     "@type": "gx:ServiceOffering"
                 },
-                "policy": {
-                    "@type": "odrl:Set",
-                    "odrl:permission": [
-                        {
-                            "odrl:action": {
-                                "odrl:type": "http://www.w3.org/ns/odrl/2/use"
-                            }
-                        },
-                        {
-                            "odrl:action": {
-                                "odrl:type": "http://www.w3.org/ns/odrl/2/transfer"
-                            }
-                        }
-                    ],
-                    "odrl:prohibition": [],
-                    "odrl:obligation": []
-                }
+                "enforcementPolicies": []
             }""";
     }
 
@@ -376,23 +361,7 @@ class ProviderRestApiTest {
                     "@type": "gx:DataResource"
                 },
                 "fileName": "testfile.txt",
-                "policy": {
-                    "@type": "odrl:Set",
-                    "odrl:permission": [
-                        {
-                            "odrl:action": {
-                                "odrl:type": "http://www.w3.org/ns/odrl/2/use"
-                            }
-                        },
-                        {
-                            "odrl:action": {
-                                "odrl:type": "http://www.w3.org/ns/odrl/2/transfer"
-                            }
-                        }
-                    ],
-                    "odrl:prohibition": [],
-                    "odrl:obligation": []
-                }
+                "enforcementPolicies": []
             }""";
     }
 
