@@ -1,15 +1,9 @@
 package eu.possiblex.participantportal.application.boundary;
 
 import eu.possiblex.participantportal.application.control.ConsumerApiMapper;
-import eu.possiblex.participantportal.application.entity.AcceptOfferResponseTO;
-import eu.possiblex.participantportal.application.entity.ConsumeOfferRequestTO;
-import eu.possiblex.participantportal.application.entity.OfferDetailsTO;
-import eu.possiblex.participantportal.application.entity.SelectOfferRequestTO;
+import eu.possiblex.participantportal.application.entity.*;
 import eu.possiblex.participantportal.business.control.ConsumerService;
-import eu.possiblex.participantportal.business.entity.AcceptOfferResponseBE;
-import eu.possiblex.participantportal.business.entity.ConsumeOfferRequestBE;
-import eu.possiblex.participantportal.business.entity.SelectOfferRequestBE;
-import eu.possiblex.participantportal.business.entity.SelectOfferResponseBE;
+import eu.possiblex.participantportal.business.entity.*;
 import eu.possiblex.participantportal.business.entity.exception.NegotiationFailedException;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
@@ -74,9 +68,6 @@ public class ConsumerRestApiImpl implements ConsumerRestApi {
         } catch (NegotiationFailedException e) {
             throw new PossibleXException(
                 "Failed to select offer with offerId" + request.getEdcOfferId() + ". NegotiationFailedException: " + e);
-        } catch (TransferFailedException e) {
-            throw new PossibleXException(
-                "Failed to select offer with offerId" + request.getEdcOfferId() + ". TransferFailedException: " + e);
         } catch (Exception e) {
             throw new PossibleXException(
                 "Failed to select offer with offerId" + request.getEdcOfferId() + ". Other Exception: " + e);
@@ -89,6 +80,33 @@ public class ConsumerRestApiImpl implements ConsumerRestApi {
         }
         AcceptOfferResponseTO response = consumerApiMapper.acceptOfferResponseBEtoAcceptOfferResponseTO(acceptOffer);
         log.info("Returning for accepting contract: " + response);
+        return response;
+    }
+
+    @Override
+    public TransferOfferResponseTO transferDataOffer(@RequestBody TransferOfferRequestTO request) {
+
+        log.info("transferring data from contract with " + request);
+        TransferOfferRequestBE be = consumerApiMapper.transferOfferRequestTOtoBE(request);
+
+        TransferOfferResponseBE transferOfferResponseBE;
+        try {
+            transferOfferResponseBE = consumerService.transferDataOffer(be);
+        } catch (OfferNotFoundException e) {
+            throw new PossibleXException(
+                "Failed to select offer with offerId" + request.getEdcOfferId() + ". OfferNotFoundException: " + e,
+                HttpStatus.NOT_FOUND);
+        } catch (TransferFailedException e) {
+            throw new PossibleXException(
+                "Failed to select offer with offerId" + request.getEdcOfferId() + ". TransferFailedException: " + e);
+        } catch (Exception e) {
+            throw new PossibleXException(
+                "Failed to select offer with offerId" + request.getEdcOfferId() + ". Other Exception: " + e);
+        }
+
+        TransferOfferResponseTO response = consumerApiMapper.transferOfferResponseBEtoTransferOfferResponseTO(
+            transferOfferResponseBE);
+        log.info("Returning for transferring data of contract: " + response);
         return response;
     }
 }

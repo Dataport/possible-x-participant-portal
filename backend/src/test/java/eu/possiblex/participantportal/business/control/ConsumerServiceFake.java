@@ -1,9 +1,6 @@
 package eu.possiblex.participantportal.business.control;
 
-import eu.possiblex.participantportal.business.entity.AcceptOfferResponseBE;
-import eu.possiblex.participantportal.business.entity.ConsumeOfferRequestBE;
-import eu.possiblex.participantportal.business.entity.SelectOfferRequestBE;
-import eu.possiblex.participantportal.business.entity.SelectOfferResponseBE;
+import eu.possiblex.participantportal.business.entity.*;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.edc.catalog.DcatDataset;
 import eu.possiblex.participantportal.business.entity.edc.negotiation.NegotiationState;
@@ -55,16 +52,25 @@ public class ConsumerServiceFake implements ConsumerService {
 
     @Override
     public AcceptOfferResponseBE acceptContractOffer(ConsumeOfferRequestBE request)
-        throws OfferNotFoundException, NegotiationFailedException, TransferFailedException {
+        throws OfferNotFoundException, NegotiationFailedException {
 
         return switch (request.getEdcOfferId()) {
             case MISSING_OFFER_ID -> throw new OfferNotFoundException("not found");
             case BAD_EDC_OFFER_ID -> throw new NegotiationFailedException("negotiation failed");
-            case BAD_TRANSFER_OFFER_ID -> throw new TransferFailedException("transfer failed");
-            default -> AcceptOfferResponseBE.builder().transferProcessState(TransferProcessState.COMPLETED)
-                .negotiationState(NegotiationState.FINALIZED).dataOffering(true).build();
-            //IonosS3TransferProcess.builder().state(TransferProcessState.COMPLETED).build();
+            default ->
+                AcceptOfferResponseBE.builder().negotiationState(NegotiationState.FINALIZED).dataOffering(true).build();
         };
 
+    }
+
+    @Override
+    public TransferOfferResponseBE transferDataOffer(TransferOfferRequestBE request)
+        throws OfferNotFoundException, TransferFailedException {
+
+        return switch (request.getEdcOfferId()) {
+            case MISSING_OFFER_ID -> throw new OfferNotFoundException("not found");
+            case BAD_TRANSFER_OFFER_ID -> throw new TransferFailedException("transfer failed");
+            default -> TransferOfferResponseBE.builder().transferProcessState(TransferProcessState.COMPLETED).build();
+        };
     }
 }

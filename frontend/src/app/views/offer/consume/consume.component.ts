@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { IOfferDetailsTO } from '../../../services/mgmt/api/backend';
+import {Component} from '@angular/core';
+import {IAcceptOfferResponseTO, IOfferDetailsTO} from '../../../services/mgmt/api/backend';
 
 @Component({
   selector: 'app-consume',
@@ -8,8 +8,18 @@ import { IOfferDetailsTO } from '../../../services/mgmt/api/backend';
 })
 export class ConsumeComponent {
   selectedOffer?: IOfferDetailsTO = undefined;
+  negotiatedContract?: IAcceptOfferResponseTO = undefined;
 
-  setSelectedOffer(offer: IOfferDetailsTO | undefined): void {
+  setSelectedOffer(offer: IOfferDetailsTO): void {
     this.selectedOffer = offer;
+  }
+
+  setNegotiatedContract(contract: IAcceptOfferResponseTO): void {
+    this.negotiatedContract = contract;
+  }
+
+  resetSelection() {
+    this.selectedOffer = undefined;
+    this.negotiatedContract = undefined;
   }
 }

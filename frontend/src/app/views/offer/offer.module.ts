@@ -30,6 +30,7 @@ import {CommonViewsModule} from '../common-views/common-views.module';
 import {AcceptOfferComponent} from './accept/accept-offer.component';
 import {SelectOfferComponent} from './select/select-offer.component';
 import {ContractsComponent} from "./contracts/contracts.component";
+import { TransferComponent } from './transfer/transfer.component';
 
 @NgModule({
   imports: [
@@ -58,7 +59,7 @@ import {ContractsComponent} from "./contracts/contracts.component";
     WizardExtensionModule,
     TooltipModule
   ],
-  declarations: [ProvideComponent, ConsumeComponent, AcceptOfferComponent, SelectOfferComponent, ContractsComponent],
+  declarations: [ProvideComponent, ConsumeComponent, AcceptOfferComponent, SelectOfferComponent, ContractsComponent, TransferComponent],
 })
 export class OfferModule {
 }

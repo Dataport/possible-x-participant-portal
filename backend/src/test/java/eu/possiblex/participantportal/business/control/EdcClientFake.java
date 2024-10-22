@@ -55,6 +55,8 @@ public class EdcClientFake implements EdcClient {
 
     public static final String BAD_NEGOTIATION_ID = "badNegotiation";
 
+    public static final String VALID_AGREEMENT_ID = "validAgreement";
+
     public static final String BAD_TRANSFER_ID = "badTransfer";
 
     public static final long FAKE_TIMESTAMP = 1234L;

@@ -3,6 +3,7 @@ package eu.possiblex.participantportal.application.boundary;
 import eu.possiblex.participantportal.application.control.ConsumerApiMapper;
 import eu.possiblex.participantportal.application.entity.ConsumeOfferRequestTO;
 import eu.possiblex.participantportal.application.entity.SelectOfferRequestTO;
+import eu.possiblex.participantportal.application.entity.TransferOfferRequestTO;
 import eu.possiblex.participantportal.business.control.ConsumerService;
 import eu.possiblex.participantportal.business.control.ConsumerServiceFake;
 import eu.possiblex.participantportal.business.entity.ConsumeOfferRequestBE;
@@ -55,8 +56,8 @@ public class ConsumerRestApiTest {
         reset(consumerService);
         this.mockMvc.perform(post("/consumer/offer/select").content(RestApiHelper.asJsonString(
                     SelectOfferRequestTO.builder().fhCatalogOfferId(ConsumerServiceFake.VALID_FH_OFFER_ID).build()))
-                .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
-            .andExpect(jsonPath("$.catalogOffering['px:providerUrl']").value(ConsumerServiceFake.VALID_COUNTER_PARTY_ADDRESS))
+                .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk()).andExpect(
+                jsonPath("$.catalogOffering['px:providerUrl']").value(ConsumerServiceFake.VALID_COUNTER_PARTY_ADDRESS))
             .andExpect(jsonPath("$.edcOfferId").value(ConsumerServiceFake.VALID_ASSET_ID));
 
         ArgumentCaptor<SelectOfferRequestBE> requestCaptor = ArgumentCaptor.forClass(SelectOfferRequestBE.class);
@@ -79,9 +80,8 @@ public class ConsumerRestApiTest {
 
         reset(consumerService);
         this.mockMvc.perform(post("/consumer/offer/accept").content(RestApiHelper.asJsonString(
-                    ConsumeOfferRequestTO.builder().edcOfferId(ConsumerServiceFake.VALID_EDC_OFFER_ID).build()))
-                .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
-            .andExpect(jsonPath("$.transferProcessState").value(TransferProcessState.COMPLETED.name()));
+                ConsumeOfferRequestTO.builder().edcOfferId(ConsumerServiceFake.VALID_EDC_OFFER_ID).build()))
+            .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk());
 
         ArgumentCaptor<ConsumeOfferRequestBE> requestCaptor = ArgumentCaptor.forClass(ConsumeOfferRequestBE.class);
 
@@ -107,11 +107,28 @@ public class ConsumerRestApiTest {
     }
 
     @Test
-    void shouldAcceptOfferBadTransfer() throws Exception {
+    void shouldNotTransferOffer() throws Exception {
 
-        this.mockMvc.perform(post("/consumer/offer/accept").content(RestApiHelper.asJsonString(
-                ConsumeOfferRequestTO.builder().edcOfferId(ConsumerServiceFake.BAD_TRANSFER_OFFER_ID).build()))
+        this.mockMvc.perform(post("/consumer/offer/transfer").content(RestApiHelper.asJsonString(
+                TransferOfferRequestTO.builder().edcOfferId(ConsumerServiceFake.BAD_TRANSFER_OFFER_ID).build()))
             .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    void shouldTransferOffer() throws Exception {
+
+        this.mockMvc.perform(post("/consumer/offer/transfer").content(RestApiHelper.asJsonString(
+                    TransferOfferRequestTO.builder().edcOfferId(ConsumerServiceFake.VALID_EDC_OFFER_ID).build()))
+                .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
+            .andExpect(jsonPath("$.transferProcessState").value(TransferProcessState.COMPLETED.toString()));
+    }
+
+    @Test
+    void shouldTransferOfferMissing() throws Exception {
+
+        this.mockMvc.perform(post("/consumer/offer/transfer").content(RestApiHelper.asJsonString(
+                TransferOfferRequestTO.builder().edcOfferId(ConsumerServiceFake.MISSING_OFFER_ID).build()))
+            .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isNotFound());
     }
 
     @TestConfiguration

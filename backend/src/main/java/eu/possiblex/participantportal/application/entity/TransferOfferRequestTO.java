@@ -1,6 +1,5 @@
 package eu.possiblex.participantportal.application.entity;
 
-import eu.possiblex.participantportal.business.entity.edc.negotiation.NegotiationState;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,14 +9,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AcceptOfferResponseTO {
-
-    private NegotiationState negotiationState;
-
+public class TransferOfferRequestTO {
     private String contractAgreementId;
 
-    /**
-     * Does this offer contain Data Resources.
-     */
-    private boolean dataOffering;
+    private String counterPartyAddress;
+    
+    private String edcOfferId;
 }

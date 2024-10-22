@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-
 @RequestMapping("/consumer")
 public interface ConsumerRestApi {
     /**
@@ -24,4 +23,12 @@ public interface ConsumerRestApi {
      */
     @PostMapping(value = "/offer/accept", produces = MediaType.APPLICATION_JSON_VALUE)
     AcceptOfferResponseTO acceptContractOffer(@RequestBody ConsumeOfferRequestTO request);
+
+    /**
+     * POST endpoint to trigger a transfer for a contract offer
+     *
+     * @return finalized transfer details
+     */
+    @PostMapping(value = "/offer/transfer", produces = MediaType.APPLICATION_JSON_VALUE)
+    TransferOfferResponseTO transferDataOffer(@RequestBody TransferOfferRequestTO request);
 }

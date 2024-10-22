@@ -122,8 +122,7 @@ public class ConsumerModuleTest {
         this.mockMvc.perform(post("/consumer/offer/accept").content(RestApiHelper.asJsonString(
                 ConsumeOfferRequestTO.builder().edcOfferId(edcOfferId).counterPartyAddress(counterPartyAddress)
                     .dataOffering(true).build())).contentType(MediaType.APPLICATION_JSON)).andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.transferProcessState").value(TransferProcessState.COMPLETED.name()));
+            .andExpect(status().isOk());
 
         // THEN
 
@@ -177,8 +176,7 @@ public class ConsumerModuleTest {
         this.mockMvc.perform(post("/consumer/offer/accept").content(RestApiHelper.asJsonString(
                 ConsumeOfferRequestTO.builder().edcOfferId(edcOfferId).counterPartyAddress(counterPartyAddress)
                     .dataOffering(false).build())).contentType(MediaType.APPLICATION_JSON)).andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.transferProcessState").value(TransferProcessState.INITIAL.name()));
+            .andExpect(status().isOk());
 
         // THEN
 

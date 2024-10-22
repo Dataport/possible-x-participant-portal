@@ -25,7 +25,6 @@ export interface IServiceOfferingShapeRestApi {
 }
 
 export interface IAcceptOfferResponseTO {
-    transferProcessState: ITransferProcessState;
     negotiationState: INegotiationState;
     contractAgreementId: string;
     dataOffering: boolean;
@@ -115,6 +114,22 @@ export interface ISelectOfferRequestTO {
 }
 
 export interface ISelectOfferRequestTOBuilder {
+}
+
+export interface ITransferOfferRequestTO {
+    contractAgreementId: string;
+    counterPartyAddress: string;
+    edcOfferId: string;
+}
+
+export interface ITransferOfferRequestTOBuilder {
+}
+
+export interface ITransferOfferResponseTO {
+    transferProcessState: ITransferProcessState;
+}
+
+export interface ITransferOfferResponseTOBuilder {
 }
 
 export interface IPojoCredentialSubject {
@@ -330,6 +345,14 @@ export class RestApplicationClient {
     }
 
     /**
+     * HTTP POST /consumer/offer/transfer
+     * Java method: eu.possiblex.participantportal.application.boundary.ConsumerRestApiImpl.transferDataOffer
+     */
+    transferDataOffer(request: ITransferOfferRequestTO): RestResponse<ITransferOfferResponseTO> {
+        return this.httpClient.request({ method: "POST", url: uriEncoding`consumer/offer/transfer`, data: request });
+    }
+
+    /**
      * HTTP GET /contract/agreement
      * Java method: eu.possiblex.participantportal.application.boundary.ContractRestApiImpl.getContractAgreements
      */
@@ -412,13 +435,13 @@ export class RestApplicationClient {
 
 export type RestResponse<R> = Promise<R>;
 
-export type ITransferProcessState = "INITIAL" | "PROVISIONING" | "PROVISIONING_REQUESTED" | "PROVISIONED" | "REQUESTING" | "REQUESTED" | "STARTING" | "STARTED" | "SUSPENDING" | "SUSPENDED" | "COMPLETING" | "COMPLETED" | "TERMINATING" | "TERMINATED" | "DEPROVISIONING" | "DEPROVISIONING_REQUESTED" | "DEPROVISIONED";
-
 export type INegotiationState = "INITIAL" | "REQUESTING" | "REQUESTED" | "OFFERING" | "OFFERED" | "ACCEPTING" | "ACCEPTED" | "AGREEING" | "AGREED" | "VERIFYING" | "VERIFIED" | "FINALIZING" | "FINALIZED" | "TERMINATING" | "TERMINATED";
 
 export type IOdrlAction = "odrl:use" | "odrl:transfer";
 
 export type IOdrlOperator = "odrl:eq" | "odrl:in";
+
+export type ITransferProcessState = "INITIAL" | "PROVISIONING" | "PROVISIONING_REQUESTED" | "PROVISIONED" | "REQUESTING" | "REQUESTED" | "STARTING" | "STARTED" | "SUSPENDING" | "SUSPENDED" | "COMPLETING" | "COMPLETED" | "TERMINATING" | "TERMINATED" | "DEPROVISIONING" | "DEPROVISIONING_REQUESTED" | "DEPROVISIONED";
 
 export type IPojoCredentialSubjectUnion = IGxDataResourceCredentialSubject | IGxServiceOfferingCredentialSubject;
 

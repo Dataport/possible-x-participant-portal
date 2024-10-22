@@ -1,26 +1,21 @@
-import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {ApiService} from '../../../services/mgmt/api/api.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {StatusMessageComponent} from '../../common-views/status-message/status-message.component';
-import {IOfferDetailsTO} from '../../../services/mgmt/api/backend';
+import {IAcceptOfferResponseTO, IOfferDetailsTO} from '../../../services/mgmt/api/backend';
 
 @Component({
   selector: 'app-accept-offer',
   templateUrl: './accept-offer.component.html',
   styleUrls: ['./accept-offer.component.scss']
 })
-export class AcceptOfferComponent implements OnChanges {
+export class AcceptOfferComponent {
   @Input() offer?: IOfferDetailsTO = undefined;
   @Output() dismiss: EventEmitter<any> = new EventEmitter();
-  buttonLabel: string;
+  @Output() negotiatedContract: EventEmitter<IAcceptOfferResponseTO> = new EventEmitter();
   @ViewChild('acceptOfferStatusMessage') private acceptOfferStatusMessage!: StatusMessageComponent;
 
   constructor(private apiService: ApiService) {
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    const offerChanges = changes['offer'].currentValue;
-    this.buttonLabel = offerChanges.dataOffering ? "Accept and transfer" : "Accept";
   }
 
   async acceptContractOffer() {
@@ -33,6 +28,7 @@ export class AcceptOfferComponent implements OnChanges {
       dataOffering: this.offer == undefined ? false : this.offer.dataOffering
     }).then(response => {
       console.log(response);
+      this.negotiatedContract.emit(response);
       this.acceptOfferStatusMessage.showSuccessMessage("Contract Agreement ID: " + response.contractAgreementId);
     }).catch((e: HttpErrorResponse) => {
       this.acceptOfferStatusMessage.showErrorMessage(e.error.detail || e.error || e.message);
@@ -41,5 +37,9 @@ export class AcceptOfferComponent implements OnChanges {
 
   cancel(): void {
     this.dismiss.emit();
+  }
+
+  isHttpOrHttps(url: string): boolean {
+    return url.startsWith('http://') || url.startsWith('https://');
   }
 }
