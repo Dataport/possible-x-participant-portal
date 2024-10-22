@@ -49,7 +49,7 @@ public class Policy {
 
     @Builder.Default
     @JsonProperty(JsonLdConstants.ODRL_PREFIX + "permission")
-    private List<JsonNode> permission = new ArrayList<>(); // replace this with proper classes once needed
+    private List<OdrlPermission> permission = new ArrayList<>();
 
     @Builder.Default
     @JsonProperty(JsonLdConstants.ODRL_PREFIX + "prohibition")

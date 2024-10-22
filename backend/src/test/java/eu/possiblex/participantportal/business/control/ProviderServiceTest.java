@@ -8,6 +8,7 @@ import eu.possiblex.participantportal.application.entity.credentials.gx.datatype
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
 import eu.possiblex.participantportal.application.entity.credentials.gx.resources.GxDataResourceCredentialSubject;
 import eu.possiblex.participantportal.application.entity.credentials.gx.serviceofferings.GxServiceOfferingCredentialSubject;
+import eu.possiblex.participantportal.application.entity.policies.EverythingAllowedPolicy;
 import eu.possiblex.participantportal.business.entity.CreateDataOfferingRequestBE;
 import eu.possiblex.participantportal.business.entity.CreateServiceOfferingRequestBE;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedDataResourceCredentialSubject;
@@ -15,7 +16,6 @@ import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedS
 import eu.possiblex.participantportal.business.entity.edc.asset.AssetCreateRequest;
 import eu.possiblex.participantportal.business.entity.edc.asset.ionoss3extension.IonosS3DataSource;
 import eu.possiblex.participantportal.business.entity.edc.asset.possible.PossibleAssetProperties;
-import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyCreateRequest;
 import eu.possiblex.participantportal.business.entity.exception.EdcOfferCreationException;
 import eu.possiblex.participantportal.business.entity.exception.FhOfferCreationException;
@@ -43,26 +43,6 @@ import static org.mockito.Mockito.verify;
 class ProviderServiceTest {
     private static final String FILE_NAME = "file.txt";
 
-    private static final String POLICY_JSON_STRING = """
-        {
-            "@id": "GENERATED_POLICY_ID",
-            "@type": "odrl:Set",
-            "odrl:permission": [
-              {
-                "odrl:action": {
-                  "odrl:type": "http://www.w3.org/ns/odrl/2/use"
-                }
-              },
-              {
-                "odrl:action": {
-                  "odrl:type": "http://www.w3.org/ns/odrl/2/transfer"
-                }
-              }
-            ],
-            "odrl:prohibition": [],
-            "odrl:obligation": []
-          }""";
-
     @Autowired
     ProviderService providerService;
 
@@ -87,7 +67,7 @@ class ProviderServiceTest {
         GxServiceOfferingCredentialSubject offeringCs = getGxServiceOfferingCredentialSubject();
 
         CreateServiceOfferingRequestBE be = CreateServiceOfferingRequestBE.builder()
-            .policy(objectMapper.readValue(POLICY_JSON_STRING, Policy.class)).providedBy(offeringCs.getProvidedBy())
+            .enforcementPolicies(List.of(new EverythingAllowedPolicy())).providedBy(offeringCs.getProvidedBy())
             .name(offeringCs.getName()).description(offeringCs.getDescription())
             .termsAndConditions(offeringCs.getTermsAndConditions()).dataAccountExport(offeringCs.getDataAccountExport())
             .dataProtectionRegime(offeringCs.getDataProtectionRegime()).build();
@@ -137,7 +117,6 @@ class ProviderServiceTest {
         //check if policyId is set correctly
         assertTrue(policyCreateRequest.getId()
             .matches("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"));
-        assertEquals("GENERATED_POLICY_ID", policyCreateRequest.getPolicy().getId());
 
         assertNotNull(response);
         assertNotNull(response.getEdcResponseId());
@@ -155,7 +134,7 @@ class ProviderServiceTest {
         GxDataResourceCredentialSubject resourceCs = getGxDataResourceCredentialSubject();
 
         CreateDataOfferingRequestBE be = CreateDataOfferingRequestBE.builder().fileName(FILE_NAME)
-            .policy(objectMapper.readValue(POLICY_JSON_STRING, Policy.class)).providedBy(offeringCs.getProvidedBy())
+            .enforcementPolicies(List.of(new EverythingAllowedPolicy())).providedBy(offeringCs.getProvidedBy())
             .name(offeringCs.getName()).description(offeringCs.getDescription())
             .termsAndConditions(offeringCs.getTermsAndConditions()).dataAccountExport(offeringCs.getDataAccountExport())
             .dataProtectionRegime(offeringCs.getDataProtectionRegime()).dataResource(resourceCs).build();
@@ -215,7 +194,6 @@ class ProviderServiceTest {
         //check if policyId is set correctly
         assertTrue(policyCreateRequest.getId()
             .matches("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"));
-        assertEquals("GENERATED_POLICY_ID", policyCreateRequest.getPolicy().getId());
 
         assertNotNull(response);
         assertNotNull(response.getEdcResponseId());
