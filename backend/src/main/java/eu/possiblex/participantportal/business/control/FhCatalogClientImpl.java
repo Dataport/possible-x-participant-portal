@@ -53,10 +53,10 @@ public class FhCatalogClientImpl implements FhCatalogClient {
     public FhCatalogIdResponse addServiceOfferingToFhCatalog(
         PxExtendedServiceOfferingCredentialSubject serviceOfferingCredentialSubject) {
 
-        FhCatalogIdResponse response = new FhCatalogIdResponse("TBR"); //TODO adapt when catalog call returns ID
-        technicalFhCatalogClient.addServiceOfferingToFhCatalog(serviceOfferingCredentialSubject);
-        log.info("got offer id: {}", response.getId());
-        return response;
+        String offerId = serviceOfferingCredentialSubject.getId(); // just use the ID also for the offer in the catalog
+        FhCatalogIdResponse catalogOfferId = technicalFhCatalogClient.addServiceOfferingToFhCatalog(serviceOfferingCredentialSubject, offerId);
+        log.info("got offer id: {} for ID {}", catalogOfferId.getId(), offerId);
+        return catalogOfferId;
     }
 
     @Override
