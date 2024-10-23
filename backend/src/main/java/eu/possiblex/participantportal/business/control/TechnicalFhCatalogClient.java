@@ -32,7 +32,7 @@ import org.springframework.web.service.annotation.PutExchange;
  * The technical class to access the FH Catalog via REST.
  */
 public interface TechnicalFhCatalogClient {
-    @PutExchange("/resources/service-offering")
+    @PutExchange("/trust/service-offering")
     FhCatalogIdResponse addServiceOfferingToFhCatalog(@RequestBody PxExtendedServiceOfferingCredentialSubject serviceOfferingCs, @RequestParam String id);
 
     @GetExchange("/resources/service-offering/{offering_id}")
