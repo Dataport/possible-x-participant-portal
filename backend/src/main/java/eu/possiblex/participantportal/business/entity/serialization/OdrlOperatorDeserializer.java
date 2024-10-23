@@ -4,28 +4,30 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import eu.possiblex.participantportal.business.entity.edc.policy.OdrlOperator;
 
 import java.io.IOException;
 
-public class IdDeserializer extends StdDeserializer<String> {
+public class OdrlOperatorDeserializer extends StdDeserializer<OdrlOperator> {
 
-    public IdDeserializer() {
+    public OdrlOperatorDeserializer() {
 
         this(null);
     }
 
-    public IdDeserializer(Class<?> vc) {
+    public OdrlOperatorDeserializer(Class<?> vc) {
 
         super(vc);
     }
 
     @Override
-    public String deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
+    public OdrlOperator deserialize(JsonParser jsonParser, DeserializationContext deserializationContext)
+        throws IOException {
 
         JsonNode node = jsonParser.getCodec().readTree(jsonParser);
         if (node.get("@id") != null) {
-            return node.get("@id").textValue();
+            return OdrlOperator.forValue(node.get("@id").textValue());
         }
-        return node.textValue();
+        return null;
     }
 }
