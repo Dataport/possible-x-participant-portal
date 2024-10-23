@@ -26,6 +26,7 @@ import {
   IGxDataResourceCredentialSubject,
   IGxServiceOfferingCredentialSubject,
   INodeKindIRITypeId,
+  IParticipantRestrictionPolicy,
   IPojoCredentialSubject
 } from '../../services/mgmt/api/backend';
 
@@ -40,11 +41,11 @@ export class OfferingWizardExtensionComponent {
   policyMap = POLICY_MAP;
   selectedPolicy: string = "";
   public prefillDone: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  isPolicyChecked: boolean;
+  dapsIDs: string[];
   protected isDataOffering: boolean = true;
   @ViewChild("gxServiceOfferingWizard") private gxServiceOfferingWizard: BaseWizardExtensionComponent;
   @ViewChild("gxDataResourceWizard") private gxDataResourceWizard: BaseWizardExtensionComponent;
-  isPolicyChecked: boolean;
-  dapsIDs: string;
 
   constructor(
     private apiService: ApiService
@@ -124,10 +125,17 @@ export class OfferingWizardExtensionComponent {
     let gxOfferingJsonSd: IGxServiceOfferingCredentialSubject = this.gxServiceOfferingWizard.generateJsonCs();
     gxOfferingJsonSd["gx:policy"] = [JSON.stringify(this.policyMap[this.selectedPolicy].policy)];
 
+    let participantRestrictionPolicy: IParticipantRestrictionPolicy = {
+      "@type": "ParticipantRestrictionPolicy",
+      allowedParticipants: this.dapsIDs
+    };
+
     let createOfferTo: any = {
       serviceOfferingCredentialSubject: gxOfferingJsonSd,
-      policy: this.policyMap[this.selectedPolicy].policy
-    }
+      enforcementPolicies: [
+        participantRestrictionPolicy
+      ]
+    };
 
     let createOfferMethod: (offer: any) => Promise<any>;
     createOfferMethod = this.apiService.createServiceOffering.bind(this.apiService)
