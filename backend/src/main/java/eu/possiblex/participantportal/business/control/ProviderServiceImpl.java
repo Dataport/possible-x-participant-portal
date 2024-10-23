@@ -223,7 +223,8 @@ public class ProviderServiceImpl implements ProviderService {
 
             // create constraint
             OdrlConstraint participantConstraint = OdrlConstraint.builder().leftOperand("connectorId")
-                .operator(OdrlOperator.IN).rightOperand(participantRestrictionPolicy.getAllowedParticipants()).build();
+                .operator(OdrlOperator.IN)
+                .rightOperand(String.join(",", participantRestrictionPolicy.getAllowedParticipants())).build();
 
             // create permissions with constraint
             OdrlPermission usePermission = OdrlPermission.builder().action(OdrlAction.USE)

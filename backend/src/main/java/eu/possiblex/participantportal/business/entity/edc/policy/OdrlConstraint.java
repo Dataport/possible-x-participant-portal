@@ -3,6 +3,10 @@ package eu.possiblex.participantportal.business.entity.edc.policy;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import eu.possiblex.participantportal.business.entity.serialization.IdDeserializer;
+import eu.possiblex.participantportal.business.entity.serialization.IdSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,9 +24,11 @@ public class OdrlConstraint {
 
     private String leftOperand;
 
+    @JsonSerialize(using = IdSerializer.class)
+    @JsonDeserialize(using = IdDeserializer.class)
     private OdrlOperator operator;
 
-    private Object rightOperand;
+    private String rightOperand; // technically this can be any object but the EDC only supports strings
 
     @JsonProperty("@type")
     public String getType() {

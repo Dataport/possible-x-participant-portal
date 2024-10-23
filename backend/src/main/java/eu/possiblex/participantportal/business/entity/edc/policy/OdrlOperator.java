@@ -9,13 +9,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum OdrlOperator {
-    EQ, IN;
+    EQ, NEQ, IN, IS_ANY_OF, IS_NONE_OF;
 
     private static final Map<String, OdrlOperator> operatorMap = new HashMap<>();
 
     static {
         operatorMap.put(JsonLdConstants.ODRL_PREFIX + "eq", EQ);
-        operatorMap.put(JsonLdConstants.ODRL_PREFIX + "in", IN);
+        operatorMap.put(JsonLdConstants.ODRL_PREFIX + "neq", NEQ);
+        operatorMap.put(JsonLdConstants.ODRL_PREFIX + "isPartOf", IN);
+        operatorMap.put(JsonLdConstants.ODRL_PREFIX + "isAnyOf", IS_ANY_OF);
+        operatorMap.put(JsonLdConstants.ODRL_PREFIX + "isNoneOf", IS_ANY_OF);
     }
 
     @JsonCreator
