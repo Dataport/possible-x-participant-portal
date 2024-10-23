@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -215,36 +216,30 @@ public class ProviderServiceImpl implements ProviderService {
      */
     private Policy createEdcPolicyFromEnforcementPolicies(List<EnforcementPolicy> enforcementPolicies) {
 
-        Policy policy = new Policy();
+        List<OdrlConstraint> constraints = new ArrayList<>();
 
-        // for now no merging, we will take the first policy...
-        EnforcementPolicy enforcementPolicy = enforcementPolicies.get(0);
-        if (enforcementPolicy instanceof ParticipantRestrictionPolicy participantRestrictionPolicy) { // restrict to participants
+        // iterate over all enforcement policies and add a constraint per entry
+        for (EnforcementPolicy enforcementPolicy : enforcementPolicies) {
+            if (enforcementPolicy instanceof ParticipantRestrictionPolicy participantRestrictionPolicy) { // restrict to participants
 
-            // create constraint
-            OdrlConstraint participantConstraint = OdrlConstraint.builder().leftOperand("connectorId")
-                .operator(OdrlOperator.IN)
-                .rightOperand(String.join(",", participantRestrictionPolicy.getAllowedParticipants())).build();
-
-            // create permissions with constraint
-            OdrlPermission usePermission = OdrlPermission.builder().action(OdrlAction.USE)
-                .constraint(participantConstraint).build();
-            OdrlPermission transferPermission = OdrlPermission.builder().action(OdrlAction.TRANSFER)
-                .constraint(participantConstraint).build();
-
-            // add permissions to policy
-            policy.getPermission().add(usePermission);
-            policy.getPermission().add(transferPermission);
-        } else { // unknown or everything allowed
-
-            // create permissions
-            OdrlPermission usePermission = OdrlPermission.builder().action(OdrlAction.USE).build();
-            OdrlPermission transferPermission = OdrlPermission.builder().action(OdrlAction.TRANSFER).build();
-
-            // add permissions to policy
-            policy.getPermission().add(usePermission);
-            policy.getPermission().add(transferPermission);
+                // create constraint
+                OdrlConstraint participantConstraint = OdrlConstraint.builder().leftOperand("connectorId")
+                    .operator(OdrlOperator.IN)
+                    .rightOperand(String.join(",", participantRestrictionPolicy.getAllowedParticipants())).build();
+                constraints.add(participantConstraint);
+            } // else unknown or everything allowed => no constraint
         }
+
+        // apply constraints to both use and transfer permission
+        OdrlPermission usePermission = OdrlPermission.builder().action(OdrlAction.USE).constraint(constraints).build();
+        OdrlPermission transferPermission = OdrlPermission.builder().action(OdrlAction.TRANSFER).constraint(constraints)
+            .build();
+
+        // add permissions to ODRL policy
+        Policy policy = new Policy();
+        policy.getPermission().add(usePermission);
+        policy.getPermission().add(transferPermission);
+
         return policy;
     }
 

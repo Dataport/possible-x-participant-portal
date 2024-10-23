@@ -9,6 +9,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -19,6 +22,7 @@ public class OdrlPermission {
     @JsonProperty(JsonLdConstants.ODRL_PREFIX + "action")
     private OdrlAction action;
 
+    @Builder.Default
     @JsonProperty(JsonLdConstants.ODRL_PREFIX + "constraint")
-    private OdrlConstraint constraint;
+    private List<OdrlConstraint> constraint = new ArrayList<>();
 }
