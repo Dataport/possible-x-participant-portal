@@ -44,8 +44,21 @@
           <div cFormText style="color: #7f7f7f;">
             Please enter organizationID
           </div>
-          <input [(ngModel)]="dapsIDs" class="form-control rounded-none w-full" placeholder="did:web:example-organization.eu"
-                 type="text">
+<!--          <input [(ngModel)]="dapsIDs" class="form-control rounded-none w-full" placeholder="did:web:example-organization.eu"-->
+<!--                 type="text">-->
+<!--          <button (click)="addInput()" class="btn btn-primary">-->
+<!--            <i class="fas fa-plus"></i> Add Input-->
+<!--          </button>-->
+          <div *ngFor="let id of dapsIDs; let i = index">
+            <input [(ngModel)]="dapsIDs[i]" placeholder="Enter value" type="text" class="form-control rounded-none w-full"/>
+            <button (click)="removeInput(i)" class="btn btn-danger">
+              <i class="fas fa-minus"></i>
+            </button>
+          </div>
+          <button (click)="addInput()" class="btn btn-primary">
+          <i class="fas fa-plus"></i> Add Input
+        </button>
+
         </div>
       </ng-template>
     </c-accordion-item>

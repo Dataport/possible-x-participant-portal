@@ -42,7 +42,7 @@ export class OfferingWizardExtensionComponent {
   selectedPolicy: string = "";
   public prefillDone: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   isPolicyChecked: boolean;
-  dapsIDs: string[];
+  dapsIDs: string[] = [];
   protected isDataOffering: boolean = true;
   @ViewChild("gxServiceOfferingWizard") private gxServiceOfferingWizard: BaseWizardExtensionComponent;
   @ViewChild("gxDataResourceWizard") private gxDataResourceWizard: BaseWizardExtensionComponent;
@@ -236,5 +236,14 @@ export class OfferingWizardExtensionComponent {
     if (isDataResourceCs(cs)) {
       this.gxDataResourceWizard.prefillFields(cs, []);
     }
+
+  }
+
+  addInput() {
+    this.dapsIDs.push('');
+  }
+
+  removeInput(index: number) {
+    this.dapsIDs.splice(index, 1);
   }
 }
