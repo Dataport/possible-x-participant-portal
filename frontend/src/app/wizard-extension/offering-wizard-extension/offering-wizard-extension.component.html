@@ -30,9 +30,12 @@
 
   <app-base-wizard-extension #gxServiceOfferingWizard></app-base-wizard-extension>
 
-  <label class="form-label">Policy* <span class="field-key">&nbsp;&nbsp;policy</span></label>
+  <label class="form-label">Policies</label>
+  <div cFormText>
+    Please define policies for the provided offer. <span *ngIf="!isPolicyChecked" class="font-bold">Currently, everything is allowed.</span>
+  </div>
   <c-accordion>
-    <c-accordion-item  #accordionItem="cAccordionItem" [visible]="false">
+    <c-accordion-item #accordionItem="cAccordionItem" [visible]="false">
       <ng-template cTemplateId="accordionHeaderTemplate">
         <div class="accordion-header">
           <label> Restrict the contractual booking to organization(s)</label>
@@ -44,20 +47,23 @@
           <div cFormText style="color: #7f7f7f;">
             Please enter organizationID
           </div>
-<!--          <input [(ngModel)]="dapsIDs" class="form-control rounded-none w-full" placeholder="did:web:example-organization.eu"-->
-<!--                 type="text">-->
-<!--          <button (click)="addInput()" class="btn btn-primary">-->
-<!--            <i class="fas fa-plus"></i> Add Input-->
-<!--          </button>-->
-          <div *ngFor="let id of dapsIDs; let i = index">
-            <input [(ngModel)]="dapsIDs[i]" placeholder="Enter value" type="text" class="form-control rounded-none w-full"/>
-            <button (click)="removeInput(i)" class="btn btn-danger">
-              <i class="fas fa-minus"></i>
-            </button>
+          <div *ngFor="let id of dapsIDs; let i = index; trackBy:customTrackBy" class="flex flex-col space-y-2">
+            <div class="flex items-center space-x-2">
+              <input #input="ngModel" [(ngModel)]="dapsIDs[i]" class="form-control rounded-none w-full"
+                     name="dapsID{{i}}" placeholder="did:web:example-organization.eu" type="text"/>
+              <button (click)="addInput()" *ngIf="i === 0" cButton color="primary" size="sm" variant="ghost">
+                <svg cIcon class="" name="cib-addthis" size="xl"></svg>
+              </button>
+              <button (click)="removeInput(i)" *ngIf="i > 0" cButton color="primary" size="sm" variant="ghost">
+                <svg cIcon class="" name="cil-trash" size="xl"></svg>
+              </button>
+            </div>
+            <div *ngIf="input.touched && !isFieldFilled(dapsIDs[i])" style="color: red">
+              <small>
+                Please enter organizationID.
+              </small>
+            </div>
           </div>
-          <button (click)="addInput()" class="btn btn-primary">
-          <i class="fas fa-plus"></i> Add Input
-        </button>
 
         </div>
       </ng-template>
