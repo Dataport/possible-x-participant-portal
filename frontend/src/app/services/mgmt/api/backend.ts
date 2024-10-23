@@ -314,7 +314,7 @@ export interface IPxExtendedDataResourceCredentialSubject {
 export interface IOdrlConstraint {
     leftOperand: string;
     operator: IOdrlOperator;
-    rightOperand: string[];
+    rightOperand: string;
     "@type": string;
 }
 
@@ -437,11 +437,11 @@ export type RestResponse<R> = Promise<R>;
 
 export type INegotiationState = "INITIAL" | "REQUESTING" | "REQUESTED" | "OFFERING" | "OFFERED" | "ACCEPTING" | "ACCEPTED" | "AGREEING" | "AGREED" | "VERIFYING" | "VERIFIED" | "FINALIZING" | "FINALIZED" | "TERMINATING" | "TERMINATED";
 
+export type ITransferProcessState = "INITIAL" | "PROVISIONING" | "PROVISIONING_REQUESTED" | "PROVISIONED" | "REQUESTING" | "REQUESTED" | "STARTING" | "STARTED" | "SUSPENDING" | "SUSPENDED" | "COMPLETING" | "COMPLETED" | "TERMINATING" | "TERMINATED" | "DEPROVISIONING" | "DEPROVISIONING_REQUESTED" | "DEPROVISIONED";
+
 export type IOdrlAction = "odrl:use" | "odrl:transfer";
 
-export type IOdrlOperator = "odrl:eq" | "odrl:in";
-
-export type ITransferProcessState = "INITIAL" | "PROVISIONING" | "PROVISIONING_REQUESTED" | "PROVISIONED" | "REQUESTING" | "REQUESTED" | "STARTING" | "STARTED" | "SUSPENDING" | "SUSPENDED" | "COMPLETING" | "COMPLETED" | "TERMINATING" | "TERMINATED" | "DEPROVISIONING" | "DEPROVISIONING_REQUESTED" | "DEPROVISIONED";
+export type IOdrlOperator = "odrl:eq" | "odrl:neq" | "odrl:isPartOf" | "odrl:isAnyOf";
 
 export type IPojoCredentialSubjectUnion = IGxDataResourceCredentialSubject | IGxServiceOfferingCredentialSubject;
 
