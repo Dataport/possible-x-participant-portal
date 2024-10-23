@@ -57,8 +57,9 @@
       <textarea [value]="getPolicyDetails(selectedPolicy)" class="form-control" disabled readonly rows="10"></textarea>
       <br>
     </div>
-    <div class="flex justify-between">
-      <button *ngIf="isOfferingDataOffering()" cButton color="secondary" shape="rounded-0" matStepperPrevious>Back</button>
+    <div class="flex justify-end">
+      <button *ngIf="isOfferingDataOffering()" cButton color="secondary" shape="rounded-0"
+              class="pr-button" matStepperPrevious>Back</button>
       <button cButton color="primary" shape="rounded-0" type="submit" [disabled]="!isServiceOfferingValid()"
               (click)="createOffer()" matStepperNext>Create Offer</button>
     </div>

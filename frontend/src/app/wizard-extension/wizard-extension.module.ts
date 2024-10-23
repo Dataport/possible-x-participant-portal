@@ -26,6 +26,8 @@ import {BaseWizardExtensionComponent} from './base-wizard-extension/base-wizard-
 import {MaterialModule} from '../sdwizard/material.module'
 import {IconModule} from '@coreui/icons-angular';
 import {MatStepperModule} from "@angular/material/stepper";
+import {MatIconModule} from "@angular/material/icon";
+import {MatButtonModule} from "@angular/material/button";
 
 @NgModule({
   declarations: [BaseWizardExtensionComponent, OfferingWizardExtensionComponent],
@@ -46,6 +48,8 @@ import {MatStepperModule} from "@angular/material/stepper";
     IconModule,
     FormTextDirective,
     MatStepperModule,
+    MatButtonModule,
+    MatIconModule
   ]
 })
 export class WizardExtensionModule {
