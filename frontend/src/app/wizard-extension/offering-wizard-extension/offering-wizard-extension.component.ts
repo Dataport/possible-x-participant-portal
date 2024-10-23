@@ -117,7 +117,7 @@ export class OfferingWizardExtensionComponent {
 
   async createOffer() {
     console.log("Create offer.");
-    this.offerCreationStatusMessage.hideAllMessages();
+    this.offerCreationStatusMessage.showInfoMessage();
 
     let gxOfferingJsonSd: IGxServiceOfferingCredentialSubject = this.gxServiceOfferingWizard.generateJsonCs();
     gxOfferingJsonSd["gx:policy"] = [JSON.stringify(this.policyMap[this.selectedPolicy].policy)];
@@ -185,20 +185,16 @@ export class OfferingWizardExtensionComponent {
     return policyDetails ? JSON.stringify(policyDetails, null, 2) : '';
   }
 
-  protected isWizardFormInvalid(): boolean {
-    let serviceOfferingWizardInvalid = this.gxServiceOfferingWizard?.isWizardFormInvalid();
-    let dataResourceWizardInvalid = this.isOfferingDataOffering() ? this.gxDataResourceWizard?.isWizardFormInvalid() : false;
-
-    return serviceOfferingWizardInvalid || dataResourceWizardInvalid;
-  }
-
   protected isOfferingDataOffering() {
     return this.isDataOffering;
   }
 
-  protected isPossibleSpecificFormInvalid(): boolean {
-    let isInvalidFileName = this.isOfferingDataOffering() ? this.isInvalidFileName : false;
-    return isInvalidFileName || this.isInvalidPolicy;
+  protected isDataResourceValid(): boolean {
+    return !this.gxDataResourceWizard?.isWizardFormInvalid() && !this.isInvalidFileName;
+  }
+
+  protected isServiceOfferingValid(): boolean {
+    return !this.gxServiceOfferingWizard?.isWizardFormInvalid() && !this.isInvalidPolicy;
   }
 
   protected adaptGxShape(shapeSource: any, shapeName: string, excludedFields: string[]) {
