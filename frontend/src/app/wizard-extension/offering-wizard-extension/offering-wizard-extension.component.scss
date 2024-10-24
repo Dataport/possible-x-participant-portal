@@ -30,10 +30,10 @@
   margin-right: calc(100% - 11rem);
 }
 
-.mat-stepper-horizontal {
+.mat-stepper-vertical {
   @apply bg-brand-50;
 }
 
-:host ::ng-deep .mat-horizontal-stepper-header{
+:host ::ng-deep .mat-vertical-stepper-header{
   pointer-events: none !important;
 }

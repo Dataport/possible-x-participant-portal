@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-import {Component, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ViewChild} from '@angular/core';
 import {StatusMessageComponent} from '../../views/common-views/status-message/status-message.component';
 import {BaseWizardExtensionComponent} from '../base-wizard-extension/base-wizard-extension.component';
 import {isDataResourceCs, isGxServiceOfferingCs} from '../../utils/credential-utils';
@@ -28,13 +28,14 @@ import {
   INodeKindIRITypeId,
   IPojoCredentialSubject
 } from '../../services/mgmt/api/backend';
+import {TBR_DATA_RESOURCE_ID, TBR_SERVICE_OFFERING_ID} from "../../views/offer/offer-data";
 
 @Component({
   selector: 'app-offering-wizard-extension',
   templateUrl: './offering-wizard-extension.component.html',
   styleUrls: ['./offering-wizard-extension.component.scss']
 })
-export class OfferingWizardExtensionComponent {
+export class OfferingWizardExtensionComponent implements AfterViewInit {
   @ViewChild("offerCreationStatusMessage") public offerCreationStatusMessage!: StatusMessageComponent;
   selectedFileName: string = "";
   policyMap = POLICY_MAP;
@@ -44,10 +45,16 @@ export class OfferingWizardExtensionComponent {
   @ViewChild("gxServiceOfferingWizard") private gxServiceOfferingWizard: BaseWizardExtensionComponent;
   @ViewChild("gxDataResourceWizard") private gxDataResourceWizard: BaseWizardExtensionComponent;
   waitingForResponse = true;
+  offerType: string = "data";
+  participantId = "";
 
   constructor(
     private apiService: ApiService
   ) {
+  }
+
+  ngAfterViewInit(): void {
+    this.prefillWizardNewOffering();
   }
 
   get isInvalidFileName(): boolean {
@@ -228,4 +235,49 @@ export class OfferingWizardExtensionComponent {
       this.gxDataResourceWizard.prefillFields(cs, []);
     }
   }
+
+  prefillWizardNewOffering() {
+    this.retrieveAndSetParticipantId();
+    this.resetPossibleSpecificFormValues();
+
+    let gxServiceOfferingCs = {
+      "gx:providedBy": {
+        "@id": this.participantId
+      },
+      "@type": "gx:ServiceOffering"
+    }
+
+    let prefillSd: any[] = [gxServiceOfferingCs];
+
+    if (!this.isOfferingDataOffering()) {
+      this.loadShape(this.offerType, TBR_SERVICE_OFFERING_ID, null).then(_ => {
+        this.prefillFields(prefillSd);
+      });
+    } else {
+      let gxDataResourceCs = {
+        "gx:producedBy": {
+          "@id": this.participantId
+        },
+        "gx:copyrightOwnedBy": [this.participantId],
+        "gx:containsPII": false,
+        "@type": "gx:DataResource"
+      }
+
+      prefillSd.push(gxDataResourceCs);
+
+      this.loadShape(this.offerType, TBR_SERVICE_OFFERING_ID, TBR_DATA_RESOURCE_ID).then(_ => {
+        this.prefillFields(prefillSd);
+      });
+    }
+  }
+
+  retrieveAndSetParticipantId() {
+    this.apiService.getParticipantId().then(response => {
+      console.log(response);
+      this.participantId = response.participantId;
+    }).catch((e) => {
+      console.error(e);
+    });
+  }
+
 }

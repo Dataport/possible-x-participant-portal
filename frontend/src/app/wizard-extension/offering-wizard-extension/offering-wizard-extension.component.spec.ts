@@ -19,16 +19,27 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { OfferingWizardExtensionComponent } from './offering-wizard-extension.component';
 import {ApiService} from "@services/api.service";
 import {WizardAppModule} from "../../sdwizard/wizardapp.module";
-import {AppModule} from "../../app.module";
 import {WizardExtensionModule} from "../wizard-extension.module";
+import {ICreateOfferResponseTO} from "../../services/mgmt/api/backend";
 
 describe('OfferingWizardExtensionComponent', () => {
   let component: OfferingWizardExtensionComponent;
   let fixture: ComponentFixture<OfferingWizardExtensionComponent>;
+  let apiService: jasmine.SpyObj<ApiService>;
+
+  const offerCreationResponse = {
+    edcResponseId: 'dummy',
+    fhResponseId: 'dummy'
+  } as ICreateOfferResponseTO;
 
   beforeEach(async () => {
+    const apiServiceSpy = jasmine.createSpyObj('ApiService', ['createOffer']);
+
     await TestBed.configureTestingModule({
       declarations: [ OfferingWizardExtensionComponent ],
+      providers: [
+        {provide: ApiService, useValue: apiServiceSpy}
+      ],
       imports: [
         WizardAppModule,
         WizardExtensionModule
@@ -38,10 +49,27 @@ describe('OfferingWizardExtensionComponent', () => {
 
     fixture = TestBed.createComponent(OfferingWizardExtensionComponent);
     component = fixture.componentInstance;
+    apiService = TestBed.inject(ApiService) as jasmine.SpyObj<ApiService>;
     fixture.detectChanges();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should call createOffer on apiService when createOffer is called', async () => {
+    const mockResponse = Promise.resolve(offerCreationResponse);
+    apiService.createOffer.and.returnValue(mockResponse);
+
+    component.selectedPolicy = 'Everything is allowed';
+
+    component.prefillDone.subscribe((value) => {
+      if (value) {
+        component.createOffer().then(() => {
+          expect(apiService.createOffer).toHaveBeenCalled();
+        });
+      }
+    });
+
   });
 });

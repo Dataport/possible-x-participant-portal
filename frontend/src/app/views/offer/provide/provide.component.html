@@ -9,14 +9,6 @@
       </div>
     </div>
     <c-container class="flex justify-center" fluid>
-      <div class="mb-3 flex-1">
-        <label class="form-label">Offering Type Selection</label>
-        <select [(ngModel)]="offerType" class="form-select rounded-none w-full" (change)="prefillWizardNewOffering()">
-          <option value="service">Service offering</option>
-          <option value="data" selected>Data offering</option>
-        </select>
-      </div>
-      <br>
       <app-offering-wizard-extension #wizardExtension></app-offering-wizard-extension>
     </c-container>
   </div>

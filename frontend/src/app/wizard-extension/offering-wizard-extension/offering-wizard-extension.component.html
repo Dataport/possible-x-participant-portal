@@ -15,7 +15,19 @@
 -->
 
 <div class="mb-3 flex-1" xmlns="http://www.w3.org/1999/html">
-<mat-stepper orientation="horizontal" linear #stepper>
+<mat-stepper orientation="vertical" linear #stepper>
+  <mat-step>
+    <ng-template matStepLabel>Define Offering Type</ng-template>
+    <label class="form-label">Offering Type Selection</label>
+    <select [(ngModel)]="offerType" class="form-select rounded-none w-full" (change)="prefillWizardNewOffering()">
+      <option value="service">Service offering</option>
+      <option value="data" selected>Data offering</option>
+    </select>
+    <div class="flex justify-end pt-4">
+      <button cButton color="primary" shape="rounded-0" type="submit" matStepperNext>Next</button>
+    </div>
+  </mat-step>
+
   <mat-step *ngIf="isOfferingDataOffering()" errorMessage="Missing fields" [completed]="isDataResourceValid()">
     <ng-template matStepLabel>Define Data Resource</ng-template>
     <div>
@@ -31,7 +43,8 @@
       <br/>
     </div>
     <app-base-wizard-extension #gxDataResourceWizard></app-base-wizard-extension>
-    <div class="flex justify-end">
+    <div class="flex justify-between pt-4">
+      <button cButton color="secondary" shape="rounded-0" matStepperPrevious>Back</button>
       <button cButton color="primary" shape="rounded-0" type="submit" [disabled]="!isDataResourceValid()" matStepperNext>
         Next
       </button>
@@ -59,10 +72,8 @@
       <textarea [value]="getPolicyDetails(selectedPolicy)" class="form-control" disabled readonly rows="10"></textarea>
       <br>
     </div>
-    <div class="flex justify-end">
-      <button *ngIf="isOfferingDataOffering()" cButton color="secondary" shape="rounded-0" class="pr-button" matStepperPrevious>
-        Back
-      </button>
+    <div class="flex justify-between pt-4">
+      <button cButton color="secondary" shape="rounded-0" matStepperPrevious>Back</button>
       <button cButton color="primary" shape="rounded-0" type="submit" [disabled]="!isServiceOfferingValid()"
               (click)="createOffer()" matStepperNext>
         Create Offer
@@ -82,7 +93,7 @@
     </div>
     <div class="flex justify-end pt-4">
       <button cButton color="primary" shape="rounded-0" type="submit" [disabled]="waitingForResponse" (click)="stepper.reset()">
-        Close
+        Reset
       </button>
     </div>
   </mat-step>
