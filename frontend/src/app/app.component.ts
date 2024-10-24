@@ -1,6 +1,4 @@
-import {Component} from '@angular/core';
-import {IconSetService} from '@coreui/icons-angular';
-import {iconSubset} from './icons/icon-subset';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -9,8 +7,4 @@ import {iconSubset} from './icons/icon-subset';
 })
 export class AppComponent {
   title = 'frontend';
-
-  constructor(private iconSetService: IconSetService) {
-    iconSetService.icons = {...iconSubset};
-  }
 }
