@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
+import eu.possiblex.participantportal.utilities.LogUtils;
 import jakarta.json.Json;
 import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonObject;
@@ -52,11 +53,20 @@ public class FhCatalogClientImpl implements FhCatalogClient {
     @Override
     public FhCatalogIdResponse addServiceOfferingToFhCatalog(
         PxExtendedServiceOfferingCredentialSubject serviceOfferingCredentialSubject) {
+      
+        log.info("sending to catalog: {}", LogUtils.serializeObjectToJson(serviceOfferingCredentialSubject));
 
-        FhCatalogIdResponse response = technicalFhCatalogClient.addServiceOfferingToFhCatalog(
-            serviceOfferingCredentialSubject, serviceOfferingCredentialSubject.getId());
-        log.info("got offer id: {}", response.getId());
-        return response;
+        String offerId = serviceOfferingCredentialSubject.getId(); // just use the ID also for the offer in the catalog
+        FhCatalogIdResponse catalogOfferId = null;
+        try {
+            catalogOfferId = technicalFhCatalogClient.addServiceOfferingToFhCatalog(serviceOfferingCredentialSubject, offerId);
+        } catch (Exception e){
+            log.error("error when trying to send offer to catalog!", e);
+            throw e;
+        }
+        log.info("got offer id: {}", catalogOfferId.getId());
+        return catalogOfferId;
+
     }
 
     @Override
