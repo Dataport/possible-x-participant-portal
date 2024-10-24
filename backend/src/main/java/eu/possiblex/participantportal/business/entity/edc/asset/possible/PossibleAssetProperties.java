@@ -52,4 +52,6 @@ public class PossibleAssetProperties extends AssetProperties {
     @JsonProperty("https://w3id.org/gaia-x/development#containsPII")
     private boolean containsPII;
 
+    private List<String> combinedPolicy;
+
 }

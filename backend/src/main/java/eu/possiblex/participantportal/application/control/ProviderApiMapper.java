@@ -23,6 +23,7 @@ public interface ProviderApiMapper {
     @Mapping(target = "termsAndConditions", source = "serviceOfferingCredentialSubject.termsAndConditions")
     @Mapping(target = "dataProtectionRegime", source = "serviceOfferingCredentialSubject.dataProtectionRegime")
     @Mapping(target = "dataAccountExport", source = "serviceOfferingCredentialSubject.dataAccountExport")
+    @Mapping(target = "policy", source = "serviceOfferingCredentialSubject.policy")
     CreateServiceOfferingRequestBE getCreateOfferingRequestBE(
         CreateServiceOfferingRequestTO createServiceOfferingRequestTO);
 

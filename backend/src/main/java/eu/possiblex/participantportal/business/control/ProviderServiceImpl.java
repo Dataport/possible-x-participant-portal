@@ -180,7 +180,6 @@ public class ProviderServiceImpl implements ProviderService {
         if (request instanceof CreateDataOfferingRequestBE dataOfferingRequest) { // data offering
             dataOfferingRequest.getDataResource().setId(dataResourceId);
             dataOfferingRequest.getDataResource().setExposedThrough(new NodeKindIRITypeId(serviceOfferingId));
-            dataOfferingRequest.getDataResource().setPolicy(providerServiceMapper.policyToStringList(policy));
 
             return providerServiceMapper.getPxExtendedServiceOfferingCredentialSubject(dataOfferingRequest,
                 serviceOfferingId, assetId, edcProtocolUrl, policy);
@@ -203,11 +202,17 @@ public class ProviderServiceImpl implements ProviderService {
     private CreateEdcOfferBE createEdcBEFromRequest(CreateServiceOfferingRequestBE request, String offerId,
         String assetId, Policy policy) {
 
+        CreateEdcOfferBE createEdcOfferBE = null;
         if (request instanceof CreateDataOfferingRequestBE dataOfferingRequest) { // data offering
-            return providerServiceMapper.getCreateEdcOfferBE(dataOfferingRequest, offerId, assetId, policy);
+            createEdcOfferBE = providerServiceMapper.getCreateEdcOfferBE(dataOfferingRequest, offerId, assetId, policy);
+            createEdcOfferBE.getProperties()
+                .setCombinedPolicy(providerServiceMapper.combinePolicyForEdcOffer(dataOfferingRequest, policy));
         } else { // base service offering
-            return providerServiceMapper.getCreateEdcOfferBE(request, offerId, assetId, policy);
+            createEdcOfferBE = providerServiceMapper.getCreateEdcOfferBE(request, offerId, assetId, policy);
+            createEdcOfferBE.getProperties()
+                .setCombinedPolicy(providerServiceMapper.combinePolicyForEdcOffer(request, policy));
         }
+        return createEdcOfferBE;
     }
 
     /**

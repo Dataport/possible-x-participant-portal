@@ -13,11 +13,11 @@ export interface IProviderRestApi {
 }
 
 export interface IResourceShapeRestApi {
+    gxVirtualResourceShape: string;
     gxInstantiatedVirtualResourceShape: string;
     gxDataResourceShape: string;
     gxPhysicalResourceShape: string;
     gxSoftwareResourceShape: string;
-    gxVirtualResourceShape: string;
 }
 
 export interface IServiceOfferingShapeRestApi {
@@ -289,8 +289,9 @@ export interface IPxExtendedServiceOfferingCredentialSubject {
 }
 
 export interface IOdrlPermission {
+    "odrl:target": string;
     "odrl:action": IOdrlAction;
-    "odrl:constraint": IOdrlConstraint;
+    "odrl:constraint": IOdrlConstraint[];
 }
 
 export interface IPolicyTarget {
@@ -312,9 +313,9 @@ export interface IPxExtendedDataResourceCredentialSubject {
 }
 
 export interface IOdrlConstraint {
-    leftOperand: string;
-    operator: IOdrlOperator;
-    rightOperand: string;
+    "odrl:leftOperand": string;
+    "odrl:operator": IOdrlOperator;
+    "odrl:rightOperand": string;
     "@type": string;
 }
 
@@ -439,7 +440,7 @@ export type INegotiationState = "INITIAL" | "REQUESTING" | "REQUESTED" | "OFFERI
 
 export type ITransferProcessState = "INITIAL" | "PROVISIONING" | "PROVISIONING_REQUESTED" | "PROVISIONED" | "REQUESTING" | "REQUESTED" | "STARTING" | "STARTED" | "SUSPENDING" | "SUSPENDED" | "COMPLETING" | "COMPLETED" | "TERMINATING" | "TERMINATED" | "DEPROVISIONING" | "DEPROVISIONING_REQUESTED" | "DEPROVISIONED";
 
-export type IOdrlAction = "odrl:use" | "odrl:transfer";
+export type IOdrlAction = "use" | "transfer";
 
 export type IOdrlOperator = "odrl:eq" | "odrl:neq" | "odrl:isPartOf" | "odrl:isAnyOf";
 

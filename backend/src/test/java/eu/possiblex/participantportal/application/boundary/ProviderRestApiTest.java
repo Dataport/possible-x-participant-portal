@@ -91,6 +91,7 @@ class ProviderRestApiTest {
             .isEqualTo(createServiceOfferingBE.getTermsAndConditions());
         assertEquals(expectedServiceOfferingCS.getName(), createServiceOfferingBE.getName());
         assertEquals(expectedServiceOfferingCS.getDescription(), createServiceOfferingBE.getDescription());
+        assertEquals("dummyServiceOfferingPolicy", createServiceOfferingBE.getPolicy().get(0));
     }
 
     @Test
@@ -133,6 +134,7 @@ class ProviderRestApiTest {
         assertEquals(expectedServiceOfferingCS.getName(), createDataOfferingRequestBE.getName());
         assertEquals(expectedServiceOfferingCS.getDescription(), createDataOfferingRequestBE.getDescription());
         assertEquals(request.getFileName(), createDataOfferingRequestBE.getFileName());
+        assertEquals("dummyServiceOfferingPolicy", createDataOfferingRequestBE.getPolicy().get(0));
 
         assertThat(expectedDataResourceCS).usingRecursiveComparison()
             .isEqualTo(createDataOfferingRequestBE.getDataResource());
@@ -150,24 +152,8 @@ class ProviderRestApiTest {
 
         return GxServiceOfferingCredentialSubject.builder()
             .providedBy(new NodeKindIRITypeId("did:web:example-organization.eu")).name("Test Service Offering")
-            .description("This is the service offering description.").policy(List.of("""
-                {
-                  "@type": "odrl:Set",
-                  "odrl:permission": [
-                    {
-                      "odrl:action": {
-                        "odrl:type": "http://www.w3.org/ns/odrl/2/use"
-                      }
-                    },
-                    {
-                      "odrl:action": {
-                        "odrl:type": "http://www.w3.org/ns/odrl/2/transfer"
-                      }
-                    }
-                  ],
-                  "odrl:prohibition": [],
-                  "odrl:obligation": []
-                }""")).dataAccountExport(List.of(
+            .description("This is the service offering description.").policy(List.of("dummyServiceOfferingPolicy"))
+            .dataAccountExport(List.of(
                 GxDataAccountExport.builder().formatType("application/json").accessType("digital").requestType("API")
                     .build()))
             .termsAndConditions(List.of(GxSOTermsAndConditions.builder().url("test.eu/tnc").hash("hash123").build()))
@@ -176,25 +162,8 @@ class ProviderRestApiTest {
 
     GxDataResourceCredentialSubject getGxDataResourceCredentialSubject() {
 
-        return GxDataResourceCredentialSubject.builder().policy(List.of("""
-                {
-                  "@type": "odrl:Set",
-                  "odrl:permission": [
-                    {
-                      "odrl:action": {
-                        "odrl:type": "http://www.w3.org/ns/odrl/2/use"
-                      }
-                    },
-                    {
-                      "odrl:action": {
-                        "odrl:type": "http://www.w3.org/ns/odrl/2/transfer"
-                      }
-                    }
-                  ],
-                  "odrl:prohibition": [],
-                  "odrl:obligation": []
-                }""")).name("Test Dataset").description("This is the data resource description.")
-            .license(List.of("AGPL-1.0-only")).containsPII(true)
+        return GxDataResourceCredentialSubject.builder().policy(List.of("dummyDataResourcePolicy")).name("Test Dataset")
+            .description("This is the data resource description.").license(List.of("AGPL-1.0-only")).containsPII(true)
             .copyrightOwnedBy(new NodeKindIRITypeId("did:web:example-organization.eu"))
             .producedBy(new NodeKindIRITypeId("did:web:example-organization.eu"))
             .exposedThrough(new NodeKindIRITypeId("urn:uuid:GENERATED_SERVICE_OFFERING_ID"))
@@ -227,7 +196,7 @@ class ProviderRestApiTest {
                         "@type": "xsd:string"
                     },
                     "gx:policy": {
-                        "@value": "{\\n  \\"@type\\": \\"odrl:Set\\",\\n  \\"odrl:permission\\": [\\n    {\\n      \\"odrl:action\\": {\\n        \\"odrl:type\\": \\"http://www.w3.org/ns/odrl/2/use\\"\\n      }\\n    },\\n    {\\n      \\"odrl:action\\": {\\n        \\"odrl:type\\": \\"http://www.w3.org/ns/odrl/2/transfer\\"\\n      }\\n    }\\n  ],\\n  \\"odrl:prohibition\\": [],\\n  \\"odrl:obligation\\": []\\n}",
+                        "@value": "dummyServiceOfferingPolicy",
                         "@type": "xsd:string"
                     },
                     "gx:dataAccountExport": {
@@ -289,7 +258,7 @@ class ProviderRestApiTest {
                         "@type": "xsd:string"
                     },
                     "gx:policy": {
-                        "@value": "{\\n  \\"@type\\": \\"odrl:Set\\",\\n  \\"odrl:permission\\": [\\n    {\\n      \\"odrl:action\\": {\\n        \\"odrl:type\\": \\"http://www.w3.org/ns/odrl/2/use\\"\\n      }\\n    },\\n    {\\n      \\"odrl:action\\": {\\n        \\"odrl:type\\": \\"http://www.w3.org/ns/odrl/2/transfer\\"\\n      }\\n    }\\n  ],\\n  \\"odrl:prohibition\\": [],\\n  \\"odrl:obligation\\": []\\n}",
+                        "@value": "dummyServiceOfferingPolicy",
                         "@type": "xsd:string"
                     },
                     "gx:dataAccountExport": {
@@ -354,7 +323,7 @@ class ProviderRestApiTest {
                         "@id": "urn:uuid:GENERATED_SERVICE_OFFERING_ID"
                     },
                     "gx:policy": {
-                        "@value": "{\\n  \\"@type\\": \\"odrl:Set\\",\\n  \\"odrl:permission\\": [\\n    {\\n      \\"odrl:action\\": {\\n        \\"odrl:type\\": \\"http://www.w3.org/ns/odrl/2/use\\"\\n      }\\n    },\\n    {\\n      \\"odrl:action\\": {\\n        \\"odrl:type\\": \\"http://www.w3.org/ns/odrl/2/transfer\\"\\n      }\\n    }\\n  ],\\n  \\"odrl:prohibition\\": [],\\n  \\"odrl:obligation\\": []\\n}",
+                        "@value": "dummyDataResourcePolicy",
                         "@type": "xsd:string"
                     },
                     "id": "urn:uuid:GENERATED_DATA_RESOURCE_ID",
