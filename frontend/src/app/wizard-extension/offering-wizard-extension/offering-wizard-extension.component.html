@@ -32,7 +32,9 @@
     </div>
     <app-base-wizard-extension #gxDataResourceWizard></app-base-wizard-extension>
     <div class="flex justify-end">
-      <button cButton color="primary" shape="rounded-0" type="submit" matStepperNext>Next</button>
+      <button cButton color="primary" shape="rounded-0" type="submit" [disabled]="!isDataResourceValid()" matStepperNext>
+        Next
+      </button>
     </div>
   </mat-step>
 
@@ -58,10 +60,13 @@
       <br>
     </div>
     <div class="flex justify-end">
-      <button *ngIf="isOfferingDataOffering()" cButton color="secondary" shape="rounded-0"
-              class="pr-button" matStepperPrevious>Back</button>
+      <button *ngIf="isOfferingDataOffering()" cButton color="secondary" shape="rounded-0" class="pr-button" matStepperPrevious>
+        Back
+      </button>
       <button cButton color="primary" shape="rounded-0" type="submit" [disabled]="!isServiceOfferingValid()"
-              (click)="createOffer()" matStepperNext>Create Offer</button>
+              (click)="createOffer()" matStepperNext>
+        Create Offer
+      </button>
     </div>
   </mat-step>
 
@@ -76,7 +81,9 @@
       </app-status-message>
     </div>
     <div class="flex justify-end pt-4">
-      <button cButton color="primary" shape="rounded-0" type="submit" (click)="stepper.reset()">Close</button>
+      <button cButton color="primary" shape="rounded-0" type="submit" [disabled]="waitingForResponse" (click)="stepper.reset()">
+        Close
+      </button>
     </div>
   </mat-step>
 </mat-stepper>

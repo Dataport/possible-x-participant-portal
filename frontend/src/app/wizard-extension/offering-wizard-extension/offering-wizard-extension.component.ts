@@ -43,6 +43,7 @@ export class OfferingWizardExtensionComponent {
   protected isDataOffering: boolean = true;
   @ViewChild("gxServiceOfferingWizard") private gxServiceOfferingWizard: BaseWizardExtensionComponent;
   @ViewChild("gxDataResourceWizard") private gxDataResourceWizard: BaseWizardExtensionComponent;
+  waitingForResponse = true;
 
   constructor(
     private apiService: ApiService
@@ -117,6 +118,7 @@ export class OfferingWizardExtensionComponent {
 
   async createOffer() {
     console.log("Create offer.");
+    this.waitingForResponse = true;
     this.offerCreationStatusMessage.showInfoMessage();
 
     let gxOfferingJsonSd: IGxServiceOfferingCredentialSubject = this.gxServiceOfferingWizard.generateJsonCs();
@@ -147,10 +149,13 @@ export class OfferingWizardExtensionComponent {
 
     createOfferMethod(createOfferTo).then(response => {
       console.log(response);
+      this.waitingForResponse = false;
       this.offerCreationStatusMessage.showSuccessMessage("");
     }).catch((e: HttpErrorResponse) => {
+      this.waitingForResponse = false;
       this.offerCreationStatusMessage.showErrorMessage(e.error.detail || e.error || e.message);
     }).catch(_ => {
+      this.waitingForResponse = false;
       this.offerCreationStatusMessage.showErrorMessage("Unbekannter Fehler");
     });
 

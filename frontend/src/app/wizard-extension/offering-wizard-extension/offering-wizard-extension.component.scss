@@ -29,3 +29,11 @@
 .pr-button {
   margin-right: calc(100% - 11rem);
 }
+
+.mat-stepper-horizontal {
+  @apply bg-brand-50;
+}
+
+:host ::ng-deep .mat-horizontal-stepper-header{
+  pointer-events: none !important;
+}
