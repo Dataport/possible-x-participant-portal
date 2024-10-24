@@ -70,7 +70,7 @@ export class SelectOfferComponent implements ControlValueAccessor {
   }
 
   validateOfferId(control: AbstractControl): ValidationErrors | null {
-    if (control.value.match(/^[a-zA-Z0-9][a-zA-Z0-9\-]*$/)) {
+    if (control.value.match(/^[a-zA-Z0-9][a-zA-Z0-9\-:]*$/)) {
       return null;
     }
     return {

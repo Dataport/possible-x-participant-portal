@@ -3,7 +3,6 @@ package eu.possiblex.participantportal.business.entity.edc.policy;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import eu.possiblex.participantportal.business.entity.common.JsonLdConstants;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +23,7 @@ public enum OdrlOperator {
     @JsonCreator
     public static OdrlOperator forValue(String value) {
 
-        return operatorMap.get(StringUtils.lowerCase(value));
+        return operatorMap.get(value);
     }
 
     @JsonValue

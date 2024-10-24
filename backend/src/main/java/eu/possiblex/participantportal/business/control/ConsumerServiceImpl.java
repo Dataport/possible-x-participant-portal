@@ -98,6 +98,7 @@ public class ConsumerServiceImpl implements ConsumerService {
             .counterPartyAddress(request.getCounterPartyAddress()).providerId(edcOffer.getParticipantId()).offer(
                 ContractOffer.builder().offerId(dataset.getHasPolicy().get(0).getId()).assetId(dataset.getAssetId())
                     .policy(dataset.getHasPolicy().get(0)).build()).build();
+
         ContractNegotiation contractNegotiation = negotiateOffer(negotiationInitiateRequest);
 
         return new AcceptOfferResponseBE(contractNegotiation.getState(), contractNegotiation.getContractAgreementId(),
