@@ -18,7 +18,6 @@ import {AfterViewInit, Component, ViewChild} from '@angular/core';
 import {StatusMessageComponent} from '../../views/common-views/status-message/status-message.component';
 import {BaseWizardExtensionComponent} from '../base-wizard-extension/base-wizard-extension.component';
 import {isDataResourceCs, isGxServiceOfferingCs} from '../../utils/credential-utils';
-import {BehaviorSubject, takeWhile} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ApiService} from '../../services/mgmt/api/api.service';
 import {
@@ -40,12 +39,13 @@ import {MatStepper} from "@angular/material/stepper";
 export class OfferingWizardExtensionComponent implements AfterViewInit {
   @ViewChild("offerCreationStatusMessage") public offerCreationStatusMessage!: StatusMessageComponent;
   selectedFileName: string = "";
-  public prefillDone: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   isPolicyChecked: boolean = false;
   dapsIDs: string[] = [''];
   waitingForResponse = true;
   offerType: string = "data";
   participantId = "";
+  serviceOfferingShapeSource = "";
+  dataResourceShapeSource = "";
   @ViewChild("stepper") stepper: MatStepper;
   protected isDataOffering: boolean = true;
   @ViewChild("gxServiceOfferingWizard") private gxServiceOfferingWizard: BaseWizardExtensionComponent;
@@ -65,63 +65,36 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.prefillWizardNewOffering();
+    this.retrieveAndAdaptServiceOfferingShape();
+    this.retrieveAndAdaptDataResourceShape();
+    this.retrieveAndSetParticipantId();
+    this.resetPossibleSpecificFormValues();
   }
 
-  public async loadShape(offerType: string, serviceOfferingId: string, dataResourceId: string): Promise<void> {
-    this.prefillDone.next(false);
-    console.log("Loading service offering shape");
-    let serviceOfferingShapeSource = await this.apiService.getGxServiceOfferingShape();
-    serviceOfferingShapeSource = this.adaptGxShape(serviceOfferingShapeSource, "ServiceOffering", ["aggregationOf"]);
-    await this.gxServiceOfferingWizard.loadShape(Promise.resolve(serviceOfferingShapeSource), serviceOfferingId);
+  async retrieveAndAdaptServiceOfferingShape() {
+    try {
+      console.log("Retrieving service offering shape");
+      const serviceOfferingShapeSource = await this.apiService.getGxServiceOfferingShape();
+      this.serviceOfferingShapeSource = this.adaptGxShape(serviceOfferingShapeSource, "ServiceOffering", ["aggregationOf"]);
+    } catch (e) {
+      console.error(e);
+    }
+  }
 
-    if (this.isOfferingDataOffering()) {
-      console.log("Loading data resource shape");
-      let dataResourceShapeSource = await this.apiService.getGxDataResourceShape();
-      dataResourceShapeSource = this.adaptGxShape(dataResourceShapeSource, "DataResource",
+  async retrieveAndAdaptDataResourceShape() {
+    try {
+      console.log("Retrieving data resource shape");
+      const dataResourceShapeSource = await this.apiService.getGxDataResourceShape();
+      this.dataResourceShapeSource = this.adaptGxShape(dataResourceShapeSource, "DataResource",
         ["exposedThrough"]);
-      await this.gxDataResourceWizard.loadShape(Promise.resolve(dataResourceShapeSource), dataResourceId);
+    } catch (e) {
+      console.error(e);
     }
   }
 
-  public isShapeLoaded(): boolean {
-    return this.gxServiceOfferingWizard?.isShapeLoaded() && this.isOfferingDataOffering() ? this.gxDataResourceWizard?.isShapeLoaded() : true;
-  }
-
-  public prefillFields(csList: IPojoCredentialSubject[]) {
-    for (let cs of csList) {
-      this.prefillHandleCs(cs)
-    }
-
-    if (!this.isOfferingDataOffering()) {
-      this.gxServiceOfferingWizard.prefillDone
-        .pipe(
-          takeWhile(done => !done, true)
-        )
-        .subscribe(done => {
-          if (done) {
-            this.prefillDone.next(true);
-          }
-        });
-    } else {
-      this.gxServiceOfferingWizard.prefillDone
-        .pipe(
-          takeWhile(done => !done, true)
-        )
-        .subscribe(done => {
-          if (done) {
-            this.gxDataResourceWizard.prefillDone
-              .pipe(
-                takeWhile(done => !done, true)
-              )
-              .subscribe(done => {
-                if (done) {
-                  this.prefillDone.next(true);
-                }
-              })
-          }
-        });
-    }
+  public async loadShape(wizard: BaseWizardExtensionComponent, shapeSource: string, id: string): Promise<void> {
+    console.log("Loading shape");
+    await wizard.loadShape(Promise.resolve(shapeSource), id);
   }
 
   async createOffer() {
@@ -216,42 +189,62 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
   }
 
   async prefillWizardNewOffering() {
-    await this.retrieveAndSetParticipantId();
-    this.resetPossibleSpecificFormValues();
+    if (this.isOfferingDataOffering()) {
+      this.prefillDataResourceWizard();
+    } else {
+      this.prefillServiceOfferingWizard();
+    }
+  }
+
+  async prefillDataResourceWizard() {
+
+    let gxDataResourceCs = {
+      "gx:producedBy": {
+        "@id": this.participantId
+      },
+      "gx:copyrightOwnedBy": [this.participantId],
+      "gx:containsPII": false,
+      "@type": "gx:DataResource"
+    } as any;
+
+    this.loadShape(this.gxDataResourceWizard, this.dataResourceShapeSource, TBR_DATA_RESOURCE_ID).then(_ => {
+      this.prefillHandleCs(gxDataResourceCs);
+    });
+  }
+
+  async prefillServiceOfferingWizard() {
 
     let gxServiceOfferingCs = {
       "gx:providedBy": {
         "@id": this.participantId
       },
-      "@type": "gx:ServiceOffering"
-    }
+      "@type": "gx:ServiceOffering",
+    } as any;
 
-    let prefillSd: any[] = [gxServiceOfferingCs];
-
-    if (!this.isOfferingDataOffering()) {
-      this.loadShape(this.offerType, TBR_SERVICE_OFFERING_ID, null).then(_ => {
-        this.prefillFields(prefillSd);
-      });
-    } else {
-      let gxDataResourceCs = {
-        "gx:producedBy": {
-          "@id": this.participantId
-        },
-        "gx:copyrightOwnedBy": [this.participantId],
-        "gx:containsPII": false,
-        "@type": "gx:DataResource"
+    if (this.isOfferingDataOffering()) {
+      let gxDataResourceJsonSd: IGxDataResourceCredentialSubject = this.gxDataResourceWizard.generateJsonCs();
+      gxServiceOfferingCs["gx:name"] = "Data Offering Service - " + gxDataResourceJsonSd["gx:name"]["@value"];
+      gxServiceOfferingCs["gx:description"] = "Data Offering Service provides data (" + gxDataResourceJsonSd["gx:name"]["@value"] + ") securely through the Possible Dataspace software solution. The Data Offering Service enables secure and sovereign data exchange between different organizations using the Eclipse Dataspace Connector (EDC). The service seamlessly integrates with IONOS S3 buckets to ensure reliable and scalable data storage and transfer.";
+      gxServiceOfferingCs["gx:dataAccountExport"] = {
+        "@type": "gx:DataAccountExport",
+        "gx:formatType": "text/plain",
+        "gx:accessType": "digital",
+        "gx:requestType": "email"
+      };
+      gxServiceOfferingCs["gx:dataProtectionRegime"] = {
+        "@value": "GDPR2016", "@type": "xsd:string"
       }
-
-      prefillSd.push(gxDataResourceCs);
-
-      this.loadShape(this.offerType, TBR_SERVICE_OFFERING_ID, TBR_DATA_RESOURCE_ID).then(_ => {
-        this.prefillFields(prefillSd);
-      });
     }
+
+    this.loadShape(this.gxServiceOfferingWizard, this.serviceOfferingShapeSource, TBR_SERVICE_OFFERING_ID).then(_ => {
+      this.prefillHandleCs(gxServiceOfferingCs);
+    });
+
   }
 
   async retrieveAndSetParticipantId() {
     try {
+      console.log("Retrieving participant id");
       const response = await this.apiService.getParticipantId();
       console.log(response);
       this.participantId = response.participantId;
@@ -262,7 +255,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
 
   reset() {
     this.stepper.reset();
-    this.prefillWizardNewOffering();
+    this.resetPossibleSpecificFormValues();
   }
 
   protected isOfferingDataOffering() {

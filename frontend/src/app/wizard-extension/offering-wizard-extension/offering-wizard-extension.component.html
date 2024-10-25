@@ -19,12 +19,14 @@
     <mat-step>
       <ng-template matStepLabel>Define Offering Type</ng-template>
       <label class="form-label">Offering Type Selection</label>
-      <select (change)="prefillWizardNewOffering()" [(ngModel)]="offerType" class="form-select rounded-none w-full">
+      <select [(ngModel)]="offerType" class="form-select rounded-none w-full">
         <option value="service">Service Offering</option>
         <option selected value="data">Data Offering</option>
       </select>
       <div class="flex justify-end pt-4">
-        <button cButton color="primary" matStepperNext shape="rounded-0" type="submit">Next</button>
+        <button (click)="prefillWizardNewOffering()" cButton color="primary" matStepperNext shape="rounded-0"
+                type="submit">Next
+        </button>
       </div>
     </mat-step>
 
@@ -45,7 +47,8 @@
       <app-base-wizard-extension #gxDataResourceWizard></app-base-wizard-extension>
       <div class="flex justify-between pt-4">
         <button cButton color="secondary" matStepperPrevious shape="rounded-0">Back</button>
-        <button [disabled]="!isDataResourceValid()" cButton color="primary" matStepperNext shape="rounded-0"
+        <button (click)="prefillServiceOfferingWizard()" [disabled]="!isDataResourceValid()" cButton color="primary"
+                matStepperNext shape="rounded-0"
                 type="submit">
           Next
         </button>
