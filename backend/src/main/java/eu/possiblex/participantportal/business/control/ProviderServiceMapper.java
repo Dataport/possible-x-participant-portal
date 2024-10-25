@@ -21,7 +21,7 @@ public interface ProviderServiceMapper {
     @Mapping(target = "providedBy", source = "request.providedBy")
     @Mapping(target = "aggregationOf", expression = "java(java.util.Collections.emptyList())")
     @Mapping(target = "termsAndConditions", source = "request.termsAndConditions")
-    @Mapping(target = "policy", expression = "java(combinePolicyForServiceOffering(request, policy))")
+    @Mapping(target = "policy", expression = "java(combineSOPolicyAndPolicy(request, policy))")
     @Mapping(target = "dataProtectionRegime", source = "request.dataProtectionRegime")
     @Mapping(target = "dataAccountExport", source = "request.dataAccountExport")
     @Mapping(target = "name", source = "request.name")
@@ -89,35 +89,21 @@ public interface ProviderServiceMapper {
 
     default List<String> combinePolicyForEdcOffer(CreateServiceOfferingRequestBE request, Policy policy) {
 
-        List<String> policyList = new ArrayList<>();
-
-        if (request.getPolicy() != null) {
-            policyList.addAll(request.getPolicy());
-        }
-
-        policyList.addAll(policyToStringList(policy));
-
-        return policyList;
+        return combineSOPolicyAndPolicy(request, policy);
     }
 
     default List<String> combinePolicyForEdcOffer(CreateDataOfferingRequestBE request, Policy policy) {
 
-        List<String> policyList = new ArrayList<>();
-
-        if (request.getPolicy() != null) {
-            policyList.addAll(request.getPolicy());
-        }
+        List<String> policyList = combineSOPolicyAndPolicy(request, policy);
 
         if (request.getDataResource().getPolicy() != null) {
             policyList.addAll(request.getDataResource().getPolicy());
         }
 
-        policyList.addAll(policyToStringList(policy));
-
         return policyList;
     }
 
-    default List<String> combinePolicyForServiceOffering(CreateServiceOfferingRequestBE request, Policy policy) {
+    default List<String> combineSOPolicyAndPolicy(CreateServiceOfferingRequestBE request, Policy policy) {
 
         List<String> policyList = new ArrayList<>();
 
