@@ -68,8 +68,6 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
   }
 
   public async loadShape(offerType: string, serviceOfferingId: string, dataResourceId: string): Promise<void> {
-    this.isDataOffering = offerType === "data";
-
     this.prefillDone.next(false);
     console.log("Loading service offering shape");
     let serviceOfferingShapeSource = await this.apiService.getGxServiceOfferingShape();
@@ -200,7 +198,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
   }
 
   protected isOfferingDataOffering() {
-    return this.isDataOffering;
+    return this.offerType === "data";
   }
 
   protected isDataResourceValid(): boolean {
