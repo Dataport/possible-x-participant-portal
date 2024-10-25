@@ -128,12 +128,17 @@ public class ProviderServiceImpl implements ProviderService {
             log.info("Creating Asset {}", assetCreateRequest);
             IdResponse assetIdResponse = edcClient.createAsset(assetCreateRequest);
 
-            PolicyCreateRequest policyCreateRequest = requestBuilder.buildPolicyRequest();
-            log.info("Creating Policy {}", policyCreateRequest);
-            IdResponse policyIdResponse = edcClient.createPolicy(policyCreateRequest);
+            PolicyCreateRequest accessPolicyCreateRequest = requestBuilder.buildPolicyRequest(
+                getEverythingAllowedPolicy());
+            log.info("Creating access Policy {}", accessPolicyCreateRequest);
+            IdResponse accessPolicyIdResponse = edcClient.createPolicy(accessPolicyCreateRequest);
+
+            PolicyCreateRequest contractPolicyCreateRequest = requestBuilder.buildPolicyRequest();
+            log.info("Creating contract Policy {}", contractPolicyCreateRequest);
+            IdResponse contractPolicyIdResponse = edcClient.createPolicy(contractPolicyCreateRequest);
 
             ContractDefinitionCreateRequest contractDefinitionCreateRequest = requestBuilder.buildContractDefinitionRequest(
-                policyIdResponse, assetIdResponse);
+                accessPolicyIdResponse, contractPolicyIdResponse, assetIdResponse);
             log.info("Creating Contract Definition {}", contractDefinitionCreateRequest);
 
             return edcClient.createContractDefinition(contractDefinitionCreateRequest);
@@ -232,15 +237,27 @@ public class ProviderServiceImpl implements ProviderService {
         }
 
         // apply constraints to both use and transfer permission
-        OdrlPermission usePermission = OdrlPermission.builder().action(OdrlAction.USE).constraint(constraints).build();
-        OdrlPermission transferPermission = OdrlPermission.builder().action(OdrlAction.TRANSFER).constraint(constraints)
-            .build();
+        Policy policy = getEverythingAllowedPolicy();
+
+        policy.getPermission().forEach(permission -> permission.setConstraint(constraints));
+
+        return policy;
+    }
+
+    /**
+     * Get base policy that can be extended with constraints.
+     *
+     * @return everything allowed policy
+     */
+    private Policy getEverythingAllowedPolicy() {
+
+        OdrlPermission usePermission = OdrlPermission.builder().action(OdrlAction.USE).build();
+        OdrlPermission transferPermission = OdrlPermission.builder().action(OdrlAction.TRANSFER).build();
 
         // add permissions to ODRL policy
         Policy policy = new Policy();
         policy.getPermission().add(usePermission);
         policy.getPermission().add(transferPermission);
-
         return policy;
     }
 
