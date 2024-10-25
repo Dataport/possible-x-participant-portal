@@ -54,24 +54,45 @@
   <mat-step errorMessage="Missing fields" [completed]="isServiceOfferingValid()">
     <ng-template matStepLabel>Define Service Offering</ng-template>
     <app-base-wizard-extension #gxServiceOfferingWizard></app-base-wizard-extension>
-    <label class="form-label">Policy* <span class="field-key">&nbsp;&nbsp;policy</span></label>
-    <select [(ngModel)]="selectedPolicy" class="form-select rounded-none w-full">
-      <option disabled hidden selected value="">Please select ...</option>
-      <option *ngFor="let policy of getPolicyNames()" [value]="policy">{{ policy }}</option>
-    </select>
-    <div cFormText style="color: #7f7f7f;">
-      A list of policy expressed using a DSL (e.g., Rego or ODRL) (access control, throttling, usage, retention,
-      …).
+    <label class="form-label">Policies</label>
+    <div cFormText>
+      Please define policies for the provided offer. <span *ngIf="!isPolicyChecked" class="font-bold">Currently, everything is allowed.</span>
     </div>
-    <div *ngIf="isInvalidPolicy" class="text-error pt-2">
-      <small>Policy is required.</small>
-    </div>
-    <br>
-    <div *ngIf="selectedPolicy">
-      <label>Policy Details</label>
-      <textarea [value]="getPolicyDetails(selectedPolicy)" class="form-control" disabled readonly rows="10"></textarea>
-      <br>
-    </div>
+    <c-accordion>
+      <c-accordion-item #accordionItem="cAccordionItem" [visible]="false">
+        <ng-template cTemplateId="accordionHeaderTemplate">
+          <div class="accordion-header">
+            <label> Restrict the contractual booking to organization(s)</label>
+            <mat-checkbox (click)="accordionItem.toggleItem()" [(ngModel)]="isPolicyChecked"></mat-checkbox>
+          </div>
+        </ng-template>
+        <ng-template cTemplateId="accordionBody">
+          <div class="accordion-body">
+            <div cFormText style="color: #7f7f7f;">
+              Please enter organizationID
+            </div>
+            <div *ngFor="let id of dapsIDs; let i = index; trackBy:customTrackBy" class="flex flex-col space-y-2">
+              <div class="flex items-center space-x-2">
+                <input #input="ngModel" [(ngModel)]="dapsIDs[i]" class="form-control rounded-none w-full"
+                       name="dapsID{{i}}" placeholder="did:web:example-organization.eu" type="text"/>
+                <button (click)="addInput()" *ngIf="i === 0" cButton color="primary" size="sm" variant="ghost">
+                  <svg cIcon class="" name="cib-addthis" size="xl"></svg>
+                </button>
+                <button (click)="removeInput(i)" *ngIf="i > 0" cButton color="primary" size="sm" variant="ghost">
+                  <svg cIcon class="" name="cil-trash" size="xl"></svg>
+                </button>
+              </div>
+              <div *ngIf="input.touched && !isFieldFilled(dapsIDs[i])" style="color: red">
+                <small>
+                  Please enter organizationID.
+                </small>
+              </div>
+            </div>
+
+          </div>
+        </ng-template>
+      </c-accordion-item>
+    </c-accordion>
     <div class="flex justify-between pt-4">
       <button cButton color="secondary" shape="rounded-0" matStepperPrevious>Back</button>
       <button cButton color="primary" shape="rounded-0" type="submit" [disabled]="!isServiceOfferingValid()"

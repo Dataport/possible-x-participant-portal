@@ -18,7 +18,17 @@ import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {WizardAppModule} from '../sdwizard/wizardapp.module';
 import {CommonViewsModule} from '../views/common-views/common-views.module';
-import {ButtonGroupModule, ButtonModule, FormTextDirective, GridModule, ModalModule} from '@coreui/angular';
+import {
+  AccordionButtonDirective,
+  AccordionComponent,
+  AccordionItemComponent,
+  ButtonGroupModule,
+  ButtonModule,
+  FormTextDirective,
+  GridModule,
+  ModalModule,
+  TemplateIdDirective
+} from '@coreui/angular';
 import {FormsModule} from '@angular/forms';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {OfferingWizardExtensionComponent} from './offering-wizard-extension/offering-wizard-extension.component';
@@ -49,7 +59,11 @@ import {MatButtonModule} from "@angular/material/button";
     FormTextDirective,
     MatStepperModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    AccordionComponent,
+    AccordionItemComponent,
+    TemplateIdDirective,
+    AccordionButtonDirective,
   ]
 })
 export class WizardExtensionModule {

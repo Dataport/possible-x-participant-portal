@@ -84,7 +84,7 @@ export interface ICreateOfferResponseTOBuilder {
 
 export interface ICreateServiceOfferingRequestTO {
     serviceOfferingCredentialSubject: IGxServiceOfferingCredentialSubject;
-    policy: IPolicy;
+    enforcementPolicies: IEnforcementPolicyUnion[];
 }
 
 export interface ICreateServiceOfferingRequestTOBuilder<C, B> {
@@ -232,9 +232,37 @@ export interface IGxServiceOfferingCredentialSubjectBuilderImpl extends IGxServi
     "gx:description": string;
 }
 
+export interface IEnforcementPolicy {
+    "@type": "EverythingAllowedPolicy" | "ParticipantRestrictionPolicy";
+}
+
+export interface IEnforcementPolicyBuilder<C, B> {
+}
+
+export interface IEverythingAllowedPolicy extends IEnforcementPolicy {
+    "@type": "EverythingAllowedPolicy";
+}
+
+export interface IEverythingAllowedPolicyBuilder<C, B> extends IEnforcementPolicyBuilder<C, B> {
+}
+
+export interface IEverythingAllowedPolicyBuilderImpl extends IEverythingAllowedPolicyBuilder<IEverythingAllowedPolicy, IEverythingAllowedPolicyBuilderImpl> {
+}
+
+export interface IParticipantRestrictionPolicy extends IEnforcementPolicy {
+    "@type": "ParticipantRestrictionPolicy";
+    allowedParticipants: string[];
+}
+
+export interface IParticipantRestrictionPolicyBuilder<C, B> extends IEnforcementPolicyBuilder<C, B> {
+}
+
+export interface IParticipantRestrictionPolicyBuilderImpl extends IParticipantRestrictionPolicyBuilder<IParticipantRestrictionPolicy, IParticipantRestrictionPolicyBuilderImpl> {
+}
+
 export interface IPolicy {
     "@id": string;
-    "odrl:permission": any[];
+    "odrl:permission": IOdrlPermission[];
     "odrl:prohibition": any[];
     "odrl:obligation": any[];
     "odrl:target": IPolicyTarget;
@@ -260,6 +288,11 @@ export interface IPxExtendedServiceOfferingCredentialSubject {
     "@type": string[];
 }
 
+export interface IOdrlPermission {
+    "odrl:action": IOdrlAction;
+    "odrl:constraint": IOdrlConstraint;
+}
+
 export interface IPolicyTarget {
     "@id": string;
 }
@@ -276,6 +309,13 @@ export interface IPxExtendedDataResourceCredentialSubject {
     "gx:description": string;
     "@context": { [index: string]: string };
     "@type": string[];
+}
+
+export interface IOdrlConstraint {
+    leftOperand: string;
+    operator: IOdrlOperator;
+    rightOperand: string;
+    "@type": string;
 }
 
 export interface HttpClient {
@@ -399,7 +439,13 @@ export type INegotiationState = "INITIAL" | "REQUESTING" | "REQUESTED" | "OFFERI
 
 export type ITransferProcessState = "INITIAL" | "PROVISIONING" | "PROVISIONING_REQUESTED" | "PROVISIONED" | "REQUESTING" | "REQUESTED" | "STARTING" | "STARTED" | "SUSPENDING" | "SUSPENDED" | "COMPLETING" | "COMPLETED" | "TERMINATING" | "TERMINATED" | "DEPROVISIONING" | "DEPROVISIONING_REQUESTED" | "DEPROVISIONED";
 
+export type IOdrlAction = "odrl:use" | "odrl:transfer";
+
+export type IOdrlOperator = "odrl:eq" | "odrl:neq" | "odrl:isPartOf" | "odrl:isAnyOf";
+
 export type IPojoCredentialSubjectUnion = IGxDataResourceCredentialSubject | IGxServiceOfferingCredentialSubject;
+
+export type IEnforcementPolicyUnion = IEverythingAllowedPolicy | IParticipantRestrictionPolicy;
 
 function uriEncoding(template: TemplateStringsArray, ...substitutions: any[]): string {
     let result = "";
