@@ -43,21 +43,17 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
   public prefillDone: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   isPolicyChecked: boolean = false;
   dapsIDs: string[] = [''];
-  protected isDataOffering: boolean = true;
-  @ViewChild("gxServiceOfferingWizard") private gxServiceOfferingWizard: BaseWizardExtensionComponent;
-  @ViewChild("gxDataResourceWizard") private gxDataResourceWizard: BaseWizardExtensionComponent;
   waitingForResponse = true;
   offerType: string = "data";
   participantId = "";
   @ViewChild("stepper") stepper: MatStepper;
+  protected isDataOffering: boolean = true;
+  @ViewChild("gxServiceOfferingWizard") private gxServiceOfferingWizard: BaseWizardExtensionComponent;
+  @ViewChild("gxDataResourceWizard") private gxDataResourceWizard: BaseWizardExtensionComponent;
 
   constructor(
     private apiService: ApiService
   ) {
-  }
-
-  ngAfterViewInit(): void {
-    this.prefillWizardNewOffering();
   }
 
   get isInvalidFileName(): boolean {
@@ -68,18 +64,22 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
     return this.isPolicyChecked && this.dapsIDs.some(id => !this.isFieldFilled(id));
   }
 
+  ngAfterViewInit(): void {
+    this.prefillWizardNewOffering();
+  }
+
   public async loadShape(offerType: string, serviceOfferingId: string, dataResourceId: string): Promise<void> {
     this.prefillDone.next(false);
     console.log("Loading service offering shape");
     let serviceOfferingShapeSource = await this.apiService.getGxServiceOfferingShape();
-    serviceOfferingShapeSource = this.adaptGxShape(serviceOfferingShapeSource, "ServiceOffering", ["policy", "aggregationOf"]);
+    serviceOfferingShapeSource = this.adaptGxShape(serviceOfferingShapeSource, "ServiceOffering", ["aggregationOf"]);
     await this.gxServiceOfferingWizard.loadShape(Promise.resolve(serviceOfferingShapeSource), serviceOfferingId);
 
     if (this.isOfferingDataOffering()) {
       console.log("Loading data resource shape");
       let dataResourceShapeSource = await this.apiService.getGxDataResourceShape();
       dataResourceShapeSource = this.adaptGxShape(dataResourceShapeSource, "DataResource",
-        ["name", "description", "policy", "exposedThrough"]);
+        ["exposedThrough"]);
       await this.gxDataResourceWizard.loadShape(Promise.resolve(dataResourceShapeSource), dataResourceId);
     }
   }
@@ -130,7 +130,6 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
     this.offerCreationStatusMessage.showInfoMessage();
 
     let gxOfferingJsonSd: IGxServiceOfferingCredentialSubject = this.gxServiceOfferingWizard.generateJsonCs();
-    gxOfferingJsonSd["gx:policy"] = [""];
 
     let policy: IParticipantRestrictionPolicy | IEverythingAllowedPolicy;
 
@@ -157,9 +156,6 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
 
     if (this.isOfferingDataOffering()) {
       let gxDataResourceJsonSd: IGxDataResourceCredentialSubject = this.gxDataResourceWizard.generateJsonCs();
-      gxDataResourceJsonSd["gx:name"] = gxOfferingJsonSd["gx:name"];
-      gxDataResourceJsonSd["gx:description"] = gxOfferingJsonSd["gx:description"];
-      gxDataResourceJsonSd["gx:policy"] = gxOfferingJsonSd["gx:policy"];
       gxDataResourceJsonSd["gx:exposedThrough"] = {id: gxOfferingJsonSd.id} as INodeKindIRITypeId;
 
       createOfferTo.dataResourceCredentialSubject = gxDataResourceJsonSd;
@@ -219,46 +215,6 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
     return index;
   }
 
-  protected isOfferingDataOffering() {
-    return this.offerType === "data";
-  }
-
-  protected isDataResourceValid(): boolean {
-    return !this.gxDataResourceWizard?.isWizardFormInvalid() && !this.isInvalidFileName;
-  }
-
-  protected isServiceOfferingValid(): boolean {
-    return !this.gxServiceOfferingWizard?.isWizardFormInvalid() && !this.isInvalidPolicy;
-  }
-
-  protected adaptGxShape(shapeSource: any, shapeName: string, excludedFields: string[]) {
-    if (typeof shapeSource !== 'object' || shapeSource === null) {
-      console.error("Invalid input: shape is not of expected type.");
-      return null;
-    }
-
-    shapeSource.shapes.forEach((shape: any) => {
-      if (shape.targetClassName === shapeName) {
-        shape.constraints = shape.constraints.filter((constraint: any) => {
-          return !(constraint.path.prefix === "gx" && excludedFields.includes(constraint.path.value));
-        });
-      }
-    });
-
-    console.log(shapeSource);
-    return shapeSource;
-  }
-
-  private prefillHandleCs(cs: IPojoCredentialSubject) {
-    if (isGxServiceOfferingCs(cs)) {
-      this.gxServiceOfferingWizard.prefillFields(cs, ["gx:providedBy"]);
-    }
-    if (isDataResourceCs(cs)) {
-      this.gxDataResourceWizard.prefillFields(cs, []);
-    }
-
-  }
-
   async prefillWizardNewOffering() {
     await this.retrieveAndSetParticipantId();
     this.resetPossibleSpecificFormValues();
@@ -307,6 +263,46 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
   reset() {
     this.stepper.reset();
     this.prefillWizardNewOffering();
+  }
+
+  protected isOfferingDataOffering() {
+    return this.offerType === "data";
+  }
+
+  protected isDataResourceValid(): boolean {
+    return !this.gxDataResourceWizard?.isWizardFormInvalid() && !this.isInvalidFileName;
+  }
+
+  protected isServiceOfferingValid(): boolean {
+    return !this.gxServiceOfferingWizard?.isWizardFormInvalid() && !this.isInvalidPolicy;
+  }
+
+  protected adaptGxShape(shapeSource: any, shapeName: string, excludedFields: string[]) {
+    if (typeof shapeSource !== 'object' || shapeSource === null) {
+      console.error("Invalid input: shape is not of expected type.");
+      return null;
+    }
+
+    shapeSource.shapes.forEach((shape: any) => {
+      if (shape.targetClassName === shapeName) {
+        shape.constraints = shape.constraints.filter((constraint: any) => {
+          return !(constraint.path.prefix === "gx" && excludedFields.includes(constraint.path.value));
+        });
+      }
+    });
+
+    console.log(shapeSource);
+    return shapeSource;
+  }
+
+  private prefillHandleCs(cs: IPojoCredentialSubject) {
+    if (isGxServiceOfferingCs(cs)) {
+      this.gxServiceOfferingWizard.prefillFields(cs, ["gx:providedBy"]);
+    }
+    if (isDataResourceCs(cs)) {
+      this.gxDataResourceWizard.prefillFields(cs, []);
+    }
+
   }
 
 }
