@@ -29,6 +29,7 @@ import {
   IPojoCredentialSubject
 } from '../../services/mgmt/api/backend';
 import {TBR_DATA_RESOURCE_ID, TBR_SERVICE_OFFERING_ID} from "../../views/offer/offer-data";
+import {MatStepper} from "@angular/material/stepper";
 
 @Component({
   selector: 'app-offering-wizard-extension',
@@ -47,6 +48,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
   waitingForResponse = true;
   offerType: string = "data";
   participantId = "";
+  @ViewChild("stepper") stepper: MatStepper;
 
   constructor(
     private apiService: ApiService
@@ -279,6 +281,11 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
     } catch (e) {
       console.error(e);
     }
+  }
+
+  reset() {
+    this.stepper.reset();
+    this.prefillWizardNewOffering();
   }
 
 }
