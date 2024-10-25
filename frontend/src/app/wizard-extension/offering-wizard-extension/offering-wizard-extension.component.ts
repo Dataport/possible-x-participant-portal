@@ -236,8 +236,8 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
     }
   }
 
-  prefillWizardNewOffering() {
-    this.retrieveAndSetParticipantId();
+  async prefillWizardNewOffering() {
+    await this.retrieveAndSetParticipantId();
     this.resetPossibleSpecificFormValues();
 
     let gxServiceOfferingCs = {
@@ -271,13 +271,14 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
     }
   }
 
-  retrieveAndSetParticipantId() {
-    this.apiService.getParticipantId().then(response => {
+  async retrieveAndSetParticipantId() {
+    try {
+      const response = await this.apiService.getParticipantId();
       console.log(response);
       this.participantId = response.participantId;
-    }).catch((e) => {
+    } catch (e) {
       console.error(e);
-    });
+    }
   }
 
 }
