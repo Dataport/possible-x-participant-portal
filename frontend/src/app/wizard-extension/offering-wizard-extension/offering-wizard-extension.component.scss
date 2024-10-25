@@ -26,6 +26,18 @@
   font-style: italic;
 }
 
+.pr-button {
+  margin-right: calc(100% - 11rem);
+}
+
+.mat-stepper-vertical {
+  @apply bg-brand-50;
+}
+
+:host ::ng-deep .mat-vertical-stepper-header{
+  pointer-events: none !important;
+}
+
 .accordion-header {
   display: flex;
   grid-template-columns: 2fr 1fr 1fr auto;

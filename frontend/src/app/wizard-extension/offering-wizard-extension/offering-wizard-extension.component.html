@@ -15,79 +15,108 @@
 -->
 
 <div class="mb-3 flex-1" xmlns="http://www.w3.org/1999/html">
-  <div *ngIf="isDataOffering">
-    <label class="form-label">File Name*</label>
-    <input [(ngModel)]="selectedFileName" class="form-control rounded-none w-full" placeholder="e.g. MyFile.json"
-           type="text">
-    <div cFormText style="color: #7f7f7f;">
-      Please enter the file name of the file in the S3-Bucket.
+<mat-stepper orientation="vertical" linear #stepper>
+  <mat-step>
+    <ng-template matStepLabel>Define Offering Type</ng-template>
+    <label class="form-label">Offering Type Selection</label>
+    <select [(ngModel)]="offerType" class="form-select rounded-none w-full" (change)="prefillWizardNewOffering()">
+      <option value="service">Service offering</option>
+      <option value="data" selected>Data offering</option>
+    </select>
+    <div class="flex justify-end pt-4">
+      <button cButton color="primary" shape="rounded-0" type="submit" matStepperNext>Next</button>
     </div>
-    <div *ngIf="isInvalidFileName" class="text-error pt-2">
-      <small>Filename is required.</small>
+  </mat-step>
+
+  <mat-step *ngIf="isOfferingDataOffering()" errorMessage="Missing fields" [completed]="isDataResourceValid()">
+    <ng-template matStepLabel>Define Data Resource</ng-template>
+    <div>
+      <label class="form-label">File Name*</label>
+      <input [(ngModel)]="selectedFileName" class="form-control rounded-none w-full" placeholder="e.g. MyFile.json"
+             type="text">
+      <div cFormText style="color: #7f7f7f;">
+        Please enter the file name of the file in the S3-Bucket.
+      </div>
+      <div *ngIf="isInvalidFileName" class="text-error pt-2">
+        <small>Filename is required.</small>
+      </div>
+      <br/>
     </div>
-    <br/>
-  </div>
+    <app-base-wizard-extension #gxDataResourceWizard></app-base-wizard-extension>
+    <div class="flex justify-between pt-4">
+      <button cButton color="secondary" shape="rounded-0" matStepperPrevious>Back</button>
+      <button cButton color="primary" shape="rounded-0" type="submit" [disabled]="!isDataResourceValid()" matStepperNext>
+        Next
+      </button>
+    </div>
+  </mat-step>
 
-  <app-base-wizard-extension #gxServiceOfferingWizard></app-base-wizard-extension>
-
-  <label class="form-label">Policies</label>
-  <div cFormText>
-    Please define policies for the provided offer. <span *ngIf="!isPolicyChecked" class="font-bold">Currently, everything is allowed.</span>
-  </div>
-  <c-accordion>
-    <c-accordion-item #accordionItem="cAccordionItem" [visible]="false">
-      <ng-template cTemplateId="accordionHeaderTemplate">
-        <div class="accordion-header">
-          <label> Restrict the contractual booking to organization(s)</label>
-          <mat-checkbox (click)="accordionItem.toggleItem()" [(ngModel)]="isPolicyChecked"></mat-checkbox>
-        </div>
-      </ng-template>
-      <ng-template cTemplateId="accordionBody">
-        <div class="accordion-body">
-          <div cFormText style="color: #7f7f7f;">
-            Please enter organizationID
+  <mat-step errorMessage="Missing fields" [completed]="isServiceOfferingValid()">
+    <ng-template matStepLabel>Define Service Offering</ng-template>
+    <app-base-wizard-extension #gxServiceOfferingWizard></app-base-wizard-extension>
+    <label class="form-label">Policies</label>
+    <div cFormText>
+      Please define policies for the provided offer. <span *ngIf="!isPolicyChecked" class="font-bold">Currently, everything is allowed.</span>
+    </div>
+    <c-accordion>
+      <c-accordion-item #accordionItem="cAccordionItem" [visible]="false">
+        <ng-template cTemplateId="accordionHeaderTemplate">
+          <div class="accordion-header">
+            <label> Restrict the contractual booking to organization(s)</label>
+            <mat-checkbox (click)="accordionItem.toggleItem()" [(ngModel)]="isPolicyChecked"></mat-checkbox>
           </div>
-          <div *ngFor="let id of dapsIDs; let i = index; trackBy:customTrackBy" class="flex flex-col space-y-2">
-            <div class="flex items-center space-x-2">
-              <input #input="ngModel" [(ngModel)]="dapsIDs[i]" class="form-control rounded-none w-full"
-                     name="dapsID{{i}}" placeholder="did:web:example-organization.eu" type="text"/>
-              <button (click)="addInput()" *ngIf="i === 0" cButton color="primary" size="sm" variant="ghost">
-                <svg cIcon class="" name="cib-addthis" size="xl"></svg>
-              </button>
-              <button (click)="removeInput(i)" *ngIf="i > 0" cButton color="primary" size="sm" variant="ghost">
-                <svg cIcon class="" name="cil-trash" size="xl"></svg>
-              </button>
+        </ng-template>
+        <ng-template cTemplateId="accordionBody">
+          <div class="accordion-body">
+            <div cFormText style="color: #7f7f7f;">
+              Please enter organizationID
             </div>
-            <div *ngIf="input.touched && !isFieldFilled(dapsIDs[i])" style="color: red">
-              <small>
-                Please enter organizationID.
-              </small>
+            <div *ngFor="let id of dapsIDs; let i = index; trackBy:customTrackBy" class="flex flex-col space-y-2">
+              <div class="flex items-center space-x-2">
+                <input #input="ngModel" [(ngModel)]="dapsIDs[i]" class="form-control rounded-none w-full"
+                       name="dapsID{{i}}" placeholder="did:web:example-organization.eu" type="text"/>
+                <button (click)="addInput()" *ngIf="i === 0" cButton color="primary" size="sm" variant="ghost">
+                  <svg cIcon class="" name="cib-addthis" size="xl"></svg>
+                </button>
+                <button (click)="removeInput(i)" *ngIf="i > 0" cButton color="primary" size="sm" variant="ghost">
+                  <svg cIcon class="" name="cil-trash" size="xl"></svg>
+                </button>
+              </div>
+              <div *ngIf="input.touched && !isFieldFilled(dapsIDs[i])" style="color: red">
+                <small>
+                  Please enter organizationID.
+                </small>
+              </div>
             </div>
+
           </div>
+        </ng-template>
+      </c-accordion-item>
+    </c-accordion>
+    <div class="flex justify-between pt-4">
+      <button cButton color="secondary" shape="rounded-0" matStepperPrevious>Back</button>
+      <button cButton color="primary" shape="rounded-0" type="submit" [disabled]="!isServiceOfferingValid()"
+              (click)="createOffer()" matStepperNext>
+        Create Offer
+      </button>
+    </div>
+  </mat-step>
 
-        </div>
-      </ng-template>
-    </c-accordion-item>
-  </c-accordion>
-  <br>
-
-  <app-base-wizard-extension #gxDataResourceWizard *ngIf="isDataOffering"></app-base-wizard-extension>
-
-</div>
-
-<div class="text-right mt-3t">
-  <button (click)="createOffer()" [disabled]="isWizardFormInvalid() || isPossibleSpecificFormInvalid()" cButton
-          color="primary" shape="rounded-0"
-          type="submit">
-    Create Offer
-  </button>
-</div>
-
-<div class="flex justify-center mt-3">
-  <app-status-message
-    #offerCreationStatusMessage
-    [errorMessage]="'Offer creation failed.'"
-    [infoMessage]="'Offer creation ongoing.'"
-    [successMessage]="'Offer creation successful.'">
-  </app-status-message>
+  <mat-step [editable]="false">
+    <ng-template matStepLabel>Done</ng-template>
+    <div class="min-h-16">
+      <app-status-message
+        #offerCreationStatusMessage
+        [errorMessage]="'Offer creation failed.'"
+        [infoMessage]="'Offer creation ongoing.'"
+        [successMessage]="'Offer creation successful.'">
+      </app-status-message>
+    </div>
+    <div class="flex justify-end pt-4">
+      <button cButton color="primary" shape="rounded-0" type="submit" [disabled]="waitingForResponse" (click)="reset()">
+        Close
+      </button>
+    </div>
+  </mat-step>
+</mat-stepper>
 </div>

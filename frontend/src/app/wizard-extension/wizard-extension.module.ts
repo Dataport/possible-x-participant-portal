@@ -20,12 +20,14 @@ import {WizardAppModule} from '../sdwizard/wizardapp.module';
 import {CommonViewsModule} from '../views/common-views/common-views.module';
 import {
   AccordionButtonDirective,
-  AccordionComponent, AccordionItemComponent,
+  AccordionComponent,
+  AccordionItemComponent,
   ButtonGroupModule,
   ButtonModule,
   FormTextDirective,
   GridModule,
-  ModalModule, TemplateIdDirective
+  ModalModule,
+  TemplateIdDirective
 } from '@coreui/angular';
 import {FormsModule} from '@angular/forms';
 import {FlexLayoutModule} from '@angular/flex-layout';
@@ -33,6 +35,9 @@ import {OfferingWizardExtensionComponent} from './offering-wizard-extension/offe
 import {BaseWizardExtensionComponent} from './base-wizard-extension/base-wizard-extension.component';
 import {MaterialModule} from '../sdwizard/material.module'
 import {IconModule} from '@coreui/icons-angular';
+import {MatStepperModule} from "@angular/material/stepper";
+import {MatIconModule} from "@angular/material/icon";
+import {MatButtonModule} from "@angular/material/button";
 
 @NgModule({
   declarations: [BaseWizardExtensionComponent, OfferingWizardExtensionComponent],
@@ -52,6 +57,9 @@ import {IconModule} from '@coreui/icons-angular';
     MaterialModule,
     IconModule,
     FormTextDirective,
+    MatStepperModule,
+    MatButtonModule,
+    MatIconModule,
     AccordionComponent,
     AccordionItemComponent,
     TemplateIdDirective,
