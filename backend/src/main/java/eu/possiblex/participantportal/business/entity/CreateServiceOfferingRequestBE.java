@@ -3,7 +3,7 @@ package eu.possiblex.participantportal.business.entity;
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.GxDataAccountExport;
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.GxSOTermsAndConditions;
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
-import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
+import eu.possiblex.participantportal.application.entity.policies.EnforcementPolicy;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,5 +28,5 @@ public class CreateServiceOfferingRequestBE {
 
     private String description;
 
-    private Policy policy;
+    private List<EnforcementPolicy> enforcementPolicies;
 }

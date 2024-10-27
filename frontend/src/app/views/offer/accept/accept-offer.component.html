@@ -29,7 +29,7 @@
             <b>Provided by:</b> {{ offer.catalogOffering["gx:providedBy"].id }} <br/>
             <b>Publisher:</b> Not implemented yet <br/>
             <b>Description:</b> {{ offer.catalogOffering["gx:description"] }} <br/>
-            <b>Terms & Conditions:</b> {{ offer.catalogOffering["gx:termsAndConditions"] }} <br/>
+            <b>Terms & Conditions:</b> <br/>
             <ul *ngFor="let tnc of offer.catalogOffering['gx:termsAndConditions']">
               <li>
                 <div *ngIf="isHttpOrHttps(tnc['gx:URL']); else textUrl">

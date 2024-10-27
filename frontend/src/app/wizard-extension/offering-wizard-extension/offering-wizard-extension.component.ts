@@ -14,39 +14,50 @@
  *  limitations under the License.
  */
 
-import {Component, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ViewChild} from '@angular/core';
 import {StatusMessageComponent} from '../../views/common-views/status-message/status-message.component';
 import {BaseWizardExtensionComponent} from '../base-wizard-extension/base-wizard-extension.component';
 import {isDataResourceCs, isGxServiceOfferingCs} from '../../utils/credential-utils';
 import {BehaviorSubject, takeWhile} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ApiService} from '../../services/mgmt/api/api.service';
-import {POLICY_MAP} from '../../constants';
 import {
+  IEverythingAllowedPolicy,
   IGxDataResourceCredentialSubject,
   IGxServiceOfferingCredentialSubject,
   INodeKindIRITypeId,
+  IParticipantRestrictionPolicy,
   IPojoCredentialSubject
 } from '../../services/mgmt/api/backend';
+import {TBR_DATA_RESOURCE_ID, TBR_SERVICE_OFFERING_ID} from "../../views/offer/offer-data";
+import {MatStepper} from "@angular/material/stepper";
 
 @Component({
   selector: 'app-offering-wizard-extension',
   templateUrl: './offering-wizard-extension.component.html',
   styleUrls: ['./offering-wizard-extension.component.scss']
 })
-export class OfferingWizardExtensionComponent {
+export class OfferingWizardExtensionComponent implements AfterViewInit {
   @ViewChild("offerCreationStatusMessage") public offerCreationStatusMessage!: StatusMessageComponent;
   selectedFileName: string = "";
-  policyMap = POLICY_MAP;
-  selectedPolicy: string = "";
   public prefillDone: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  isPolicyChecked: boolean = false;
+  dapsIDs: string[] = [''];
   protected isDataOffering: boolean = true;
   @ViewChild("gxServiceOfferingWizard") private gxServiceOfferingWizard: BaseWizardExtensionComponent;
   @ViewChild("gxDataResourceWizard") private gxDataResourceWizard: BaseWizardExtensionComponent;
+  waitingForResponse = true;
+  offerType: string = "data";
+  participantId = "";
+  @ViewChild("stepper") stepper: MatStepper;
 
   constructor(
     private apiService: ApiService
   ) {
+  }
+
+  ngAfterViewInit(): void {
+    this.prefillWizardNewOffering();
   }
 
   get isInvalidFileName(): boolean {
@@ -54,12 +65,10 @@ export class OfferingWizardExtensionComponent {
   }
 
   get isInvalidPolicy(): boolean {
-    return !this.isFieldFilled(this.selectedPolicy);
+    return this.isPolicyChecked && this.dapsIDs.some(id => !this.isFieldFilled(id));
   }
 
   public async loadShape(offerType: string, serviceOfferingId: string, dataResourceId: string): Promise<void> {
-    this.isDataOffering = offerType === "data";
-
     this.prefillDone.next(false);
     console.log("Loading service offering shape");
     let serviceOfferingShapeSource = await this.apiService.getGxServiceOfferingShape();
@@ -117,15 +126,31 @@ export class OfferingWizardExtensionComponent {
 
   async createOffer() {
     console.log("Create offer.");
-    this.offerCreationStatusMessage.hideAllMessages();
+    this.waitingForResponse = true;
+    this.offerCreationStatusMessage.showInfoMessage();
 
     let gxOfferingJsonSd: IGxServiceOfferingCredentialSubject = this.gxServiceOfferingWizard.generateJsonCs();
-    gxOfferingJsonSd["gx:policy"] = [JSON.stringify(this.policyMap[this.selectedPolicy].policy)];
+    gxOfferingJsonSd["gx:policy"] = [""];
+
+    let policy: IParticipantRestrictionPolicy | IEverythingAllowedPolicy;
+
+    if (this.isPolicyChecked) {
+      policy = {
+        "@type": "ParticipantRestrictionPolicy",
+        allowedParticipants: this.dapsIDs
+      } as IParticipantRestrictionPolicy;
+    } else {
+      policy = {
+        "@type": "EverythingAllowedPolicy"
+      } as IEverythingAllowedPolicy;
+    }
 
     let createOfferTo: any = {
       serviceOfferingCredentialSubject: gxOfferingJsonSd,
-      policy: this.policyMap[this.selectedPolicy].policy
-    }
+      enforcementPolicies: [
+        policy
+      ]
+    };
 
     let createOfferMethod: (offer: any) => Promise<any>;
     createOfferMethod = this.apiService.createServiceOffering.bind(this.apiService)
@@ -147,10 +172,13 @@ export class OfferingWizardExtensionComponent {
 
     createOfferMethod(createOfferTo).then(response => {
       console.log(response);
+      this.waitingForResponse = false;
       this.offerCreationStatusMessage.showSuccessMessage("");
     }).catch((e: HttpErrorResponse) => {
+      this.waitingForResponse = false;
       this.offerCreationStatusMessage.showErrorMessage(e.error.detail || e.error || e.message);
     }).catch(_ => {
+      this.waitingForResponse = false;
       this.offerCreationStatusMessage.showErrorMessage("Unbekannter Fehler");
     });
 
@@ -173,32 +201,34 @@ export class OfferingWizardExtensionComponent {
 
   public resetPossibleSpecificFormValues() {
     this.selectedFileName = "";
-    this.selectedPolicy = "";
+    this.isPolicyChecked = false;
+    this.dapsIDs = [''];
   }
 
-  protected getPolicyNames() {
-    return Object.keys(this.policyMap);
+  addInput(): void {
+    this.dapsIDs.push('');
   }
 
-  protected getPolicyDetails(policy: string): string {
-    const policyDetails = this.policyMap[policy];
-    return policyDetails ? JSON.stringify(policyDetails, null, 2) : '';
+  removeInput(index: number): void {
+    if (this.dapsIDs.length > 1) {
+      this.dapsIDs.splice(index, 1);
+    }
   }
 
-  protected isWizardFormInvalid(): boolean {
-    let serviceOfferingWizardInvalid = this.gxServiceOfferingWizard?.isWizardFormInvalid();
-    let dataResourceWizardInvalid = this.isOfferingDataOffering() ? this.gxDataResourceWizard?.isWizardFormInvalid() : false;
-
-    return serviceOfferingWizardInvalid || dataResourceWizardInvalid;
+  public customTrackBy(index: number, obj: any): any {
+    return index;
   }
 
   protected isOfferingDataOffering() {
-    return this.isDataOffering;
+    return this.offerType === "data";
   }
 
-  protected isPossibleSpecificFormInvalid(): boolean {
-    let isInvalidFileName = this.isOfferingDataOffering() ? this.isInvalidFileName : false;
-    return isInvalidFileName || this.isInvalidPolicy;
+  protected isDataResourceValid(): boolean {
+    return !this.gxDataResourceWizard?.isWizardFormInvalid() && !this.isInvalidFileName;
+  }
+
+  protected isServiceOfferingValid(): boolean {
+    return !this.gxServiceOfferingWizard?.isWizardFormInvalid() && !this.isInvalidPolicy;
   }
 
   protected adaptGxShape(shapeSource: any, shapeName: string, excludedFields: string[]) {
@@ -226,5 +256,57 @@ export class OfferingWizardExtensionComponent {
     if (isDataResourceCs(cs)) {
       this.gxDataResourceWizard.prefillFields(cs, []);
     }
+
   }
+
+  async prefillWizardNewOffering() {
+    await this.retrieveAndSetParticipantId();
+    this.resetPossibleSpecificFormValues();
+
+    let gxServiceOfferingCs = {
+      "gx:providedBy": {
+        "@id": this.participantId
+      },
+      "@type": "gx:ServiceOffering"
+    }
+
+    let prefillSd: any[] = [gxServiceOfferingCs];
+
+    if (!this.isOfferingDataOffering()) {
+      this.loadShape(this.offerType, TBR_SERVICE_OFFERING_ID, null).then(_ => {
+        this.prefillFields(prefillSd);
+      });
+    } else {
+      let gxDataResourceCs = {
+        "gx:producedBy": {
+          "@id": this.participantId
+        },
+        "gx:copyrightOwnedBy": [this.participantId],
+        "gx:containsPII": false,
+        "@type": "gx:DataResource"
+      }
+
+      prefillSd.push(gxDataResourceCs);
+
+      this.loadShape(this.offerType, TBR_SERVICE_OFFERING_ID, TBR_DATA_RESOURCE_ID).then(_ => {
+        this.prefillFields(prefillSd);
+      });
+    }
+  }
+
+  async retrieveAndSetParticipantId() {
+    try {
+      const response = await this.apiService.getParticipantId();
+      console.log(response);
+      this.participantId = response.participantId;
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  reset() {
+    this.stepper.reset();
+    this.prefillWizardNewOffering();
+  }
+
 }

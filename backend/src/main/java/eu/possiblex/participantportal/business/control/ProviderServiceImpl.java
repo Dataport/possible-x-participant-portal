@@ -3,6 +3,8 @@ package eu.possiblex.participantportal.business.control;
 import eu.possiblex.participantportal.application.entity.CreateOfferResponseTO;
 import eu.possiblex.participantportal.application.entity.ParticipantIdTO;
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
+import eu.possiblex.participantportal.application.entity.policies.EnforcementPolicy;
+import eu.possiblex.participantportal.application.entity.policies.ParticipantRestrictionPolicy;
 import eu.possiblex.participantportal.business.entity.CreateDataOfferingRequestBE;
 import eu.possiblex.participantportal.business.entity.CreateServiceOfferingRequestBE;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
@@ -10,7 +12,7 @@ import eu.possiblex.participantportal.business.entity.edc.CreateEdcOfferBE;
 import eu.possiblex.participantportal.business.entity.edc.asset.AssetCreateRequest;
 import eu.possiblex.participantportal.business.entity.edc.common.IdResponse;
 import eu.possiblex.participantportal.business.entity.edc.contractdefinition.ContractDefinitionCreateRequest;
-import eu.possiblex.participantportal.business.entity.edc.policy.PolicyCreateRequest;
+import eu.possiblex.participantportal.business.entity.edc.policy.*;
 import eu.possiblex.participantportal.business.entity.exception.EdcOfferCreationException;
 import eu.possiblex.participantportal.business.entity.exception.FhOfferCreationException;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
@@ -21,6 +23,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -51,9 +55,9 @@ public class ProviderServiceImpl implements ProviderService {
      * @param fhCatalogClient the FH catalog client
      */
     @Autowired
-    public ProviderServiceImpl(EdcClient edcClient, FhCatalogClient fhCatalogClient,
-        ProviderServiceMapper providerServiceMapper, @Value("${edc.protocol-base-url}") String edcProtocolUrl,
-        @Value("${participant-id}") String participantId,
+    public ProviderServiceImpl(@Autowired EdcClient edcClient, @Autowired FhCatalogClient fhCatalogClient,
+        @Autowired ProviderServiceMapper providerServiceMapper,
+        @Value("${edc.protocol-base-url}") String edcProtocolUrl, @Value("${participant-id}") String participantId,
         @Value("${s3.bucket-storage-region}") String bucketStorageRegion,
         @Value("${s3.bucket-name}") String bucketName) {
 
@@ -75,9 +79,12 @@ public class ProviderServiceImpl implements ProviderService {
     @Override
     public CreateOfferResponseTO createOffering(CreateServiceOfferingRequestBE request) {
 
-        PxExtendedServiceOfferingCredentialSubject pxExtendedServiceOfferingCs = createCombinedCsFromRequest(request);
+        Policy policy = createEdcPolicyFromEnforcementPolicies(request.getEnforcementPolicies());
+
+        PxExtendedServiceOfferingCredentialSubject pxExtendedServiceOfferingCs = createCombinedCsFromRequest(request,
+            policy);
         CreateEdcOfferBE createEdcOfferBE = createEdcBEFromRequest(request, pxExtendedServiceOfferingCs.getId(),
-            pxExtendedServiceOfferingCs.getAssetId());
+            pxExtendedServiceOfferingCs.getAssetId(), policy);
 
         try {
             FhCatalogIdResponse fhResponseId = createFhCatalogOffer(pxExtendedServiceOfferingCs);
@@ -158,10 +165,11 @@ public class ProviderServiceImpl implements ProviderService {
      * Creates a combined credential subject for the offering from the request.
      *
      * @param request the offering creation request
+     * @param policy policy for the offering
      * @return the combined credential subject
      */
     private PxExtendedServiceOfferingCredentialSubject createCombinedCsFromRequest(
-        CreateServiceOfferingRequestBE request) {
+        CreateServiceOfferingRequestBE request, Policy policy) {
 
         String assetId = UUID.randomUUID().toString();
         String serviceOfferingId = "urn:uuid:" + UUID.randomUUID();
@@ -170,12 +178,13 @@ public class ProviderServiceImpl implements ProviderService {
         if (request instanceof CreateDataOfferingRequestBE dataOfferingRequest) { // data offering
             dataOfferingRequest.getDataResource().setId(dataResourceId);
             dataOfferingRequest.getDataResource().setExposedThrough(new NodeKindIRITypeId(serviceOfferingId));
+            dataOfferingRequest.getDataResource().setPolicy(providerServiceMapper.policyToStringList(policy));
 
             return providerServiceMapper.getPxExtendedServiceOfferingCredentialSubject(dataOfferingRequest,
-                serviceOfferingId, assetId, edcProtocolUrl);
+                serviceOfferingId, assetId, edcProtocolUrl, policy);
         } else { // base service offering
             return providerServiceMapper.getPxExtendedServiceOfferingCredentialSubject(request, serviceOfferingId,
-                assetId, edcProtocolUrl);
+                assetId, edcProtocolUrl, policy);
         }
 
     }
@@ -186,16 +195,53 @@ public class ProviderServiceImpl implements ProviderService {
      * @param request the offering creation request
      * @param offerId the id of the created offer
      * @param assetId the id of the created asset
+     * @param policy the policy for the EDC
      * @return the EDC offer business entity
      */
     private CreateEdcOfferBE createEdcBEFromRequest(CreateServiceOfferingRequestBE request, String offerId,
-        String assetId) {
+        String assetId, Policy policy) {
 
         if (request instanceof CreateDataOfferingRequestBE dataOfferingRequest) { // data offering
-            return providerServiceMapper.getCreateEdcOfferBE(dataOfferingRequest, offerId, assetId);
+            return providerServiceMapper.getCreateEdcOfferBE(dataOfferingRequest, offerId, assetId, policy);
         } else { // base service offering
-            return providerServiceMapper.getCreateEdcOfferBE(request, offerId, assetId);
+            return providerServiceMapper.getCreateEdcOfferBE(request, offerId, assetId, policy);
         }
+    }
+
+    /**
+     * Given a list of enforcement policies, convert them to a single policy that can be given to the EDC for
+     * evaluation.
+     *
+     * @param enforcementPolicies list of enforcement policies and their constraints
+     * @return edc policy
+     */
+    private Policy createEdcPolicyFromEnforcementPolicies(List<EnforcementPolicy> enforcementPolicies) {
+
+        List<OdrlConstraint> constraints = new ArrayList<>();
+
+        // iterate over all enforcement policies and add a constraint per entry
+        for (EnforcementPolicy enforcementPolicy : enforcementPolicies) {
+            if (enforcementPolicy instanceof ParticipantRestrictionPolicy participantRestrictionPolicy) { // restrict to participants
+
+                // create constraint
+                OdrlConstraint participantConstraint = OdrlConstraint.builder().leftOperand("connectorId")
+                    .operator(OdrlOperator.IN)
+                    .rightOperand(String.join(",", participantRestrictionPolicy.getAllowedParticipants())).build();
+                constraints.add(participantConstraint);
+            } // else unknown or everything allowed => no constraint
+        }
+
+        // apply constraints to both use and transfer permission
+        OdrlPermission usePermission = OdrlPermission.builder().action(OdrlAction.USE).constraint(constraints).build();
+        OdrlPermission transferPermission = OdrlPermission.builder().action(OdrlAction.TRANSFER).constraint(constraints)
+            .build();
+
+        // add permissions to ODRL policy
+        Policy policy = new Policy();
+        policy.getPermission().add(usePermission);
+        policy.getPermission().add(transferPermission);
+
+        return policy;
     }
 
 }

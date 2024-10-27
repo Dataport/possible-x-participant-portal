@@ -1,10 +1,11 @@
 <div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
   <div class="p-6 w-full max-w-3xl"> <!-- Centered form container with fixed max width -->
-    <form [formGroup]="selectionForm" (submit)="selectOffer(selectionForm.controls.offerId.value)">
+    <form (submit)="selectOffer(selectionForm.controls.offerId.value)" [formGroup]="selectionForm">
       <div class="form-group row pb-6 min-h-32 justify-start">
         <div class="max-h-20">
           <label class="form-label">Offer ID (as provided in Fraunhofer Catalogue):</label>
-          <input formControlName="offerId" type="text" placeholder="e.g. stadtwerke-netz-44ff-b685" class="form-control rounded-none">
+          <input class="form-control rounded-none" formControlName="offerId" placeholder="e.g. urn:uuid:c92cbab3-3e4d-4cb5-8060-9aff7320f85b"
+                 type="text">
         </div>
         <div *ngIf="isInvalidOfferId" class="text-warning pt-2">
           The Offer ID can not contain special characters other than - (hyphen).

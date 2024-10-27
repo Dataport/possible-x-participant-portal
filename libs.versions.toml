@@ -11,6 +11,7 @@ typescriptGenerator = "3.2.1263"
 mapStruct = "1.6.0"
 titaniumJsonLd = "1.4.1"
 jakartaJson = "2.0.1"
+hibernateValidator = "8.0.1.Final"
 
 [libraries]
 springBootStarterActuator = { module = "org.springframework.boot:spring-boot-starter-actuator", version.ref = "springBoot" }
@@ -29,6 +30,7 @@ reactorTest = { module = "io.projectreactor:reactor-test", version.ref = "reacto
 jUnit = { module = "org.junit.platform:junit-platform-launcher", version.ref = "jUnit" }
 titaniumJsonLd = { module = "com.apicatalog:titanium-json-ld-jre8", version.ref = "titaniumJsonLd" }
 jakartaJson = { module = "org.glassfish:jakarta.json", version.ref = "jakartaJson" }
+hibernateValidator = { module = "org.hibernate:hibernate-validator", version.ref = "hibernateValidator" }
 
 [plugins]
 springBoot = { id = "org.springframework.boot", version.ref = "springBoot" }

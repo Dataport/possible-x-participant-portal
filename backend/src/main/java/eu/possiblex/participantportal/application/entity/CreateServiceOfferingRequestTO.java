@@ -1,9 +1,11 @@
 package eu.possiblex.participantportal.application.entity;
 
 import eu.possiblex.participantportal.application.entity.credentials.gx.serviceofferings.GxServiceOfferingCredentialSubject;
-import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
+import eu.possiblex.participantportal.application.entity.policies.EnforcementPolicy;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,5 +17,5 @@ public class CreateServiceOfferingRequestTO {
 
     private GxServiceOfferingCredentialSubject serviceOfferingCredentialSubject;
 
-    private Policy policy;
+    private List<EnforcementPolicy> enforcementPolicies;
 }
