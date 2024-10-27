@@ -53,21 +53,5 @@
     "id": "urn:uuid:GENERATED_SERVICE_OFFERING_ID",
     "@type": "gx:ServiceOffering"
   },
-  "policy": {
-    "@type": "odrl:Set",
-    "odrl:permission": [
-      {
-        "odrl:action": {
-          "odrl:type": "http://www.w3.org/ns/odrl/2/use"
-        }
-      },
-      {
-        "odrl:action": {
-          "odrl:type": "http://www.w3.org/ns/odrl/2/transfer"
-        }
-      }
-    ],
-    "odrl:prohibition": [],
-    "odrl:obligation": []
-  }
+  "enforcementPolicies": []
 }
