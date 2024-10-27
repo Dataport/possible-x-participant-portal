@@ -46,6 +46,7 @@ dependencies {
   testImplementation(libs.springBootStarterTest)
   testImplementation(libs.reactorTest)
   testRuntimeOnly(libs.jUnit)
+  testImplementation("org.wiremock:wiremock-standalone:3.9.2")
 }
 
 tasks.withType<Test> {
