@@ -41,7 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(ProviderRestApiImpl.class)
 @ContextConfiguration(classes = { ProviderRestApiTest.TestConfig.class, ProviderRestApiImpl.class })
-class ProviderRestApiTest {
+class ProviderRestApiTest extends ProviderTestParent {
 
     @Autowired
     private MockMvc mockMvc;
@@ -55,16 +55,17 @@ class ProviderRestApiTest {
     @Test
     void shouldReturnMessageOnCreateServiceOffering() throws Exception {
 
+        // GIVEN
+
         reset(providerService);
 
-        //given
         CreateServiceOfferingRequestTO request = objectMapper.readValue(getCreateServiceOfferingTOJsonString(),
             CreateServiceOfferingRequestTO.class);
 
         GxServiceOfferingCredentialSubject expectedServiceOfferingCS = getGxServiceOfferingCredentialSubject();
 
-        //when
-        //then
+        // WHEN/THEN
+
         this.mockMvc.perform(post("/provider/offer/service").content(RestApiHelper.asJsonString(request))
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
             .andExpect(jsonPath("$.edcResponseId").value(ProviderServiceFake.CREATE_OFFER_RESPONSE_ID))
@@ -97,17 +98,18 @@ class ProviderRestApiTest {
     @Test
     void shouldReturnMessageOnCreateDataOffering() throws Exception {
 
+        // GIVEN
+
         reset(providerService);
 
-        //given
         CreateDataOfferingRequestTO request = objectMapper.readValue(getCreateDataOfferingTOJsonString(),
             CreateDataOfferingRequestTO.class);
 
         GxServiceOfferingCredentialSubject expectedServiceOfferingCS = getGxServiceOfferingCredentialSubject();
         GxDataResourceCredentialSubject expectedDataResourceCS = getGxDataResourceCredentialSubject();
 
-        //when
-        //then
+        // WHEN/THEN
+
         this.mockMvc.perform(post("/provider/offer/data").content(RestApiHelper.asJsonString(request))
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
             .andExpect(jsonPath("$.edcResponseId").value(ProviderServiceFake.CREATE_OFFER_RESPONSE_ID))
@@ -142,8 +144,7 @@ class ProviderRestApiTest {
 
     @Test
     void shouldReturnMessageOnGetParticipantId() throws Exception {
-        //when
-        //then
+        // WHEN/THEN
         this.mockMvc.perform(get("/provider/id")).andDo(print()).andExpect(status().isOk())
             .andExpect(jsonPath("$.participantId").value(ProviderServiceFake.PARTICIPANT_ID));
     }

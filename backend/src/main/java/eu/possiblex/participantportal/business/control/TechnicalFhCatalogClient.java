@@ -19,13 +19,13 @@
 
 package eu.possiblex.participantportal.business.control;
 
+import eu.possiblex.participantportal.business.entity.common.CommonConstants;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.service.annotation.GetExchange;
-import org.springframework.web.service.annotation.PostExchange;
 import org.springframework.web.service.annotation.PutExchange;
 
 /**
@@ -33,8 +33,9 @@ import org.springframework.web.service.annotation.PutExchange;
  */
 public interface TechnicalFhCatalogClient {
 
-    @PutExchange("/trust/service-offering")
-    FhCatalogIdResponse addServiceOfferingToFhCatalog(@RequestBody PxExtendedServiceOfferingCredentialSubject serviceOfferingCs, @RequestParam String id);
+    @PutExchange(CommonConstants.REST_PATH_FH_CATALOG_SERVICE_OFFER)
+    FhCatalogIdResponse addServiceOfferingToFhCatalog(
+        @RequestBody PxExtendedServiceOfferingCredentialSubject serviceOfferingCs, @RequestParam String id);
 
     @GetExchange("/resources/service-offering/{offering_id}")
     String getFhCatalogOffer(@PathVariable String offering_id);

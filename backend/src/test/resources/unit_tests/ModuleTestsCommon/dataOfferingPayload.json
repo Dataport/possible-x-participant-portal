@@ -1,0 +1,97 @@
+{
+  "serviceOfferingCredentialSubject": {
+    "@context": {
+      "gx": "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "sh": "http://www.w3.org/ns/shacl#",
+      "xsd": "http://www.w3.org/2001/XMLSchema#",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "vcard": "http://www.w3.org/2006/vcard/ns#"
+    },
+    "gx:providedBy": {
+      "@id": "did:web:example-organization.eu"
+    },
+    "gx:name": {
+      "@value": "Test Service Offering",
+      "@type": "xsd:string"
+    },
+    "gx:description": {
+      "@value": "This is the service offering description.",
+      "@type": "xsd:string"
+    },
+    "gx:policy": {
+      "@value": "{\n  \"@type\": \"odrl:Set\",\n  \"odrl:permission\": [\n    {\n      \"odrl:action\": {\n        \"odrl:type\": \"http://www.w3.org/ns/odrl/2/use\"\n      }\n    },\n    {\n      \"odrl:action\": {\n        \"odrl:type\": \"http://www.w3.org/ns/odrl/2/transfer\"\n      }\n    }\n  ],\n  \"odrl:prohibition\": [],\n  \"odrl:obligation\": []\n}",
+      "@type": "xsd:string"
+    },
+    "gx:dataAccountExport": {
+      "@type": "gx:DataAccountExport",
+      "gx:formatType": {
+        "@value": "application/json",
+        "@type": "xsd:string"
+      },
+      "gx:accessType": {
+        "@value": "digital",
+        "@type": "xsd:string"
+      },
+      "gx:requestType": {
+        "@value": "API",
+        "@type": "xsd:string"
+      }
+    },
+    "gx:termsAndConditions": {
+      "@type": "gx:SOTermsAndConditions",
+      "gx:URL": {
+        "@value": "test.eu/tnc",
+        "@type": "xsd:string"
+      },
+      "gx:hash": {
+        "@value": "hash123",
+        "@type": "xsd:string"
+      }
+    },
+    "id": "urn:uuid:GENERATED_SERVICE_OFFERING_ID",
+    "@type": "gx:ServiceOffering"
+  },
+  "dataResourceCredentialSubject": {
+    "@context": {
+      "gx": "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "sh": "http://www.w3.org/ns/shacl#",
+      "xsd": "http://www.w3.org/2001/XMLSchema#",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "vcard": "http://www.w3.org/2006/vcard/ns#"
+    },
+    "gx:copyrightOwnedBy": {
+      "@id": "did:web:example-organization.eu"
+    },
+    "gx:producedBy": {
+      "@id": "did:web:example-organization.eu"
+    },
+    "gx:name": {
+      "@value": "Test Dataset",
+      "@type": "xsd:string"
+    },
+    "gx:description": {
+      "@value": "This is the data resource description.",
+      "@type": "xsd:string"
+    },
+    "gx:license": {
+      "@value": "AGPL-1.0-only",
+      "@type": "xsd:string"
+    },
+    "gx:containsPII": true,
+    "gx:exposedThrough": {
+      "@id": "urn:uuid:GENERATED_SERVICE_OFFERING_ID"
+    },
+    "gx:policy": {
+      "@value": "{\n  \"@type\": \"odrl:Set\",\n  \"odrl:permission\": [\n    {\n      \"odrl:action\": {\n        \"odrl:type\": \"http://www.w3.org/ns/odrl/2/use\"\n      }\n    },\n    {\n      \"odrl:action\": {\n        \"odrl:type\": \"http://www.w3.org/ns/odrl/2/transfer\"\n      }\n    }\n  ],\n  \"odrl:prohibition\": [],\n  \"odrl:obligation\": []\n}",
+      "@type": "xsd:string"
+    },
+    "id": "urn:uuid:GENERATED_DATA_RESOURCE_ID",
+    "@type": "gx:DataResource"
+  },
+  "fileName": "testfile.txt",
+  "enforcementPolicies": []
+}
