@@ -58,6 +58,7 @@
     <mat-step [completed]="isServiceOfferingValid()" errorMessage="Missing fields">
       <ng-template matStepLabel>Define Service Offering</ng-template>
       <app-base-wizard-extension #gxServiceOfferingWizard></app-base-wizard-extension>
+      <br/>
       <label
         [matTooltip]="'Below you have the option of entering a policy for the use and management of this service, which will also be technically enforced.\nYou have the option of restricting access to the service to organizations of your choice'"
         class="form-label"
