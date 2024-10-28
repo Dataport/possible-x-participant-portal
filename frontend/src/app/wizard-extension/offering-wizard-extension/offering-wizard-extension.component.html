@@ -58,7 +58,7 @@
     <mat-step [completed]="isServiceOfferingValid()" errorMessage="Missing fields">
       <ng-template matStepLabel>Define Service Offering</ng-template>
       <app-base-wizard-extension #gxServiceOfferingWizard></app-base-wizard-extension>
-      <label class="form-label">Policies</label>
+      <label class="form-label">Predefined Policy Class</label>
       <div cFormText>
         Please define policies for the provided offer. <span *ngIf="!isPolicyChecked" class="font-bold">Currently, everything is allowed.</span>
       </div>

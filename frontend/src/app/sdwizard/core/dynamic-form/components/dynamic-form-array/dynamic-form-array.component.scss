@@ -14,9 +14,9 @@
   font-size: 16px;
 }
 
-.addDelete{
- 
- text-align: initial!important;
+.addDelete {
+
+  text-align: initial !important;
 }
 
 .flex-container {
@@ -30,6 +30,12 @@
 }
 
 .field-key {
-  color:gray; 
+  color: gray;
   font-style: italic;
+}
+
+::ng-deep .custom-tooltip {
+  word-wrap: break-word;
+  white-space: pre-line;
+  max-width: 2000px !important; /* Adjust the width as needed */
 }

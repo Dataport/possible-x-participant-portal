@@ -223,17 +223,15 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
 
     if (this.isOfferingDataOffering()) {
       let gxDataResourceJsonSd: IGxDataResourceCredentialSubject = this.gxDataResourceWizard.generateJsonCs();
-      gxServiceOfferingCs["gx:name"] = "Data Offering Service - " + gxDataResourceJsonSd["gx:name"]["@value"];
-      gxServiceOfferingCs["gx:description"] = "Data Offering Service provides data (" + gxDataResourceJsonSd["gx:name"]["@value"] + ") securely through the Possible Dataspace software solution. The Data Offering Service enables secure and sovereign data exchange between different organizations using the Eclipse Dataspace Connector (EDC). The service seamlessly integrates with IONOS S3 buckets to ensure reliable and scalable data storage and transfer.";
+      gxServiceOfferingCs["gx:name"] = "Data Offering Service - " + (gxDataResourceJsonSd["gx:name"] ? gxDataResourceJsonSd["gx:name"]["@value"] : "data resource name not available");
+      gxServiceOfferingCs["gx:description"] = "Data Offering Service provides data (" + (gxDataResourceJsonSd["gx:name"] ? gxDataResourceJsonSd["gx:name"]["@value"] : "data resource name not available") + ") securely through the Possible Dataspace software solution. The Data Offering Service enables secure and sovereign data exchange between different organizations using the Eclipse Dataspace Connector (EDC). The service seamlessly integrates with IONOS S3 buckets to ensure reliable and scalable data storage and transfer.";
       gxServiceOfferingCs["gx:dataAccountExport"] = {
         "@type": "gx:DataAccountExport",
         "gx:formatType": "text/plain",
         "gx:accessType": "digital",
         "gx:requestType": "email"
       };
-      gxServiceOfferingCs["gx:dataProtectionRegime"] = {
-        "@value": "GDPR2016", "@type": "xsd:string"
-      }
+      gxServiceOfferingCs["gx:dataProtectionRegime"] = ["GDPR2016"];
     }
 
     this.loadShape(this.gxServiceOfferingWizard, this.serviceOfferingShapeSource, TBR_SERVICE_OFFERING_ID).then(_ => {
