@@ -51,6 +51,7 @@ public interface ProviderServiceMapper {
     @Mapping(target = "properties.dataAccountExport", source = "request.dataAccountExport")
     @Mapping(target = "properties.contenttype", ignore = true)
     @Mapping(target = "properties.version", ignore = true)
+    @Mapping(target = "properties.offeringPolicy", source = "request.policy")
     @Mapping(target = "fileName", constant = "")
     @Mapping(target = "policy", source = "policy")
     CreateEdcOfferBE getCreateEdcOfferBE(CreateServiceOfferingRequestBE request, String offerId, String assetId,
@@ -62,6 +63,7 @@ public interface ProviderServiceMapper {
     @Mapping(target = "properties.exposedThrough", source = "request.dataResource.exposedThrough")
     @Mapping(target = "properties.license", source = "request.dataResource.license")
     @Mapping(target = "properties.containsPII", source = "request.dataResource.containsPII")
+    @Mapping(target = "properties.dataPolicy", source = "request.dataResource.policy")
     @Mapping(target = "fileName", source = "request.fileName")
     CreateEdcOfferBE getCreateEdcOfferBE(CreateDataOfferingRequestBE request, String offerId, String assetId,
         Policy policy);
@@ -85,22 +87,6 @@ public interface ProviderServiceMapper {
         } catch (JsonProcessingException e) {
             return Collections.emptyList();
         }
-    }
-
-    default List<String> combinePolicyForEdcOffer(CreateServiceOfferingRequestBE request, Policy policy) {
-
-        return combineSOPolicyAndPolicy(request, policy);
-    }
-
-    default List<String> combinePolicyForEdcOffer(CreateDataOfferingRequestBE request, Policy policy) {
-
-        List<String> policyList = combineSOPolicyAndPolicy(request, policy);
-
-        if (request.getDataResource().getPolicy() != null) {
-            policyList.addAll(request.getDataResource().getPolicy());
-        }
-
-        return policyList;
     }
 
     default List<String> combineSOPolicyAndPolicy(CreateServiceOfferingRequestBE request, Policy policy) {
