@@ -1,7 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ConsumeComponent } from './consume.component';
-import { IOfferDetailsTO } from '../../../services/mgmt/api/backend';
+import {
+  IAcceptOfferResponseTO, INegotiationState,
+  IOfferDetailsTO,
+  IPxExtendedServiceOfferingCredentialSubject
+} from '../../../services/mgmt/api/backend';
 import { NO_ERRORS_SCHEMA } from "@angular/core";
 
 describe('ConsumeComponent', () => {
@@ -10,13 +14,31 @@ describe('ConsumeComponent', () => {
 
   const offerDetails = {
     edcOfferId: 'dummy',
-    counterPartyAddress: 'dummy',
-    offerType: 'dummy',
-    creationDate: new Date(Date.now()),
-    name: 'dummy',
-    description: 'dummy',
-    contentType: 'dummy'
+    catalogOffering: {
+      id: "catalogOfferingId",
+      "gx:providedBy": { id: "providedBy" },
+      "gx:aggregationOf": [],
+      "gx:termsAndConditions": [],
+      "gx:policy": ["policy"],
+      "gx:dataProtectionRegime": [],
+      "gx:dataAccountExport": [],
+      "gx:name": "name",
+      "gx:description": "description",
+      "px:assetId": "assetId",
+      "px:providerUrl": "providerUrl",
+      "schema:name": "schema",
+      "schema:description": "schemaDescription",
+      "@context": {},
+      "@type": []
+    } as IPxExtendedServiceOfferingCredentialSubject,
+    dataOffering: false
   } as IOfferDetailsTO;
+
+  const negotiatedContract = {
+    negotiationState: "ACCEPTED" as INegotiationState,
+    contractAgreementId: "contractAgreementId",
+    dataOffering: false
+  } as IAcceptOfferResponseTO;
 
   beforeEach(async () => {
 
@@ -35,9 +57,25 @@ describe('ConsumeComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should select offer', () => {
+  it('should set selected offer', () => {
     component.setSelectedOffer(offerDetails);
 
     expect(component.selectedOffer).toEqual(offerDetails);
+  });
+
+  it('should set negotiated contract', () => {
+    component.setNegotiatedContract(negotiatedContract);
+
+    expect(component.negotiatedContract).toEqual(negotiatedContract);
+  });
+
+  it('should reset', () => {
+    component.selectedOffer = offerDetails;
+    component.negotiatedContract = negotiatedContract;
+
+    component.resetSelection();
+
+    expect(component.selectedOffer).toBeUndefined();
+    expect(component.negotiatedContract).toBeUndefined();
   });
 });
