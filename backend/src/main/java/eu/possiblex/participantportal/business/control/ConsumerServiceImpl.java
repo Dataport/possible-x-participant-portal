@@ -26,6 +26,8 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -47,18 +49,15 @@ public class ConsumerServiceImpl implements ConsumerService {
 
     private final String bucketName;
 
-    private final String bucketTargetPath;
-
     public ConsumerServiceImpl(@Autowired EdcClient edcClient, @Autowired FhCatalogClient fhCatalogClient,
         @Autowired TaskScheduler taskScheduler, @Value("${s3.bucket-storage-region}") String bucketStorageRegion,
-        @Value("${s3.bucket-name}") String bucketName, @Value("${s3.bucket-target-path}") String bucketTargetPath) {
+        @Value("${s3.bucket-name}") String bucketName) {
 
         this.edcClient = edcClient;
         this.fhCatalogClient = fhCatalogClient;
         this.taskScheduler = taskScheduler;
         this.bucketStorageRegion = bucketStorageRegion;
         this.bucketName = bucketName;
-        this.bucketTargetPath = bucketTargetPath;
     }
 
     @Override
@@ -115,6 +114,8 @@ public class ConsumerServiceImpl implements ConsumerService {
         DcatDataset dataset = getDatasetById(edcOffer, request.getEdcOfferId());
 
         // initiate transfer
+        String timestamp = ZonedDateTime.now().format(DateTimeFormatter.ofPattern("YYYYMMDD_HHmmss"));
+        String bucketTargetPath = timestamp + "/" + request.getContractAgreementId();
         DataAddress dataAddress = IonosS3DataDestination.builder().region(bucketStorageRegion).bucketName(bucketName)
             .path(bucketTargetPath).keyName("myKey").build();
         TransferRequest transferRequest = TransferRequest.builder().connectorId(edcOffer.getParticipantId())
