@@ -189,6 +189,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
   }
 
   async prefillWizardNewOffering() {
+    this.resetPossibleSpecificFormValues();
     if (this.isOfferingDataOffering()) {
       this.prefillDataResourceWizard();
     } else {

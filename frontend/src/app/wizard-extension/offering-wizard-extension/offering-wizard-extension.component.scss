@@ -34,7 +34,7 @@
   @apply bg-brand-50;
 }
 
-:host ::ng-deep .mat-vertical-stepper-header{
+:host ::ng-deep .mat-vertical-stepper-header {
   pointer-events: none !important;
 }
 
@@ -50,4 +50,10 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: 5px;
+}
+
+::ng-deep .custom-tooltip {
+  word-wrap: break-word;
+  white-space: pre-line;
+  max-width: 2000px !important; /* Adjust the width as needed */
 }
