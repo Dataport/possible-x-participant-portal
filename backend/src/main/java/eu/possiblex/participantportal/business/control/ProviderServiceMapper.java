@@ -51,7 +51,6 @@ public interface ProviderServiceMapper {
     @Mapping(target = "properties.dataAccountExport", source = "request.dataAccountExport")
     @Mapping(target = "properties.contenttype", ignore = true)
     @Mapping(target = "properties.version", ignore = true)
-    @Mapping(target = "properties.offeringPolicy", source = "request.policy")
     @Mapping(target = "fileName", constant = "")
     @Mapping(target = "policy", source = "policy")
     CreateEdcOfferBE getCreateEdcOfferBE(CreateServiceOfferingRequestBE request, String offerId, String assetId,

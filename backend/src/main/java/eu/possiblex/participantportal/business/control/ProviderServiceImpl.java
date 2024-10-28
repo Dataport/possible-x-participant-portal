@@ -200,12 +200,18 @@ public class ProviderServiceImpl implements ProviderService {
     private CreateEdcOfferBE createEdcBEFromRequest(CreateServiceOfferingRequestBE request, String offerId,
         String assetId, Policy policy) {
 
+        CreateEdcOfferBE createEdcOfferBE = null;
         if (request instanceof CreateDataOfferingRequestBE dataOfferingRequest) { // data offering
-            return providerServiceMapper.getCreateEdcOfferBE(dataOfferingRequest, offerId, assetId, policy);
+            createEdcOfferBE = providerServiceMapper.getCreateEdcOfferBE(dataOfferingRequest, offerId, assetId, policy);
+            createEdcOfferBE.getProperties()
+                .setOfferingPolicy(providerServiceMapper.combineSOPolicyAndPolicy(dataOfferingRequest, policy));
 
         } else { // base service offering
-            return providerServiceMapper.getCreateEdcOfferBE(request, offerId, assetId, policy);
+            createEdcOfferBE = providerServiceMapper.getCreateEdcOfferBE(request, offerId, assetId, policy);
+            createEdcOfferBE.getProperties()
+                .setOfferingPolicy(providerServiceMapper.combineSOPolicyAndPolicy(request, policy));
         }
+        return createEdcOfferBE;
     }
 
     /**

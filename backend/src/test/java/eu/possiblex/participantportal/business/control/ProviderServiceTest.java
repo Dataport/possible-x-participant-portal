@@ -108,7 +108,8 @@ class ProviderServiceTest {
             properties.getDataProtectionRegime());
         assertThat(offeringCs.getDataAccountExport()).usingRecursiveComparison()
             .isEqualTo(properties.getDataAccountExport());
-        assertThat(properties.getOfferingPolicy()).hasSize(1).contains("dummyServiceOfferingPolicy");
+        assertThat(properties.getOfferingPolicy()).hasSize(2).contains("dummyServiceOfferingPolicy");
+        assertThat(properties.getDataPolicy()).isNull();
         //check if file name is set correctly
         assertEquals("", assetCreateRequest.getDataAddress().getKeyName());
         assertEquals("", ((IonosS3DataSource) assetCreateRequest.getDataAddress()).getBlobName());
@@ -190,7 +191,7 @@ class ProviderServiceTest {
         assertEquals(resourceCs.getExposedThrough().getId(), properties.getExposedThrough().getId());
         assertThat(resourceCs.getLicense()).containsExactlyInAnyOrderElementsOf(properties.getLicense());
         assertEquals(resourceCs.isContainsPII(), properties.isContainsPII());
-        assertThat(properties.getOfferingPolicy()).hasSize(1).contains("dummyServiceOfferingPolicy");
+        assertThat(properties.getOfferingPolicy()).hasSize(2).contains("dummyServiceOfferingPolicy");
         assertThat(properties.getDataPolicy()).hasSize(1).contains("dummyDataResourcePolicy");
         //check if file name is set correctly
         assertEquals(FILE_NAME, assetCreateRequest.getDataAddress().getKeyName());
