@@ -2,7 +2,10 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SelectComponent } from './select.component';
 import { ApiService } from "../../../services/mgmt/api/api.service";
-import { IOfferDetailsTO } from "../../../services/mgmt/api/backend";
+import {
+  IOfferDetailsTO,
+  IPxExtendedServiceOfferingCredentialSubject
+} from "../../../services/mgmt/api/backend";
 import { StatusMessageComponent } from "../../common-views/status-message/status-message.component";
 import { Component, NO_ERRORS_SCHEMA } from "@angular/core";
 import { first } from "rxjs";
@@ -14,12 +17,24 @@ describe('SelectOfferComponent', () => {
 
   const offerDetails = {
     edcOfferId: 'dummy',
-    counterPartyAddress: 'dummy',
-    offerType: 'dummy',
-    creationDate: new Date(Date.now()),
-    name: 'dummy',
-    description: 'dummy',
-    contentType: 'dummy'
+    catalogOffering: {
+      id: "catalogOfferingId",
+      "gx:providedBy": { id: "providedBy" },
+      "gx:aggregationOf": [],
+      "gx:termsAndConditions": [],
+      "gx:policy": ["policy"],
+      "gx:dataProtectionRegime": [],
+      "gx:dataAccountExport": [],
+      "gx:name": "name",
+      "gx:description": "description",
+      "px:assetId": "assetId",
+      "px:providerUrl": "providerUrl",
+      "schema:name": "schema",
+      "schema:description": "schemaDescription",
+      "@context": {},
+      "@type": []
+    } as IPxExtendedServiceOfferingCredentialSubject,
+    dataOffering: false
   } as IOfferDetailsTO;
 
   @Component({
@@ -60,7 +75,7 @@ describe('SelectOfferComponent', () => {
     component.selectedOffer.pipe(first())
       .subscribe((offer) => expect(offer).toEqual(offerDetails));
 
-    component.selectOffer();
+    component.selectOffer("offerId");
 
     expect(apiService.selectContractOffer).toHaveBeenCalled();
   });
