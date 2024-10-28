@@ -10,6 +10,7 @@ import eu.possiblex.participantportal.application.control.ProviderApiMapper;
 import eu.possiblex.participantportal.application.entity.CreateServiceOfferingRequestTO;
 import eu.possiblex.participantportal.application.entity.credentials.gx.serviceofferings.GxServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.control.*;
+import eu.possiblex.participantportal.business.entity.common.CommonConstants;
 import eu.possiblex.participantportal.utils.TestUtils;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -75,8 +76,6 @@ class ProviderModuleTest extends ProviderTestParent {
         CreateServiceOfferingRequestTO request = objectMapper.readValue(getCreateServiceOfferingTOJsonString(),
                 CreateServiceOfferingRequestTO.class);
 
-        GxServiceOfferingCredentialSubject expectedServiceOfferingCS = getGxServiceOfferingCredentialSubject();
-
         mockFhCatalogCreateServiceOffering();
         mockEdcCreateAsset();
         mockEdcCreatePolicy();
@@ -90,7 +89,7 @@ class ProviderModuleTest extends ProviderTestParent {
 
     private void mockFhCatalogCreateServiceOffering() {
         WireMockRuntimeInfo wm1RuntimeInfo = wmExt.getRuntimeInfo();
-        wmExt.stubFor(WireMock.put(WireMock.urlPathMatching("/" + FH_CATALOG_SERVICE_PATH + "/resources/service-offering.*"))
+        wmExt.stubFor(WireMock.put(WireMock.urlPathMatching("/" + FH_CATALOG_SERVICE_PATH + CommonConstants.REST_PATH_FH_CATALOG_SERVICE_OFFER + ".*"))
                 .willReturn(WireMock.aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json")
@@ -165,11 +164,6 @@ class ProviderModuleTest extends ProviderTestParent {
         @Bean
         public ObjectMapper objectMapper() {
             return new ObjectMapper();
-        }
-
-        @Bean
-        public EdcClient edcClientMock() {
-            return Mockito.mock(EdcClient.class);
         }
     }
 }

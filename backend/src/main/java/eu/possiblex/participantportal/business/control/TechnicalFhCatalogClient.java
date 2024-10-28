@@ -19,6 +19,7 @@
 
 package eu.possiblex.participantportal.business.control;
 
+import eu.possiblex.participantportal.business.entity.common.CommonConstants;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,7 +33,7 @@ import org.springframework.web.service.annotation.PutExchange;
  */
 public interface TechnicalFhCatalogClient {
 
-    @PutExchange("/resources/service-offering")
+    @PutExchange(CommonConstants.REST_PATH_FH_CATALOG_SERVICE_OFFER)
     FhCatalogIdResponse addServiceOfferingToFhCatalog(
         @RequestBody PxExtendedServiceOfferingCredentialSubject serviceOfferingCs, @RequestParam String id);
 

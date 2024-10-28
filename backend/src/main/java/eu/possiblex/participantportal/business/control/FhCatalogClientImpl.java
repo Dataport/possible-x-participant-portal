@@ -56,8 +56,6 @@ public class FhCatalogClientImpl implements FhCatalogClient {
       
         log.info("sending to catalog: {}", LogUtils.serializeObjectToJson(serviceOfferingCredentialSubject));
 
-        log.info("sending to catalog: {}", LogUtils.serializeObjectToJson(serviceOfferingCredentialSubject));
-
         String offerId = serviceOfferingCredentialSubject.getId(); // just use the ID also for the offer in the catalog
         FhCatalogIdResponse catalogOfferId = null;
         try {
