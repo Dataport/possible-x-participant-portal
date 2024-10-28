@@ -1,5 +1,9 @@
-import {Component} from '@angular/core';
+import {Component, ViewChild} from '@angular/core';
 import {IAcceptOfferResponseTO, IOfferDetailsTO} from '../../../services/mgmt/api/backend';
+import {MatStepper} from "@angular/material/stepper";
+import {SelectComponent} from "../select/select.component";
+import {AcceptComponent} from "../accept/accept.component";
+import {TransferComponent} from "../transfer/transfer.component";
 
 @Component({
   selector: 'app-consume',
@@ -7,19 +11,30 @@ import {IAcceptOfferResponseTO, IOfferDetailsTO} from '../../../services/mgmt/ap
   styleUrls: ['./consume.component.scss']
 })
 export class ConsumeComponent {
+  @ViewChild("stepper") stepper: MatStepper;
+  @ViewChild("select") select: SelectComponent;
+  @ViewChild("accept") accept: AcceptComponent;
+  @ViewChild("transfer") transfer: TransferComponent;
   selectedOffer?: IOfferDetailsTO = undefined;
   negotiatedContract?: IAcceptOfferResponseTO = undefined;
 
   setSelectedOffer(offer: IOfferDetailsTO): void {
     this.selectedOffer = offer;
+    this.stepper.next();
   }
 
   setNegotiatedContract(contract: IAcceptOfferResponseTO): void {
     this.negotiatedContract = contract;
+    this.stepper.next();
   }
 
   resetSelection() {
     this.selectedOffer = undefined;
     this.negotiatedContract = undefined;
+    this.select.queryCatalogStatusMessage.hideAllMessages();
+    this.select.selectionForm.reset();
+    this.accept.acceptOfferStatusMessage.hideAllMessages();
+    this.transfer.dataTransferStatusMessage.hideAllMessages();
+    this.stepper.reset();
   }
 }
