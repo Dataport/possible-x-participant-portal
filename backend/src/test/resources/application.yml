@@ -17,3 +17,7 @@ s3:
   bucket-storage-region: "something"
   bucket-name: "something"
   bucket-target-path: "something/"
+
+logging:
+  level:
+    reactor.netty.http.client: DEBUG

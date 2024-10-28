@@ -53,8 +53,8 @@ public class FhCatalogClientImpl implements FhCatalogClient {
     @Override
     public FhCatalogIdResponse addServiceOfferingToFhCatalog(
         PxExtendedServiceOfferingCredentialSubject serviceOfferingCredentialSubject) {
-      
-        log.info("sending to catalog: {}", LogUtils.serializeObjectToJson(serviceOfferingCredentialSubject));
+
+        log.info("sending to catalog");
 
         String offerId = serviceOfferingCredentialSubject.getId(); // just use the ID also for the offer in the catalog
         FhCatalogIdResponse catalogOfferId = null;
@@ -64,7 +64,7 @@ public class FhCatalogClientImpl implements FhCatalogClient {
             log.error("error when trying to send offer to catalog!", e);
             throw e;
         }
-        log.info("got offer id: {}", catalogOfferId.getId());
+
         return catalogOfferId;
 
     }
@@ -83,7 +83,6 @@ public class FhCatalogClientImpl implements FhCatalogClient {
             }
             throw e;
         }
-        log.info("answer for fh catalog ID: " + offerJsonContent);
 
         try {
             JsonDocument input = JsonDocument.of(new StringReader(offerJsonContent));

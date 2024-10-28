@@ -33,3 +33,7 @@ s3:
   bucket-storage-region: "eu-central-3"
   bucket-name: "dev-provider-edc-bucket-possible-31952746"
   bucket-target-path: "s3HatGeklappt/"
+
+logging:
+  level:
+    reactor.netty.http.client: DEBUG
