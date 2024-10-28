@@ -1,13 +1,3 @@
-<div class="flex flex-col items-center min-h-screen"> <!-- Full-page flex container -->
-  <div class="pt-10 pb-40">
-    <div class="flex justify-center pb-3 text-3xl font-bold text-brand-800">
-      Contract and Transfer
-    </div>
-    <div class="flex justify-center text-lg">
-      To transfer the Data Resource you have to accept the contract offer.
-    </div>
-  </div>
-
   <div class="flex justify-between w-full max-w-3xl mb-6 bg-white">
     <div class="font-bold text-lg p-3">
       {{ offer?.catalogOffering["gx:name"] }}
@@ -15,6 +5,8 @@
   </div>
 
   <div class="w-full max-w-3xl pb-6">
+    <div #viewContainerRef></div>
+    <ng-template #accordion>
     <c-accordion [alwaysOpen]="true" [flush]="true">
       <c-accordion-item #contractDetails="cAccordionItem" [visible]="false">
         <ng-template cTemplateId="accordionHeaderTemplate">
@@ -110,6 +102,7 @@
         </ng-template>
       </c-accordion-item>
     </c-accordion>
+    </ng-template>
   </div>
 
   <div class="w-full max-w-3xl">
@@ -131,4 +124,3 @@
       </app-status-message>
     </div>
   </div>
-</div>

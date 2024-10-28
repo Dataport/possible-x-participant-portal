@@ -1,8 +1,7 @@
 .page-container {
-    @apply flex flex-col min-h-screen;
-    /* Full height with Flexbox */
+  @apply flex flex-col;
 }
 
 .content {
-    @apply flex-1 mx-auto h-auto lg:max-w-screen-xl;
+  @apply flex-1 mx-auto h-auto lg:max-w-screen-xl;
 }

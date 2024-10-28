@@ -1,4 +1,4 @@
-import { AcceptOfferComponent } from './accept-offer.component';
+import { AcceptComponent } from './accept.component';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ApiService } from '../../../services/mgmt/api/api.service';
 import { IAcceptOfferResponseTO } from '../../../services/mgmt/api/backend';
@@ -7,22 +7,22 @@ import { CommonViewsModule } from '../../common-views/common-views.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('AcceptOfferComponent', () => {
-  let component: AcceptOfferComponent;
-  let fixture: ComponentFixture<AcceptOfferComponent>;
+  let component: AcceptComponent;
+  let fixture: ComponentFixture<AcceptComponent>;
   let apiService: jasmine.SpyObj<ApiService>;
 
   beforeEach(async () => {
     const apiServiceSpy = jasmine.createSpyObj('ApiService', ['acceptContractOffer']);
 
     await TestBed.configureTestingModule({
-      declarations: [AcceptOfferComponent],
+      declarations: [AcceptComponent],
       providers: [
         { provide: ApiService, useValue: apiServiceSpy }
       ],
       imports: [ BadgeComponent, AccordionComponent, AccordionItemComponent, CommonViewsModule, BrowserAnimationsModule ]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(AcceptOfferComponent);
+    fixture = TestBed.createComponent(AcceptComponent);
     component = fixture.componentInstance;
     apiService = TestBed.inject(ApiService) as jasmine.SpyObj<ApiService>;
     fixture.detectChanges();

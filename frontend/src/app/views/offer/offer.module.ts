@@ -27,10 +27,12 @@ import {OfferRoutingModule} from './offer-routing.module';
 import {ProvideComponent} from './provide/provide.component';
 import {ConsumeComponent} from './consume/consume.component';
 import {CommonViewsModule} from '../common-views/common-views.module';
-import {AcceptOfferComponent} from './accept/accept-offer.component';
-import {SelectOfferComponent} from './select/select-offer.component';
+import {AcceptComponent} from './accept/accept.component';
+import {SelectComponent} from './select/select.component';
 import {ContractsComponent} from "./contracts/contracts.component";
 import { TransferComponent } from './transfer/transfer.component';
+import {MatStepperModule} from "@angular/material/stepper";
+import {MatButtonModule} from "@angular/material/button";
 
 @NgModule({
   imports: [
@@ -57,9 +59,14 @@ import { TransferComponent } from './transfer/transfer.component';
     AccordionButtonDirective,
     BadgeComponent,
     WizardExtensionModule,
-    TooltipModule
+    TooltipModule,
+    MatStepperModule,
+    MatButtonModule
   ],
-  declarations: [ProvideComponent, ConsumeComponent, AcceptOfferComponent, SelectOfferComponent, ContractsComponent, TransferComponent],
+  declarations: [ProvideComponent, ConsumeComponent, AcceptComponent, SelectComponent, ContractsComponent, TransferComponent],
+  exports: [
+    TransferComponent
+  ]
 })
 export class OfferModule {
 }
