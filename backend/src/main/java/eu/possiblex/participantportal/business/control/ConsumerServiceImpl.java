@@ -115,14 +115,13 @@ public class ConsumerServiceImpl implements ConsumerService {
 
         // initiate transfer
         String timestamp = ZonedDateTime.now().format(DateTimeFormatter.ofPattern("YYYYMMDD_HHmmss"));
-        String bucketTargetPath = timestamp + "/" + request.getContractAgreementId();
+        String bucketTargetPath = timestamp + "/" + request.getContractAgreementId() + "/";
         DataAddress dataAddress = IonosS3DataDestination.builder().region(bucketStorageRegion).bucketName(bucketName)
             .path(bucketTargetPath).keyName("myKey").build();
         TransferRequest transferRequest = TransferRequest.builder().connectorId(edcOffer.getParticipantId())
             .counterPartyAddress(request.getCounterPartyAddress()).assetId(dataset.getAssetId())
             .contractId(request.getContractAgreementId()).dataDestination(dataAddress).build();
         TransferProcessState transferProcessState = performTransfer(transferRequest).getState();
-
         return new TransferOfferResponseBE(transferProcessState);
     }
 
