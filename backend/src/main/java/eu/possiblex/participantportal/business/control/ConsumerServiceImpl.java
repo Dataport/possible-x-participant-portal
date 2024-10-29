@@ -49,15 +49,18 @@ public class ConsumerServiceImpl implements ConsumerService {
 
     private final String bucketName;
 
+    private final String bucketTopLevelFolder;
+
     public ConsumerServiceImpl(@Autowired EdcClient edcClient, @Autowired FhCatalogClient fhCatalogClient,
         @Autowired TaskScheduler taskScheduler, @Value("${s3.bucket-storage-region}") String bucketStorageRegion,
-        @Value("${s3.bucket-name}") String bucketName) {
+        @Value("${s3.bucket-name}") String bucketName, @Value("${s3.bucket-top-level-folder}") String bucketTopLevelFolder) {
 
         this.edcClient = edcClient;
         this.fhCatalogClient = fhCatalogClient;
         this.taskScheduler = taskScheduler;
         this.bucketStorageRegion = bucketStorageRegion;
         this.bucketName = bucketName;
+        this.bucketTopLevelFolder = bucketTopLevelFolder;
     }
 
     @Override
@@ -115,7 +118,7 @@ public class ConsumerServiceImpl implements ConsumerService {
 
         // initiate transfer
         String timestamp = ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-        String bucketTargetPath = timestamp + "/" + request.getContractAgreementId() + "/";
+        String bucketTargetPath = bucketTopLevelFolder + "/" + timestamp + "_" + request.getContractAgreementId() + "/";
         DataAddress dataAddress = IonosS3DataDestination.builder().region(bucketStorageRegion).bucketName(bucketName)
             .path(bucketTargetPath).keyName("myKey").build();
         TransferRequest transferRequest = TransferRequest.builder().connectorId(edcOffer.getParticipantId())

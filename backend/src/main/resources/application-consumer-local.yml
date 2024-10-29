@@ -13,5 +13,5 @@ fh:
 
 s3:
   bucket-storage-region: "eu-central-3"
+  bucket-top-level-folder: "possiblex_data_transfers"
   bucket-name: "dev-consumer-edc-bucket-possible-31952746"
-  bucket-target-path: "s3HatGeklappt/"
