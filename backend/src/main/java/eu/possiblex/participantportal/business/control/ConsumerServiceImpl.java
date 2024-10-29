@@ -114,7 +114,7 @@ public class ConsumerServiceImpl implements ConsumerService {
         DcatDataset dataset = getDatasetById(edcOffer, request.getEdcOfferId());
 
         // initiate transfer
-        String timestamp = ZonedDateTime.now().format(DateTimeFormatter.ofPattern("YYYYMMDD_HHmmss"));
+        String timestamp = ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
         String bucketTargetPath = timestamp + "/" + request.getContractAgreementId() + "/";
         DataAddress dataAddress = IonosS3DataDestination.builder().region(bucketStorageRegion).bucketName(bucketName)
             .path(bucketTargetPath).keyName("myKey").build();
