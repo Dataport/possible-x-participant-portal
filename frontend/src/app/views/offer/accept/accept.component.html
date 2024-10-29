@@ -1,6 +1,6 @@
   <div class="flex justify-between w-full max-w-3xl mb-6 bg-white">
     <div class="font-bold text-lg p-3">
-      {{ offer?.catalogOffering["gx:name"] }}
+      {{ offer?.catalogOffering["schema:name"] }}
     </div>
   </div>
 
@@ -17,10 +17,10 @@
         <ng-template cTemplateId="accordionBodyTemplate">
           <div *ngIf="!offer.dataOffering" class="accordion-body">
             <b>Offer ID:</b> {{ offer.catalogOffering.id }} <br/>
-            <b>Offer name:</b> {{ offer.catalogOffering["gx:name"] }} <br/>
+            <b>Offer name:</b> {{ offer.catalogOffering["schema:name"] }} <br/>
             <b>Provided by:</b> {{ offer.catalogOffering["gx:providedBy"].id }} <br/>
             <b>Publisher:</b> Not implemented yet <br/>
-            <b>Description:</b> {{ offer.catalogOffering["gx:description"] }} <br/>
+            <b>Description:</b> {{ offer.catalogOffering["schema:description"] }} <br/>
             <b>Terms & Conditions:</b> <br/>
             <ul *ngFor="let tnc of offer.catalogOffering['gx:termsAndConditions']">
               <li>
@@ -50,10 +50,10 @@
           </div>
           <div *ngIf="offer.dataOffering" class="accordion-body">
             <b>Offer ID:</b> {{ offer.catalogOffering.id }} <br/>
-            <b>Data Ressource Name:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:name"] }} <br/>
+            <b>Data Ressource Name:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["schema:name"] }} <br/>
             <b>Provided by:</b> {{ offer.catalogOffering["gx:providedBy"].id }} <br/>
             <b>Publisher:</b> Not implemented yet <br/>
-            <b>Data Ressource Description:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:description"] }}
+            <b>Data Ressource Description:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["schema:description"] }}
             <br/>
             <b>Data Ressource Policy:</b><br/>
             <ul *ngFor="let p of offer.catalogOffering['gx:aggregationOf'][0]['gx:policy']">
@@ -70,8 +70,8 @@
             <b>Contains personal identifiable Information
               (PII):</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:containsPII"] }} <br/>
             <br/><br/>
-            <b>Offer name:</b> {{ offer.catalogOffering["gx:name"] }} <br/>
-            <b>Description:</b> {{ offer.catalogOffering["gx:description"] }} <br/>
+            <b>Offer name:</b> {{ offer.catalogOffering["schema:name"] }} <br/>
+            <b>Description:</b> {{ offer.catalogOffering["schema:description"] }} <br/>
             <b>Terms & Conditions:</b> <br/>
             <ul *ngFor="let tnc of offer.catalogOffering['gx:termsAndConditions']">
               <li>

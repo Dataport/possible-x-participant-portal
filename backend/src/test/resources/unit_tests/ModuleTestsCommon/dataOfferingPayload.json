@@ -12,11 +12,11 @@
     "gx:providedBy": {
       "@id": "did:web:example-organization.eu"
     },
-    "gx:name": {
+    "schema:name": {
       "@value": "Test Service Offering",
       "@type": "xsd:string"
     },
-    "gx:description": {
+    "schema:description": {
       "@value": "This is the service offering description.",
       "@type": "xsd:string"
     },
@@ -69,11 +69,11 @@
     "gx:producedBy": {
       "@id": "did:web:example-organization.eu"
     },
-    "gx:name": {
+    "schema:name": {
       "@value": "Test Dataset",
       "@type": "xsd:string"
     },
-    "gx:description": {
+    "schema:description": {
       "@value": "This is the data resource description.",
       "@type": "xsd:string"
     },
