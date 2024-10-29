@@ -18,7 +18,6 @@
         "http://w3id.org/gaia-x/possible-x#PossibleXServiceOfferingExtension"
       ],
       "http://w3id.org/gaia-x/possible-x#assetId": "EXPECTED_ASSET_ID_VALUE",
-      "schema:description": "This is the service offering description.",
       "http://w3id.org/gaia-x/possible-x#providerUrl": "EXPECTED_PROVIDER_URL_VALUE",
       "schema:description": "steffens test service offer",
       "schema:name": "SteffenServiceOffer222_2",
@@ -28,7 +27,6 @@
       "gx:providedBy": {
         "@id": "_:b3"
       },
-      "schema:name": "SteffenServiceOffer222",
       "gx:policy": "{\n  \"@type\": \"odrl:Set\",\n  \"odrl:permission\": [\n    {\n      \"odrl:action\": {\n        \"odrl:type\": \"http://www.w3.org/ns/odrl/2/use\"\n      }\n    },\n    {\n      \"odrl:action\": {\n        \"odrl:type\": \"http://www.w3.org/ns/odrl/2/transfer\"\n      }\n    }\n  ],\n  \"odrl:prohibition\": [],\n  \"odrl:obligation\": []\n}",
       "gx:termsAndConditions": {
         "@id": "_:b1"
