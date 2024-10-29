@@ -39,7 +39,7 @@ public class GxDataResourceCredentialSubject extends PojoCredentialSubject {
     @Getter(AccessLevel.NONE)
     public static final Map<String, String> CONTEXT = Map.of(TYPE_NAMESPACE,
         "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#", "xsd",
-        "http://www.w3.org/2001/XMLSchema#");
+        "http://www.w3.org/2001/XMLSchema#", "schema", "https://schema.org/");
 
     @JsonProperty("gx:copyrightOwnedBy")
     @NotNull
@@ -72,12 +72,12 @@ public class GxDataResourceCredentialSubject extends PojoCredentialSubject {
     @NotNull
     private boolean containsPII;
 
-    @JsonProperty("gx:name")
+    @JsonProperty("schema:name")
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)
     private String name;
 
-    @JsonProperty("gx:description")
+    @JsonProperty("schema:description")
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)
     private String description;

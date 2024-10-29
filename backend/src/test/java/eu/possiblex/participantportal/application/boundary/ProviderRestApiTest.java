@@ -183,16 +183,17 @@ class ProviderRestApiTest extends ProviderTestParent {
                         "xsd": "http://www.w3.org/2001/XMLSchema#",
                         "skos": "http://www.w3.org/2004/02/skos/core#",
                         "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-                        "vcard": "http://www.w3.org/2006/vcard/ns#"
+                        "vcard": "http://www.w3.org/2006/vcard/ns#",
+                        "schema": "https://schema.org/"
                     },
                     "gx:providedBy": {
                         "@id": "did:web:example-organization.eu"
                     },
-                    "gx:name": {
+                    "schema:name": {
                         "@value": "Test Service Offering",
                         "@type": "xsd:string"
                     },
-                    "gx:description": {
+                    "schema:description": {
                         "@value": "This is the service offering description.",
                         "@type": "xsd:string"
                     },
@@ -245,16 +246,17 @@ class ProviderRestApiTest extends ProviderTestParent {
                         "xsd": "http://www.w3.org/2001/XMLSchema#",
                         "skos": "http://www.w3.org/2004/02/skos/core#",
                         "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-                        "vcard": "http://www.w3.org/2006/vcard/ns#"
+                        "vcard": "http://www.w3.org/2006/vcard/ns#",
+                        "schema": "https://schema.org/"
                     },
                     "gx:providedBy": {
                         "@id": "did:web:example-organization.eu"
                     },
-                    "gx:name": {
+                    "schema:name": {
                         "@value": "Test Service Offering",
                         "@type": "xsd:string"
                     },
-                    "gx:description": {
+                    "schema:description": {
                         "@value": "This is the service offering description.",
                         "@type": "xsd:string"
                     },
@@ -299,7 +301,8 @@ class ProviderRestApiTest extends ProviderTestParent {
                         "xsd": "http://www.w3.org/2001/XMLSchema#",
                         "skos": "http://www.w3.org/2004/02/skos/core#",
                         "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-                        "vcard": "http://www.w3.org/2006/vcard/ns#"
+                        "vcard": "http://www.w3.org/2006/vcard/ns#",
+                        "schema": "https://schema.org/"
                     },
                     "gx:copyrightOwnedBy": {
                         "@id": "did:web:example-organization.eu"
@@ -307,11 +310,11 @@ class ProviderRestApiTest extends ProviderTestParent {
                     "gx:producedBy": {
                         "@id": "did:web:example-organization.eu"
                     },
-                    "gx:name": {
+                    "schema:name": {
                         "@value": "Test Dataset",
                         "@type": "xsd:string"
                     },
-                    "gx:description": {
+                    "schema:description": {
                         "@value": "This is the data resource description.",
                         "@type": "xsd:string"
                     },
