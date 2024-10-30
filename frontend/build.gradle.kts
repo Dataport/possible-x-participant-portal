@@ -22,24 +22,21 @@ tasks {
     args.set(listOf("run", "build", "--", "--configuration", project.findProperty("npmEnv") as String? ?: "consumer-dev"))
   }
 
-  val npmTest by registering(NpmTask::class) {
+  val npmFeTest by registering(NpmTask::class) {
     outputs.upToDateWhen { false }
+    println("testttttttttttttttttttttttttttttttttttt")
     dependsOn(npmBuild)
     args.set(listOf("test"))
   }
-
-  val npmTestConditional by registering(NpmTask::class) {
-    outputs.upToDateWhen { false }
-    if(gradle.startParameter.getTaskNames().contains("build")) {
-      println("do npm tests")
-      dependsOn(npmTest)
-    }
-    else {
-      println("skip npm tests")
-      dependsOn(npmBuild)
-    }
-  }
-
-
 }
 
+tasks.register("npmTestConditional") {
+  if(gradle.startParameter.getTaskNames().contains("build")) {
+    println("do npm tests")
+    dependsOn(tasks.getByName("npmFeTest"))
+  }
+  else {
+    println("skip npm tests")
+    dependsOn(tasks.getByName("npmBuild"))
+  }
+}
