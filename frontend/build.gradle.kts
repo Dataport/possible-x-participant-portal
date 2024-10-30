@@ -21,4 +21,25 @@ tasks {
     dependsOn(npmInstalll)
     args.set(listOf("run", "build", "--", "--configuration", project.findProperty("npmEnv") as String? ?: "consumer-dev"))
   }
+
+  val npmTest by registering(NpmTask::class) {
+    outputs.upToDateWhen { false }
+    dependsOn(npmBuild)
+    args.set(listOf("test"))
+  }
+
+  val npmTestConditional by registering(NpmTask::class) {
+    outputs.upToDateWhen { false }
+    if(gradle.startParameter.getTaskNames().contains("build")) {
+      println("do npm tests")
+      dependsOn(npmTest)
+    }
+    else {
+      println("skip npm tests")
+      dependsOn(npmBuild)
+    }
+  }
+
+
 }
+

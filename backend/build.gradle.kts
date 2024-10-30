@@ -51,6 +51,9 @@ dependencies {
 
 tasks.withType<Test> {
   useJUnitPlatform()
+  testLogging {
+    events("passed", "skipped", "failed")
+  }
 }
 
 
@@ -72,7 +75,7 @@ tasks.register<Copy>("copyWebApp") {
 }
 
 tasks.named("compileJava") {
-  dependsOn(":frontend:npmBuild")
+  dependsOn(":frontend:npmTestConditional")
 }
 
 tasks.named("processResources") {
