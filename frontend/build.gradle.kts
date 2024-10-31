@@ -24,12 +24,12 @@ tasks {
 
   val npmFeTest by registering(NpmTask::class) {
     outputs.upToDateWhen { false }
-    println("testttttttttttttttttttttttttttttttttttt")
     dependsOn(npmBuild)
     args.set(listOf("test"))
   }
 }
 
+// run npm test only with build task
 tasks.register("npmTestConditional") {
   if(gradle.startParameter.getTaskNames().contains("build")) {
     println("do npm tests")
