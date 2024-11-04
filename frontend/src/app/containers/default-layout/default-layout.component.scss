@@ -1,15 +1,20 @@
 .headerWrapper {
     @apply bg-white;
   }
-  
+
   .header {
     @apply flex items-end justify-between;
     @apply container max-w-screen-4xl px-8 py-4 xl:px-20;
-  
+
     .logo {
       @apply flex flex-shrink-0 items-baseline;
     }
   }
+
+.active-tab {
+  background-color: #b3b1b1;
+  font-weight: bold;
+}
 
 .footerWrapper {
     @apply overflow-hidden bg-brand-700;
