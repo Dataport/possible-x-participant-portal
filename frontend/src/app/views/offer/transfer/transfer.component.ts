@@ -36,6 +36,7 @@ export class TransferComponent implements OnChanges {
     this.isTransferDisabled = false;
 
     if(this.contract) {
+      this.viewContainerRef.clear();
       this.dismissButtonLabel = this.contract.dataOffering ? "Cancel" : "Close";
       this.viewContainerRef.createEmbeddedView(this.contractDetails);
     } else {
