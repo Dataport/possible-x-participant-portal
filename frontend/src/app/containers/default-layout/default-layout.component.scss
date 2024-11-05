@@ -12,8 +12,24 @@
   }
 
 .active-tab {
-  background-color: #b3b1b1;
+  @apply underline text-brand-700;
+  text-underline-offset: 9px;
   font-weight: bold;
+  display:inline;
+}
+
+a[cNavLink] {
+  position: relative;
+  display: inline-block;
+  text-align: center;
+}
+
+a[cNavLink]::before {
+  content: attr(data-text);
+  font-weight: bold;
+  visibility: hidden;
+  height: 0;
+  display: block;
 }
 
 .footerWrapper {
