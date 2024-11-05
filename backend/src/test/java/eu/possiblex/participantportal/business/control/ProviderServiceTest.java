@@ -15,6 +15,8 @@ import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedS
 import eu.possiblex.participantportal.business.entity.edc.asset.AssetCreateRequest;
 import eu.possiblex.participantportal.business.entity.edc.asset.ionoss3extension.IonosS3DataSource;
 import eu.possiblex.participantportal.business.entity.edc.asset.possible.PossibleAssetProperties;
+import eu.possiblex.participantportal.business.entity.edc.contractdefinition.ContractDefinitionCreateRequest;
+import eu.possiblex.participantportal.business.entity.edc.policy.OdrlPermission;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyCreateRequest;
 import eu.possiblex.participantportal.business.entity.exception.EdcOfferCreationException;
 import eu.possiblex.participantportal.business.entity.exception.FhOfferCreationException;
@@ -33,9 +35,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentCaptor.forClass;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ContextConfiguration(classes = { ProviderServiceTest.TestConfig.class, ProviderServiceImpl.class })
@@ -76,6 +76,8 @@ class ProviderServiceTest {
         //then
         ArgumentCaptor<AssetCreateRequest> assetCreateRequestCaptor = forClass(AssetCreateRequest.class);
         ArgumentCaptor<PolicyCreateRequest> policyCreateRequestCaptor = forClass(PolicyCreateRequest.class);
+        ArgumentCaptor<ContractDefinitionCreateRequest> contractDefinitionCreateRequestCaptor = forClass(
+            ContractDefinitionCreateRequest.class);
 
         ArgumentCaptor<PxExtendedServiceOfferingCredentialSubject> serviceOfferingCaptor = forClass(
             PxExtendedServiceOfferingCredentialSubject.class);
@@ -93,8 +95,8 @@ class ProviderServiceTest {
         assertThat(pxExtSoCs.getPolicy()).hasSize(2).contains("dummyServiceOfferingPolicy");
 
         verify(edcClient).createAsset(assetCreateRequestCaptor.capture());
-        verify(edcClient).createPolicy(policyCreateRequestCaptor.capture());
-        verify(edcClient).createContractDefinition(any());
+        verify(edcClient, times(2)).createPolicy(policyCreateRequestCaptor.capture());
+        verify(edcClient).createContractDefinition(contractDefinitionCreateRequestCaptor.capture());
 
         AssetCreateRequest assetCreateRequest = assetCreateRequestCaptor.getValue();
         //validate asset properties
@@ -114,10 +116,24 @@ class ProviderServiceTest {
         assertEquals("", assetCreateRequest.getDataAddress().getKeyName());
         assertEquals("", ((IonosS3DataSource) assetCreateRequest.getDataAddress()).getBlobName());
 
-        PolicyCreateRequest policyCreateRequest = policyCreateRequestCaptor.getValue();
-        //check if policyId is set correctly
-        assertTrue(policyCreateRequest.getId()
-            .matches("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"));
+        ContractDefinitionCreateRequest contractDefinitionCreateRequest = contractDefinitionCreateRequestCaptor.getValue();
+
+        List<PolicyCreateRequest> policyCreateRequests = policyCreateRequestCaptor.getAllValues();
+        boolean foundAccessPolicy = false;
+        for (var policy : policyCreateRequests) {
+            //check if policyId is set correctly
+            assertTrue(
+                policy.getId().matches("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"));
+
+            if (contractDefinitionCreateRequest.getAccessPolicyId().equals(policy.getId())) {
+                foundAccessPolicy = true;
+                // for access policy make sure there are no constraints
+                for (OdrlPermission permission : policy.getPolicy().getPermission()) {
+                    assertTrue(permission.getConstraint().isEmpty());
+                }
+            }
+        }
+        assertTrue(foundAccessPolicy);
 
         assertNotNull(response);
         assertNotNull(response.getEdcResponseId());
@@ -147,6 +163,8 @@ class ProviderServiceTest {
         //then
         ArgumentCaptor<AssetCreateRequest> assetCreateRequestCaptor = forClass(AssetCreateRequest.class);
         ArgumentCaptor<PolicyCreateRequest> policyCreateRequestCaptor = forClass(PolicyCreateRequest.class);
+        ArgumentCaptor<ContractDefinitionCreateRequest> contractDefinitionCreateRequestCaptor = forClass(
+            ContractDefinitionCreateRequest.class);
 
         ArgumentCaptor<PxExtendedServiceOfferingCredentialSubject> serviceOfferingCaptor = forClass(
             PxExtendedServiceOfferingCredentialSubject.class);
@@ -171,8 +189,8 @@ class ProviderServiceTest {
         assertThat(pxExtSoCs.getAggregationOf().get(0).getPolicy()).contains("dummyDataResourcePolicy");
 
         verify(edcClient).createAsset(assetCreateRequestCaptor.capture());
-        verify(edcClient).createPolicy(policyCreateRequestCaptor.capture());
-        verify(edcClient).createContractDefinition(any());
+        verify(edcClient, times(2)).createPolicy(policyCreateRequestCaptor.capture());
+        verify(edcClient).createContractDefinition(contractDefinitionCreateRequestCaptor.capture());
 
         AssetCreateRequest assetCreateRequest = assetCreateRequestCaptor.getValue();
         //validate asset properties
@@ -197,10 +215,25 @@ class ProviderServiceTest {
         assertEquals(FILE_NAME, assetCreateRequest.getDataAddress().getKeyName());
         assertEquals(FILE_NAME, ((IonosS3DataSource) assetCreateRequest.getDataAddress()).getBlobName());
 
-        PolicyCreateRequest policyCreateRequest = policyCreateRequestCaptor.getValue();
-        //check if policyId is set correctly
-        assertTrue(policyCreateRequest.getId()
-            .matches("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"));
+        ContractDefinitionCreateRequest contractDefinitionCreateRequest = contractDefinitionCreateRequestCaptor.getValue();
+
+        List<PolicyCreateRequest> policyCreateRequests = policyCreateRequestCaptor.getAllValues();
+
+        boolean foundAccessPolicy = false;
+        for (var policy : policyCreateRequests) {
+            //check if policyId is set correctly
+            assertTrue(
+                policy.getId().matches("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"));
+
+            if (contractDefinitionCreateRequest.getAccessPolicyId().equals(policy.getId())) {
+                foundAccessPolicy = true;
+                // for access policy make sure there are no constraints
+                for (OdrlPermission permission : policy.getPolicy().getPermission()) {
+                    assertTrue(permission.getConstraint().isEmpty());
+                }
+            }
+        }
+        assertTrue(foundAccessPolicy);
 
         assertNotNull(response);
         assertNotNull(response.getEdcResponseId());

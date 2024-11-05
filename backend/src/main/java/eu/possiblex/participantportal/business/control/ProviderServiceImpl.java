@@ -235,7 +235,7 @@ public class ProviderServiceImpl implements ProviderService {
             if (enforcementPolicy instanceof ParticipantRestrictionPolicy participantRestrictionPolicy) { // restrict to participants
 
                 // create constraint
-                OdrlConstraint participantConstraint = OdrlConstraint.builder().leftOperand("connectorId")
+                OdrlConstraint participantConstraint = OdrlConstraint.builder().leftOperand("did")
                     .operator(OdrlOperator.IN)
                     .rightOperand(String.join(",", participantRestrictionPolicy.getAllowedParticipants())).build();
                 constraints.add(participantConstraint);
