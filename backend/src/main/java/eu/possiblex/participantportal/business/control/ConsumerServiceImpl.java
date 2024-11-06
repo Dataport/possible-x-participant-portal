@@ -1,7 +1,10 @@
 package eu.possiblex.participantportal.business.control;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.possiblex.participantportal.business.entity.*;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
+import eu.possiblex.participantportal.business.entity.edc.DataspaceErrorMessage;
 import eu.possiblex.participantportal.business.entity.edc.asset.DataAddress;
 import eu.possiblex.participantportal.business.entity.edc.asset.ionoss3extension.IonosS3DataDestination;
 import eu.possiblex.participantportal.business.entity.edc.catalog.CatalogRequest;
@@ -39,6 +42,8 @@ public class ConsumerServiceImpl implements ConsumerService {
 
     private static final int MAX_TRANSFER_CHECK_ATTEMPTS = 30;
 
+    private final ObjectMapper objectMapper;
+
     private final EdcClient edcClient;
 
     private final FhCatalogClient fhCatalogClient;
@@ -51,10 +56,12 @@ public class ConsumerServiceImpl implements ConsumerService {
 
     private final String bucketTopLevelFolder;
 
-    public ConsumerServiceImpl(@Autowired EdcClient edcClient, @Autowired FhCatalogClient fhCatalogClient,
-        @Autowired TaskScheduler taskScheduler, @Value("${s3.bucket-storage-region}") String bucketStorageRegion,
-        @Value("${s3.bucket-name}") String bucketName, @Value("${s3.bucket-top-level-folder}") String bucketTopLevelFolder) {
+    public ConsumerServiceImpl(@Autowired ObjectMapper objectMapper, @Autowired EdcClient edcClient,
+        @Autowired FhCatalogClient fhCatalogClient, @Autowired TaskScheduler taskScheduler,
+        @Value("${s3.bucket-storage-region}") String bucketStorageRegion, @Value("${s3.bucket-name}") String bucketName,
+        @Value("${s3.bucket-top-level-folder}") String bucketTopLevelFolder) {
 
+        this.objectMapper = objectMapper;
         this.edcClient = edcClient;
         this.fhCatalogClient = fhCatalogClient;
         this.taskScheduler = taskScheduler;
@@ -160,9 +167,19 @@ public class ConsumerServiceImpl implements ConsumerService {
             contractNegotiation = edcClient.checkOfferStatus(negotiation.getId());
             log.info("Negotiation {}", contractNegotiation);
             negotiationCheckAttempts += 1;
-            if (negotiationCheckAttempts >= MAX_NEGOTIATION_CHECK_ATTEMPTS || contractNegotiation.getState()
-                .equals(NegotiationState.TERMINATED)) {
-                throw new NegotiationFailedException("Negotiation never reached FINALIZED state.");
+            if (negotiationCheckAttempts >= MAX_NEGOTIATION_CHECK_ATTEMPTS) {
+                throw new NegotiationFailedException("Negotiation never reached FINALIZED state and timed out.");
+            } else if (contractNegotiation.getState().equals(NegotiationState.TERMINATED)) {
+                String errorReason;
+                try {
+                    errorReason = objectMapper.readValue(contractNegotiation.getErrorDetail(),
+                        DataspaceErrorMessage.class).getReason();
+                } catch (JsonProcessingException e) {
+                    log.warn("Failed to read error message from payload", e);
+                    errorReason = "Unknown Error.";
+                }
+
+                throw new NegotiationFailedException("Negotiation was terminated. " + errorReason);
             }
         } while (!contractNegotiation.getState().equals(NegotiationState.FINALIZED));
         return contractNegotiation;
@@ -181,11 +198,22 @@ public class ConsumerServiceImpl implements ConsumerService {
             transferProcess = edcClient.checkTransferStatus(transfer.getId());
             log.info("Transfer Process {}", transferProcess);
             transferCheckAttempts += 1;
-            if (transferCheckAttempts >= MAX_TRANSFER_CHECK_ATTEMPTS || transferProcess.getState()
-                .equals(TransferProcessState.TERMINATED)) {
-
+            if (transferCheckAttempts >= MAX_TRANSFER_CHECK_ATTEMPTS) {
                 deprovisionTransfer(transferProcess.getId());
-                throw new TransferFailedException("Transfer never reached COMPLETED state.");
+                throw new TransferFailedException("Transfer never reached COMPLETED state and timed out.");
+            } else if (transferProcess.getState().equals(TransferProcessState.TERMINATED)) {
+                deprovisionTransfer(transferProcess.getId());
+
+                String errorReason;
+                try {
+                    errorReason = objectMapper.readValue(transferProcess.getErrorDetail(), DataspaceErrorMessage.class)
+                        .getReason();
+                } catch (JsonProcessingException e) {
+                    log.warn("Failed to read error message from payload", e);
+                    errorReason = "Unknown Error.";
+                }
+
+                throw new TransferFailedException("Transfer was terminated. " + errorReason);
             }
         } while (!transferProcess.getState().equals(TransferProcessState.COMPLETED));
 

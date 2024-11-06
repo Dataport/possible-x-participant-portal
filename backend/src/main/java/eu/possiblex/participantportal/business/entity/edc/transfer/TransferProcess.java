@@ -52,5 +52,7 @@ public abstract class TransferProcess {
 
     private List<String> callbackAddresses;
 
+    private String errorDetail;
+
     private DataRequest dataRequest;
 }

@@ -44,9 +44,15 @@ public class ContractNegotiation {
 
     private NegotiationState state;
 
+    private String counterPartyId;
+
     private String counterPartyAddress;
 
     private List<String> callbackAddresses;
+
+    private long createdAt;
+
+    private String errorDetail;
 
     private String contractAgreementId;
 
