@@ -1,12 +1,13 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { ConsumeComponent } from './consume.component';
+import {ConsumeComponent} from './consume.component';
 import {
-  IAcceptOfferResponseTO, INegotiationState,
+  IAcceptOfferResponseTO,
+  INegotiationState,
   IOfferDetailsTO,
   IPxExtendedServiceOfferingCredentialSubject
 } from '../../../services/mgmt/api/backend';
-import { NO_ERRORS_SCHEMA } from "@angular/core";
+import {NO_ERRORS_SCHEMA} from "@angular/core";
 
 describe('ConsumeComponent', () => {
   let component: ConsumeComponent;
@@ -16,18 +17,16 @@ describe('ConsumeComponent', () => {
     edcOfferId: 'dummy',
     catalogOffering: {
       id: "catalogOfferingId",
-      "gx:providedBy": { id: "providedBy" },
+      "gx:providedBy": {id: "providedBy"},
       "gx:aggregationOf": [],
       "gx:termsAndConditions": [],
       "gx:policy": ["policy"],
       "gx:dataProtectionRegime": [],
       "gx:dataAccountExport": [],
-      "gx:name": "name",
-      "gx:description": "description",
+      "schema:name": "name",
+      "schema:description": "description",
       "px:assetId": "assetId",
       "px:providerUrl": "providerUrl",
-      "schema:name": "schema",
-      "schema:description": "schemaDescription",
       "@context": {},
       "@type": []
     } as IPxExtendedServiceOfferingCredentialSubject,
@@ -43,10 +42,10 @@ describe('ConsumeComponent', () => {
   beforeEach(async () => {
 
     await TestBed.configureTestingModule({
-      declarations: [ ConsumeComponent ],
-      schemas: [ NO_ERRORS_SCHEMA ],
+      declarations: [ConsumeComponent],
+      schemas: [NO_ERRORS_SCHEMA],
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(ConsumeComponent);
     component = fixture.componentInstance;

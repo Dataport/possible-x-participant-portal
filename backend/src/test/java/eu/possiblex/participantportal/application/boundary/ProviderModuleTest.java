@@ -5,18 +5,15 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
-import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import eu.possiblex.participantportal.application.control.ProviderApiMapper;
 import eu.possiblex.participantportal.application.entity.CreateServiceOfferingRequestTO;
-import eu.possiblex.participantportal.application.entity.credentials.gx.serviceofferings.GxServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.control.*;
 import eu.possiblex.participantportal.business.entity.common.CommonConstants;
+import eu.possiblex.participantportal.utilities.LogUtils;
 import eu.possiblex.participantportal.utils.TestUtils;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mapstruct.factory.Mappers;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -28,10 +25,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.support.WebClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 
-import static org.mockito.Mockito.reset;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -134,7 +129,7 @@ class ProviderModuleTest extends ProviderTestParent {
         @Bean
         public TechnicalFhCatalogClient technicalFhCatalogClient() {
             String baseUrl = "http://localhost:" + String.valueOf(WIREMOCK_PORT) + "/" + FH_CATALOG_SERVICE_PATH;
-            WebClient webClient = WebClient.builder().baseUrl(baseUrl).defaultHeaders(httpHeaders -> {
+            WebClient webClient = WebClient.builder().clientConnector(LogUtils.createHttpClient()).baseUrl(baseUrl).defaultHeaders(httpHeaders -> {
                 httpHeaders.set("Content-Type", "application/json");
             }).build();
             HttpServiceProxyFactory httpServiceProxyFactory = HttpServiceProxyFactory.builder()
@@ -145,7 +140,7 @@ class ProviderModuleTest extends ProviderTestParent {
         @Bean
         public EdcClient edcClient() {
             String baseUrl = "http://localhost:" + String.valueOf(WIREMOCK_PORT) + "/" + EDC_SERVICE_PATH;
-            WebClient webClient = WebClient.builder().baseUrl(baseUrl).build();
+            WebClient webClient = WebClient.builder().clientConnector(LogUtils.createHttpClient()).baseUrl(baseUrl).build();
             HttpServiceProxyFactory httpServiceProxyFactory = HttpServiceProxyFactory.builder()
                     .exchangeAdapter(WebClientAdapter.create(webClient)).build();
             return httpServiceProxyFactory.createClient(EdcClient.class);

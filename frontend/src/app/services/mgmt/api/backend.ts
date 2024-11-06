@@ -13,11 +13,11 @@ export interface IProviderRestApi {
 }
 
 export interface IResourceShapeRestApi {
-    gxVirtualResourceShape: string;
     gxInstantiatedVirtualResourceShape: string;
     gxDataResourceShape: string;
     gxPhysicalResourceShape: string;
     gxSoftwareResourceShape: string;
+    gxVirtualResourceShape: string;
 }
 
 export interface IServiceOfferingShapeRestApi {
@@ -184,8 +184,8 @@ export interface IGxDataResourceCredentialSubject extends IPojoCredentialSubject
     "gx:policy": string[];
     "gx:license": string[];
     "gx:containsPII": boolean;
-    "gx:name": string;
-    "gx:description": string;
+    "schema:name": string;
+    "schema:description": string;
     "@context": { [index: string]: string };
     type: string;
 }
@@ -200,8 +200,8 @@ export interface IGxDataResourceCredentialSubjectBuilderImpl extends IGxDataReso
     "gx:policy": string[];
     "gx:license": string[];
     "gx:containsPII": boolean;
-    "gx:name": string;
-    "gx:description": string;
+    "schema:name": string;
+    "schema:description": string;
 }
 
 export interface IGxServiceOfferingCredentialSubject extends IPojoCredentialSubject {
@@ -212,8 +212,8 @@ export interface IGxServiceOfferingCredentialSubject extends IPojoCredentialSubj
     "gx:policy": string[];
     "gx:dataProtectionRegime": string[];
     "gx:dataAccountExport": IGxDataAccountExport[];
-    "gx:name": string;
-    "gx:description": string;
+    "schema:name": string;
+    "schema:description": string;
     "@context": { [index: string]: string };
     type: string;
 }
@@ -228,8 +228,8 @@ export interface IGxServiceOfferingCredentialSubjectBuilderImpl extends IGxServi
     "gx:policy": string[];
     "gx:dataProtectionRegime": string[];
     "gx:dataAccountExport": IGxDataAccountExport[];
-    "gx:name": string;
-    "gx:description": string;
+    "schema:name": string;
+    "schema:description": string;
 }
 
 export interface IEnforcementPolicy {
@@ -278,12 +278,10 @@ export interface IPxExtendedServiceOfferingCredentialSubject {
     "gx:policy": string[];
     "gx:dataProtectionRegime": string[];
     "gx:dataAccountExport": IGxDataAccountExport[];
-    "gx:name": string;
-    "gx:description": string;
-    "px:assetId": string;
-    "px:providerUrl": string;
     "schema:name": string;
     "schema:description": string;
+    "px:assetId": string;
+    "px:providerUrl": string;
     "@context": { [index: string]: string };
     "@type": string[];
 }
@@ -306,8 +304,8 @@ export interface IPxExtendedDataResourceCredentialSubject {
     "gx:policy": string[];
     "gx:license": string[];
     "gx:containsPII": boolean;
-    "gx:name": string;
-    "gx:description": string;
+    "schema:name": string;
+    "schema:description": string;
     "@context": { [index: string]: string };
     "@type": string[];
 }

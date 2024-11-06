@@ -29,8 +29,6 @@ public interface ProviderServiceMapper {
     @Mapping(target = "assetId", source = "assetId")
     @Mapping(target = "providerUrl", source = "providerUrl")
     @Mapping(target = "id", source = "offeringId")
-    @Mapping(target = "schemaName", source = "request.name")
-    @Mapping(target = "schemaDescription", source = "request.description")
     @Mapping(target = "type", ignore = true)
     @Mapping(target = "context", ignore = true)
     PxExtendedServiceOfferingCredentialSubject getPxExtendedServiceOfferingCredentialSubject(

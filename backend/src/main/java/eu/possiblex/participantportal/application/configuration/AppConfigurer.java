@@ -3,6 +3,7 @@ package eu.possiblex.participantportal.application.configuration;
 import eu.possiblex.participantportal.business.control.EdcClient;
 import eu.possiblex.participantportal.business.control.SdCreationWizardApiClient;
 import eu.possiblex.participantportal.business.control.TechnicalFhCatalogClient;
+import eu.possiblex.participantportal.utilities.LogUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,7 +40,7 @@ public class AppConfigurer {
     @Bean
     public EdcClient edcClient() {
 
-        WebClient webClient = WebClient.builder().baseUrl(edcMgmtUrl).defaultHeader("X-API-Key", edcAccessKey).build();
+        WebClient webClient = WebClient.builder().baseUrl(edcMgmtUrl).clientConnector(LogUtils.createHttpClient()).defaultHeader("X-API-Key", edcAccessKey).build();
         HttpServiceProxyFactory httpServiceProxyFactory = HttpServiceProxyFactory.builder()
             .exchangeAdapter(WebClientAdapter.create(webClient)).build();
         return httpServiceProxyFactory.createClient(EdcClient.class);
@@ -48,7 +49,7 @@ public class AppConfigurer {
     @Bean
     public TechnicalFhCatalogClient technicalFhCatalogClient() {
 
-        WebClient webClient = WebClient.builder().baseUrl(fhCatalogUrl).defaultHeaders(httpHeaders -> {
+        WebClient webClient = WebClient.builder().baseUrl(fhCatalogUrl).clientConnector(LogUtils.createHttpClient()).defaultHeaders(httpHeaders -> {
             httpHeaders.set("Content-Type", "application/json");
             httpHeaders.set("Authorization", "Bearer " + fhCatalogSecretKey);
         }).build();
