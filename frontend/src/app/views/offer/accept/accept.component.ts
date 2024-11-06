@@ -27,6 +27,8 @@ export class AcceptComponent implements OnChanges {
   @ViewChild('viewContainerRef', { read: ViewContainerRef, static: true }) viewContainerRef: ViewContainerRef;
   @ViewChild('accordion', { read: TemplateRef, static: true }) accordion: TemplateRef<any>;
 
+  isAcceptButtonDisabled = false;
+
   constructor(private apiService: ApiService) {
   }
 
@@ -41,7 +43,7 @@ export class AcceptComponent implements OnChanges {
   async acceptContractOffer() {
     this.acceptOfferStatusMessage.showInfoMessage();
     console.log("'Accept Contract Offer' button pressed");
-
+    this.isAcceptButtonDisabled = true;
     this.apiService.acceptContractOffer({
       counterPartyAddress: this.offer == undefined ? "" : this.offer.catalogOffering["px:providerUrl"],
       edcOfferId: this.offer == undefined ? "" : this.offer.edcOfferId,
@@ -52,6 +54,7 @@ export class AcceptComponent implements OnChanges {
       this.acceptOfferStatusMessage.showSuccessMessage("Contract Agreement ID: " + response.contractAgreementId);
     }).catch((e: HttpErrorResponse) => {
       this.acceptOfferStatusMessage.showErrorMessage(e.error.detail || e.error || e.message);
+      this.isAcceptButtonDisabled = false;
     });
   };
 

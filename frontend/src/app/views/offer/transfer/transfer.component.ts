@@ -24,7 +24,7 @@ export class TransferComponent implements OnChanges {
   @Output() dismiss: EventEmitter<any> = new EventEmitter();
   @ViewChild('dataTransferStatusMessage') dataTransferStatusMessage!: StatusMessageComponent;
   dismissButtonLabel: string;
-  isTransferDisabled = false;
+  isTransferButtonDisabled = false;
 
   @ViewChild('viewContainerRef', { read: ViewContainerRef, static: true }) viewContainerRef: ViewContainerRef;
   @ViewChild('contractDetails', { read: TemplateRef, static: true }) contractDetails: TemplateRef<any>;
@@ -33,8 +33,6 @@ export class TransferComponent implements OnChanges {
   }
 
   ngOnChanges(): void {
-    this.isTransferDisabled = false;
-
     if(this.contract) {
       this.viewContainerRef.clear();
       this.dismissButtonLabel = this.contract.dataOffering ? "Cancel" : "Close";
@@ -47,17 +45,17 @@ export class TransferComponent implements OnChanges {
   async transfer() {
     this.dataTransferStatusMessage.showInfoMessage();
     console.log("'Transfer Data Resource' button pressed");
-
+    this.isTransferButtonDisabled = true;
     this.apiService.transferDataOffer({
       contractAgreementId: this.contract.contractAgreementId,
       counterPartyAddress: this.offer.catalogOffering["px:providerUrl"],
       edcOfferId: this.offer.edcOfferId,
     }).then(response => {
       console.log(response);
-      this.isTransferDisabled = true;
       this.dataTransferStatusMessage.showSuccessMessage("Data Transfer successful: " + response.transferProcessState);
     }).catch((e: HttpErrorResponse) => {
       this.dataTransferStatusMessage.showErrorMessage(e.error.detail || e.error || e.message);
+      this.isTransferButtonDisabled = false;
     });
   }
 

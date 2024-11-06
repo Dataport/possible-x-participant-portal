@@ -14,7 +14,7 @@
     <button (click)="cancel()" cButton color="secondary" shape="rounded-0">
       {{dismissButtonLabel}}
     </button>
-    <button *ngIf="contract.dataOffering" [disabled]="isTransferDisabled" (click)="transfer()" cButton color="primary" shape="rounded-0">
+    <button *ngIf="contract.dataOffering" [disabled]="isTransferButtonDisabled" (click)="transfer()" cButton color="primary" shape="rounded-0">
       Transfer Data Resource
     </button>
   </div>

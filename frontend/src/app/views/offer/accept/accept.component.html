@@ -110,7 +110,7 @@
       <button (click)="cancel()" cButton color="secondary" shape="rounded-0">
         Cancel
       </button>
-      <button (click)="acceptContractOffer()" cButton color="primary" shape="rounded-0" type="submit">
+      <button (click)="acceptContractOffer()" [disabled]="isAcceptButtonDisabled" cButton color="primary" shape="rounded-0" type="submit">
         Accept
       </button>
     </div>
