@@ -1,0 +1,7 @@
+.mat-stepper-vertical {
+  @apply bg-brand-50;
+}
+
+:host ::ng-deep .mat-vertical-stepper-header{
+  pointer-events: none !important;
+}

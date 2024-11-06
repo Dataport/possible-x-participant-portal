@@ -72,12 +72,12 @@ public class PxExtendedDataResourceCredentialSubject {
     @NotNull
     private boolean containsPII;
 
-    @JsonProperty("gx:name")
+    @JsonProperty("schema:name")
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)
     private String name;
 
-    @JsonProperty("gx:description")
+    @JsonProperty("schema:description")
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)
     private String description;

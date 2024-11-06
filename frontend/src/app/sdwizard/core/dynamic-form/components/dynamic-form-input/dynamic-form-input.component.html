@@ -3,12 +3,17 @@
     <div *ngSwitchCase="'textbox'">
 
       <div class="mb-3">
-        <label class="form-label">{{input.name}}<span *ngIf="input.required" aria-required="true" class="required">*</span><span class="field-key">&nbsp;&nbsp;{{ input.key }}</span>
+        <label class="form-label">{{ input.name }}<span *ngIf="input.required" aria-required="true"
+                                                        class="required">*</span><span
+          class="field-key">&nbsp;&nbsp;{{ input.key }}</span>
         </label>
-        <input *ngIf="input.name != 'Description'" [type]="input.datatype" class="form-control" [formControlName]="input.id" placeholder="{{input.example}}">
-        <textarea *ngIf="input.name == 'Description'" class="form-control" [formControlName]="input.id" rows="3" placeholder="{{input.example}}"></textarea>
+        <input *ngIf="input.name != 'Description'" [formControlName]="input.id" [type]="input.datatype"
+               class="form-control" placeholder="{{input.example}}">
+        <textarea *ngIf="input.name == 'Description'" [formControlName]="input.id" class="form-control"
+                  placeholder="{{input.example}}"
+                  rows="3"></textarea>
         <div cFormText>
-          {{input.description[this.translate.currentLang]}}
+          {{ input.description[this.translate.currentLang] }}
         </div>
       </div>
 
@@ -20,11 +25,13 @@
     <div *ngSwitchCase="'textbox_integer'">
 
       <div class="mb-3">
-        <label class="form-label">{{input.name}}<span *ngIf="input.required" aria-required="true" class="required">*</span><span class="field-key">&nbsp;&nbsp;{{ input.key }}</span>
+        <label class="form-label">{{ input.name }}<span *ngIf="input.required" aria-required="true"
+                                                        class="required">*</span><span
+          class="field-key">&nbsp;&nbsp;{{ input.key }}</span>
         </label>
-        <input type="number" class="form-control" [formControlName]="input.id" placeholder="{{input.example}}">
+        <input [formControlName]="input.id" class="form-control" placeholder="{{input.example}}" type="number">
         <div cFormText>
-          {{input.description[this.translate.currentLang]}}
+          {{ input.description[this.translate.currentLang] }}
         </div>
       </div>
 
@@ -35,11 +42,13 @@
     <div *ngSwitchCase="'textbox_decimal'">
 
       <div class="mb-3">
-        <label class="form-label">{{input.name}}<span *ngIf="input.required" aria-required="true" class="required">*</span><span class="field-key">&nbsp;&nbsp;{{ input.key }}</span>
+        <label class="form-label">{{ input.name }}<span *ngIf="input.required" aria-required="true"
+                                                        class="required">*</span><span
+          class="field-key">&nbsp;&nbsp;{{ input.key }}</span>
         </label>
-        <input type="number" class="form-control" [formControlName]="input.id" placeholder="{{input.example}}">
+        <input [formControlName]="input.id" class="form-control" placeholder="{{input.example}}" type="number">
         <div cFormText>
-          {{input.description[this.translate.currentLang]}}
+          {{ input.description[this.translate.currentLang] }}
         </div>
       </div>
 
@@ -50,11 +59,13 @@
     <div *ngSwitchCase="'textbox_uri'">
 
       <div class="mb-3">
-        <label class="form-label">{{input.name}}<span *ngIf="input.required" aria-required="true" class="required">*</span><span class="field-key">&nbsp;&nbsp;{{ input.key }}</span>
+        <label class="form-label">{{ input.name }}<span *ngIf="input.required" aria-required="true"
+                                                        class="required">*</span><span
+          class="field-key">&nbsp;&nbsp;{{ input.key }}</span>
         </label>
-        <input class="form-control" [formControlName]="input.id" placeholder="{{input.example}}">
+        <input [formControlName]="input.id" class="form-control" placeholder="{{input.example}}">
         <div cFormText>
-          {{input.description[this.translate.currentLang]}}
+          {{ input.description[this.translate.currentLang] }}
         </div>
       </div>
 
@@ -65,12 +76,14 @@
     <div *ngSwitchCase="'dropdown'">
       <div class="mb-3">
 
-        <label class="form-label">{{input.name}}<span *ngIf="input.required" aria-required="true" class="required">*</span><span class="field-key">&nbsp;&nbsp;{{ input.key }}</span></label>
-        <select class="form-select" [formControlName]="input.id">
-          <option *ngFor="let option of input.in" [value]="option.value">{{option.value}}</option>
+        <label class="form-label">{{ input.name }}<span *ngIf="input.required" aria-required="true"
+                                                        class="required">*</span><span
+          class="field-key">&nbsp;&nbsp;{{ input.key }}</span></label>
+        <select [formControlName]="input.id" class="form-select">
+          <option *ngFor="let option of input.in" [value]="option.value">{{ option.value }}</option>
         </select>
         <div cFormText>
-          {{input.description[this.translate.currentLang]}}
+          {{ input.description[this.translate.currentLang] }}
         </div>
       </div>
       <mat-error>
@@ -84,13 +97,14 @@
 
     <div *ngSwitchCase="'datepicker'">
       <mat-form-field class="full-width-input">
-        <mat-label>{{input.name}} <span *ngIf="input.required" aria-required="true" class="required">*</span><span class="field-key">&nbsp;&nbsp;{{ input.key }}</span>
+        <mat-label>{{ input.name }} <span *ngIf="input.required" aria-required="true" class="required">*</span><span
+          class="field-key">&nbsp;&nbsp;{{ input.key }}</span>
         </mat-label>
         <input [formControlName]="input.id" [matDatepicker]="picker" matInput>
         <mat-datepicker-toggle [for]="picker" matSuffix></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
         <div cFormText>
-          {{input.description[this.translate.currentLang]}}
+          {{ input.description[this.translate.currentLang] }}
         </div>
       </mat-form-field>
       <mat-error>
@@ -100,13 +114,14 @@
 
     <div *ngSwitchCase="'datetimepicker'">
       <mat-form-field class="full-width-input">
-        <mat-label>{{input.name}} <span *ngIf="input.required" aria-required="true" class="required">*</span><span class="field-key">&nbsp;&nbsp;{{ input.key }}</span>
+        <mat-label>{{ input.name }} <span *ngIf="input.required" aria-required="true" class="required">*</span><span
+          class="field-key">&nbsp;&nbsp;{{ input.key }}</span>
         </mat-label>
         <input [formControlName]="input.id" [ngxMatDatetimePicker]="picker" matInput>
         <mat-datepicker-toggle [for]="$any(picker)" matSuffix></mat-datepicker-toggle>
         <ngx-mat-datetime-picker #picker></ngx-mat-datetime-picker>
         <div cFormText>
-          {{input.description[this.translate.currentLang]}}
+          {{ input.description[this.translate.currentLang] }}
         </div>
       </mat-form-field>
       <mat-error>
@@ -116,15 +131,17 @@
 
     <div *ngSwitchCase="'checkbox'">
       <mat-checkbox [formControlName]="input.id" class="checkbox-style">
-        <mat-label>{{input.name}}<span class="field-key">&nbsp;&nbsp;{{ input.key }}</span>
-      </mat-label>
-      <div cFormText>
-        {{input.description[this.translate.currentLang]}}
-      </div>
+        <mat-label>{{ input.name }}<span class="field-key">&nbsp;&nbsp;{{ input.key }}</span>
+        </mat-label>
+        <div cFormText>
+          {{ input.description[this.translate.currentLang] }}
+        </div>
       </mat-checkbox>
       <mat-error>
         <app-show-errors [ctrl]="$any(form.get(input.id))" [label]="input.name"></app-show-errors>
       </mat-error>
+      <br/>
+      <br/>
     </div>
   </div>
 </form>

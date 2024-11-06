@@ -1,15 +1,36 @@
 .headerWrapper {
     @apply bg-white;
   }
-  
+
   .header {
     @apply flex items-end justify-between;
     @apply container max-w-screen-4xl px-8 py-4 xl:px-20;
-  
+
     .logo {
       @apply flex flex-shrink-0 items-baseline;
     }
   }
+
+.active-tab {
+  @apply underline text-brand-700;
+  text-underline-offset: 9px;
+  font-weight: bold;
+  display:inline;
+}
+
+a[cNavLink] {
+  position: relative;
+  display: inline-block;
+  text-align: center;
+}
+
+a[cNavLink]::before {
+  content: attr(data-text);
+  font-weight: bold;
+  visibility: hidden;
+  height: 0;
+  display: block;
+}
 
 .footerWrapper {
     @apply overflow-hidden bg-brand-700;

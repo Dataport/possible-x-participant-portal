@@ -73,12 +73,12 @@ public class PxExtendedServiceOfferingCredentialSubject {
     @NotNull
     private List<GxDataAccountExport> dataAccountExport;
 
-    @JsonProperty("gx:name")
+    @JsonProperty("schema:name")
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)
     private String name;
 
-    @JsonProperty("gx:description")
+    @JsonProperty("schema:description")
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)
     private String description;
@@ -92,18 +92,6 @@ public class PxExtendedServiceOfferingCredentialSubject {
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)
     private String providerUrl;
-
-    // TODO: Remove this when FH catalog UI is adjusted, currently needed to show the name
-    @JsonProperty("schema:name")
-    @JsonSerialize(using = StringSerializer.class)
-    @JsonDeserialize(using = StringDeserializer.class)
-    private String schemaName;
-
-    // TODO: Remove this when FH catalog UI is adjusted, currently needed to show the description
-    @JsonProperty("schema:description")
-    @JsonSerialize(using = StringSerializer.class)
-    @JsonDeserialize(using = StringDeserializer.class)
-    private String schemaDescription;
 
     @JsonProperty("@type")
     public List<String> getType() {

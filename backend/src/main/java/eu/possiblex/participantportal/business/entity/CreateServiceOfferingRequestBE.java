@@ -28,5 +28,7 @@ public class CreateServiceOfferingRequestBE {
 
     private String description;
 
+    private List<String> policy;
+
     private List<EnforcementPolicy> enforcementPolicies;
 }

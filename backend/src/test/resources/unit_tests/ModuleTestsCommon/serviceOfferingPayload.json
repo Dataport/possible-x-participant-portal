@@ -12,11 +12,11 @@
     "gx:providedBy": {
       "@id": "did:web:example-organization.eu"
     },
-    "gx:name": {
+    "schema:name": {
       "@value": "Test Service Offering",
       "@type": "xsd:string"
     },
-    "gx:description": {
+    "schema:description": {
       "@value": "This is the service offering description.",
       "@type": "xsd:string"
     },

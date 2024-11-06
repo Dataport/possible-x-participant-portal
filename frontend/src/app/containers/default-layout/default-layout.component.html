@@ -8,13 +8,13 @@
       <div #collapseRef="cCollapse" cCollapse navbar>
         <c-navbar-nav class="navbar-nav">
           <c-nav-item>
-            <a [routerLink]="['/offer/provide']" cNavLink>Provide Offer</a>
+            <a [routerLink]="['/offer/provide']" routerLinkActive="active-tab" data-text="Provide Offer" cNavLink>Provide Offer</a>
           </c-nav-item>
           <c-nav-item>
-            <a [routerLink]="['/offer/consume']" cNavLink>Consume Offer</a>
+            <a [routerLink]="['/offer/consume']" routerLinkActive="active-tab" data-text="Consume Offer" cNavLink>Consume Offer</a>
           </c-nav-item>
           <c-nav-item>
-            <a [routerLink]="['offer/contracts']" cNavLink>Contracts</a>
+            <a [routerLink]="['offer/contracts']" routerLinkActive="active-tab" data-text="Contracts" cNavLink>Contracts</a>
           </c-nav-item>
         </c-navbar-nav>
       </div>

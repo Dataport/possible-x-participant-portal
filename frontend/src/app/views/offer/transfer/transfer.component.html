@@ -1,24 +1,24 @@
-<div class="flex flex-col items-center"> <!-- Full-page flex container -->
-  <div class="pt-10 pb-40">
-    <div class="flex justify-center pb-3 text-2xl font-bold text-brand-800">
-      Contract Negotiation Successful
-    </div>
-    <div class="flex justify-center text-lg text-center">
-      Generated Contract Agreement ID:<br>{{ contract.contractAgreementId }}
+<div #viewContainerRef></div>
+<ng-template #contractDetails>
+  <div class="flex flex-col items-center"> <!-- Full-page flex container -->
+    <div class="pt-10 pb-24">
+      <div class="flex justify-center pb-3 text-2xl font-bold text-brand-800">
+        Contract Negotiation Successful
+      </div>
+      <div class="flex justify-center text-lg text-center">
+        Generated Contract Agreement ID:<br>{{ contract.contractAgreementId }}
+      </div>
     </div>
   </div>
-</div>
-
-<div class="flex justify-between">
-  <button (click)="cancel()" cButton color="secondary" shape="rounded-0">
-    {{dismissButtonLabel}}
-  </button>
-  <button *ngIf="contract.dataOffering" (click)="transfer()" cButton
-          color="primary" shape="rounded-0"
-          type="submit">
-    Transfer Data Resource
-  </button>
-</div>
+  <div class="flex justify-between">
+    <button (click)="cancel()" cButton color="secondary" shape="rounded-0">
+      {{dismissButtonLabel}}
+    </button>
+    <button *ngIf="contract.dataOffering" [disabled]="isTransferDisabled" (click)="transfer()" cButton color="primary" shape="rounded-0">
+      Transfer Data Resource
+    </button>
+  </div>
+</ng-template>
 
 <div class="flex justify-center mt-3">
   <app-status-message

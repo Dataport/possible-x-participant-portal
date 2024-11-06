@@ -1,25 +1,38 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SelectOfferComponent } from './select-offer.component';
+import { SelectComponent } from './select.component';
 import { ApiService } from "../../../services/mgmt/api/api.service";
-import { IOfferDetailsTO } from "../../../services/mgmt/api/backend";
+import {
+  IOfferDetailsTO,
+  IPxExtendedServiceOfferingCredentialSubject
+} from "../../../services/mgmt/api/backend";
 import { StatusMessageComponent } from "../../common-views/status-message/status-message.component";
 import { Component, NO_ERRORS_SCHEMA } from "@angular/core";
 import { first } from "rxjs";
 
 describe('SelectOfferComponent', () => {
-  let component: SelectOfferComponent;
-  let fixture: ComponentFixture<SelectOfferComponent>;
+  let component: SelectComponent;
+  let fixture: ComponentFixture<SelectComponent>;
   let apiService: jasmine.SpyObj<ApiService>;
 
   const offerDetails = {
     edcOfferId: 'dummy',
-    counterPartyAddress: 'dummy',
-    offerType: 'dummy',
-    creationDate: new Date(Date.now()),
-    name: 'dummy',
-    description: 'dummy',
-    contentType: 'dummy'
+    catalogOffering: {
+      id: "catalogOfferingId",
+      "gx:providedBy": { id: "providedBy" },
+      "gx:aggregationOf": [],
+      "gx:termsAndConditions": [],
+      "gx:policy": ["policy"],
+      "gx:dataProtectionRegime": [],
+      "gx:dataAccountExport": [],
+      "schema:name": "name",
+      "schema:description": "description",
+      "px:assetId": "assetId",
+      "px:providerUrl": "providerUrl",
+      "@context": {},
+      "@type": []
+    } as IPxExtendedServiceOfferingCredentialSubject,
+    dataOffering: false
   } as IOfferDetailsTO;
 
   @Component({
@@ -36,7 +49,7 @@ describe('SelectOfferComponent', () => {
     const apiServiceSpy = jasmine.createSpyObj('ApiService', ['selectContractOffer']);
 
     await TestBed.configureTestingModule({
-      declarations: [SelectOfferComponent, MockStatusMessageComponent],
+      declarations: [SelectComponent, MockStatusMessageComponent],
       providers: [
         { provide: ApiService, useValue: apiServiceSpy }
       ],
@@ -44,7 +57,7 @@ describe('SelectOfferComponent', () => {
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(SelectOfferComponent);
+    fixture = TestBed.createComponent(SelectComponent);
     component = fixture.componentInstance;
     apiService = TestBed.inject(ApiService) as jasmine.SpyObj<ApiService>;
     fixture.detectChanges();
@@ -60,7 +73,7 @@ describe('SelectOfferComponent', () => {
     component.selectedOffer.pipe(first())
       .subscribe((offer) => expect(offer).toEqual(offerDetails));
 
-    component.selectOffer();
+    component.selectOffer("offerId");
 
     expect(apiService.selectContractOffer).toHaveBeenCalled();
   });

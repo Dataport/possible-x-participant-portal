@@ -4,8 +4,9 @@
       <span class="addDelete">
         <div *ngSwitchCase="'textbox'">
           <div class="full-width-input">
-            <label class="form-label" *ngIf="i == 0"
-              >{{ input.name }}
+            <label *ngIf="i == 0" [matTooltip]="getTooltip(input.name)" class="form-label"
+                   matTooltipClass="custom-tooltip"
+            >{{ input.name }}
               <span
                 *ngIf="hasRequiredValidator($any(control))"
                 aria-required="true"
@@ -13,38 +14,37 @@
               >*</span>
               <span class="field-key">&nbsp;&nbsp;{{ input.key }}</span>
             </label>
-
             <div class="flex-container">
               <input
-                class="form-control"
                 [formControl]="$any(inputs.controls[i])"
+                class="form-control"
                 placeholder="{{ input.example }}"
               />
 
               <button
-                cButton
-                variant="ghost"
-                color="primary"
                 (click)="addInput()"
                 *ngIf="i == 0 && displayAddButton"
                 [disabled]="!enableButton"
+                cButton
+                color="primary"
                 size="sm"
+                variant="ghost"
               >
-                <svg class="" cIcon name="cib-addthis" size="xl"></svg>
+                <svg cIcon class="" name="cib-addthis" size="xl"></svg>
               </button>
 
               <button
-                cButton
-                variant="ghost"
                 (click)="deleteInput(i)"
                 *ngIf="i != 0 && i >= input.minCount"
+                cButton
                 color="primary"
                 size="sm"
+                variant="ghost"
               >
-                <svg class="" cIcon name="cil-trash" size="xl"></svg>
+                <svg cIcon class="" name="cil-trash" size="xl"></svg>
               </button>
             </div>
-            <div cFormText *ngIf="i == inputs.controls.length - 1">
+            <div *ngIf="i == inputs.controls.length - 1" cFormText>
               {{ input.description[this.translate.currentLang] }}
             </div>
           </div>
@@ -59,8 +59,8 @@
       </span>
       <div *ngSwitchCase="'textbox_integer'">
         <div class="full-width-input">
-          <label class="form-label" *ngIf="i == 0"
-            >{{ input.name }}
+          <label *ngIf="i == 0" class="form-label"
+          >{{ input.name }}
             <span
               *ngIf="hasRequiredValidator($any(control))"
               aria-required="true"
@@ -71,36 +71,36 @@
 
           <div class="flex-container">
             <input
-              class="form-control"
               [formControl]="$any(inputs.controls[i])"
+              class="form-control"
               placeholder="{{ input.example }}"
               type="number"
             />
 
             <button
-              cButton
-              variant="ghost"
-              color="primary"
               (click)="addInput()"
               *ngIf="i == 0 && displayAddButton"
               [disabled]="!enableButton"
+              cButton
+              color="primary"
               size="sm"
+              variant="ghost"
             >
-              <svg class="" cIcon name="cib-addthis" size="xl"></svg>
+              <svg cIcon class="" name="cib-addthis" size="xl"></svg>
             </button>
 
             <button
-              cButton
-              variant="ghost"
               (click)="deleteInput(i)"
               *ngIf="i != 0 && i >= input.minCount"
+              cButton
               color="primary"
               size="sm"
+              variant="ghost"
             >
-              <svg class="" cIcon name="cil-trash" size="xl"></svg>
+              <svg cIcon class="" name="cil-trash" size="xl"></svg>
             </button>
           </div>
-          <div cFormText *ngIf="i == inputs.controls.length - 1">
+          <div *ngIf="i == inputs.controls.length - 1" cFormText>
             {{ input.description[this.translate.currentLang] }}
           </div>
         </div>
@@ -115,8 +115,8 @@
 
       <div *ngSwitchCase="'textbox_decimal'">
         <div class="full-width-input">
-          <label class="form-label" *ngIf="i == 0"
-            >{{ input.name }}
+          <label *ngIf="i == 0" class="form-label"
+          >{{ input.name }}
             <span
               *ngIf="hasRequiredValidator($any(control))"
               aria-required="true"
@@ -127,35 +127,35 @@
 
           <div class="flex-container">
             <input
-              class="form-control"
               [formControl]="$any(inputs.controls[i])"
+              class="form-control"
               placeholder="{{ input.example }}"
             />
 
             <button
-              cButton
-              variant="ghost"
-              color="primary"
               (click)="addInput()"
               *ngIf="i == 0 && displayAddButton"
               [disabled]="!enableButton"
+              cButton
+              color="primary"
               size="sm"
+              variant="ghost"
             >
-              <svg class="" cIcon name="cib-addthis" size="xl"></svg>
+              <svg cIcon class="" name="cib-addthis" size="xl"></svg>
             </button>
 
             <button
-              cButton
-              variant="ghost"
               (click)="deleteInput(i)"
               *ngIf="i != 0 && i >= input.minCount"
+              cButton
               color="primary"
               size="sm"
+              variant="ghost"
             >
-              <svg class="" cIcon name="cil-trash" size="xl"></svg>
+              <svg cIcon class="" name="cil-trash" size="xl"></svg>
             </button>
           </div>
-          <div cFormText *ngIf="i == inputs.controls.length - 1">
+          <div *ngIf="i == inputs.controls.length - 1" cFormText>
             {{ input.description[this.translate.currentLang] }}
           </div>
         </div>
@@ -170,8 +170,8 @@
 
       <div *ngSwitchCase="'textbox_uri'">
         <div class="full-width-input">
-          <label class="form-label" *ngIf="i == 0"
-            >{{ input.name }}
+          <label *ngIf="i == 0" class="form-label"
+          >{{ input.name }}
             <span
               *ngIf="hasRequiredValidator($any(control))"
               aria-required="true"
@@ -182,35 +182,35 @@
 
           <div class="flex-container">
             <input
-              class="form-control"
               [formControl]="$any(inputs.controls[i])"
+              class="form-control"
               placeholder="{{ input.example }}"
             />
 
             <button
-              cButton
-              variant="ghost"
-              color="primary"
               (click)="addInput()"
               *ngIf="i == 0 && displayAddButton"
               [disabled]="!enableButton"
+              cButton
+              color="primary"
               size="sm"
+              variant="ghost"
             >
-              <svg class="" cIcon name="cib-addthis" size="xl"></svg>
+              <svg cIcon class="" name="cib-addthis" size="xl"></svg>
             </button>
 
             <button
-              cButton
-              variant="ghost"
               (click)="deleteInput(i)"
               *ngIf="i != 0 && i >= input.minCount"
+              cButton
               color="primary"
               size="sm"
+              variant="ghost"
             >
-              <svg class="" cIcon name="cil-trash" size="xl"></svg>
+              <svg cIcon class="" name="cil-trash" size="xl"></svg>
             </button>
           </div>
-          <div cFormText *ngIf="i == inputs.controls.length - 1">
+          <div *ngIf="i == inputs.controls.length - 1" cFormText>
             {{ input.description[this.translate.currentLang] }}
           </div>
         </div>
@@ -231,7 +231,7 @@
           }"
         >
           <mat-label
-            >{{ input.name }}
+          >{{ input.name }}
             <span *ngIf="hasRequiredValidator($any(control))" aria-required="true">*</span>
             <span class="field-key">&nbsp;&nbsp;{{ input.key }}</span>
           </mat-label>
@@ -280,7 +280,7 @@
           }"
         >
           <mat-label
-            >{{ input.name }}
+          >{{ input.name }}
             <span
               *ngIf="hasRequiredValidator($any(control))"
               aria-required="true"
@@ -328,8 +328,8 @@
       <div *ngSwitchCase="'dropdown'">
         <div class="mb-3">
           <div class="full-width-input">
-            <label class="form-label" *ngIf="i == 0"
-              >{{ input.name }}
+            <label *ngIf="i == 0" class="form-label"
+            >{{ input.name }}
               <span
                 *ngIf="hasRequiredValidator($any(control))"
                 aria-required="true"
@@ -340,8 +340,8 @@
 
             <div class="flex-container">
               <select
-                class="form-select"
                 [formControl]="$any(inputs.controls[i])"
+                class="form-select"
               >
                 <option *ngFor="let option of input.in" [value]="option.value">
                   {{ option.value }}
@@ -349,29 +349,29 @@
               </select>
 
               <button
-                cButton
-                variant="ghost"
-                color="primary"
                 (click)="addInput()"
                 *ngIf="i == 0 && displayAddButton"
                 [disabled]="!enableButton"
+                cButton
+                color="primary"
                 size="sm"
+                variant="ghost"
               >
-                <svg class="" cIcon name="cib-addthis" size="xl"></svg>
+                <svg cIcon class="" name="cib-addthis" size="xl"></svg>
               </button>
 
               <button
-                cButton
-                variant="ghost"
                 (click)="deleteInput(i)"
                 *ngIf="i != 0 && i >= input.minCount"
+                cButton
                 color="primary"
                 size="sm"
+                variant="ghost"
               >
-                <svg class="" cIcon name="cil-trash" size="xl"></svg>
+                <svg cIcon class="" name="cil-trash" size="xl"></svg>
               </button>
             </div>
-            <div cFormText *ngIf="i == inputs.controls.length - 1">
+            <div *ngIf="i == inputs.controls.length - 1" cFormText>
               {{ input.description[this.translate.currentLang] }}
             </div>
           </div>
