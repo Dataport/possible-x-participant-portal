@@ -23,7 +23,7 @@ export class DynamicFormArrayComponent implements OnInit {
   validationService: ValidationControlService = new ValidationControlService();
 
   serviceOfferingPolicyTooltip: string = 'Below you have the option of entering a policy for the use and management of this service. \n' +
-    'The policy should also include the restrictions set out in the predefined policy class. \n' +
+    'The policy should also include the restrictions set out in the POSSIBLE-X enforced policy. \n' +
     '\n' +
     'This policy is neither technically enforced nor is its compliance monitored. However, the user of the service undertakes to comply with the guidelines listed here.\n' +
     '\n' +
