@@ -52,6 +52,10 @@
   gap: 5px;
 }
 
+ul {
+  list-style-type: square;
+  padding-left: 2em;
+}
 
 ::ng-deep .custom-tooltip {
   word-wrap: break-word;

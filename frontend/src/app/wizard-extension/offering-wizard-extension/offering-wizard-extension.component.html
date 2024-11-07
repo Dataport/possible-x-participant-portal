@@ -52,10 +52,9 @@
                 Data resource freely defined policy field
               </button>
           </ng-template>
-          <ng-template cTemplateId="accordionBody">
-            <div>
+          <ng-template cTemplateId="accordionBodyTemplate">
+            <div class="accordion-body">
               You must define machine readable policies for the data resource as expected by Gaia-x and POSSIBLE-X.
-              <br>
               <ul>
                 <li>
                   Use under service offering “POSSIBLE-X enforced policy” to restrict booking of this data product by a consumer organisation in the POSSIBLE-X Dataspace.
@@ -79,7 +78,6 @@
               The policies related to the service providing the data resource (e.g. the use of an Eclipse Dataspace Connector) shall be defined in the next section.
               <br><br>
               For each policy type, you may take the following dimensions into account:
-              <br>
               <ul>
                 <li>
                   <b>Access control</b>: Who is allowed to access this data resource? (e.g. only certain departments or roles)
@@ -88,12 +86,10 @@
                   <b>Usage control</b>: How may the data resource be used? (e.g. only for internal analyses, not to be passed on to third parties, pre-requisites to be fullfilled to use the data)
                 </li>
               </ul>
-              <br>
               See as well IDS standard:
                 <a href="https://docs.internationaldataspaces.org/ids-knowledgebase/open-dei-building-blocks-catalog/access_and_usage_control">
                   https://docs.internationaldataspaces.org/ids-knowledgebase/open-dei-building-blocks-catalog/access_and_usage_control
                 </a>
-              <br>
               <ul>
                 <li>
                   <b>Security</b>: What security precautions need to be taken? (e.g. encryption, regular security checks)
@@ -170,10 +166,9 @@
               Service offering freely defined policy field
             </button>
           </ng-template>
-          <ng-template cTemplateId="accordionBody">
-            <div>
+          <ng-template cTemplateId="accordionBodyTemplate">
+            <div class="accordion-body">
               You must define machine readable policies for the service offering as expected by Gaia-x and POSSIBLE-X.
-              <br>
               <ul>
                 <li>
                   Use under service offering “POSSIBLE-X enforced policy” to restrict booking of this data product by a consumer organisation in the POSSIBLE-X Dataspace.
@@ -213,7 +208,6 @@
                   <b>Data integrity</b>: What obligations has the user to comply to ensure the integrity of the data input/output to/from the service? (e.g. maintain integrity proofs of data input like checksums, error correction procedures, protect data output received from the service)
                 </li>
               </ul>
-              <br>
             </div>
           </ng-template>
         </c-accordion-item>
@@ -223,8 +217,8 @@
               Service offering POSSIBLE-X enforced policy
             </button>
           </ng-template>
-          <ng-template cTemplateId="accordionBody">
-            <div>
+          <ng-template cTemplateId="accordionBodyTemplate">
+            <div class="accordion-body">
               You may defined POSSIBLE-X enforced policy by configuring a predefined policy class for the use and management of this service/data product.
               <br><br>
               Restrict the contractual booking to organization(s)” allows to restrict which organization(s) of your choice will be able to proceed with a contractual booking based on their legal participant did:web declared in the POSSIBLE-X Catalog credentials.
