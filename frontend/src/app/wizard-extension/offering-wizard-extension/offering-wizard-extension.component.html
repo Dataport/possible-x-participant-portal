@@ -45,7 +45,7 @@
         <br/>
       </div>
       <app-base-wizard-extension #gxDataResourceWizard></app-base-wizard-extension>
-      <c-accordion>
+      <c-accordion [flush]="true">
         <c-accordion-item #accordionItemDataOfferPolicyHints="cAccordionItem" [visible]="false">
           <ng-template cTemplateId="accordionHeaderTemplate">
               <button (click)="accordionItemDataOfferPolicyHints.toggleItem()" [collapsed]="!accordionItemDataOfferPolicyHints.visible" cAccordionButton>
@@ -120,7 +120,7 @@
       <div cFormText>
         Please define POSSIBLE-X enforced policies based on POSSIBLE predefined policy classes for the provided service offer. <span *ngIf="!isPolicyChecked" class="font-bold">Currently, everything is allowed.</span>
       </div>
-      <c-accordion>
+      <c-accordion [flush]="true">
         <c-accordion-item #accordionItem="cAccordionItem" [visible]="false">
           <ng-template cTemplateId="accordionHeaderTemplate">
             <div class="accordion-header">
@@ -150,13 +150,12 @@
                   </small>
                 </div>
               </div>
-
             </div>
           </ng-template>
         </c-accordion-item>
       </c-accordion>
       <br>
-      <c-accordion>
+      <c-accordion [flush]="true">
         <c-accordion-item #accordionItemServiceOfferFreePolicyHints="cAccordionItem" [visible]="false">
           <ng-template cTemplateId="accordionHeaderTemplate">
             <button (click)="accordionItemServiceOfferFreePolicyHints.toggleItem()" [collapsed]="!accordionItemServiceOfferFreePolicyHints.visible" cAccordionButton>
