@@ -57,7 +57,7 @@ ul {
   padding-left: 2em;
 }
 
-::ng-deep .custom-tooltip {
+::ng-deep {
   word-wrap: break-word;
   white-space: pre-line;
   max-width: 2000px !important; /* Adjust the width as needed */
