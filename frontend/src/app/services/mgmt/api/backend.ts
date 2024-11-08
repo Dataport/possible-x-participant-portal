@@ -18,6 +18,7 @@ export interface IResourceShapeRestApi {
     gxPhysicalResourceShape: string;
     gxSoftwareResourceShape: string;
     gxVirtualResourceShape: string;
+    gxLegitimateInterestShape: string;
 }
 
 export interface IServiceOfferingShapeRestApi {
@@ -397,6 +398,14 @@ export class RestApplicationClient {
      */
     getGxInstantiatedVirtualResourceShape(): RestResponse<string> {
         return this.httpClient.request({ method: "GET", url: uriEncoding`shapes/gx/resource/instantiatedvirtualresource` });
+    }
+
+    /**
+     * HTTP GET /shapes/gx/resource/legitimateinterest
+     * Java method: eu.possiblex.participantportal.application.boundary.ShapeRestApiImpl.getGxLegitimateInterestShape
+     */
+    getGxLegitimateInterestShape(): RestResponse<string> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`shapes/gx/resource/legitimateinterest` });
     }
 
     /**
