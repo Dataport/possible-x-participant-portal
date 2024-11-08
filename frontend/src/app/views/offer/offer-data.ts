@@ -1,2 +1,3 @@
 export const TBR_SERVICE_OFFERING_ID: string = "urn:uuid:GENERATED_SERVICE_OFFERING_ID";
 export const TBR_DATA_RESOURCE_ID: string = "urn:uuid:GENERATED_DATA_RESOURCE_ID";
+export const TBR_LEGITIMATE_INTEREST_ID: string = "urn:uuid:GENERATED_LEGITIMATE_INTEREST_ID";
