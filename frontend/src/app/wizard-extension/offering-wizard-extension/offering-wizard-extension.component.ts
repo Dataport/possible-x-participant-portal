@@ -21,7 +21,7 @@ import {isDataResourceCs, isGxServiceOfferingCs} from '../../utils/credential-ut
 import {ApiService} from '../../services/mgmt/api/api.service';
 import {
   IEverythingAllowedPolicy,
-  IGxDataResourceCredentialSubject,
+  IGxDataResourceCredentialSubject, IGxLegitimateInterest,
   IGxServiceOfferingCredentialSubject,
   INodeKindIRITypeId,
   IParticipantRestrictionPolicy,
@@ -30,6 +30,7 @@ import {
 import {TBR_DATA_RESOURCE_ID, TBR_LEGITIMATE_INTEREST_ID, TBR_SERVICE_OFFERING_ID} from "../../views/offer/offer-data";
 import {MatStepper} from "@angular/material/stepper";
 import {AccordionItemComponent} from "@coreui/angular";
+import {HttpErrorResponse} from "@angular/common/http";
 
 @Component({
   selector: 'app-offering-wizard-extension',
@@ -121,6 +122,8 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
 
     let policy: IParticipantRestrictionPolicy | IEverythingAllowedPolicy;
 
+    let gxLegitimateInterestJsonSd: IGxLegitimateInterest;
+
     if (this.isPolicyChecked) {
       policy = {
         "@type": "ParticipantRestrictionPolicy",
@@ -136,7 +139,8 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
       serviceOfferingCredentialSubject: gxOfferingJsonSd,
       enforcementPolicies: [
         policy
-      ]
+      ],
+      legitimateInterest: gxLegitimateInterestJsonSd,
     };
 
     let createOfferMethod: (offer: any) => Promise<any>;
@@ -150,9 +154,9 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
       createOfferTo.fileName = this.selectedFileName;
 
       if (this.isContainingPII()) {
-        createOfferTo.legitimateInterestCredentialSubject = this.gxLegitimateInterestWizard.generateJsonCs();
+        createOfferTo.legitimateInterest = this.gxLegitimateInterestWizard.generateJsonCs();
 
-        //createOfferMethod = this.apiService.createDataOfferingWithPII.bind(this.apiService);
+        createOfferMethod = this.apiService.createDataOffering.bind(this.apiService);//withPII
       } else {
         createOfferMethod = this.apiService.createDataOffering.bind(this.apiService);
       }
@@ -160,17 +164,17 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
 
     console.log(createOfferTo);
 
-    // createOfferMethod(createOfferTo).then(response => {
-    //   console.log(response);
-    //   this.waitingForResponse = false;
-    //   this.offerCreationStatusMessage.showSuccessMessage("");
-    // }).catch((e: HttpErrorResponse) => {
-    //   this.waitingForResponse = false;
-    //   this.offerCreationStatusMessage.showErrorMessage(e.error.detail || e.error || e.message);
-    // }).catch(_ => {
-    //   this.waitingForResponse = false;
-    //   this.offerCreationStatusMessage.showErrorMessage("Unbekannter Fehler");
-    // });
+     createOfferMethod(createOfferTo).then(response => {
+       console.log(response);
+       this.waitingForResponse = false;
+       this.offerCreationStatusMessage.showSuccessMessage("");
+     }).catch((e: HttpErrorResponse) => {
+       this.waitingForResponse = false;
+       this.offerCreationStatusMessage.showErrorMessage(e.error.detail || e.error || e.message);
+     }).catch(_ => {
+       this.waitingForResponse = false;
+       this.offerCreationStatusMessage.showErrorMessage("Unbekannter Fehler");
+     });
 
   }
 

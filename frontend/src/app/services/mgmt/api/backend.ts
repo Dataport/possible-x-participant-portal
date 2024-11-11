@@ -67,6 +67,7 @@ export interface IContractAgreementTOBuilder {
 export interface ICreateDataOfferingRequestTO extends ICreateServiceOfferingRequestTO {
     dataResourceCredentialSubject: IGxDataResourceCredentialSubject;
     fileName: string;
+    legitimateInterestCredentialSubject?: IGxLegitimateInterest;
 }
 
 export interface ICreateDataOfferingRequestTOBuilder<C, B> extends ICreateServiceOfferingRequestTOBuilder<C, B> {
@@ -161,6 +162,16 @@ export interface IGxDataAccountExportBuilder {
     "gx:requestType": string;
     "gx:accessType": string;
     "gx:formatType": string;
+}
+
+export interface IGxLegitimateInterest {
+    "gx:dataProtectionContact": string;
+    "gx:legalBasis": string;
+}
+
+export interface IGxLegitimateInterestBuilder {
+    "gx:dataProtectionContact": string;
+    "gx:legalBasis": string;
 }
 
 export interface IGxSOTermsAndConditions {
