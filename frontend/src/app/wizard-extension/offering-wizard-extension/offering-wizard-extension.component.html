@@ -46,7 +46,7 @@
       </div>
       <app-base-wizard-extension #gxDataResourceWizard></app-base-wizard-extension>
       <div class="flex justify-between pt-4">
-        <button cButton color="secondary" matStepperPrevious shape="rounded-0">Back</button>
+        <button (click)="prepareStepBeforeDataResource()" cButton color="secondary" matStepperPrevious shape="rounded-0">Back</button>
         <button (click)="prepareStepAfterDataResource()" [disabled]="!isDataResourceValid()" cButton
                 color="primary"
                 matStepperNext shape="rounded-0"
@@ -56,11 +56,12 @@
       </div>
     </mat-step>
 
-    <mat-step *ngIf="isContainingPII()" [completed]="isLegitimateInterestValid()" errorMessage="Missing fields">
+    <mat-step *ngIf="isContainingPII()" [completed]="isLegitimateInterestValid()" errorMessage="Missing fields" [ngClass]="{'hidden': !isContainingPII()}">
       <ng-template matStepLabel>Define Legitimate Interest</ng-template>
-      <div>In the last step you have stated that your data contains personal identifiable information which is why you
-        have to state the legitimate interest now in this additional step.
-        <br/>
+      <div>
+        In the previous step, you mentioned that your data includes personally identifiable information.
+        Therefore, it is necessary to specify the legitimate interest in this additional step.
+        <br/><br/>
       </div>
       <app-base-wizard-extension #gxLegitimateInterestWizard></app-base-wizard-extension>
       <div class="flex justify-between pt-4">

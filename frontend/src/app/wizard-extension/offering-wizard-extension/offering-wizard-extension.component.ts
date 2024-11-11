@@ -68,15 +68,6 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    setTimeout(() => {
-      console.log("ser wiz " + this.gxServiceOfferingWizard);
-      console.log("dat wiz " + this.gxDataResourceWizard);
-      console.log("leg wiz " + this.gxLegitimateInterestWizard);
-
-      if (!this.gxLegitimateInterestWizard) {
-        console.error("gxLegitimateInterestWizard is not initialized");
-      }
-
       this.retrieveAndAdaptServiceOfferingShape();
       this.retrieveAndAdaptDataResourceShape();
       this.retrieveLegitimateInterestShape();
@@ -84,7 +75,6 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
       this.resetPossibleSpecificFormValues();
       this.resetAccordionItem();
       this.containsPII = false;
-    }, 100);
   }
 
   async retrieveAndAdaptServiceOfferingShape() {
@@ -253,11 +243,6 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
 
   async prefillLegitimateInterestWizard() {
     let gxLegitimateInterestCs = {"@type": "gx:LegitimateInterest"} as any;
-    console.log("leg wiz " + this.gxLegitimateInterestWizard);
-    console.log("dat wiz " + this.gxDataResourceWizard);
-    console.log("ser wiz " + this.gxServiceOfferingWizard);
-    console.log(this.legitimateInterestShapeSource);
-    console.log(TBR_LEGITIMATE_INTEREST_ID);
 
     this.loadShape(this.gxLegitimateInterestWizard, this.legitimateInterestShapeSource, TBR_LEGITIMATE_INTEREST_ID).then(_ => {
       this.prefillHandleCs(gxLegitimateInterestCs);
@@ -309,16 +294,6 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
     this.resetAccordionItem();
   }
 
-  protected prepareStepAfterDataResource() {
-    this.setContainsPII();
-
-    if (this.isContainingPII()) {
-      this.prefillLegitimateInterestWizard();
-    } else {
-      this.prefillServiceOfferingWizard();
-    }
-  }
-
   protected isOfferingDataOffering() {
     return this.offerType === "data";
   }
@@ -357,6 +332,18 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
     return shapeSource;
   }
 
+  protected prepareStepAfterDataResource() {
+    this.setContainsPII();
+
+    setTimeout(() => {
+      if (this.isContainingPII()) {
+        this.prefillLegitimateInterestWizard();
+      } else {
+        this.prefillServiceOfferingWizard();
+      }
+    }, 50);
+  }
+
   protected setContainsPII() {
     let gxDataResourceJsonSd: IGxDataResourceCredentialSubject = this.gxDataResourceWizard.generateJsonCs();
     this.containsPII = gxDataResourceJsonSd["gx:containsPII"];
@@ -372,4 +359,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
 
   }
 
+  prepareStepBeforeDataResource() {
+    this.containsPII = false;
+  }
 }
