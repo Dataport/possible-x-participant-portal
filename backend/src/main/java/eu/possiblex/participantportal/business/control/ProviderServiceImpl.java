@@ -178,9 +178,9 @@ public class ProviderServiceImpl implements ProviderService {
         if (request instanceof CreateDataOfferingRequestBE dataOfferingRequest) { // data offering
             dataOfferingRequest.getDataResource().setId(dataResourceId);
             dataOfferingRequest.getDataResource().setExposedThrough(new NodeKindIRITypeId(serviceOfferingId));
-            if (!dataOfferingRequest.getLegitimateInterest().isEmpty()) {
+            if (dataOfferingRequest.getLegitimateInterest() != null) {
                 dataOfferingRequest.getDataResource()
-                    .setLegitimateInterest(dataOfferingRequest.getLegitimateInterest().get());
+                    .setLegitimateInterest(dataOfferingRequest.getLegitimateInterest());
             }
             return providerServiceMapper.getPxExtendedServiceOfferingCredentialSubject(dataOfferingRequest,
                 serviceOfferingId, assetId, edcProtocolUrl, policy);
@@ -249,7 +249,6 @@ public class ProviderServiceImpl implements ProviderService {
         Policy policy = new Policy();
         policy.getPermission().add(usePermission);
         policy.getPermission().add(transferPermission);
-
         return policy;
     }
 

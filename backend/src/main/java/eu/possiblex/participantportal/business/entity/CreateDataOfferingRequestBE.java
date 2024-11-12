@@ -18,5 +18,5 @@ public class CreateDataOfferingRequestBE extends CreateServiceOfferingRequestBE 
 
     private String fileName;
 
-    private Optional<GxLegitimateInterest> legitimateInterest;
+    private GxLegitimateInterest legitimateInterest;
 }

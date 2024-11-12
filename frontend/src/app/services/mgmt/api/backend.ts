@@ -67,7 +67,7 @@ export interface IContractAgreementTOBuilder {
 export interface ICreateDataOfferingRequestTO extends ICreateServiceOfferingRequestTO {
     dataResourceCredentialSubject: IGxDataResourceCredentialSubject;
     fileName: string;
-    legitimateInterestCredentialSubject?: IGxLegitimateInterest;
+    legitimateInterest: IGxLegitimateInterest;
 }
 
 export interface ICreateDataOfferingRequestTOBuilder<C, B> extends ICreateServiceOfferingRequestTOBuilder<C, B> {
@@ -196,6 +196,7 @@ export interface IGxDataResourceCredentialSubject extends IPojoCredentialSubject
     "gx:policy": string[];
     "gx:license": string[];
     "gx:containsPII": boolean;
+    "gx:legitimateInterest": IGxLegitimateInterest;
     "schema:name": string;
     "schema:description": string;
     "@context": { [index: string]: string };
@@ -212,6 +213,7 @@ export interface IGxDataResourceCredentialSubjectBuilderImpl extends IGxDataReso
     "gx:policy": string[];
     "gx:license": string[];
     "gx:containsPII": boolean;
+    "gx:legitimateInterest": IGxLegitimateInterest;
     "schema:name": string;
     "schema:description": string;
 }
@@ -316,6 +318,7 @@ export interface IPxExtendedDataResourceCredentialSubject {
     "gx:policy": string[];
     "gx:license": string[];
     "gx:containsPII": boolean;
+    "gx:legitimateInterest": IGxLegitimateInterest;
     "schema:name": string;
     "schema:description": string;
     "@context": { [index: string]: string };
