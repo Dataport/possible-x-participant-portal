@@ -79,7 +79,7 @@ public class ShapeRestApiImpl implements ServiceOfferingShapeRestApi, ResourceSh
      * @return catalog shape
      */
     @Override
-    public String getGxLegitimateInterestShape() {
+    public String getPxLegitimateInterestShape() {
 
         return sdCreationWizardApiService.getShapeByName(ECOSYSTEM_GAIAX, "Legitimateinterest.json");
     }

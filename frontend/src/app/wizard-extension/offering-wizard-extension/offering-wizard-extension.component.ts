@@ -21,7 +21,7 @@ import {isDataResourceCs, isGxServiceOfferingCs} from '../../utils/credential-ut
 import {ApiService} from '../../services/mgmt/api/api.service';
 import {
   IEverythingAllowedPolicy,
-  IGxDataResourceCredentialSubject, IGxLegitimateInterest,
+  IGxDataResourceCredentialSubject, IPxLegitimateInterest,
   IGxServiceOfferingCredentialSubject,
   INodeKindIRITypeId,
   IParticipantRestrictionPolicy,
@@ -53,7 +53,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
   protected containsPII: boolean = false;
   @ViewChild("gxServiceOfferingWizard") private gxServiceOfferingWizard: BaseWizardExtensionComponent;
   @ViewChild("gxDataResourceWizard") private gxDataResourceWizard: BaseWizardExtensionComponent;
-  @ViewChild("gxLegitimateInterestWizard") private gxLegitimateInterestWizard: BaseWizardExtensionComponent;
+  @ViewChild("pxLegitimateInterestWizard") private pxLegitimateInterestWizard: BaseWizardExtensionComponent;
 
   constructor(
     private apiService: ApiService
@@ -102,7 +102,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
   async retrieveLegitimateInterestShape() {
     try {
       console.log("Retrieving legitimate interest shape");
-      this.legitimateInterestShapeSource = await this.apiService.getGxLegitimateInterestShape();
+      this.legitimateInterestShapeSource = await this.apiService.getPxLegitimateInterestShape();
     } catch (e) {
       console.error(e);
     }
@@ -122,7 +122,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
 
     let policy: IParticipantRestrictionPolicy | IEverythingAllowedPolicy;
 
-    let gxLegitimateInterestJsonSd: IGxLegitimateInterest;
+    let pxLegitimateInterestJsonSd: IPxLegitimateInterest;
 
     if (this.isPolicyChecked) {
       policy = {
@@ -140,7 +140,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
       enforcementPolicies: [
         policy
       ],
-      legitimateInterest: gxLegitimateInterestJsonSd,
+      legitimateInterest: pxLegitimateInterestJsonSd,
     };
 
     let createOfferMethod: (offer: any) => Promise<any>;
@@ -154,7 +154,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
       createOfferTo.fileName = this.selectedFileName;
 
       if (this.isContainingPII()) {
-        createOfferTo.legitimateInterest = this.gxLegitimateInterestWizard.generateJsonCs();
+        createOfferTo.legitimateInterest = this.pxLegitimateInterestWizard.generateJsonCs();
 
         createOfferMethod = this.apiService.createDataOffering.bind(this.apiService);//withPII
       } else {
@@ -181,7 +181,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
   public ngOnDestroy() {
     this.gxServiceOfferingWizard.ngOnDestroy();
     this.gxDataResourceWizard.ngOnDestroy();
-    this.gxLegitimateInterestWizard.ngOnDestroy();
+    this.pxLegitimateInterestWizard.ngOnDestroy();
     this.resetPossibleSpecificFormValues();
     this.resetAccordionItem();
     this.offerCreationStatusMessage.hideAllMessages();
@@ -246,10 +246,10 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
   }
 
   async prefillLegitimateInterestWizard() {
-    let gxLegitimateInterestCs = {"@type": "gx:LegitimateInterest"} as any;
+    let pxLegitimateInterestCs = {"@type": "px:LegitimateInterest"} as any;
 
-    this.loadShape(this.gxLegitimateInterestWizard, this.legitimateInterestShapeSource, TBR_LEGITIMATE_INTEREST_ID).then(_ => {
-      this.prefillHandleCs(gxLegitimateInterestCs);
+    this.loadShape(this.pxLegitimateInterestWizard, this.legitimateInterestShapeSource, TBR_LEGITIMATE_INTEREST_ID).then(_ => {
+      this.prefillHandleCs(pxLegitimateInterestCs);
     });
   }
 
@@ -311,7 +311,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
   }
 
   protected isLegitimateInterestValid(): boolean {
-    return !this.gxLegitimateInterestWizard?.isWizardFormInvalid();
+    return !this.pxLegitimateInterestWizard?.isWizardFormInvalid();
   }
 
   protected isServiceOfferingValid(): boolean {

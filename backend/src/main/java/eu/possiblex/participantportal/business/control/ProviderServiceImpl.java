@@ -179,6 +179,7 @@ public class ProviderServiceImpl implements ProviderService {
             dataOfferingRequest.getDataResource().setId(dataResourceId);
             dataOfferingRequest.getDataResource().setExposedThrough(new NodeKindIRITypeId(serviceOfferingId));
             if (dataOfferingRequest.getLegitimateInterest() != null) {
+                log.info(dataOfferingRequest.getLegitimateInterest().toString());
                 dataOfferingRequest.getDataResource()
                     .setLegitimateInterest(dataOfferingRequest.getLegitimateInterest());
             }

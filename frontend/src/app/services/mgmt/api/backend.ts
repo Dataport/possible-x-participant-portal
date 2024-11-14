@@ -18,7 +18,7 @@ export interface IResourceShapeRestApi {
     gxPhysicalResourceShape: string;
     gxSoftwareResourceShape: string;
     gxVirtualResourceShape: string;
-    gxLegitimateInterestShape: string;
+    pxLegitimateInterestShape: string;
 }
 
 export interface IServiceOfferingShapeRestApi {
@@ -67,7 +67,7 @@ export interface IContractAgreementTOBuilder {
 export interface ICreateDataOfferingRequestTO extends ICreateServiceOfferingRequestTO {
     dataResourceCredentialSubject: IGxDataResourceCredentialSubject;
     fileName: string;
-    legitimateInterest: IGxLegitimateInterest;
+    legitimateInterest: IPxLegitimateInterest;
 }
 
 export interface ICreateDataOfferingRequestTOBuilder<C, B> extends ICreateServiceOfferingRequestTOBuilder<C, B> {
@@ -142,6 +142,20 @@ export interface IPojoCredentialSubject {
 export interface IPojoCredentialSubjectBuilder<C, B> {
 }
 
+export interface IPxLegitimateInterest {
+    "gx:dataProtectionContact": string;
+    "gx:legalBasis": string;
+    "@type": string;
+}
+
+export interface IPxLegitimateInterestBuilder<C, B> {
+}
+
+export interface IPxLegitimateInterestBuilderImpl extends IPxLegitimateInterestBuilder<IPxLegitimateInterest, IPxLegitimateInterestBuilderImpl> {
+    "gx:dataProtectionContact": string;
+    "gx:legalBasis": string;
+}
+
 export interface IUnknownCredentialSubject extends IPojoCredentialSubject {
     "@type": "UnknownCredentialSubject";
 }
@@ -162,16 +176,6 @@ export interface IGxDataAccountExportBuilder {
     "gx:requestType": string;
     "gx:accessType": string;
     "gx:formatType": string;
-}
-
-export interface IGxLegitimateInterest {
-    "gx:dataProtectionContact": string;
-    "gx:legalBasis": string;
-}
-
-export interface IGxLegitimateInterestBuilder {
-    "gx:dataProtectionContact": string;
-    "gx:legalBasis": string;
 }
 
 export interface IGxSOTermsAndConditions {
@@ -196,7 +200,7 @@ export interface IGxDataResourceCredentialSubject extends IPojoCredentialSubject
     "gx:policy": string[];
     "gx:license": string[];
     "gx:containsPII": boolean;
-    "gx:legitimateInterest": IGxLegitimateInterest;
+    "gx:legitimateInterest": IPxLegitimateInterest;
     "schema:name": string;
     "schema:description": string;
     "@context": { [index: string]: string };
@@ -213,7 +217,7 @@ export interface IGxDataResourceCredentialSubjectBuilderImpl extends IGxDataReso
     "gx:policy": string[];
     "gx:license": string[];
     "gx:containsPII": boolean;
-    "gx:legitimateInterest": IGxLegitimateInterest;
+    "gx:legitimateInterest": IPxLegitimateInterest;
     "schema:name": string;
     "schema:description": string;
 }
@@ -318,7 +322,7 @@ export interface IPxExtendedDataResourceCredentialSubject {
     "gx:policy": string[];
     "gx:license": string[];
     "gx:containsPII": boolean;
-    "gx:legitimateInterest": IGxLegitimateInterest;
+    "gx:legitimateInterest": IPxLegitimateInterest;
     "schema:name": string;
     "schema:description": string;
     "@context": { [index: string]: string };
@@ -416,9 +420,9 @@ export class RestApplicationClient {
 
     /**
      * HTTP GET /shapes/gx/resource/legitimateinterest
-     * Java method: eu.possiblex.participantportal.application.boundary.ShapeRestApiImpl.getGxLegitimateInterestShape
+     * Java method: eu.possiblex.participantportal.application.boundary.ShapeRestApiImpl.getPxLegitimateInterestShape
      */
-    getGxLegitimateInterestShape(): RestResponse<string> {
+    getPxLegitimateInterestShape(): RestResponse<string> {
         return this.httpClient.request({ method: "GET", url: uriEncoding`shapes/gx/resource/legitimateinterest` });
     }
 

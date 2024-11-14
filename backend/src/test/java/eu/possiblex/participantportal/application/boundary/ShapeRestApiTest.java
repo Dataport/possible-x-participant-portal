@@ -76,7 +76,7 @@ class ShapeRestApiTest {
     }
 
     @Test
-    void getGxLegitimateInterestShape() throws Exception {
+    void getPxLegitimateInterestShape() throws Exception {
 
         this.mockMvc.perform(get("/shapes/gx/resource/legitimateinterest").contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())

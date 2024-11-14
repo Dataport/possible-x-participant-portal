@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package eu.possiblex.participantportal.application.entity.credentials.gx.datatypes;
+package eu.possiblex.participantportal.application.entity.credentials;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -25,16 +25,23 @@ import eu.possiblex.participantportal.business.entity.serialization.StringDeseri
 import eu.possiblex.participantportal.business.entity.serialization.StringSerializer;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class GxLegitimateInterest {
+public class PxLegitimateInterest {
+
+    @JsonProperty("@type")
+    @JsonSerialize(using = StringSerializer.class)
+    @JsonDeserialize(using = StringDeserializer.class)
+    @NotNull
+    @Builder.Default
+    public String TYPE = "gx:LegitimateInterest";
 
     @JsonProperty("gx:dataProtectionContact")
     @JsonSerialize(using = StringSerializer.class)

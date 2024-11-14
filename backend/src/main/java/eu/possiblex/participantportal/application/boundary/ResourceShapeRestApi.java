@@ -51,5 +51,5 @@ public interface ResourceShapeRestApi {
      * @return catalog shape
      */
     @GetMapping("/gx/resource/legitimateinterest")
-    public String getGxLegitimateInterestShape();
+    public String getPxLegitimateInterestShape();
 }
