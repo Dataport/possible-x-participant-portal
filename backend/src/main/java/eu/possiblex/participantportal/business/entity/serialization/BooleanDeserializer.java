@@ -40,7 +40,7 @@ public class BooleanDeserializer extends StdDeserializer<Boolean> {
         throws IOException {
 
         JsonNode node = jsonParser.getCodec().readTree(jsonParser);
-        if (node.get("@type") != null && node.get("@type").textValue().equals("xsd:boolean")) {
+        if (node.get("@type") != null && (node.get("@type").textValue().equals("xsd:boolean") || node.get("@type").textValue().equals("http://www.w3.org/2001/XMLSchema#boolean"))) {
             return node.get("@value").booleanValue();
         }
         return node.booleanValue();

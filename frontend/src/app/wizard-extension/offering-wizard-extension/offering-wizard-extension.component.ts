@@ -21,7 +21,7 @@ import {isDataResourceCs, isGxServiceOfferingCs} from '../../utils/credential-ut
 import {ApiService} from '../../services/mgmt/api/api.service';
 import {
   IEverythingAllowedPolicy,
-  IGxDataResourceCredentialSubject, IPxLegitimateInterest,
+  IGxDataResourceCredentialSubject, IGxLegitimateInterest,
   IGxServiceOfferingCredentialSubject,
   INodeKindIRITypeId,
   IParticipantRestrictionPolicy,
@@ -53,7 +53,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
   protected containsPII: boolean = false;
   @ViewChild("gxServiceOfferingWizard") private gxServiceOfferingWizard: BaseWizardExtensionComponent;
   @ViewChild("gxDataResourceWizard") private gxDataResourceWizard: BaseWizardExtensionComponent;
-  @ViewChild("pxLegitimateInterestWizard") private pxLegitimateInterestWizard: BaseWizardExtensionComponent;
+  @ViewChild("gxLegitimateInterestWizard") private gxLegitimateInterestWizard: BaseWizardExtensionComponent;
 
   constructor(
     private apiService: ApiService
@@ -102,7 +102,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
   async retrieveLegitimateInterestShape() {
     try {
       console.log("Retrieving legitimate interest shape");
-      this.legitimateInterestShapeSource = await this.apiService.getPxLegitimateInterestShape();
+      this.legitimateInterestShapeSource = await this.apiService.getGxLegitimateInterestShape();
     } catch (e) {
       console.error(e);
     }
@@ -122,7 +122,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
 
     let policy: IParticipantRestrictionPolicy | IEverythingAllowedPolicy;
 
-    let pxLegitimateInterestJsonSd: IPxLegitimateInterest;
+    let gxLegitimateInterestJsonSd: IGxLegitimateInterest;
 
     if (this.isPolicyChecked) {
       policy = {
@@ -140,7 +140,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
       enforcementPolicies: [
         policy
       ],
-      legitimateInterest: pxLegitimateInterestJsonSd,
+      legitimateInterest: gxLegitimateInterestJsonSd,
     };
 
     let createOfferMethod: (offer: any) => Promise<any>;
@@ -152,9 +152,10 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
 
       createOfferTo.dataResourceCredentialSubject = gxDataResourceJsonSd;
       createOfferTo.fileName = this.selectedFileName;
-
+      createOfferTo["gx:containsPII"] = this.containsPII;
+      console.log(this.isContainingPII());
       if (this.isContainingPII()) {
-        createOfferTo.legitimateInterest = this.pxLegitimateInterestWizard.generateJsonCs();
+        createOfferTo.legitimateInterest = this.gxLegitimateInterestWizard.generateJsonCs();
 
         createOfferMethod = this.apiService.createDataOffering.bind(this.apiService);//withPII
       } else {
@@ -181,7 +182,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
   public ngOnDestroy() {
     this.gxServiceOfferingWizard.ngOnDestroy();
     this.gxDataResourceWizard.ngOnDestroy();
-    this.pxLegitimateInterestWizard.ngOnDestroy();
+    this.gxLegitimateInterestWizard.ngOnDestroy();
     this.resetPossibleSpecificFormValues();
     this.resetAccordionItem();
     this.offerCreationStatusMessage.hideAllMessages();
@@ -246,10 +247,10 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
   }
 
   async prefillLegitimateInterestWizard() {
-    let pxLegitimateInterestCs = {"@type": "px:LegitimateInterest"} as any;
+    let gxLegitimateInterestCs = {"@type": "gx:LegitimateInterest"} as any;
 
-    this.loadShape(this.pxLegitimateInterestWizard, this.legitimateInterestShapeSource, TBR_LEGITIMATE_INTEREST_ID).then(_ => {
-      this.prefillHandleCs(pxLegitimateInterestCs);
+    this.loadShape(this.gxLegitimateInterestWizard, this.legitimateInterestShapeSource, TBR_LEGITIMATE_INTEREST_ID).then(_ => {
+      this.prefillHandleCs(gxLegitimateInterestCs);
     });
   }
 
@@ -311,7 +312,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
   }
 
   protected isLegitimateInterestValid(): boolean {
-    return !this.pxLegitimateInterestWizard?.isWizardFormInvalid();
+    return !this.gxLegitimateInterestWizard?.isWizardFormInvalid();
   }
 
   protected isServiceOfferingValid(): boolean {
@@ -349,7 +350,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
   }
 
   protected setContainsPII() {
-    let gxDataResourceJsonSd: IGxDataResourceCredentialSubject = this.gxDataResourceWizard.generateJsonCs();
+    let gxDataResourceJsonSd = this.gxDataResourceWizard.generateJsonCs();
     this.containsPII = gxDataResourceJsonSd["gx:containsPII"];
   }
 

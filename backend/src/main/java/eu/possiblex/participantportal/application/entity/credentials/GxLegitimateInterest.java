@@ -16,7 +16,6 @@
 
 package eu.possiblex.participantportal.application.entity.credentials;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -34,7 +33,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class PxLegitimateInterest {
+public class GxLegitimateInterest {
 
     @JsonProperty("@type")
     @JsonSerialize(using = StringSerializer.class)
