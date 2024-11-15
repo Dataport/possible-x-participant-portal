@@ -2,7 +2,6 @@ package eu.possiblex.participantportal.business.entity.edc.asset.possible;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.GxContainsPII;
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
 import eu.possiblex.participantportal.business.entity.edc.asset.AssetProperties;
 import lombok.AllArgsConstructor;

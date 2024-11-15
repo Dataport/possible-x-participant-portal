@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import eu.possiblex.participantportal.application.entity.credentials.PojoCredentialSubject;
 import eu.possiblex.participantportal.application.entity.credentials.GxLegitimateInterest;
-import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.GxContainsPII;
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
 import eu.possiblex.participantportal.business.entity.serialization.BooleanDeserializer;
 import eu.possiblex.participantportal.business.entity.serialization.BooleanSerializer;
