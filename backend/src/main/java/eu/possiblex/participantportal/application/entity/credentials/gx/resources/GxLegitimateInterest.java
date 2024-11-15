@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package eu.possiblex.participantportal.application.entity.credentials;
+package eu.possiblex.participantportal.application.entity.credentials.gx.resources;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;

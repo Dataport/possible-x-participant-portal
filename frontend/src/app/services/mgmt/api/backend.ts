@@ -13,12 +13,12 @@ export interface IProviderRestApi {
 }
 
 export interface IResourceShapeRestApi {
+    gxLegitimateInterestShape: string;
     gxInstantiatedVirtualResourceShape: string;
     gxDataResourceShape: string;
     gxPhysicalResourceShape: string;
     gxSoftwareResourceShape: string;
     gxVirtualResourceShape: string;
-    gxLegitimateInterestShape: string;
 }
 
 export interface IServiceOfferingShapeRestApi {
@@ -165,19 +165,6 @@ export interface IUnknownCredentialSubjectBuilder<C, B> extends IPojoCredentialS
 }
 
 export interface IUnknownCredentialSubjectBuilderImpl extends IUnknownCredentialSubjectBuilder<IUnknownCredentialSubject, IUnknownCredentialSubjectBuilderImpl> {
-}
-
-export interface IGxContainsPII {
-    "@type": string;
-    "@value": string;
-}
-
-export interface IGxContainsPIIBuilder<C, B> {
-}
-
-export interface IGxContainsPIIBuilderImpl extends IGxContainsPIIBuilder<IGxContainsPII, IGxContainsPIIBuilderImpl> {
-    "@type": string;
-    "@value": string;
 }
 
 export interface IGxDataAccountExport {

@@ -1,6 +1,6 @@
 package eu.possiblex.participantportal.application.entity;
 
-import eu.possiblex.participantportal.application.entity.credentials.GxLegitimateInterest;
+import eu.possiblex.participantportal.application.entity.credentials.gx.resources.GxLegitimateInterest;
 import eu.possiblex.participantportal.application.entity.credentials.gx.resources.GxDataResourceCredentialSubject;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
