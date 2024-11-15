@@ -72,8 +72,8 @@ public class GxDataResourceCredentialSubject extends PojoCredentialSubject {
     private List<String> license;
 
     @JsonProperty("gx:containsPII")
-    @JsonSerialize(contentUsing = BooleanSerializer.class)
-    @JsonDeserialize(contentUsing = BooleanDeserializer.class)
+    @JsonSerialize(using = BooleanSerializer.class)
+    @JsonDeserialize(using = BooleanDeserializer.class)
     @NotNull
     private boolean containsPII;
 

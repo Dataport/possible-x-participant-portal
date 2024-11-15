@@ -69,8 +69,8 @@ public class PxExtendedDataResourceCredentialSubject {
 
     @JsonProperty("gx:containsPII")
     @NotNull
-    @JsonSerialize(contentUsing = BooleanSerializer.class)
-    @JsonDeserialize(contentUsing = BooleanDeserializer.class)
+    @JsonSerialize(using = BooleanSerializer.class)
+    @JsonDeserialize(using = BooleanDeserializer.class)
     private boolean containsPII;
 
     @JsonProperty("gx:legitimateInterest")
