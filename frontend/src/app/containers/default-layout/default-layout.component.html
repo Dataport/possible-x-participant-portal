@@ -2,22 +2,19 @@
   <c-navbar class="header border-0" expand="lg">
     <c-container fluid>
       <a [routerLink]="['/']" cNavbarBrand class="logo">
-        <img [alt]="'POSSIBLE-X Logo'" [height]="36" [src]="'assets/images/brand/possible_blue.svg'" [width]="142"/>
+        <img alt="POSSIBLE-X Logo" width="142" src="assets/images/brand/possible_blue.svg"/>
       </a>
-      <button [cNavbarToggler]="collapseRef"></button>
-      <div #collapseRef="cCollapse" cCollapse navbar>
-        <c-navbar-nav class="navbar-nav">
-          <c-nav-item>
-            <a [routerLink]="['/offer/provide']" routerLinkActive="active-tab" data-text="Provide Offer" cNavLink>Provide Offer</a>
-          </c-nav-item>
-          <c-nav-item>
-            <a [routerLink]="['/offer/consume']" routerLinkActive="active-tab" data-text="Consume Offer" cNavLink>Consume Offer</a>
-          </c-nav-item>
-          <c-nav-item>
-            <a [routerLink]="['offer/contracts']" routerLinkActive="active-tab" data-text="Contracts" cNavLink>Contracts</a>
-          </c-nav-item>
-        </c-navbar-nav>
-      </div>
+      <c-navbar-nav class="navbar-nav">
+        <c-nav-item>
+          <a [routerLink]="['/offer/provide']" routerLinkActive="active-tab" data-text="Provide Offer" cNavLink>Provide Offer</a>
+        </c-nav-item>
+        <c-nav-item>
+          <a [routerLink]="['/offer/consume']" routerLinkActive="active-tab" data-text="Consume Offer" cNavLink>Consume Offer</a>
+        </c-nav-item>
+        <c-nav-item>
+          <a [routerLink]="['offer/contracts']" routerLinkActive="active-tab" data-text="Contracts" cNavLink>Contracts</a>
+        </c-nav-item>
+      </c-navbar-nav>
     </c-container>
   </c-navbar>
 </div>

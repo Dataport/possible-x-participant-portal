@@ -8,6 +8,11 @@
 
     .logo {
       @apply flex flex-shrink-0 items-baseline;
+      margin-right:1rem;
+    }
+
+    .navbar-nav{
+      @apply flex flex-row flex-grow;
     }
   }
 
@@ -15,7 +20,7 @@
   @apply underline text-brand-700;
   text-underline-offset: 9px;
   font-weight: bold;
-  display:inline;
+  display: inline;
 }
 
 a[cNavLink] {
@@ -55,5 +60,13 @@ a[cNavLink]::before {
 
     a {
       @apply no-underline text-white;
+  }
+}
+
+@media (max-width: 1024px) {
+  /* Maintain padding on smaller screens */
+  .navbar-nav c-nav-item a[cNavLink] {
+    padding-left: 0.5rem; /* Ensure padding remains */
+    padding-right: 0.5rem; /* Ensure padding remains */
   }
 }
