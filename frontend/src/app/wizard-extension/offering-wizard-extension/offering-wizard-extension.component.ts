@@ -152,8 +152,6 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
 
       createOfferTo.dataResourceCredentialSubject = gxDataResourceJsonSd;
       createOfferTo.fileName = this.selectedFileName;
-      createOfferTo["gx:containsPII"] = this.containsPII;
-      console.log(this.isContainingPII());
       if (this.isContainingPII()) {
         createOfferTo.legitimateInterest = this.gxLegitimateInterestWizard.generateJsonCs();
       }
