@@ -8,6 +8,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
+import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsQueryResult;
+import eu.possiblex.participantportal.business.entity.fh.ParticipantNameQueryResult;
+import eu.possiblex.participantportal.business.entity.fh.QueryResponse;
 import eu.possiblex.participantportal.utilities.LogUtils;
 import jakarta.json.Json;
 import jakarta.json.JsonArrayBuilder;
@@ -19,8 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.io.StringReader;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -94,6 +96,45 @@ public class FhCatalogClientImpl implements FhCatalogClient {
         } catch (JsonLdError | JsonProcessingException e) {
             throw new RuntimeException("failed to parse fh catalog offer json: " + offerJsonContent, e);
         }
+    }
+
+    public Map<String, ParticipantNameQueryResult> getParticipantNames(Collection<String> dapsIds) {
+        QueryResponse<ParticipantNameQueryResult> result = technicalFhCatalogClient.queryCatalogForParticipantName("""
+            PREFIX gx: <https://w3id.org/gaia-x/development#>
+            PREFIX px: <http://w3id.org/gaia-x/possible-x#>
+            
+            SELECT ?uri ?dapsId ?name WHERE {
+              ?uri a gx:LegalParticipant;
+              px:dapsId ?dapsId;
+              gx:name ?name .
+              FILTER(?dapsId IN (""" + String.join(",", dapsIds.stream()
+                                        .map(id -> "\"" + id + "\"").toList()) +  "))" + """
+            }
+            """, null);
+
+       return result.getResults().getBindings().stream()
+            .collect(HashMap::new, (map, p)
+                -> map.put(p.getDapsId(), p), HashMap::putAll);
+    }
+
+    public Map<String, OfferingDetailsQueryResult> getOfferingDetails(Collection<String> assetIds) {
+        QueryResponse<OfferingDetailsQueryResult> result = technicalFhCatalogClient.queryCatalogForOfferingDetails("""
+            PREFIX gx: <https://w3id.org/gaia-x/development#>
+            PREFIX px: <http://w3id.org/gaia-x/possible-x#>
+            
+            SELECT ?uri ?assetId ?name ?description WHERE {
+              ?uri a gx:ServiceOffering;
+              gx:name ?name;
+              gx:description ?description;
+              px:assetId ?assetId .
+              FILTER(?assetId IN (""" + String.join(",", assetIds.stream()
+                                                      .map(id -> "\"" + id + "\"").toList()) +  "))" + """
+            }
+            """, null);
+
+        return result.getResults().getBindings().stream()
+            .collect(HashMap::new, (map, p)
+                -> map.put(p.getAssetId(), p), HashMap::putAll);
     }
 
 }
