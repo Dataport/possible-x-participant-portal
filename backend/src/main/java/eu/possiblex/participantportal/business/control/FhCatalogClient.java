@@ -6,6 +6,11 @@ import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedS
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.ParticipantNotFoundException;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
+import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsQueryResult;
+import eu.possiblex.participantportal.business.entity.fh.ParticipantNameQueryResult;
+
+import java.util.Collection;
+import java.util.Map;
 
 public interface FhCatalogClient {
     /**
@@ -32,4 +37,8 @@ public interface FhCatalogClient {
     void deleteServiceOfferingFromFhCatalog(String offeringId, boolean doesContainData);
 
     JsonNode getSparqlQuery(String query);
+
+    Map<String, ParticipantNameQueryResult> getParticipantNames(Collection<String> dapsIds);
+
+    Map<String, OfferingDetailsQueryResult> getOfferingDetails(Collection<String> assetIds);
 }

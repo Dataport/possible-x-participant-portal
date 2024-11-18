@@ -11,17 +11,26 @@ import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedS
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.ParticipantNotFoundException;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
+import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsQueryResult;
+import eu.possiblex.participantportal.business.entity.fh.ParticipantNameQueryResult;
+import eu.possiblex.participantportal.business.entity.fh.QueryResponse;
+import eu.possiblex.participantportal.utilities.LogUtils;
 import jakarta.json.*;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.io.StringReader;
+
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
+
+import java.util.*;
+
 
 @Service
 @Slf4j
@@ -158,15 +167,47 @@ public class FhCatalogClientImpl implements FhCatalogClient {
 
     @Override
     public JsonNode getSparqlQuery(String query) {
-        log.info("executing SPARQL query: {}", query);
-        try {
-            String default_graph_uri="";
-            String format = "application/sparql-results+json";
-            String timeout= "0";
-            String signal_void = "on";
-            return sparqlFhCatalogClient.getSparqlQuery(query, default_graph_uri, format, timeout, signal_void);
-        } catch (WebClientResponseException e) {
-            throw new RuntimeException("Failed to execute SPARQL query: " + e.getResponseBodyAsString(), e);
-        }
+
+        return null;
     }
+
+    public Map<String, ParticipantNameQueryResult> getParticipantNames(Collection<String> dapsIds) {
+        QueryResponse<ParticipantNameQueryResult> result = technicalFhCatalogClient.queryCatalogForParticipantName("""
+            PREFIX gx: <https://w3id.org/gaia-x/development#>
+            PREFIX px: <http://w3id.org/gaia-x/possible-x#>
+            
+            SELECT ?uri ?dapsId ?name WHERE {
+              ?uri a gx:LegalParticipant;
+              px:dapsId ?dapsId;
+              gx:name ?name .
+              FILTER(?dapsId IN (""" + String.join(",", dapsIds.stream()
+                                        .map(id -> "\"" + id + "\"").toList()) +  "))" + """
+            }
+            """, null);
+
+       return result.getResults().getBindings().stream()
+            .collect(HashMap::new, (map, p)
+                -> map.put(p.getDapsId(), p), HashMap::putAll);
+    }
+
+    public Map<String, OfferingDetailsQueryResult> getOfferingDetails(Collection<String> assetIds) {
+        QueryResponse<OfferingDetailsQueryResult> result = technicalFhCatalogClient.queryCatalogForOfferingDetails("""
+            PREFIX gx: <https://w3id.org/gaia-x/development#>
+            PREFIX px: <http://w3id.org/gaia-x/possible-x#>
+            
+            SELECT ?uri ?assetId ?name ?description WHERE {
+              ?uri a gx:ServiceOffering;
+              gx:name ?name;
+              gx:description ?description;
+              px:assetId ?assetId .
+              FILTER(?assetId IN (""" + String.join(",", assetIds.stream()
+                                                      .map(id -> "\"" + id + "\"").toList()) +  "))" + """
+            }
+            """, null);
+
+        return result.getResults().getBindings().stream()
+            .collect(HashMap::new, (map, p)
+                -> map.put(p.getAssetId(), p), HashMap::putAll);
+    }
+
 }

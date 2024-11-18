@@ -1,6 +1,7 @@
 package eu.possiblex.participantportal.business.entity.common;
 
 public class CommonConstants {
+
     /**
      * Endpoint for creating service offers WITHOUT data.
      */
