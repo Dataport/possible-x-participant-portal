@@ -40,7 +40,7 @@ public class GxLegitimateInterest {
     @JsonDeserialize(using = StringDeserializer.class)
     @NotNull
     @Builder.Default
-    public String TYPE = "gx:LegitimateInterest";
+    private String type = "gx:LegitimateInterest";
 
     @JsonProperty("gx:dataProtectionContact")
     @JsonSerialize(using = StringSerializer.class)

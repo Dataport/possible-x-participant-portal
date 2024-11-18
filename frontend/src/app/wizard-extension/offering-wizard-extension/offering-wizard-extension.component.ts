@@ -156,11 +156,8 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
       console.log(this.isContainingPII());
       if (this.isContainingPII()) {
         createOfferTo.legitimateInterest = this.gxLegitimateInterestWizard.generateJsonCs();
-
-        createOfferMethod = this.apiService.createDataOffering.bind(this.apiService);//withPII
-      } else {
-        createOfferMethod = this.apiService.createDataOffering.bind(this.apiService);
       }
+      createOfferMethod = this.apiService.createDataOffering.bind(this.apiService);
     }
 
     console.log(createOfferTo);

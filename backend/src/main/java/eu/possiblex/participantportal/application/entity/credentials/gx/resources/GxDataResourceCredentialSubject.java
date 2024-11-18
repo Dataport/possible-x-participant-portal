@@ -76,9 +76,6 @@ public class GxDataResourceCredentialSubject extends PojoCredentialSubject {
     @NotNull
     private boolean containsPII;
 
-    @JsonProperty("gx:legitimateInterest")
-    private GxLegitimateInterest legitimateInterest;
-
     @JsonProperty("schema:name")
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)
