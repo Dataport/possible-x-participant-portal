@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ContractAgreementBE {
     private ContractAgreement contractAgreement;
-
-    private PossibleAsset asset;
+    private OfferingDetailsBE offeringDetails;
+    private ParticipantDetailsBE providerDetails;
+    private ParticipantDetailsBE consumerDetails;
 }

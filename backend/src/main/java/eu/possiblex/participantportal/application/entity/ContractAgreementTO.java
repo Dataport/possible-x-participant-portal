@@ -25,5 +25,9 @@ public class ContractAgreementTO {
 
     private String consumerId;
 
+    private String consumerName;
+
     private String providerId;
+
+    private String providerName;
 }
