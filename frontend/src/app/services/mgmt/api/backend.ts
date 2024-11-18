@@ -13,12 +13,12 @@ export interface IProviderRestApi {
 }
 
 export interface IResourceShapeRestApi {
-    gxLegitimateInterestShape: string;
-    gxInstantiatedVirtualResourceShape: string;
     gxDataResourceShape: string;
+    gxInstantiatedVirtualResourceShape: string;
     gxPhysicalResourceShape: string;
     gxSoftwareResourceShape: string;
     gxVirtualResourceShape: string;
+    gxLegitimateInterestShape: string;
 }
 
 export interface IServiceOfferingShapeRestApi {
@@ -134,21 +134,6 @@ export interface ITransferOfferResponseTO {
 export interface ITransferOfferResponseTOBuilder {
 }
 
-export interface IGxLegitimateInterest {
-    "@type": string;
-    "gx:dataProtectionContact": string;
-    "gx:legalBasis": string;
-}
-
-export interface IGxLegitimateInterestBuilder<C, B> {
-}
-
-export interface IGxLegitimateInterestBuilderImpl extends IGxLegitimateInterestBuilder<IGxLegitimateInterest, IGxLegitimateInterestBuilderImpl> {
-    "gx:dataProtectionContact": string;
-    "gx:legalBasis": string;
-    "@type": string;
-}
-
 export interface IPojoCredentialSubject {
     "@type": "UnknownCredentialSubject" | "gx:DataResource" | "gx:ServiceOffering";
     id: string;
@@ -201,7 +186,6 @@ export interface IGxDataResourceCredentialSubject extends IPojoCredentialSubject
     "gx:policy": string[];
     "gx:license": string[];
     "gx:containsPII": boolean;
-    "gx:legitimateInterest": IGxLegitimateInterest;
     "schema:name": string;
     "schema:description": string;
     "@context": { [index: string]: string };
@@ -218,9 +202,23 @@ export interface IGxDataResourceCredentialSubjectBuilderImpl extends IGxDataReso
     "gx:policy": string[];
     "gx:license": string[];
     "gx:containsPII": boolean;
-    "gx:legitimateInterest": IGxLegitimateInterest;
     "schema:name": string;
     "schema:description": string;
+}
+
+export interface IGxLegitimateInterest {
+    "@type": string;
+    "gx:dataProtectionContact": string;
+    "gx:legalBasis": string;
+}
+
+export interface IGxLegitimateInterestBuilder<C, B> {
+}
+
+export interface IGxLegitimateInterestBuilderImpl extends IGxLegitimateInterestBuilder<IGxLegitimateInterest, IGxLegitimateInterestBuilderImpl> {
+    "gx:dataProtectionContact": string;
+    "gx:legalBasis": string;
+    "@type": string;
 }
 
 export interface IGxServiceOfferingCredentialSubject extends IPojoCredentialSubject {
