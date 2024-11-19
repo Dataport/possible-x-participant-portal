@@ -3,6 +3,7 @@ package eu.possiblex.participantportal.business.control;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.possiblex.participantportal.business.entity.*;
+import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedLegalParticipantCredentialSubjectSubset;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.edc.DataspaceErrorMessage;
 import eu.possiblex.participantportal.business.entity.edc.asset.DataAddress;
@@ -112,8 +113,10 @@ public class ConsumerServiceImpl implements ConsumerService {
 
         ContractNegotiation contractNegotiation = negotiateOffer(negotiationInitiateRequest);
 
+       PxExtendedLegalParticipantCredentialSubjectSubset provider = fhCatalogClient.getFhCatalogParticipant(request.getProducedBy());
+
         return new AcceptOfferResponseBE(contractNegotiation.getState(), contractNegotiation.getContractAgreementId(),
-            request.isDataOffering());
+            request.isDataOffering(), provider.getMailAddress());
     }
 
     @Override

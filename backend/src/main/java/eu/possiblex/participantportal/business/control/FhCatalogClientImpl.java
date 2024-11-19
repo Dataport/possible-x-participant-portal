@@ -5,10 +5,10 @@ import com.apicatalog.jsonld.JsonLdError;
 import com.apicatalog.jsonld.document.JsonDocument;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedLegalParticipantCredentialSubjectSubset;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
-import eu.possiblex.participantportal.utilities.LogUtils;
 import jakarta.json.Json;
 import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonObject;
@@ -69,31 +69,37 @@ public class FhCatalogClientImpl implements FhCatalogClient {
 
     }
 
-    @Override
-    public PxExtendedServiceOfferingCredentialSubject getFhCatalogOffer(String offeringId)
-        throws OfferNotFoundException {
-
-        log.info("fetching offer for fh catalog ID " + offeringId);
-        String offerJsonContent = null;
+    private <T> T parseCatalogContent(String id, boolean isOffer, Class<T> returnType) throws OfferNotFoundException {
+        log.info("fetching " + (isOffer ? "offer" : "participant") + " for fh catalog ID " + id);
+        String jsonContent = null;
         try {
-            offerJsonContent = technicalFhCatalogClient.getFhCatalogOffer(offeringId);
+            jsonContent = isOffer ? technicalFhCatalogClient.getFhCatalogOffer(id) : technicalFhCatalogClient.getFhCatalogParticipant(id);
         } catch (WebClientResponseException e) {
             if (e.getStatusCode().value() == 404) {
-                throw new OfferNotFoundException("no FH Catalog offer found with ID " + offeringId);
+                throw new OfferNotFoundException("no FH Catalog " + (isOffer ? "offer" : "participant") + " found with ID " + id);
             }
             throw e;
         }
 
         try {
-            JsonDocument input = JsonDocument.of(new StringReader(offerJsonContent));
+            JsonDocument input = JsonDocument.of(new StringReader(jsonContent));
             JsonDocument offeringFrame = getFrameByType(PxExtendedServiceOfferingCredentialSubject.TYPE,
                 PxExtendedServiceOfferingCredentialSubject.CONTEXT);
             JsonObject framedOffering = JsonLd.frame(input, offeringFrame).get();
 
-            return objectMapper.readValue(framedOffering.toString(), PxExtendedServiceOfferingCredentialSubject.class);
+            return objectMapper.readValue(framedOffering.toString(), returnType);
         } catch (JsonLdError | JsonProcessingException e) {
-            throw new RuntimeException("failed to parse fh catalog offer json: " + offerJsonContent, e);
+            throw new RuntimeException("failed to parse fh catalog " + (isOffer ? "offer" : "participant") + " json: " + jsonContent, e);
         }
     }
+    @Override
+    public PxExtendedServiceOfferingCredentialSubject getFhCatalogOffer(String offeringId) throws OfferNotFoundException {
+        return parseCatalogContent(offeringId, true, PxExtendedServiceOfferingCredentialSubject.class);
+    }
 
+    @Override
+    public PxExtendedLegalParticipantCredentialSubjectSubset getFhCatalogParticipant(String participantId) throws
+        OfferNotFoundException {
+        return parseCatalogContent(participantId, false, PxExtendedLegalParticipantCredentialSubjectSubset.class);
+    }
 }

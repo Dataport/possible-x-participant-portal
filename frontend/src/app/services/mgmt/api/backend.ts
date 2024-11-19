@@ -14,11 +14,11 @@ export interface IProviderRestApi {
 
 export interface IResourceShapeRestApi {
     gxDataResourceShape: string;
-    gxInstantiatedVirtualResourceShape: string;
     gxPhysicalResourceShape: string;
     gxSoftwareResourceShape: string;
     gxVirtualResourceShape: string;
     gxLegitimateInterestShape: string;
+    gxInstantiatedVirtualResourceShape: string;
 }
 
 export interface IServiceOfferingShapeRestApi {
@@ -29,6 +29,7 @@ export interface IAcceptOfferResponseTO {
     negotiationState: INegotiationState;
     contractAgreementId: string;
     dataOffering: boolean;
+    providerEmail: string;
 }
 
 export interface IAcceptOfferResponseTOBuilder {
@@ -46,6 +47,7 @@ export interface IConsumeOfferRequestTO {
     counterPartyAddress: string;
     edcOfferId: string;
     dataOffering: boolean;
+    producedBy: string;
 }
 
 export interface IConsumeOfferRequestTOBuilder {
@@ -249,6 +251,9 @@ export interface IGxServiceOfferingCredentialSubjectBuilderImpl extends IGxServi
     "schema:description": string;
 }
 
+export interface IOfferingComplianceException extends IException {
+}
+
 export interface IEnforcementPolicy {
     "@type": "EverythingAllowedPolicy" | "ParticipantRestrictionPolicy";
 }
@@ -303,6 +308,28 @@ export interface IPxExtendedServiceOfferingCredentialSubject {
     "@type": string[];
 }
 
+export interface IThrowable extends ISerializable {
+    cause: IThrowable;
+    stackTrace: IStackTraceElement[];
+    message: string;
+    suppressed: IThrowable[];
+    localizedMessage: string;
+}
+
+export interface IStackTraceElement extends ISerializable {
+    classLoaderName: string;
+    moduleName: string;
+    moduleVersion: string;
+    methodName: string;
+    fileName: string;
+    lineNumber: number;
+    nativeMethod: boolean;
+    className: string;
+}
+
+export interface IException extends IThrowable {
+}
+
 export interface IOdrlPermission {
     "odrl:target": string;
     "odrl:action": IOdrlAction;
@@ -326,6 +353,9 @@ export interface IPxExtendedDataResourceCredentialSubject {
     "schema:description": string;
     "@context": { [index: string]: string };
     "@type": string[];
+}
+
+export interface ISerializable {
 }
 
 export interface IOdrlConstraint {

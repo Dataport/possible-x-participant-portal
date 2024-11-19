@@ -51,11 +51,13 @@ export class AcceptComponent implements OnChanges {
     this.apiService.acceptContractOffer({
       counterPartyAddress: this.offer == undefined ? "" : this.offer.catalogOffering["px:providerUrl"],
       edcOfferId: this.offer == undefined ? "" : this.offer.edcOfferId,
-      dataOffering: this.offer == undefined ? false : this.offer.dataOffering
+      dataOffering: this.offer == undefined ? false : this.offer.dataOffering,
+      producedBy: this.offer == undefined ? "" : this.offer.catalogOffering["px:producedBy"],
     }).then(response => {
       console.log(response);
       this.negotiatedContract.emit(response);
-      this.acceptOfferStatusMessage.showSuccessMessage("Contract Agreement ID: " + response.contractAgreementId);
+      this.acceptOfferStatusMessage.showSuccessMessage("Contract Agreement ID: " + response.contractAgreementId + ";" +
+        " Contact Email Address: " + response.providerEmail);
     }).catch((e: HttpErrorResponse) => {
       this.acceptOfferStatusMessage.showErrorMessage(e.error.detail || e.error || e.message);
       this.isAcceptButtonDisabled = false;
