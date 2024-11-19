@@ -49,6 +49,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
   dataResourceShapeSource = "";
   @ViewChild("stepper") stepper: MatStepper;
   @ViewChild('accordionItem') accordionItem!: AccordionItemComponent;
+  protected isDataOffering: boolean = true;
   @ViewChild("gxServiceOfferingWizard") private gxServiceOfferingWizard: BaseWizardExtensionComponent;
   @ViewChild("gxDataResourceWizard") private gxDataResourceWizard: BaseWizardExtensionComponent;
 
