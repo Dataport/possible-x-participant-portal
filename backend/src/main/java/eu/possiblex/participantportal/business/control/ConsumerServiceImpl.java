@@ -2,7 +2,9 @@ package eu.possiblex.participantportal.business.control;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.possiblex.participantportal.application.entity.ParticipantIdNameTO;
 import eu.possiblex.participantportal.business.entity.*;
+import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedLegalParticipantCredentialSubject;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.edc.DataspaceErrorMessage;
 import eu.possiblex.participantportal.business.entity.edc.asset.DataAddress;
@@ -58,10 +60,13 @@ public class ConsumerServiceImpl implements ConsumerService {
 
     private final String bucketTopLevelFolder;
 
+    private final String participantId;
+
     public ConsumerServiceImpl(@Autowired ObjectMapper objectMapper, @Autowired EdcClient edcClient,
         @Autowired FhCatalogClient fhCatalogClient, @Autowired TaskScheduler taskScheduler,
         @Value("${s3.bucket-storage-region}") String bucketStorageRegion, @Value("${s3.bucket-name}") String bucketName,
-        @Value("${s3.bucket-top-level-folder}") String bucketTopLevelFolder) {
+        @Value("${s3.bucket-top-level-folder}") String bucketTopLevelFolder,
+        @Value("${participant-id}") String participantId) {
 
         this.objectMapper = objectMapper;
         this.edcClient = edcClient;
@@ -70,6 +75,7 @@ public class ConsumerServiceImpl implements ConsumerService {
         this.bucketStorageRegion = bucketStorageRegion;
         this.bucketName = bucketName;
         this.bucketTopLevelFolder = bucketTopLevelFolder;
+        this.participantId = participantId;
     }
 
     @Override
@@ -87,10 +93,15 @@ public class ConsumerServiceImpl implements ConsumerService {
         log.info("got edc catalog: " + edcCatalog);
         DcatDataset edcCatalogOffer = getDatasetById(edcCatalog, fhCatalogOffer.getAssetId());
 
+        // get provider of the offer from FH Catalog
+        PxExtendedLegalParticipantCredentialSubject provider = fhCatalogClient.getParticipantFromCatalog(
+            fhCatalogOffer.getProvidedBy().getId());
+
         SelectOfferResponseBE response = new SelectOfferResponseBE();
         response.setEdcOffer(edcCatalogOffer);
         response.setCatalogOffering(fhCatalogOffer);
         response.setDataOffering(isDataOffering);
+        response.setOfferingProvider(provider);
 
         return response;
     }
@@ -135,6 +146,13 @@ public class ConsumerServiceImpl implements ConsumerService {
             .contractId(request.getContractAgreementId()).dataDestination(dataAddress).build();
         TransferProcessState transferProcessState = performTransfer(transferRequest).getState();
         return new TransferOfferResponseBE(transferProcessState);
+    }
+
+    @Override
+    public ParticipantIdNameTO getParticipantIdName() {
+
+        PxExtendedLegalParticipantCredentialSubject participant = fhCatalogClient.getParticipantFromCatalog(participantId);
+        return new ParticipantIdNameTO(participantId, participant.getName());
     }
 
     private DcatCatalog queryEdcCatalog(CatalogRequest catalogRequest) {

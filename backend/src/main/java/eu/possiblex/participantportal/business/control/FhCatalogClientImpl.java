@@ -4,9 +4,12 @@ import com.apicatalog.jsonld.JsonLd;
 import com.apicatalog.jsonld.JsonLdError;
 import com.apicatalog.jsonld.document.JsonDocument;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedLegalParticipantCredentialSubject;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
+import eu.possiblex.participantportal.business.entity.exception.ParticipantNotFoundException;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
 import eu.possiblex.participantportal.utilities.LogUtils;
 import jakarta.json.Json;
@@ -93,6 +96,36 @@ public class FhCatalogClientImpl implements FhCatalogClient {
             return objectMapper.readValue(framedOffering.toString(), PxExtendedServiceOfferingCredentialSubject.class);
         } catch (JsonLdError | JsonProcessingException e) {
             throw new RuntimeException("failed to parse fh catalog offer json: " + offerJsonContent, e);
+        }
+    }
+
+    @Override
+    public PxExtendedLegalParticipantCredentialSubject getParticipantFromCatalog(String participantId) throws ParticipantNotFoundException {
+        log.info("fetching participant for fh catalog ID " + participantId);
+        String participantJsonContent;
+        try {
+            participantJsonContent = technicalFhCatalogClient.getParticipantFromCatalog(participantId);
+        } catch (WebClientResponseException e) {
+            if (e.getStatusCode().value() == 404) {
+                throw new ParticipantNotFoundException("no FH Catalog participant found with ID " + participantId);
+            }
+            throw e;
+        }
+        log.info("answer for fh catalog ID: " + participantJsonContent);
+
+        try {
+            JsonDocument input = JsonDocument.of(new StringReader(participantJsonContent));
+            JsonDocument participantFrame = getFrameByType(List.of("gx:LegalParticipant",
+                    "px:PossibleXLegalParticipantExtension"),
+                Map.of("gx", "https://w3id.org/gaia-x/development#", "xsd",
+                    "http://www.w3.org/2001/XMLSchema#", "px", "http://w3id.org/gaia-x/possible-x#", "schema",
+                    "https://schema.org/"));
+            JsonObject framedParticipant = JsonLd.frame(input, participantFrame).get();
+
+            return objectMapper.readValue(framedParticipant.toString(),
+                PxExtendedLegalParticipantCredentialSubject.class);
+        } catch (JsonLdError | JsonProcessingException e) {
+            throw new RuntimeException("failed to parse fh catalog participant json: " + participantJsonContent, e);
         }
     }
 

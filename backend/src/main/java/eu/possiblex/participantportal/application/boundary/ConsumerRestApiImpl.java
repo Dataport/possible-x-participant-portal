@@ -109,4 +109,11 @@ public class ConsumerRestApiImpl implements ConsumerRestApi {
         log.info("Returning for transferring data of contract: " + response);
         return response;
     }
+
+
+    @Override
+    public ParticipantIdNameTO getParticipantIdName() {
+
+        return consumerService.getParticipantIdName();
+    }
 }

@@ -1,7 +1,9 @@
 package eu.possiblex.participantportal.business.control;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
 import eu.possiblex.participantportal.business.entity.*;
+import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedLegalParticipantCredentialSubject;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.exception.NegotiationFailedException;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
@@ -16,8 +18,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.test.context.ContextConfiguration;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -42,8 +43,13 @@ class ConsumerServiceTest {
         reset(edcClient);
         reset(fhCatalogClient);
         PxExtendedServiceOfferingCredentialSubject fhCatalogOffer = new PxExtendedServiceOfferingCredentialSubject();
+        fhCatalogOffer.setProvidedBy(new NodeKindIRITypeId("did:web:example.com"));
         fhCatalogOffer.setAssetId(EdcClientFake.FAKE_ID);
-        Mockito.when(fhCatalogClient.getFhCatalogOffer(Mockito.eq(EdcClientFake.FAKE_ID))).thenReturn(fhCatalogOffer);
+        Mockito.when(fhCatalogClient.getFhCatalogOffer(EdcClientFake.FAKE_ID)).thenReturn(fhCatalogOffer);
+
+        PxExtendedLegalParticipantCredentialSubject participant = new PxExtendedLegalParticipantCredentialSubject();
+        participant.setName("Example Organization");
+        Mockito.when(fhCatalogClient.getParticipantFromCatalog("did:web:example.com")).thenReturn(participant);
 
         // WHEN
 
@@ -54,8 +60,10 @@ class ConsumerServiceTest {
 
         verify(edcClient).queryCatalog(any());
         verify(edcClient, times(0)).initiateTransfer(any());
+        verify(fhCatalogClient).getParticipantFromCatalog("did:web:example.com");
 
         assertNotNull(response);
+        assertEquals("Example Organization", response.getOfferingProvider().getName());
     }
 
     @Test

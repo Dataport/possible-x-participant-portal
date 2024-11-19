@@ -1,5 +1,6 @@
 package eu.possiblex.participantportal.business.entity;
 
+import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedLegalParticipantCredentialSubject;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.edc.catalog.DcatDataset;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,11 @@ public class SelectOfferResponseBE {
      * The content of the offering as retrieved from the catalog.
      */
     private PxExtendedServiceOfferingCredentialSubject catalogOffering;
+
+    /**
+     * The provider of the offering as retrieved from the catalog.
+     */
+    private PxExtendedLegalParticipantCredentialSubject offeringProvider;
 
     /**
      * Does this offer contain Data Resources.

@@ -1,6 +1,8 @@
 package eu.possiblex.participantportal.business.control;
 
+import eu.possiblex.participantportal.application.entity.ParticipantIdNameTO;
 import eu.possiblex.participantportal.business.entity.*;
+import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedLegalParticipantCredentialSubject;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.edc.catalog.DcatDataset;
 import eu.possiblex.participantportal.business.entity.edc.negotiation.NegotiationState;
@@ -29,6 +31,12 @@ public class ConsumerServiceFake implements ConsumerService {
 
     public static final String VALID_COUNTER_PARTY_ADDRESS = "some provider EDC URL";
 
+    public static final String PARTICIPANT_ID = "did:web:test.eu";
+
+    public static final String PARTICIPANT_NAME = "Test Organization";
+
+    public static final String OTHER_PARTICIPANT_NAME = "Some Organization";
+
     @Override
     public SelectOfferResponseBE selectContractOffer(SelectOfferRequestBE request) throws OfferNotFoundException {
 
@@ -46,6 +54,9 @@ public class ConsumerServiceFake implements ConsumerService {
         PxExtendedServiceOfferingCredentialSubject cs = new PxExtendedServiceOfferingCredentialSubject();
         cs.setProviderUrl(VALID_COUNTER_PARTY_ADDRESS);
         response.setCatalogOffering(cs);
+        PxExtendedLegalParticipantCredentialSubject offeringProvider = new PxExtendedLegalParticipantCredentialSubject();
+        offeringProvider.setName(OTHER_PARTICIPANT_NAME);
+        response.setOfferingProvider(offeringProvider);
 
         return response;
     }
@@ -72,5 +83,11 @@ public class ConsumerServiceFake implements ConsumerService {
             case BAD_TRANSFER_OFFER_ID -> throw new TransferFailedException("transfer failed");
             default -> TransferOfferResponseBE.builder().transferProcessState(TransferProcessState.COMPLETED).build();
         };
+    }
+
+    @Override
+    public ParticipantIdNameTO getParticipantIdName() {
+
+        return new ParticipantIdNameTO(PARTICIPANT_ID, PARTICIPANT_NAME);
     }
 }

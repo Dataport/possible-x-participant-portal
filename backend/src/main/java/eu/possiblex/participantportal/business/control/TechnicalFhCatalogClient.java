@@ -37,7 +37,10 @@ public interface TechnicalFhCatalogClient {
     FhCatalogIdResponse addServiceOfferingToFhCatalog(
         @RequestBody PxExtendedServiceOfferingCredentialSubject serviceOfferingCs, @RequestParam String id);
 
-    @GetExchange("/resources/service-offering/{offering_id}")
-    String getFhCatalogOffer(@PathVariable String offering_id);
+    @GetExchange("/resources/service-offering/{offeringId}")
+    String getFhCatalogOffer(@PathVariable String offeringId);
+
+    @GetExchange("/resources/legal-participant/{participantId}")
+    String getParticipantFromCatalog(@PathVariable String participantId);
 }
 

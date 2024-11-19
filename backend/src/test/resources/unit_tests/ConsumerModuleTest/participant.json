@@ -1,0 +1,43 @@
+{
+  "@graph": [
+    {
+      "@id": "_:b0",
+      "gx:countrySubdivisionCode": "DE-NI",
+      "gx:countryCode": "DE"
+    },
+    {
+      "@id": "_:b1",
+      "gx:countryCode": "DE",
+      "gx:countrySubdivisionCode": "DE-NI"
+    },
+    {
+      "@id": "_:b2",
+      "@type": "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#legalRegistrationNumber",
+      "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#leiCode": "894500MQZ65CN32S9A66"
+    },
+    {
+      "@id": "https://piveau.io/set/resource/legal-participant/did:web:didwebservice.dev.possible-x.de:participant:6a03785d-e00f-3d26-8b46-62affbbbc1ad",
+      "schema:description": "Test",
+      "gx:legalAddress": {
+        "@id": "_:b0"
+      },
+      "gx:headquarterAddress": {
+        "@id": "_:b1"
+      },
+      "schema:name": "Test Org",
+      "gx:legalRegistrationNumber": {
+        "@id": "_:b2"
+      },
+      "@type": [
+        "gx:LegalParticipant",
+        "http://w3id.org/gaia-x/possible-x#PossibleXLegalParticipantExtension"
+      ],
+      "http://w3id.org/gaia-x/possible-x#mailAddress": "test@org.de"
+    }
+  ],
+  "@context": {
+    "schema": "https://schema.org/",
+    "gx": "https://w3id.org/gaia-x/development#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  }
+}
