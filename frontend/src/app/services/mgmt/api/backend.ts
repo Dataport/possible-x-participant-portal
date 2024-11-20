@@ -13,8 +13,8 @@ export interface IProviderRestApi {
 }
 
 export interface IResourceShapeRestApi {
-    gxDataResourceShape: string;
     gxInstantiatedVirtualResourceShape: string;
+    gxDataResourceShape: string;
     gxPhysicalResourceShape: string;
     gxSoftwareResourceShape: string;
     gxVirtualResourceShape: string;
@@ -64,6 +64,21 @@ export interface IContractAgreementTO {
 export interface IContractAgreementTOBuilder {
 }
 
+export interface IContractPartiesRequestTO {
+    providerId: string;
+}
+
+export interface IContractPartiesRequestTOBuilder {
+}
+
+export interface IContractPartiesTO {
+    consumerDetails: IParticipantIdNameTO;
+    providerDetails: IParticipantIdNameTO;
+}
+
+export interface IContractPartiesTOBuilder {
+}
+
 export interface ICreateDataOfferingRequestTO extends ICreateServiceOfferingRequestTO {
     dataResourceCredentialSubject: IGxDataResourceCredentialSubject;
     fileName: string;
@@ -102,6 +117,14 @@ export interface IOfferDetailsTO {
 }
 
 export interface IOfferDetailsTOBuilder {
+}
+
+export interface IParticipantIdNameTO {
+    participantId: string;
+    participantName: string;
+}
+
+export interface IParticipantIdNameTOBuilder {
 }
 
 export interface IParticipantIdTO {
@@ -351,6 +374,14 @@ export class RestApplicationClient {
      */
     acceptContractOffer(request: IConsumeOfferRequestTO): RestResponse<IAcceptOfferResponseTO> {
         return this.httpClient.request({ method: "POST", url: uriEncoding`consumer/offer/accept`, data: request });
+    }
+
+    /**
+     * HTTP POST /consumer/offer/contractparties
+     * Java method: eu.possiblex.participantportal.application.boundary.ConsumerRestApiImpl.getContractParties
+     */
+    getContractParties(request: IContractPartiesRequestTO): RestResponse<IContractPartiesTO> {
+        return this.httpClient.request({ method: "POST", url: uriEncoding`consumer/offer/contractparties`, data: request });
     }
 
     /**
