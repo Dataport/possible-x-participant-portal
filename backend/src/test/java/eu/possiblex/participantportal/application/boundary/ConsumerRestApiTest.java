@@ -135,7 +135,7 @@ public class ConsumerRestApiTest {
     }
 
     @Test
-    void shouldReturnMessageOnGetParticipantIdName() throws Exception {
+    void shouldReturnMessageOnGetContractPartiesDetails() throws Exception {
         // WHEN/THEN
         this.mockMvc.perform(get("/consumer/name")).andDo(print()).andExpect(status().isOk())
             .andExpect(jsonPath("$.participantId").value(ConsumerServiceFake.PARTICIPANT_ID))

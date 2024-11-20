@@ -23,11 +23,6 @@ public class OfferDetailsTO {
     private PxExtendedServiceOfferingCredentialSubject catalogOffering;
 
     /**
-     * The name of the offering provider.
-     */
-    private String offeringProviderName;
-
-    /**
      * Does this offer contain Data Resources.
      */
     private boolean dataOffering;

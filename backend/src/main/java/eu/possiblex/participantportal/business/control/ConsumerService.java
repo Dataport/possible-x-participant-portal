@@ -1,6 +1,6 @@
 package eu.possiblex.participantportal.business.control;
 
-import eu.possiblex.participantportal.application.entity.ParticipantIdNameTO;
+import eu.possiblex.participantportal.application.entity.ContractPartiesDetailsTO;
 import eu.possiblex.participantportal.business.entity.*;
 import eu.possiblex.participantportal.business.entity.exception.NegotiationFailedException;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
@@ -42,5 +42,5 @@ public interface ConsumerService {
      * Get the participant's id and name.
      * @return participant id and name
      */
-    ParticipantIdNameTO getParticipantIdName();
+    ContractPartiesDetailsTO getContractPartiesDetails();
 }

@@ -34,10 +34,12 @@ public interface ConsumerRestApi {
     TransferOfferResponseTO transferDataOffer(@RequestBody TransferOfferRequestTO request);
 
     /**
-     * GET endpoint to get the participant's id and name
+     * POST endpoint to get details of the potential contract parties
      *
-     * @return participant id and name
+     * @param request request containing the participant id of the provider
+     *
+     * @return details of the potential contract parties (consumer and provider)
      */
-    @GetMapping(value = "/name", produces = MediaType.APPLICATION_JSON_VALUE)
-    ParticipantIdNameTO getParticipantIdName();
+    @PostMapping(value = "/offer/contractparties", produces = MediaType.APPLICATION_JSON_VALUE)
+    ContractPartiesDetailsTO getContractPartiesDetails(@RequestBody ContractPartyDetailsRequestTO request);
 }

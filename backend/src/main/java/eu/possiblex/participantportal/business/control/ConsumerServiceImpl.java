@@ -2,6 +2,7 @@ package eu.possiblex.participantportal.business.control;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.possiblex.participantportal.application.entity.ContractPartiesDetailsTO;
 import eu.possiblex.participantportal.application.entity.ParticipantIdNameTO;
 import eu.possiblex.participantportal.business.entity.*;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedLegalParticipantCredentialSubject;
@@ -149,10 +150,11 @@ public class ConsumerServiceImpl implements ConsumerService {
     }
 
     @Override
-    public ParticipantIdNameTO getParticipantIdName() {
+    public ContractPartiesDetailsTO getContractPartiesDetails() {
 
-        PxExtendedLegalParticipantCredentialSubject participant = fhCatalogClient.getParticipantFromCatalog(participantId);
-        return new ParticipantIdNameTO(participantId, participant.getName());
+        PxExtendedLegalParticipantCredentialSubject consumer = fhCatalogClient.getParticipantFromCatalog(participantId);
+        PxExtendedLegalParticipantCredentialSubject consumer = fhCatalogClient.getParticipantFromCatalog(participantId);
+        return new ParticipantIdNameTO(participantId, consumer.getName());
     }
 
     private DcatCatalog queryEdcCatalog(CatalogRequest catalogRequest) {

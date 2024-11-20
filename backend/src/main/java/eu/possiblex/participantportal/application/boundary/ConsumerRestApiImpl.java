@@ -112,8 +112,8 @@ public class ConsumerRestApiImpl implements ConsumerRestApi {
 
 
     @Override
-    public ParticipantIdNameTO getParticipantIdName() {
+    public ContractPartiesDetailsTO getContractPartiesDetails(@RequestBody ContractPartyDetailsRequestTO request) {
 
-        return consumerService.getParticipantIdName();
+        return consumerService.getContractPartiesDetails();
     }
 }
