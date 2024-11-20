@@ -43,6 +43,7 @@ import eu.possiblex.participantportal.business.entity.edc.transfer.DataRequest;
 import eu.possiblex.participantportal.business.entity.edc.transfer.IonosS3TransferProcess;
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcessState;
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferRequest;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -59,6 +60,8 @@ public class EdcClientFake implements EdcClient {
 
     public static final String BAD_TRANSFER_ID = "badTransfer";
 
+    public static final String BAD_GATEWAY_ASSET_ID = "edcerror";
+
     public static final long FAKE_TIMESTAMP = 1234L;
 
     public static boolean isProvider = true;
@@ -74,6 +77,10 @@ public class EdcClientFake implements EdcClient {
 
     @Override
     public IdResponse createAsset(AssetCreateRequest assetCreateRequest) {
+
+        if (assetCreateRequest.getProperties().getName().equals(BAD_GATEWAY_ASSET_ID)) {
+            throw new WebClientResponseException(502, "error", null, null, null);
+        }
 
         return generateFakeIdResponse(assetCreateRequest.getId());
     }

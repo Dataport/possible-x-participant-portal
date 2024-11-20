@@ -20,6 +20,7 @@ import eu.possiblex.participantportal.business.entity.edc.policy.OdrlPermission;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyCreateRequest;
 import eu.possiblex.participantportal.business.entity.exception.EdcOfferCreationException;
 import eu.possiblex.participantportal.business.entity.exception.FhOfferCreationException;
+import eu.possiblex.participantportal.utilities.PossibleXException;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import org.mockito.ArgumentCaptor;
@@ -28,7 +29,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.List;
 
@@ -55,7 +58,7 @@ class ProviderServiceTest {
     ObjectMapper objectMapper;
 
     @Test
-    void testCreateServiceOffering() throws EdcOfferCreationException, FhOfferCreationException {
+    void testCreateServiceOffering() {
 
         reset(fhCatalogClient);
         reset(edcClient);
@@ -141,7 +144,7 @@ class ProviderServiceTest {
     }
 
     @Test
-    void testCreateDataOffering() throws EdcOfferCreationException, FhOfferCreationException {
+    void testCreateDataOffering() {
 
         reset(fhCatalogClient);
         reset(edcClient);
@@ -238,6 +241,26 @@ class ProviderServiceTest {
         assertNotNull(response);
         assertNotNull(response.getEdcResponseId());
         assertNotNull(response.getFhResponseId());
+    }
+
+    @Test
+    void testCreateServiceOfferingEdcError() {
+
+        reset(fhCatalogClient);
+        reset(edcClient);
+
+        //given
+        GxServiceOfferingCredentialSubject offeringCs = getGxServiceOfferingCredentialSubject();
+
+        CreateServiceOfferingRequestBE be = CreateServiceOfferingRequestBE.builder()
+            .enforcementPolicies(List.of(new EverythingAllowedPolicy())).providedBy(offeringCs.getProvidedBy())
+            .name(EdcClientFake.BAD_GATEWAY_ASSET_ID).description(offeringCs.getDescription())
+            .termsAndConditions(offeringCs.getTermsAndConditions()).dataAccountExport(offeringCs.getDataAccountExport())
+            .policy(offeringCs.getPolicy()).dataProtectionRegime(offeringCs.getDataProtectionRegime()).build();
+
+        //when
+        assertThrows(PossibleXException.class, () -> providerService.createOffering(be));
+        verify(fhCatalogClient).deleteServiceOfferingFromFhCatalog(any());
     }
 
     @Test
