@@ -26,7 +26,7 @@ import java.util.Map;
 public class PxExtendedDataResourceCredentialSubject {
     @Getter(AccessLevel.NONE)
     public static final List<String> TYPE = List.of(GxDataResourceCredentialSubject.TYPE/*,
-        "px:PossibleXDataResourceExtension"*/); // TODO read this once the catalog properly parses this
+        "px:PossibleXDataResourceExtension"*/); // TODO re-add this once the catalog properly parses this
     // currently this has no implications as we don't have custom fields on the resource, but if we did, this would
     // be bad
 
