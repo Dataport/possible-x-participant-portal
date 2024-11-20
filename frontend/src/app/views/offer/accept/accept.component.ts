@@ -38,6 +38,7 @@ export class AcceptComponent implements OnChanges {
     } else {
       this.viewContainerRef.clear();
     }
+    this.isAcceptButtonDisabled = false;
   }
 
   async acceptContractOffer() {
