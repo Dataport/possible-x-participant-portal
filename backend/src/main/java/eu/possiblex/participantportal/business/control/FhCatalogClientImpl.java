@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedLegalParticipantCredentialSubjectSubset;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
+import eu.possiblex.participantportal.business.entity.exception.ParticipantNotFoundException;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
 import jakarta.json.Json;
 import jakarta.json.JsonArrayBuilder;
@@ -69,14 +70,18 @@ public class FhCatalogClientImpl implements FhCatalogClient {
 
     }
 
-    private <T> T parseCatalogContent(String id, boolean isOffer, Class<T> returnType) throws OfferNotFoundException {
+    private <T> T parseCatalogContent(String id, boolean isOffer, Class<T> returnType) throws OfferNotFoundException,
+        ParticipantNotFoundException {
         log.info("fetching " + (isOffer ? "offer" : "participant") + " for fh catalog ID " + id);
         String jsonContent = null;
         try {
             jsonContent = isOffer ? technicalFhCatalogClient.getFhCatalogOffer(id) : technicalFhCatalogClient.getFhCatalogParticipant(id);
         } catch (WebClientResponseException e) {
-            if (e.getStatusCode().value() == 404) {
-                throw new OfferNotFoundException("no FH Catalog " + (isOffer ? "offer" : "participant") + " found with ID " + id);
+            if (e.getStatusCode().value() == 404 && isOffer) {
+                throw new OfferNotFoundException("no FH Catalog offer found with ID " + id);
+            }
+            if (e.getStatusCode().value() == 404 && !isOffer) {
+                throw new ParticipantNotFoundException("no FH Catalog participant found with ID " + id);
             }
             throw e;
         }
@@ -94,12 +99,20 @@ public class FhCatalogClientImpl implements FhCatalogClient {
     }
     @Override
     public PxExtendedServiceOfferingCredentialSubject getFhCatalogOffer(String offeringId) throws OfferNotFoundException {
-        return parseCatalogContent(offeringId, true, PxExtendedServiceOfferingCredentialSubject.class);
+        try {
+            return parseCatalogContent(offeringId, true, PxExtendedServiceOfferingCredentialSubject.class);
+        } catch (ParticipantNotFoundException e) {
+            throw new OfferNotFoundException(e.getMessage());
+        }
     }
 
     @Override
     public PxExtendedLegalParticipantCredentialSubjectSubset getFhCatalogParticipant(String participantId) throws
-        OfferNotFoundException {
-        return parseCatalogContent(participantId, false, PxExtendedLegalParticipantCredentialSubjectSubset.class);
+        ParticipantNotFoundException {
+        try {
+            return parseCatalogContent(participantId, false, PxExtendedLegalParticipantCredentialSubjectSubset.class);
+        } catch (OfferNotFoundException e) {
+            throw new ParticipantNotFoundException(e.getMessage());
+        }
     }
 }

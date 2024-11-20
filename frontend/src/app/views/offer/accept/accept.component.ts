@@ -52,7 +52,7 @@ export class AcceptComponent implements OnChanges {
       counterPartyAddress: this.offer == undefined ? "" : this.offer.catalogOffering["px:providerUrl"],
       edcOfferId: this.offer == undefined ? "" : this.offer.edcOfferId,
       dataOffering: this.offer == undefined ? false : this.offer.dataOffering,
-      producedBy: this.offer == undefined ? "" : this.offer.catalogOffering["px:producedBy"],
+      providedBy: this.offer == undefined ? "" : this.offer.catalogOffering["px:providedBy"].id,
     }).then(response => {
       console.log(response);
       this.negotiatedContract.emit(response);

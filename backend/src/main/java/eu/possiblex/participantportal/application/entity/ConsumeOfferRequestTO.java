@@ -26,7 +26,7 @@ public class ConsumeOfferRequestTO {
     private boolean dataOffering;
 
     /**
-     * @see eu.possiblex.participantportal.application.entity.OfferDetailsTO#catalogOffering.producedBy
+     * @see eu.possiblex.participantportal.application.entity.OfferDetailsTO#catalogOffering.providedBy
      */
-    private String producedBy;
+    private String providedBy;
 }

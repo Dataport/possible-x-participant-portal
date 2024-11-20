@@ -13,12 +13,12 @@ export interface IProviderRestApi {
 }
 
 export interface IResourceShapeRestApi {
+    gxInstantiatedVirtualResourceShape: string;
     gxDataResourceShape: string;
     gxPhysicalResourceShape: string;
     gxSoftwareResourceShape: string;
     gxVirtualResourceShape: string;
     gxLegitimateInterestShape: string;
-    gxInstantiatedVirtualResourceShape: string;
 }
 
 export interface IServiceOfferingShapeRestApi {
@@ -47,7 +47,7 @@ export interface IConsumeOfferRequestTO {
     counterPartyAddress: string;
     edcOfferId: string;
     dataOffering: boolean;
-    producedBy: string;
+    providedBy: string;
 }
 
 export interface IConsumeOfferRequestTOBuilder {
