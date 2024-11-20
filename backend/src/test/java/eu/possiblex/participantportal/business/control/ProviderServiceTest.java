@@ -254,7 +254,7 @@ class ProviderServiceTest {
 
         CreateServiceOfferingRequestBE be = CreateServiceOfferingRequestBE.builder()
             .enforcementPolicies(List.of(new EverythingAllowedPolicy())).providedBy(offeringCs.getProvidedBy())
-            .name("edcerror").description(offeringCs.getDescription())
+            .name(EdcClientFake.BAD_GATEWAY_ASSET_ID).description(offeringCs.getDescription())
             .termsAndConditions(offeringCs.getTermsAndConditions()).dataAccountExport(offeringCs.getDataAccountExport())
             .policy(offeringCs.getPolicy()).dataProtectionRegime(offeringCs.getDataProtectionRegime()).build();
 
