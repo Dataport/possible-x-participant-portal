@@ -6,6 +6,7 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import eu.possiblex.participantportal.application.control.ProviderApiMapper;
+import eu.possiblex.participantportal.application.entity.CreateDataOfferingRequestTO;
 import eu.possiblex.participantportal.application.entity.CreateServiceOfferingRequestTO;
 import eu.possiblex.participantportal.business.control.*;
 import eu.possiblex.participantportal.business.entity.common.CommonConstants;
@@ -82,9 +83,39 @@ class ProviderModuleTest extends ProviderTestParent {
                         .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk());
     }
 
+    @Test
+    void shouldReturnMessageOnCreateServiceOfferingWithData() throws Exception {
+
+        // GIVEN
+
+        CreateDataOfferingRequestTO request = objectMapper.readValue(getCreateServiceOfferingWithDataTOJsonString(),
+                CreateDataOfferingRequestTO.class);
+
+        mockFhCatalogCreateServiceOfferingWithData();
+        mockEdcCreateAsset();
+        mockEdcCreatePolicy();
+        mockEdcCreateContractDefinition();
+
+        // WHEN/THEN
+
+        this.mockMvc.perform(post("/provider/offer/data").content(RestApiHelper.asJsonString(request))
+                .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk());
+    }
+
+    private void mockFhCatalogCreateServiceOfferingWithData() {
+        WireMockRuntimeInfo wm1RuntimeInfo = wmExt.getRuntimeInfo();
+        wmExt.stubFor(WireMock.put(WireMock.urlPathMatching("/" + FH_CATALOG_SERVICE_PATH + "/trust/data-product" + ".*"))
+                .willReturn(WireMock.aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody("""
+                                { "id":"someId" }
+                                """)));
+    }
+
     private void mockFhCatalogCreateServiceOffering() {
         WireMockRuntimeInfo wm1RuntimeInfo = wmExt.getRuntimeInfo();
-        wmExt.stubFor(WireMock.put(WireMock.urlPathMatching("/" + FH_CATALOG_SERVICE_PATH + CommonConstants.REST_PATH_FH_CATALOG_SERVICE_OFFER + ".*"))
+        wmExt.stubFor(WireMock.put(WireMock.urlPathMatching("/" + FH_CATALOG_SERVICE_PATH + "/trust/service-offering" + ".*"))
                 .willReturn(WireMock.aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json")
