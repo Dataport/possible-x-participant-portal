@@ -16,7 +16,7 @@
       "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#leiCode": "894500MQZ65CN32S9A66"
     },
     {
-      "@id": "https://piveau.io/set/resource/legal-participant/did:web:didwebservice.dev.possible-x.de:participant:6a03785d-e00f-3d26-8b46-62affbbbc1ad",
+      "@id": "https://piveau.io/set/resource/legal-participant/did:web:test.eu",
       "schema:description": "Test",
       "gx:legalAddress": {
         "@id": "_:b0"
@@ -24,7 +24,7 @@
       "gx:headquarterAddress": {
         "@id": "_:b1"
       },
-      "schema:name": "Test Org",
+      "schema:name": "Test Organization",
       "gx:legalRegistrationNumber": {
         "@id": "_:b2"
       },

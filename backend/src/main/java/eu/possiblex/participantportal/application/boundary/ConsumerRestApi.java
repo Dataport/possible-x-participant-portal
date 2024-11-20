@@ -2,7 +2,6 @@ package eu.possiblex.participantportal.application.boundary;
 
 import eu.possiblex.participantportal.application.entity.*;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,12 +33,12 @@ public interface ConsumerRestApi {
     TransferOfferResponseTO transferDataOffer(@RequestBody TransferOfferRequestTO request);
 
     /**
-     * POST endpoint to get details of the potential contract parties
+     * POST endpoint to get details of the potential contracting parties
      *
-     * @param request request containing the participant id of the provider
+     * @param request request containing the participant id of the offer provider
      *
-     * @return details of the potential contract parties (consumer and provider)
+     * @return details of the potential contracting parties (consumer and provider)
      */
     @PostMapping(value = "/offer/contractparties", produces = MediaType.APPLICATION_JSON_VALUE)
-    ContractPartiesDetailsTO getContractPartiesDetails(@RequestBody ContractPartyDetailsRequestTO request);
+    ContractPartiesTO getContractParties(@RequestBody ContractPartiesRequestTO request);
 }

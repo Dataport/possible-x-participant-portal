@@ -115,11 +115,13 @@ public class FhCatalogClientImpl implements FhCatalogClient {
 
         try {
             JsonDocument input = JsonDocument.of(new StringReader(participantJsonContent));
-            JsonDocument participantFrame = getFrameByType(List.of("gx:LegalParticipant",
-                    "px:PossibleXLegalParticipantExtension"),
-                Map.of("gx", "https://w3id.org/gaia-x/development#", "xsd",
-                    "http://www.w3.org/2001/XMLSchema#", "px", "http://w3id.org/gaia-x/possible-x#", "schema",
-                    "https://schema.org/"));
+
+            List<String> pxExtendedLegalParticipantType = List.of("gx:LegalParticipant", "px:PossibleXLegalParticipantExtension");
+            Map<String, String> pxExtendedLegalParticipantContext = Map.of("gx", "https://w3id.org/gaia-x/development#", "xsd",
+                "http://www.w3.org/2001/XMLSchema#", "px", "http://w3id.org/gaia-x/possible-x#", "schema",
+                "https://schema.org/");
+            
+            JsonDocument participantFrame = getFrameByType(pxExtendedLegalParticipantType, pxExtendedLegalParticipantContext);
             JsonObject framedParticipant = JsonLd.frame(input, participantFrame).get();
 
             return objectMapper.readValue(framedParticipant.toString(),

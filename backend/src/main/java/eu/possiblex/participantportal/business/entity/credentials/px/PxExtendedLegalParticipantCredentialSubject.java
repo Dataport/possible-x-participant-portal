@@ -32,17 +32,17 @@ public class PxExtendedLegalParticipantCredentialSubject {
 
     @NotNull
     @JsonProperty("gx:legalRegistrationNumber")
-    // TODO: change to GxLegalRegistrationNumberCredentialSubject when needed
+    // Add GxLegalRegistrationNumberCredentialSubject when needed
     private JsonNode legalRegistrationNumber;
 
     @NotNull
     @JsonProperty("gx:legalAddress")
-    // TODO: change to GxVcard when needed
+    // Add GxVcard when needed
     private JsonNode legalAddress;
 
     @NotNull
     @JsonProperty("gx:headquarterAddress")
-    // TODO: change to GxVcard when needed
+    // Add GxVcard when needed
     private JsonNode headquarterAddress;
 
     @JsonProperty("schema:name")
@@ -59,6 +59,5 @@ public class PxExtendedLegalParticipantCredentialSubject {
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)
     private String mailAddress;
-
 }
 

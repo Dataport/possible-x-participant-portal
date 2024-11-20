@@ -2,11 +2,11 @@ package eu.possiblex.participantportal.application.boundary;
 
 import eu.possiblex.participantportal.application.control.ConsumerApiMapper;
 import eu.possiblex.participantportal.application.entity.ConsumeOfferRequestTO;
+import eu.possiblex.participantportal.application.entity.ContractPartiesRequestTO;
 import eu.possiblex.participantportal.application.entity.SelectOfferRequestTO;
 import eu.possiblex.participantportal.application.entity.TransferOfferRequestTO;
 import eu.possiblex.participantportal.business.control.ConsumerService;
 import eu.possiblex.participantportal.business.control.ConsumerServiceFake;
-import eu.possiblex.participantportal.business.control.ProviderServiceFake;
 import eu.possiblex.participantportal.business.entity.ConsumeOfferRequestBE;
 import eu.possiblex.participantportal.business.entity.SelectOfferRequestBE;
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcessState;
@@ -36,7 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(ConsumerRestApiImpl.class)
 @ContextConfiguration(classes = { ConsumerRestApiTest.TestConfig.class, ConsumerRestApiImpl.class })
-public class ConsumerRestApiTest {
+class ConsumerRestApiTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -60,8 +60,7 @@ public class ConsumerRestApiTest {
                     SelectOfferRequestTO.builder().fhCatalogOfferId(ConsumerServiceFake.VALID_FH_OFFER_ID).build()))
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk()).andExpect(
                 jsonPath("$.catalogOffering['px:providerUrl']").value(ConsumerServiceFake.VALID_COUNTER_PARTY_ADDRESS))
-            .andExpect(jsonPath("$.edcOfferId").value(ConsumerServiceFake.VALID_ASSET_ID))
-            .andExpect(jsonPath("$.offeringProviderName").value(ConsumerServiceFake.OTHER_PARTICIPANT_NAME));
+            .andExpect(jsonPath("$.edcOfferId").value(ConsumerServiceFake.VALID_ASSET_ID));
 
         ArgumentCaptor<SelectOfferRequestBE> requestCaptor = ArgumentCaptor.forClass(SelectOfferRequestBE.class);
 
@@ -135,11 +134,21 @@ public class ConsumerRestApiTest {
     }
 
     @Test
-    void shouldReturnMessageOnGetContractPartiesDetails() throws Exception {
+    void shouldReturnMessageOnGetContractParties() throws Exception {
         // WHEN/THEN
-        this.mockMvc.perform(get("/consumer/name")).andDo(print()).andExpect(status().isOk())
-            .andExpect(jsonPath("$.participantId").value(ConsumerServiceFake.PARTICIPANT_ID))
-            .andExpect(jsonPath("$.participantName").value(ConsumerServiceFake.PARTICIPANT_NAME));
+        this.mockMvc.perform(post("/consumer/offer/contractparties").content(RestApiHelper.asJsonString(
+                    ContractPartiesRequestTO.builder().providerId(ConsumerServiceFake.OTHER_PARTICIPANT_ID).build()))
+            .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
+            .andExpect(jsonPath("$.consumerDetails.participantName").value(ConsumerServiceFake.PARTICIPANT_NAME))
+            .andExpect(jsonPath("$.providerDetails.participantName").value(ConsumerServiceFake.OTHER_PARTICIPANT_NAME));
+    }
+
+    @Test
+    void shouldReturnMessageOnGetContractPartiesNotFound() throws Exception {
+        // WHEN/THEN
+        this.mockMvc.perform(post("/consumer/offer/contractparties").content(RestApiHelper.asJsonString(
+                    ContractPartiesRequestTO.builder().providerId(ConsumerServiceFake.UNKNOWN_PARTICIPANT_ID).build()))
+                .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isNotFound());
     }
 
     @TestConfiguration

@@ -10,20 +10,27 @@ import java.time.OffsetDateTime;
 @Mapper(componentModel = "spring", imports = { OffsetDateTime.class })
 public interface ConsumerApiMapper {
 
-    SelectOfferRequestBE selectOfferRequestTOtoBE(SelectOfferRequestTO to);
+    SelectOfferRequestBE selectOfferRequestTOToBE(SelectOfferRequestTO to);
 
-    ConsumeOfferRequestBE consumeOfferRequestTOtoBE(ConsumeOfferRequestTO to);
+    ConsumeOfferRequestBE consumeOfferRequestTOToBE(ConsumeOfferRequestTO to);
 
-    TransferOfferRequestBE transferOfferRequestTOtoBE(TransferOfferRequestTO to);
+    TransferOfferRequestBE transferOfferRequestTOToBE(TransferOfferRequestTO to);
+
+    ContractPartiesRequestBE contractPartiesRequestTOToBE(ContractPartiesRequestTO to);
 
     @Mapping(target = "edcOfferId", source = "edcOffer.assetId")
     @Mapping(target = "catalogOffering", source = "catalogOffering")
     @Mapping(target = "dataOffering", source = "dataOffering")
-    @Mapping(target = "offeringProviderName", source = "offeringProvider.name")
     OfferDetailsTO selectOfferResponseBEToOfferDetailsTO(SelectOfferResponseBE selectOfferResponseBE);
 
-    AcceptOfferResponseTO acceptOfferResponseBEtoAcceptOfferResponseTO(AcceptOfferResponseBE acceptOfferResponseBE);
+    AcceptOfferResponseTO acceptOfferResponseBEToAcceptOfferResponseTO(AcceptOfferResponseBE acceptOfferResponseBE);
 
-    TransferOfferResponseTO transferOfferResponseBEtoTransferOfferResponseTO(
+    TransferOfferResponseTO transferOfferResponseBEToTransferOfferResponseTO(
         TransferOfferResponseBE transferOfferResponseBE);
+
+    @Mapping(target = "consumerDetails.participantId", source = "consumer.id")
+    @Mapping(target = "consumerDetails.participantName", source = "consumer.name")
+    @Mapping(target = "providerDetails.participantId", source = "provider.id")
+    @Mapping(target = "providerDetails.participantName", source = "provider.name")
+    ContractPartiesTO contractPartiesBEToContractPartiesTO(ContractPartiesBE contractPartiesBE);
 }

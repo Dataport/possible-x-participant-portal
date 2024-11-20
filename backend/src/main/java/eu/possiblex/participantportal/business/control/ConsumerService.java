@@ -1,9 +1,9 @@
 package eu.possiblex.participantportal.business.control;
 
-import eu.possiblex.participantportal.application.entity.ContractPartiesDetailsTO;
 import eu.possiblex.participantportal.business.entity.*;
 import eu.possiblex.participantportal.business.entity.exception.NegotiationFailedException;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
+import eu.possiblex.participantportal.business.entity.exception.ParticipantNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
 
 public interface ConsumerService {
@@ -39,8 +39,9 @@ public interface ConsumerService {
         throws OfferNotFoundException, TransferFailedException;
 
     /**
-     * Get the participant's id and name.
-     * @return participant id and name
+     * Get the contract parties.
+     *
+     * @return the contract parties
      */
-    ContractPartiesDetailsTO getContractPartiesDetails();
+    ContractPartiesBE getContractParties(ContractPartiesRequestBE request) throws ParticipantNotFoundException;
 }

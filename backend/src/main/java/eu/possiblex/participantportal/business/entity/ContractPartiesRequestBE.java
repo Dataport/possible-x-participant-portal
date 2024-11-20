@@ -1,4 +1,4 @@
-package eu.possiblex.participantportal.application.entity;
+package eu.possiblex.participantportal.business.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,9 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ContractPartyDetailsRequestTO {
-    /**
-     * The ID of the participant providing the offer.
-     */
+public class ContractPartiesRequestBE {
     private String providerId;
 }

@@ -2,6 +2,7 @@ package eu.possiblex.participantportal.application.boundary;
 
 import eu.possiblex.participantportal.application.control.ConsumerApiMapper;
 import eu.possiblex.participantportal.application.entity.ConsumeOfferRequestTO;
+import eu.possiblex.participantportal.application.entity.ContractPartiesRequestTO;
 import eu.possiblex.participantportal.application.entity.SelectOfferRequestTO;
 import eu.possiblex.participantportal.business.control.*;
 import eu.possiblex.participantportal.business.entity.edc.catalog.DcatCatalog;
@@ -196,12 +197,6 @@ class ConsumerModuleTest {
         Mockito.when(technicalFhCatalogClientMock.getFhCatalogOffer(ConsumerServiceFake.VALID_FH_OFFER_ID))
             .thenReturn(fhCatalogOfferContent);
 
-        // let the FH catalog provide a test participant
-        String fhCatalogParticipantContent = TestUtils.loadTextFile(TEST_FILES_PATH + "participant.json");
-        Mockito.when(technicalFhCatalogClientMock.getParticipantFromCatalog(any()))
-            .thenReturn(fhCatalogParticipantContent);
-
-        String expectedProviderName = "Test Org"; // from the "name" attribute in the test participant
         String expectedEdcProviderUrl = "EXPECTED_PROVIDER_URL_VALUE"; // from the "px:providerURL" attribute in the test data offer
         String expectedAssetId = "EXPECTED_ASSET_ID_VALUE"; // from the "px:assetId" attribute in the test data offer
 
@@ -227,15 +222,12 @@ class ConsumerModuleTest {
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
             .andExpect(jsonPath("$.catalogOffering['px:providerUrl']").value(expectedEdcProviderUrl))
             .andExpect(jsonPath("$.edcOfferId").value(expectedAssetId))
-            .andExpect(jsonPath("$.dataOffering").value(true))
-            .andExpect(jsonPath("$.offeringProviderName").value(expectedProviderName));
+            .andExpect(jsonPath("$.dataOffering").value(true));
 
         // THEN
 
         // FH Catalog should have been queried with the offer ID given in the request
         verify(technicalFhCatalogClientMock, Mockito.times(1)).getFhCatalogOffer(ConsumerServiceFake.VALID_FH_OFFER_ID);
-        // FH Catalog should have been queried with the participant ID given in the offer ("providedBy" attribute)
-        verify(technicalFhCatalogClientMock, Mockito.times(1)).getFhCatalogOffer(any());
     }
 
     @Test
@@ -280,7 +272,7 @@ class ConsumerModuleTest {
         // let the FH catalog client throw a 404 error
         WebClientResponseException expectedException = Mockito.mock(WebClientResponseException.class);
         Mockito.when(expectedException.getStatusCode()).thenReturn(HttpStatus.NOT_FOUND);
-        Mockito.when(technicalFhCatalogClientMock.getFhCatalogOffer(Mockito.eq(ConsumerServiceFake.VALID_FH_OFFER_ID)))
+        Mockito.when(technicalFhCatalogClientMock.getFhCatalogOffer(ConsumerServiceFake.VALID_FH_OFFER_ID))
             .thenThrow(expectedException);
 
         // WHEN/THEN
@@ -301,7 +293,7 @@ class ConsumerModuleTest {
 
         // let the FH catalog provide the test data offer which does not contain an asset ID
         String fhCatalogOfferContent = TestUtils.loadTextFile(TEST_FILES_PATH + "invalidFhOfferNoAssetId.json");
-        Mockito.when(technicalFhCatalogClientMock.getFhCatalogOffer(Mockito.eq(ConsumerServiceFake.VALID_FH_OFFER_ID)))
+        Mockito.when(technicalFhCatalogClientMock.getFhCatalogOffer(ConsumerServiceFake.VALID_FH_OFFER_ID))
             .thenReturn(fhCatalogOfferContent);
 
         // WHEN/THEN
@@ -321,7 +313,7 @@ class ConsumerModuleTest {
 
         // let the FH catalog provide the test data offer which does not contain an asset ID
         String fhCatalogOfferContent = TestUtils.loadTextFile(TEST_FILES_PATH + "invalidFhOfferNoAccessUrl.json");
-        Mockito.when(technicalFhCatalogClientMock.getFhCatalogOffer(Mockito.eq(ConsumerServiceFake.VALID_FH_OFFER_ID)))
+        Mockito.when(technicalFhCatalogClientMock.getFhCatalogOffer(ConsumerServiceFake.VALID_FH_OFFER_ID))
             .thenReturn(fhCatalogOfferContent);
 
         // WHEN/THEN
@@ -330,6 +322,63 @@ class ConsumerModuleTest {
                 SelectOfferRequestTO.builder().fhCatalogOfferId(ConsumerServiceFake.VALID_FH_OFFER_ID).build()))
             .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().is5xxServerError());
     }
+
+    @Test
+    void getContractPartiesSucceeds() throws Exception {
+
+        // GIVEN
+
+        reset(edcClientMock);
+        reset(technicalFhCatalogClientMock);
+
+        // let the FH catalog provide test participants
+        String consumerParticipantContent = TestUtils.loadTextFile(TEST_FILES_PATH + "consumerParticipant.json");
+        Mockito.when(technicalFhCatalogClientMock.getParticipantFromCatalog(ConsumerServiceFake.PARTICIPANT_ID))
+            .thenReturn(consumerParticipantContent);
+
+        String providerParticipantContent = TestUtils.loadTextFile(TEST_FILES_PATH + "providerParticipant.json");
+        Mockito.when(technicalFhCatalogClientMock.getParticipantFromCatalog(ConsumerServiceFake.OTHER_PARTICIPANT_ID))
+            .thenReturn(providerParticipantContent);
+
+        String expectedConsumerName = "Test Organization"; // from the "name" attribute in the consumer participant
+        String expectedProviderName = "Other Organization"; // from the "name" attribute in the provider participant
+
+
+        // WHEN/THEN
+
+        this.mockMvc.perform(post("/consumer/offer/contractparties").content(RestApiHelper.asJsonString(
+                ContractPartiesRequestTO.builder().providerId(ConsumerServiceFake.OTHER_PARTICIPANT_ID).build()))
+            .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
+            .andExpect(jsonPath("$.consumerDetails.participantName").value(expectedConsumerName))
+            .andExpect(jsonPath("$.providerDetails.participantName").value(expectedProviderName));
+
+        // FH Catalog should have been queried with the consumer and provider participant IDs
+        verify(technicalFhCatalogClientMock, Mockito.times(1)).getParticipantFromCatalog(ConsumerServiceFake.PARTICIPANT_ID);
+        verify(technicalFhCatalogClientMock, Mockito.times(1)).getParticipantFromCatalog(ConsumerServiceFake.OTHER_PARTICIPANT_ID);
+    }
+
+    @Test
+    void getContractPartiesThrows404() throws Exception {
+
+        // GIVEN
+
+        reset(edcClientMock);
+        reset(technicalFhCatalogClientMock);
+
+        // let the FH catalog throw a 404 error
+        WebClientResponseException expectedException = Mockito.mock(WebClientResponseException.class);
+        Mockito.when(expectedException.getStatusCode()).thenReturn(HttpStatus.NOT_FOUND);
+        Mockito.when(technicalFhCatalogClientMock.getParticipantFromCatalog(any()))
+            .thenThrow(expectedException);
+
+        // WHEN/THEN
+
+        this.mockMvc.perform(post("/consumer/offer/contractparties").content(RestApiHelper.asJsonString(
+                ContractPartiesRequestTO.builder().providerId(ConsumerServiceFake.OTHER_PARTICIPANT_ID).build()))
+            .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isNotFound());
+    }
+
+
 
     @TestConfiguration
     static class TestConfig {

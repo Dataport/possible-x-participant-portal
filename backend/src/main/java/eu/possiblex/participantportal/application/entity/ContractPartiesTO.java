@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ContractPartiesDetailsTO {
+public class ContractPartiesTO {
     private ParticipantIdNameTO consumerDetails;
     private ParticipantIdNameTO providerDetails;
 }

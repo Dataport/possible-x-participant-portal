@@ -2,10 +2,12 @@ package eu.possiblex.participantportal.application.boundary;
 
 import eu.possiblex.participantportal.application.control.ConsumerApiMapper;
 import eu.possiblex.participantportal.application.entity.*;
+import eu.possiblex.participantportal.application.entity.ContractPartiesRequestTO;
 import eu.possiblex.participantportal.business.control.ConsumerService;
 import eu.possiblex.participantportal.business.entity.*;
 import eu.possiblex.participantportal.business.entity.exception.NegotiationFailedException;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
+import eu.possiblex.participantportal.business.entity.exception.ParticipantNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
 import eu.possiblex.participantportal.utilities.PossibleXException;
 import lombok.extern.slf4j.Slf4j;
@@ -34,8 +36,8 @@ public class ConsumerRestApiImpl implements ConsumerRestApi {
     @Override
     public OfferDetailsTO selectContractOffer(@RequestBody SelectOfferRequestTO request) {
 
-        log.info("selecting contract with " + request);
-        SelectOfferRequestBE be = consumerApiMapper.selectOfferRequestTOtoBE(request);
+        log.info("selecting contract with {}", request);
+        SelectOfferRequestBE be = consumerApiMapper.selectOfferRequestTOToBE(request);
         SelectOfferResponseBE response;
         try {
             response = consumerService.selectContractOffer(be);
@@ -48,15 +50,15 @@ public class ConsumerRestApiImpl implements ConsumerRestApi {
                 "Failed to select offer with offerId" + request.getFhCatalogOfferId() + ". Other Exception: " + e);
         }
 
-        log.info("returning for selecting contract: " + response);
+        log.info("returning for selecting contract: {}", response);
         return consumerApiMapper.selectOfferResponseBEToOfferDetailsTO(response);
     }
 
     @Override
     public AcceptOfferResponseTO acceptContractOffer(@RequestBody ConsumeOfferRequestTO request) {
 
-        log.info("accepting contract with " + request);
-        ConsumeOfferRequestBE be = consumerApiMapper.consumeOfferRequestTOtoBE(request);
+        log.info("accepting contract with {}", request);
+        ConsumeOfferRequestBE be = consumerApiMapper.consumeOfferRequestTOToBE(request);
 
         AcceptOfferResponseBE acceptOffer;
         try {
@@ -78,16 +80,16 @@ public class ConsumerRestApiImpl implements ConsumerRestApi {
         } else {
             log.info("No dataResource found: Transfer is omitted");
         }
-        AcceptOfferResponseTO response = consumerApiMapper.acceptOfferResponseBEtoAcceptOfferResponseTO(acceptOffer);
-        log.info("Returning for accepting contract: " + response);
+        AcceptOfferResponseTO response = consumerApiMapper.acceptOfferResponseBEToAcceptOfferResponseTO(acceptOffer);
+        log.info("Returning for accepting contract: {}", response);
         return response;
     }
 
     @Override
     public TransferOfferResponseTO transferDataOffer(@RequestBody TransferOfferRequestTO request) {
 
-        log.info("transferring data from contract with " + request);
-        TransferOfferRequestBE be = consumerApiMapper.transferOfferRequestTOtoBE(request);
+        log.info("transferring data from contract with {}", request);
+        TransferOfferRequestBE be = consumerApiMapper.transferOfferRequestTOToBE(request);
 
         TransferOfferResponseBE transferOfferResponseBE;
         try {
@@ -104,16 +106,32 @@ public class ConsumerRestApiImpl implements ConsumerRestApi {
                 "Failed to select offer with offerId" + request.getEdcOfferId() + ". Other Exception: " + e);
         }
 
-        TransferOfferResponseTO response = consumerApiMapper.transferOfferResponseBEtoTransferOfferResponseTO(
+        TransferOfferResponseTO response = consumerApiMapper.transferOfferResponseBEToTransferOfferResponseTO(
             transferOfferResponseBE);
-        log.info("Returning for transferring data of contract: " + response);
+        log.info("Returning for transferring data of contract: {}", response);
         return response;
     }
 
-
     @Override
-    public ContractPartiesDetailsTO getContractPartiesDetails(@RequestBody ContractPartyDetailsRequestTO request) {
+    public ContractPartiesTO getContractParties(@RequestBody ContractPartiesRequestTO request) {
 
-        return consumerService.getContractPartiesDetails();
+        log.info("Retrieving contract parties details with: {}", request);
+        ContractPartiesRequestBE be = consumerApiMapper.contractPartiesRequestTOToBE(request);
+
+        ContractPartiesBE contractPartiesBE;
+        try {
+            contractPartiesBE = consumerService.getContractParties(be);
+        } catch (ParticipantNotFoundException e) {
+            throw new PossibleXException(
+                "Failed to retrieve contract parties details with: " + request + ". ParticipantNotFoundException: " + e,
+                HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            throw new PossibleXException(
+                "Failed to retrieve contract parties details with: " + request + ". Other Exception: " + e);
+        }
+
+        ContractPartiesTO response = consumerApiMapper.contractPartiesBEToContractPartiesTO(contractPartiesBE);
+        log.info("Returning contract parties details: {}", response);
+        return response;
     }
 }

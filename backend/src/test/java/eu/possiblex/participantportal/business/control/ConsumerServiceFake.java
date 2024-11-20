@@ -1,7 +1,5 @@
 package eu.possiblex.participantportal.business.control;
 
-import eu.possiblex.participantportal.application.entity.ContractPartiesDetailsTO;
-import eu.possiblex.participantportal.application.entity.ParticipantIdNameTO;
 import eu.possiblex.participantportal.business.entity.*;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedLegalParticipantCredentialSubject;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
@@ -11,6 +9,7 @@ import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcessState;
 import eu.possiblex.participantportal.business.entity.exception.NegotiationFailedException;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
+import eu.possiblex.participantportal.business.entity.exception.ParticipantNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
 
 import java.util.Collections;
@@ -36,7 +35,11 @@ public class ConsumerServiceFake implements ConsumerService {
 
     public static final String PARTICIPANT_NAME = "Test Organization";
 
-    public static final String OTHER_PARTICIPANT_NAME = "Some Organization";
+    public static final String OTHER_PARTICIPANT_ID = "did:web:other.eu";
+
+    public static final String OTHER_PARTICIPANT_NAME = "Other Organization";
+
+    public static final String UNKNOWN_PARTICIPANT_ID = "did:web:unknown.eu";
 
     @Override
     public SelectOfferResponseBE selectContractOffer(SelectOfferRequestBE request) throws OfferNotFoundException {
@@ -55,9 +58,6 @@ public class ConsumerServiceFake implements ConsumerService {
         PxExtendedServiceOfferingCredentialSubject cs = new PxExtendedServiceOfferingCredentialSubject();
         cs.setProviderUrl(VALID_COUNTER_PARTY_ADDRESS);
         response.setCatalogOffering(cs);
-        PxExtendedLegalParticipantCredentialSubject offeringProvider = new PxExtendedLegalParticipantCredentialSubject();
-        offeringProvider.setName(OTHER_PARTICIPANT_NAME);
-        response.setOfferingProvider(offeringProvider);
 
         return response;
     }
@@ -87,8 +87,17 @@ public class ConsumerServiceFake implements ConsumerService {
     }
 
     @Override
-    public ContractPartiesDetailsTO getContractPartiesDetails() {
+    public ContractPartiesBE getContractParties(ContractPartiesRequestBE request) throws ParticipantNotFoundException{
 
-        return new ParticipantIdNameTO(PARTICIPANT_ID, PARTICIPANT_NAME);
+        if(request.getProviderId().equals(UNKNOWN_PARTICIPANT_ID)) {
+            throw new ParticipantNotFoundException("not found");
+        }
+
+        PxExtendedLegalParticipantCredentialSubject consumer = PxExtendedLegalParticipantCredentialSubject.builder()
+            .id(PARTICIPANT_ID).name(PARTICIPANT_NAME).build();
+        PxExtendedLegalParticipantCredentialSubject provider = PxExtendedLegalParticipantCredentialSubject.builder()
+            .id(OTHER_PARTICIPANT_ID).name(OTHER_PARTICIPANT_NAME).build();
+
+        return new ContractPartiesBE(consumer, provider);
     }
 }

@@ -7,6 +7,7 @@ import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedL
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.exception.NegotiationFailedException;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
+import eu.possiblex.participantportal.business.entity.exception.ParticipantNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -15,8 +16,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -47,10 +50,6 @@ class ConsumerServiceTest {
         fhCatalogOffer.setAssetId(EdcClientFake.FAKE_ID);
         Mockito.when(fhCatalogClient.getFhCatalogOffer(EdcClientFake.FAKE_ID)).thenReturn(fhCatalogOffer);
 
-        PxExtendedLegalParticipantCredentialSubject participant = new PxExtendedLegalParticipantCredentialSubject();
-        participant.setName("Example Organization");
-        Mockito.when(fhCatalogClient.getParticipantFromCatalog("did:web:example.com")).thenReturn(participant);
-
         // WHEN
 
         SelectOfferResponseBE response = sut.selectContractOffer(
@@ -60,10 +59,8 @@ class ConsumerServiceTest {
 
         verify(edcClient).queryCatalog(any());
         verify(edcClient, times(0)).initiateTransfer(any());
-        verify(fhCatalogClient).getParticipantFromCatalog("did:web:example.com");
 
         assertNotNull(response);
-        assertEquals("Example Organization", response.getOfferingProvider().getName());
     }
 
     @Test
@@ -152,6 +149,58 @@ class ConsumerServiceTest {
         verify(edcClient).initiateTransfer(any());
 
         assertNotNull(response);
+    }
+
+    @Test
+    void contractPartiesDetailsSucceeds() {
+
+        // GIVEN
+
+        reset(fhCatalogClient);
+
+        // WHEN
+
+        PxExtendedLegalParticipantCredentialSubject consumer = new PxExtendedLegalParticipantCredentialSubject();
+        consumer.setName("Test Organization");
+        Mockito.when(fhCatalogClient.getParticipantFromCatalog("did:web:test.com")).thenReturn(consumer);
+
+        PxExtendedLegalParticipantCredentialSubject provider = new PxExtendedLegalParticipantCredentialSubject();
+        provider.setName("Other Organization");
+        Mockito.when(fhCatalogClient.getParticipantFromCatalog("did:web:other.com")).thenReturn(provider);
+
+        ContractPartiesBE response = sut.getContractParties(
+            ContractPartiesRequestBE.builder().providerId("did:web:other.com").build());
+
+        // THEN
+
+        verify(fhCatalogClient, times(2)).getParticipantFromCatalog(any());
+
+        assertNotNull(response);
+    }
+
+    @Test
+    void contractPartiesDetailsNotFound() {
+
+        // GIVEN
+
+        reset(fhCatalogClient);
+
+        // WHEN
+
+        PxExtendedLegalParticipantCredentialSubject consumer = new PxExtendedLegalParticipantCredentialSubject();
+        consumer.setName("Test Organization");
+        Mockito.when(fhCatalogClient.getParticipantFromCatalog("did:web:test.com")).thenReturn(consumer);
+
+        ParticipantNotFoundException expectedException = Mockito.mock(ParticipantNotFoundException.class);
+        Mockito.when(fhCatalogClient.getParticipantFromCatalog("did:web:unknown.com")).thenThrow(expectedException);
+
+        ContractPartiesRequestBE request = ContractPartiesRequestBE.builder().providerId("did:web:unknown.com").build();
+
+        assertThrows(ParticipantNotFoundException.class, () -> sut.getContractParties(request));
+
+        // THEN
+
+        verify(fhCatalogClient, times(2)).getParticipantFromCatalog(any());
     }
 
     // Test-specific configuration to provide mocks

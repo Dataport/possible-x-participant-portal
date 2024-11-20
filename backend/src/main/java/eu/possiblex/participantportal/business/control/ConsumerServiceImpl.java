@@ -2,8 +2,6 @@ package eu.possiblex.participantportal.business.control;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.possiblex.participantportal.application.entity.ContractPartiesDetailsTO;
-import eu.possiblex.participantportal.application.entity.ParticipantIdNameTO;
 import eu.possiblex.participantportal.business.entity.*;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedLegalParticipantCredentialSubject;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
@@ -24,6 +22,7 @@ import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProce
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferRequest;
 import eu.possiblex.participantportal.business.entity.exception.NegotiationFailedException;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
+import eu.possiblex.participantportal.business.entity.exception.ParticipantNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,15 +93,10 @@ public class ConsumerServiceImpl implements ConsumerService {
         log.info("got edc catalog: " + edcCatalog);
         DcatDataset edcCatalogOffer = getDatasetById(edcCatalog, fhCatalogOffer.getAssetId());
 
-        // get provider of the offer from FH Catalog
-        PxExtendedLegalParticipantCredentialSubject provider = fhCatalogClient.getParticipantFromCatalog(
-            fhCatalogOffer.getProvidedBy().getId());
-
         SelectOfferResponseBE response = new SelectOfferResponseBE();
         response.setEdcOffer(edcCatalogOffer);
         response.setCatalogOffering(fhCatalogOffer);
         response.setDataOffering(isDataOffering);
-        response.setOfferingProvider(provider);
 
         return response;
     }
@@ -150,11 +144,11 @@ public class ConsumerServiceImpl implements ConsumerService {
     }
 
     @Override
-    public ContractPartiesDetailsTO getContractPartiesDetails() {
+    public ContractPartiesBE getContractParties(ContractPartiesRequestBE request) throws ParticipantNotFoundException {
 
         PxExtendedLegalParticipantCredentialSubject consumer = fhCatalogClient.getParticipantFromCatalog(participantId);
-        PxExtendedLegalParticipantCredentialSubject consumer = fhCatalogClient.getParticipantFromCatalog(participantId);
-        return new ParticipantIdNameTO(participantId, consumer.getName());
+        PxExtendedLegalParticipantCredentialSubject provider = fhCatalogClient.getParticipantFromCatalog(request.getProviderId());
+        return new ContractPartiesBE(consumer, provider);
     }
 
     private DcatCatalog queryEdcCatalog(CatalogRequest catalogRequest) {

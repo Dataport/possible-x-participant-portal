@@ -22,11 +22,6 @@ public class SelectOfferResponseBE {
     private PxExtendedServiceOfferingCredentialSubject catalogOffering;
 
     /**
-     * The provider of the offering as retrieved from the catalog.
-     */
-    private PxExtendedLegalParticipantCredentialSubject offeringProvider;
-
-    /**
      * Does this offer contain Data Resources.
      */
     private boolean dataOffering;
