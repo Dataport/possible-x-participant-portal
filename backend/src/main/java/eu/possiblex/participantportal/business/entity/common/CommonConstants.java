@@ -9,5 +9,5 @@ public class CommonConstants {
     /**
      * Endpoint for creating service offers WITH data.
      */
-    public final static String REST_PATH_FH_CATALOG_SERVICE_OFFER_WITH_DATA = "/trust/service-offering";
+    public final static String REST_PATH_FH_CATALOG_SERVICE_OFFER_WITH_DATA = "/trust/data-product";
 }
