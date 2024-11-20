@@ -59,7 +59,12 @@ public class FhCatalogClientImpl implements FhCatalogClient {
         String offerId = serviceOfferingCredentialSubject.getId(); // just use the ID also for the offer in the catalog
         FhCatalogIdResponse catalogOfferId = null;
         try {
-            catalogOfferId = technicalFhCatalogClient.addServiceOfferingToFhCatalog(serviceOfferingCredentialSubject, offerId);
+            if( isServiceOfferWithData(serviceOfferingCredentialSubject)) {
+                catalogOfferId = technicalFhCatalogClient.addServiceOfferingWithDataToFhCatalog(serviceOfferingCredentialSubject, offerId);
+            }
+            else {
+                catalogOfferId = technicalFhCatalogClient.addServiceOfferingToFhCatalog(serviceOfferingCredentialSubject, offerId);
+            }
         } catch (Exception e){
             log.error("error when trying to send offer to catalog!", e);
             throw e;
@@ -96,4 +101,16 @@ public class FhCatalogClientImpl implements FhCatalogClient {
         }
     }
 
+    /**
+     * Check if the service offer payload contains data.
+     * Currently, the check is just if gx:aggregationOf is empty.
+     *
+     * @param serviceOfferPayload the service offer payload
+     * @return true: The service offer contains data. false: otherwise
+     */
+    private boolean isServiceOfferWithData(PxExtendedServiceOfferingCredentialSubject serviceOfferPayload) {
+        boolean serviceOfferContainsData = !serviceOfferPayload.getAggregationOf().isEmpty();
+
+        return serviceOfferContainsData;
+    }
 }
