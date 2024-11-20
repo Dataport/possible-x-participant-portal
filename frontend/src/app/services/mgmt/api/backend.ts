@@ -97,6 +97,7 @@ export interface IOfferDetailsTO {
     edcOfferId: string;
     catalogOffering: IPxExtendedServiceOfferingCredentialSubject;
     dataOffering: boolean;
+    enforcementPolicies: IEnforcementPolicyUnion[];
 }
 
 export interface IOfferDetailsTOBuilder {
@@ -232,6 +233,9 @@ export interface IGxServiceOfferingCredentialSubjectBuilderImpl extends IGxServi
     "schema:description": string;
 }
 
+export interface IOfferingComplianceException extends IException {
+}
+
 export interface IEnforcementPolicy {
     "@type": "EverythingAllowedPolicy" | "ParticipantRestrictionPolicy";
 }
@@ -286,6 +290,28 @@ export interface IPxExtendedServiceOfferingCredentialSubject {
     "@type": string[];
 }
 
+export interface IThrowable extends ISerializable {
+    cause: IThrowable;
+    stackTrace: IStackTraceElement[];
+    message: string;
+    suppressed: IThrowable[];
+    localizedMessage: string;
+}
+
+export interface IStackTraceElement extends ISerializable {
+    classLoaderName: string;
+    moduleName: string;
+    moduleVersion: string;
+    methodName: string;
+    fileName: string;
+    lineNumber: number;
+    nativeMethod: boolean;
+    className: string;
+}
+
+export interface IException extends IThrowable {
+}
+
 export interface IOdrlPermission {
     "odrl:target": string;
     "odrl:action": IOdrlAction;
@@ -308,6 +334,9 @@ export interface IPxExtendedDataResourceCredentialSubject {
     "schema:description": string;
     "@context": { [index: string]: string };
     "@type": string[];
+}
+
+export interface ISerializable {
 }
 
 export interface IOdrlConstraint {

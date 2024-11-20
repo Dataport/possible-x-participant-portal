@@ -11,7 +11,12 @@ import {
 import {ApiService} from '../../../services/mgmt/api/api.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {StatusMessageComponent} from '../../common-views/status-message/status-message.component';
-import {IAcceptOfferResponseTO, IOfferDetailsTO} from '../../../services/mgmt/api/backend';
+import {
+  IAcceptOfferResponseTO,
+  IEnforcementPolicy,
+  IEverythingAllowedPolicy, IEverythingAllowedPolicyBuilder,
+  IOfferDetailsTO, IParticipantRestrictionPolicy
+} from '../../../services/mgmt/api/backend';
 
 @Component({
   selector: 'app-accept-offer',
@@ -28,6 +33,12 @@ export class AcceptComponent implements OnChanges {
   @ViewChild('accordion', { read: TemplateRef, static: true }) accordion: TemplateRef<any>;
 
   isAcceptButtonDisabled = false;
+
+  protected asEverythingAllowedPolicy: (policy: IEnforcementPolicy) => IEverythingAllowedPolicy
+    = policy => (policy as IEverythingAllowedPolicy);
+
+  protected asParticipantRestrictionPolicy: (policy: IEnforcementPolicy) => IParticipantRestrictionPolicy
+    = policy => (policy as IParticipantRestrictionPolicy);
 
   constructor(private apiService: ApiService) {
   }

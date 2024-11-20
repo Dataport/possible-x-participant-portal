@@ -99,6 +99,22 @@
               </li>
             </ul>
           </div>
+          <div>
+            <b>Enforcement Policies:</b>
+          </div>
+          <div *ngFor="let ep of offer.enforcementPolicies">
+            <div *ngIf="ep['@type'] === 'EverythingAllowedPolicy'">
+              <b>Everything is allowed</b>
+            </div>
+            <div *ngIf="ep['@type'] === 'ParticipantRestrictionPolicy'">
+              <b>Restricted to the following organizations:</b>
+              <ul *ngFor="let org of asParticipantRestrictionPolicy(ep).allowedParticipants">
+                <li>
+                  {{ org }}
+                </li>
+              </ul>
+            </div>
+          </div>
         </ng-template>
       </c-accordion-item>
     </c-accordion>
