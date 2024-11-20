@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
-import eu.possiblex.participantportal.utilities.LogUtils;
 import jakarta.json.Json;
 import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonObject;
@@ -31,7 +30,7 @@ public class FhCatalogClientImpl implements FhCatalogClient {
     private final ObjectMapper objectMapper;
 
     public FhCatalogClientImpl(@Autowired TechnicalFhCatalogClient technicalFhCatalogClient,
-        @Autowired ObjectMapper objectMapper) {
+                               @Autowired ObjectMapper objectMapper) {
 
         this.technicalFhCatalogClient = technicalFhCatalogClient;
         this.objectMapper = objectMapper;
@@ -46,21 +45,26 @@ public class FhCatalogClientImpl implements FhCatalogClient {
         type.forEach(typeArrayBuilder::add);
 
         return JsonDocument.of(
-            Json.createObjectBuilder().add("@context", contextBuilder.build()).add("@type", typeArrayBuilder.build())
-                .build());
+                Json.createObjectBuilder().add("@context", contextBuilder.build()).add("@type", typeArrayBuilder.build())
+                        .build());
     }
 
     @Override
     public FhCatalogIdResponse addServiceOfferingToFhCatalog(
-        PxExtendedServiceOfferingCredentialSubject serviceOfferingCredentialSubject) {
+            PxExtendedServiceOfferingCredentialSubject serviceOfferingCredentialSubject) {
 
         log.info("sending to catalog");
 
         String offerId = serviceOfferingCredentialSubject.getId(); // just use the ID also for the offer in the catalog
         FhCatalogIdResponse catalogOfferId = null;
         try {
-            catalogOfferId = technicalFhCatalogClient.addServiceOfferingToFhCatalog(serviceOfferingCredentialSubject, offerId);
-        } catch (Exception e){
+            if( isServiceOfferWithData(serviceOfferingCredentialSubject)) {
+                catalogOfferId = technicalFhCatalogClient.addServiceOfferingWithDataToFhCatalog(serviceOfferingCredentialSubject, offerId);
+            }
+            else {
+                catalogOfferId = technicalFhCatalogClient.addServiceOfferingToFhCatalog(serviceOfferingCredentialSubject, offerId);
+            }
+        } catch (Exception e) {
             log.error("error when trying to send offer to catalog!", e);
             throw e;
         }
@@ -69,9 +73,22 @@ public class FhCatalogClientImpl implements FhCatalogClient {
 
     }
 
+    /**
+     * Check if the service offer payload contains data.
+     * Currently, the check is just if gx:aggregationOf is empty.
+     *
+     * @param serviceOfferPayload the service offer payload
+     * @return true: The service offer contains data. false: otherwise
+     */
+    private boolean isServiceOfferWithData(PxExtendedServiceOfferingCredentialSubject serviceOfferPayload) {
+        boolean serviceOfferContainsData = !serviceOfferPayload.getAggregationOf().isEmpty();
+
+        return serviceOfferContainsData;
+    }
+
     @Override
     public PxExtendedServiceOfferingCredentialSubject getFhCatalogOffer(String offeringId)
-        throws OfferNotFoundException {
+            throws OfferNotFoundException {
 
         log.info("fetching offer for fh catalog ID " + offeringId);
         String offerJsonContent = null;
@@ -87,7 +104,7 @@ public class FhCatalogClientImpl implements FhCatalogClient {
         try {
             JsonDocument input = JsonDocument.of(new StringReader(offerJsonContent));
             JsonDocument offeringFrame = getFrameByType(PxExtendedServiceOfferingCredentialSubject.TYPE,
-                PxExtendedServiceOfferingCredentialSubject.CONTEXT);
+                    PxExtendedServiceOfferingCredentialSubject.CONTEXT);
             JsonObject framedOffering = JsonLd.frame(input, offeringFrame).get();
 
             return objectMapper.readValue(framedOffering.toString(), PxExtendedServiceOfferingCredentialSubject.class);
