@@ -81,13 +81,13 @@ public class ProviderServiceImpl implements ProviderService {
      */
     @Override
     public CreateOfferResponseTO createOffering(CreateServiceOfferingRequestBE request) {
-
         Policy policy = createEdcPolicyFromEnforcementPolicies(request.getEnforcementPolicies());
 
         PxExtendedServiceOfferingCredentialSubject pxExtendedServiceOfferingCs = createCombinedCsFromRequest(request,
             policy);
         CreateEdcOfferBE createEdcOfferBE = createEdcBEFromRequest(request, pxExtendedServiceOfferingCs.getId(),
             pxExtendedServiceOfferingCs.getAssetId(), policy);
+        boolean isOfferWithData = isServiceOfferWithData(pxExtendedServiceOfferingCs);
 
         FhCatalogIdResponse fhResponseId;
         try {
@@ -105,7 +105,7 @@ public class ProviderServiceImpl implements ProviderService {
             edcResponseId = createEdcOffer(createEdcOfferBE);
         } catch (EdcOfferCreationException e) {
             // rollback catalog offering creation
-            fhCatalogClient.deleteServiceOfferingFromFhCatalog(fhResponseId.getId());
+            fhCatalogClient.deleteServiceOfferingFromFhCatalog(fhResponseId.getId(), isOfferWithData);
             throw new PossibleXException("Failed to create offer. EdcOfferCreationException: " + e,
                 HttpStatus.BAD_REQUEST);
         }
@@ -170,14 +170,28 @@ public class ProviderServiceImpl implements ProviderService {
         throws FhOfferCreationException, OfferingComplianceException {
 
         try {
-            log.info("Adding Service Offering to Fraunhofer Catalog {}", serviceOfferingCredentialSubject);
+            boolean isOfferWithData = isServiceOfferWithData(serviceOfferingCredentialSubject);
+            log.info("Adding Service Offering to Fraunhofer Catalog {}, with data: {}", serviceOfferingCredentialSubject, isOfferWithData);
 
-            return fhCatalogClient.addServiceOfferingToFhCatalog(serviceOfferingCredentialSubject);
+            return fhCatalogClient.addServiceOfferingToFhCatalog(serviceOfferingCredentialSubject, isOfferWithData);
         } catch (WebClientResponseException e) {
             throw buildComplianceException(e);
         } catch (Exception e) {
             throw new FhOfferCreationException("An error occurred during Fh offer creation: " + e.getMessage());
         }
+    }
+
+    /**
+     * Check if the service offer payload contains data.
+     * Currently, the check is just if gx:aggregationOf is empty.
+     *
+     * @param serviceOfferPayload the service offer payload
+     * @return true: The service offer contains data. false: otherwise
+     */
+    private boolean isServiceOfferWithData(PxExtendedServiceOfferingCredentialSubject serviceOfferPayload) {
+        boolean serviceOfferContainsData = !serviceOfferPayload.getAggregationOf().isEmpty();
+
+        return serviceOfferContainsData;
     }
 
     private OfferingComplianceException buildComplianceException(WebClientResponseException e) {

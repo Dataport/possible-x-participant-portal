@@ -85,7 +85,7 @@ class ProviderServiceTest {
         ArgumentCaptor<PxExtendedServiceOfferingCredentialSubject> serviceOfferingCaptor = forClass(
             PxExtendedServiceOfferingCredentialSubject.class);
 
-        verify(fhCatalogClient).addServiceOfferingToFhCatalog(serviceOfferingCaptor.capture());
+        verify(fhCatalogClient).addServiceOfferingToFhCatalog(serviceOfferingCaptor.capture(), Mockito.anyBoolean());
 
         PxExtendedServiceOfferingCredentialSubject pxExtSoCs = serviceOfferingCaptor.getValue();
         assertTrue(pxExtSoCs.getId()
@@ -172,7 +172,7 @@ class ProviderServiceTest {
         ArgumentCaptor<PxExtendedServiceOfferingCredentialSubject> serviceOfferingCaptor = forClass(
             PxExtendedServiceOfferingCredentialSubject.class);
 
-        verify(fhCatalogClient).addServiceOfferingToFhCatalog(serviceOfferingCaptor.capture());
+        verify(fhCatalogClient).addServiceOfferingToFhCatalog(serviceOfferingCaptor.capture(), Mockito.anyBoolean());
 
         PxExtendedServiceOfferingCredentialSubject pxExtSoCs = serviceOfferingCaptor.getValue();
         assertNotNull(pxExtSoCs);
@@ -260,7 +260,7 @@ class ProviderServiceTest {
 
         //when
         assertThrows(PossibleXException.class, () -> providerService.createOffering(be));
-        verify(fhCatalogClient).deleteServiceOfferingFromFhCatalog(any());
+        verify(fhCatalogClient).deleteServiceOfferingFromFhCatalog(any(), Mockito.anyBoolean());
     }
 
     @Test

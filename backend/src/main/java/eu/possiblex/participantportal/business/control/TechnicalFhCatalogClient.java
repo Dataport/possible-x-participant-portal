@@ -47,5 +47,8 @@ public interface TechnicalFhCatalogClient {
 
     @DeleteExchange("/resources/service-offering/{offeringId}")
     void deleteServiceOfferingFromFhCatalog(@PathVariable String offeringId);
+
+    @DeleteExchange("/resources/data-product/{offeringId}")
+    void deleteServiceOfferingWithDataFromFhCatalog(@PathVariable String offeringId);
 }
 

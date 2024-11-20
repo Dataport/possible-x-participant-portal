@@ -52,14 +52,14 @@ public class FhCatalogClientImpl implements FhCatalogClient {
 
     @Override
     public FhCatalogIdResponse addServiceOfferingToFhCatalog(
-        PxExtendedServiceOfferingCredentialSubject serviceOfferingCredentialSubject) {
+        PxExtendedServiceOfferingCredentialSubject serviceOfferingCredentialSubject, boolean doesContainData) {
 
         log.info("sending to catalog");
 
         String offerId = serviceOfferingCredentialSubject.getId(); // just use the ID also for the offer in the catalog
         FhCatalogIdResponse catalogOfferId = null;
         try {
-            if( isServiceOfferWithData(serviceOfferingCredentialSubject)) {
+            if( doesContainData ) {
                 catalogOfferId = technicalFhCatalogClient.addServiceOfferingWithDataToFhCatalog(serviceOfferingCredentialSubject, offerId);
             }
             else {
@@ -101,24 +101,16 @@ public class FhCatalogClientImpl implements FhCatalogClient {
         }
     }
 
-    /**
-     * Check if the service offer payload contains data.
-     * Currently, the check is just if gx:aggregationOf is empty.
-     *
-     * @param serviceOfferPayload the service offer payload
-     * @return true: The service offer contains data. false: otherwise
-     */
-    private boolean isServiceOfferWithData(PxExtendedServiceOfferingCredentialSubject serviceOfferPayload) {
-        boolean serviceOfferContainsData = !serviceOfferPayload.getAggregationOf().isEmpty();
-
-        return serviceOfferContainsData;
-    }
-
     @Override
-    public void deleteServiceOfferingFromFhCatalog(String offeringId) {
-        log.info("deleting offer from fh catalog with ID {}", offeringId);
+    public void deleteServiceOfferingFromFhCatalog(String offeringId, boolean doesContainData) {
+        log.info("deleting offer from fh catalog with ID {}, contains data: {}", offeringId, doesContainData);
         try {
-            technicalFhCatalogClient.deleteServiceOfferingFromFhCatalog(offeringId);
+            if( doesContainData ) {
+                technicalFhCatalogClient.deleteServiceOfferingWithDataFromFhCatalog(offeringId);
+            }
+            else {
+                technicalFhCatalogClient.deleteServiceOfferingFromFhCatalog(offeringId);
+            }
         } catch (WebClientResponseException e) {
             if (e.getStatusCode().value() == 404) {
                 log.warn("no FH Catalog offer found with ID {} - nothing to delete", offeringId);
