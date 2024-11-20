@@ -74,6 +74,17 @@ public class ShapeRestApiImpl implements ServiceOfferingShapeRestApi, ResourceSh
     }
 
     /**
+     * GET request for retrieving the Gaia-X legitimate interest shape.
+     *
+     * @return catalog shape
+     */
+    @Override
+    public String getGxLegitimateInterestShape() {
+
+        return sdCreationWizardApiService.getShapeByName(ECOSYSTEM_GAIAX, "Legitimateinterest.json");
+    }
+
+    /**
      * GET request for retrieving the Gaia-X service offering shape.
      *
      * @return catalog shape

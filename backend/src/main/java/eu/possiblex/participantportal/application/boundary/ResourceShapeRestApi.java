@@ -44,4 +44,12 @@ public interface ResourceShapeRestApi {
      */
     @GetMapping("/gx/resource/virtualresource")
     public String getGxVirtualResourceShape();
+
+    /**
+     * GET request for retrieving the Gaia-X legitimate interest shape.
+     *
+     * @return catalog shape
+     */
+    @GetMapping("/gx/resource/legitimateinterest")
+    public String getGxLegitimateInterestShape();
 }
