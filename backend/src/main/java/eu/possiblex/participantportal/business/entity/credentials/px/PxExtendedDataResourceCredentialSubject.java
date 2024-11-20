@@ -1,11 +1,9 @@
 package eu.possiblex.participantportal.business.entity.credentials.px;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import eu.possiblex.participantportal.application.entity.credentials.gx.resources.GxLegitimateInterest;
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
 import eu.possiblex.participantportal.application.entity.credentials.gx.resources.GxDataResourceCredentialSubject;
 import eu.possiblex.participantportal.business.entity.serialization.BooleanDeserializer;
@@ -69,10 +67,14 @@ public class PxExtendedDataResourceCredentialSubject {
     private List<String> license;
 
     @JsonProperty("gx:containsPII")
+    @NotNull
     @JsonSerialize(using = BooleanSerializer.class)
     @JsonDeserialize(using = BooleanDeserializer.class)
-    @NotNull
     private boolean containsPII;
+
+    @JsonProperty("gx:legitimateInterest")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private GxLegitimateInterest legitimateInterest;
 
     @JsonProperty("schema:name")
     @JsonSerialize(using = StringSerializer.class)

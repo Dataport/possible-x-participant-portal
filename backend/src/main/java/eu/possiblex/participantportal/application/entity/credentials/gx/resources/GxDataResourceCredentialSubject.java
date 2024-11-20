@@ -8,6 +8,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import eu.possiblex.participantportal.application.entity.credentials.PojoCredentialSubject;
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
+import eu.possiblex.participantportal.business.entity.serialization.BooleanDeserializer;
+import eu.possiblex.participantportal.business.entity.serialization.BooleanSerializer;
 import eu.possiblex.participantportal.business.entity.serialization.StringDeserializer;
 import eu.possiblex.participantportal.business.entity.serialization.StringSerializer;
 import jakarta.validation.constraints.NotNull;
@@ -69,6 +71,8 @@ public class GxDataResourceCredentialSubject extends PojoCredentialSubject {
     private List<String> license;
 
     @JsonProperty("gx:containsPII")
+    @JsonSerialize(using = BooleanSerializer.class)
+    @JsonDeserialize(using = BooleanDeserializer.class)
     @NotNull
     private boolean containsPII;
 

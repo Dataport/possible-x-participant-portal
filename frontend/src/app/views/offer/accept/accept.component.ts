@@ -11,7 +11,11 @@ import {
 import {ApiService} from '../../../services/mgmt/api/api.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {StatusMessageComponent} from '../../common-views/status-message/status-message.component';
-import {IAcceptOfferResponseTO, IOfferDetailsTO} from '../../../services/mgmt/api/backend';
+import {
+  IAcceptOfferResponseTO,
+  IOfferDetailsTO,
+  IPxExtendedServiceOfferingCredentialSubject
+} from '../../../services/mgmt/api/backend';
 
 @Component({
   selector: 'app-accept-offer',
@@ -60,6 +64,10 @@ export class AcceptComponent implements OnChanges {
 
   cancel(): void {
     this.dismiss.emit();
+  }
+
+  containsPII(catalogOffering: IPxExtendedServiceOfferingCredentialSubject): boolean {
+    return catalogOffering["gx:aggregationOf"][0]["gx:containsPII"];
   }
 
   isHttpOrHttps(url: string): boolean {
