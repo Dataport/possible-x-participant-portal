@@ -81,12 +81,22 @@ public class FhCatalogClientImpl implements FhCatalogClient {
         log.info("fetching offer for fh catalog ID " + offeringId);
         String offerJsonContent = null;
         try {
-            offerJsonContent = technicalFhCatalogClient.getFhCatalogOffer(offeringId);
+            offerJsonContent = technicalFhCatalogClient.getFhCatalogOfferWithData(offeringId);
         } catch (WebClientResponseException e) {
             if (e.getStatusCode().value() == 404) {
-                throw new OfferNotFoundException("no FH Catalog offer found with ID " + offeringId);
+                log.info("did not find offer with data");
+                try {
+                    offerJsonContent = technicalFhCatalogClient.getFhCatalogOffer(offeringId);
+                } catch (WebClientResponseException ex) {
+                    if (ex.getStatusCode().value() == 404) {
+                        throw new OfferNotFoundException("no FH Catalog offer found with ID " + offeringId);
+                    }
+                    throw ex;
+                }
             }
-            throw e;
+            else {
+                throw e;
+            }
         }
 
         try {
