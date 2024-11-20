@@ -89,22 +89,27 @@ public class ProviderServiceImpl implements ProviderService {
         CreateEdcOfferBE createEdcOfferBE = createEdcBEFromRequest(request, pxExtendedServiceOfferingCs.getId(),
             pxExtendedServiceOfferingCs.getAssetId(), policy);
 
+        FhCatalogIdResponse fhResponseId;
         try {
-            FhCatalogIdResponse fhResponseId = createFhCatalogOffer(pxExtendedServiceOfferingCs);
-            IdResponse edcResponseId = createEdcOffer(createEdcOfferBE);
-            return new CreateOfferResponseTO(edcResponseId.getId(), fhResponseId.getId());
-        } catch (EdcOfferCreationException e) {
-            throw new PossibleXException("Failed to create offer. EdcOfferCreationException: " + e,
-                HttpStatus.BAD_REQUEST);
+            fhResponseId = createFhCatalogOffer(pxExtendedServiceOfferingCs);
         } catch (FhOfferCreationException e) {
             throw new PossibleXException("Failed to create offer. FhOfferCreationException: " + e,
                 HttpStatus.BAD_REQUEST);
         } catch (OfferingComplianceException e) {
             throw new PossibleXException("Failed to create offer. Compliance not attested: " + e.getMessage(),
                 HttpStatus.UNPROCESSABLE_ENTITY);
-        } catch (Exception e) {
-            throw new PossibleXException("Failed to create offer. Other Exception: " + e);
         }
+
+        IdResponse edcResponseId;
+        try {
+            edcResponseId = createEdcOffer(createEdcOfferBE);
+        } catch (EdcOfferCreationException e) {
+            // rollback catalog offering creation
+            fhCatalogClient.deleteServiceOfferingFromFhCatalog(fhResponseId.getId());
+            throw new PossibleXException("Failed to create offer. EdcOfferCreationException: " + e,
+                HttpStatus.BAD_REQUEST);
+        }
+        return new CreateOfferResponseTO(edcResponseId.getId(), fhResponseId.getId());
     }
 
     /**

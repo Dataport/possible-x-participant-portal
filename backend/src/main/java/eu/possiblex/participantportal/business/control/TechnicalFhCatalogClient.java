@@ -25,6 +25,7 @@ import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.service.annotation.DeleteExchange;
 import org.springframework.web.service.annotation.GetExchange;
 import org.springframework.web.service.annotation.PutExchange;
 
@@ -37,7 +38,10 @@ public interface TechnicalFhCatalogClient {
     FhCatalogIdResponse addServiceOfferingToFhCatalog(
         @RequestBody PxExtendedServiceOfferingCredentialSubject serviceOfferingCs, @RequestParam String id);
 
-    @GetExchange("/resources/service-offering/{offering_id}")
-    String getFhCatalogOffer(@PathVariable String offering_id);
+    @GetExchange("/resources/service-offering/{offeringId}")
+    String getFhCatalogOffer(@PathVariable String offeringId);
+
+    @DeleteExchange("/resources/service-offering/{offeringId}")
+    void deleteServiceOfferingFromFhCatalog(@PathVariable String offeringId);
 }
 

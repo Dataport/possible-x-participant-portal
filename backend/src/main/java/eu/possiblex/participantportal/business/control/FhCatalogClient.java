@@ -9,4 +9,6 @@ public interface FhCatalogClient {
         PxExtendedServiceOfferingCredentialSubject serviceOfferingCredentialSubject);
 
     PxExtendedServiceOfferingCredentialSubject getFhCatalogOffer(String offeringId) throws OfferNotFoundException;
+
+    void deleteServiceOfferingFromFhCatalog(String offeringId);
 }

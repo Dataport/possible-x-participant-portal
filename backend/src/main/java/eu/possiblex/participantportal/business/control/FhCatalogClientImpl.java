@@ -96,4 +96,18 @@ public class FhCatalogClientImpl implements FhCatalogClient {
         }
     }
 
+    @Override
+    public void deleteServiceOfferingFromFhCatalog(String offeringId) {
+        log.info("deleting offer from fh catalog with ID {}", offeringId);
+        try {
+            technicalFhCatalogClient.deleteServiceOfferingFromFhCatalog(offeringId);
+        } catch (WebClientResponseException e) {
+            if (e.getStatusCode().value() == 404) {
+                log.warn("no FH Catalog offer found with ID {} - nothing to delete", offeringId);
+            } else {
+                log.error("error when trying to delete offer from catalog!", e);
+            }
+        }
+    }
+
 }
