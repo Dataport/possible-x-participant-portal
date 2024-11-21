@@ -3,6 +3,7 @@ package eu.possiblex.participantportal.business.control;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.possiblex.participantportal.application.entity.credentials.gx.resources.GxDataResourceCredentialSubject;
+import eu.possiblex.participantportal.application.entity.credentials.gx.resources.GxLegitimateInterest;
 import eu.possiblex.participantportal.business.entity.CreateDataOfferingRequestBE;
 import eu.possiblex.participantportal.business.entity.CreateServiceOfferingRequestBE;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedDataResourceCredentialSubject;
@@ -35,7 +36,7 @@ public interface ProviderServiceMapper {
         CreateServiceOfferingRequestBE request, String offeringId, String assetId, String providerUrl, Policy policy);
 
     @InheritConfiguration
-    @Mapping(target = "aggregationOf", source = "request.dataResource", qualifiedByName = "gxDataResourceToPxDataResourceList")
+    @Mapping(target = "aggregationOf", source = "request", qualifiedByName = "gxDataResourceToPxDataResourceList")
     PxExtendedServiceOfferingCredentialSubject getPxExtendedServiceOfferingCredentialSubject(
         CreateDataOfferingRequestBE request, String offeringId, String assetId, String providerUrl, Policy policy);
 
@@ -67,14 +68,16 @@ public interface ProviderServiceMapper {
 
     @Mapping(target = "type", ignore = true)
     @Mapping(target = "context", ignore = true)
+    @Mapping(target = "legitimateInterest", source = "legitimateInterest")
     PxExtendedDataResourceCredentialSubject gxDataResourceToPxDataResource(
-        GxDataResourceCredentialSubject dataResource);
+        GxDataResourceCredentialSubject dataResource, GxLegitimateInterest legitimateInterest);
 
     @Named("gxDataResourceToPxDataResourceList")
     default List<PxExtendedDataResourceCredentialSubject> gxDataResourceToPxDataResourceList(
-        GxDataResourceCredentialSubject dataResource) {
-
-        return List.of(gxDataResourceToPxDataResource(dataResource));
+        CreateDataOfferingRequestBE request) {
+        GxDataResourceCredentialSubject dataResource = request.getDataResource();
+        GxLegitimateInterest legitimateInterest = request.getLegitimateInterest();
+        return List.of(gxDataResourceToPxDataResource(dataResource, legitimateInterest));
     }
 
     default List<String> policyToStringList(Policy policy) {

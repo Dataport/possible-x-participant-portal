@@ -220,7 +220,6 @@ public class ProviderServiceImpl implements ProviderService {
         if (request instanceof CreateDataOfferingRequestBE dataOfferingRequest) { // data offering
             dataOfferingRequest.getDataResource().setId(dataResourceId);
             dataOfferingRequest.getDataResource().setExposedThrough(new NodeKindIRITypeId(serviceOfferingId));
-
             return providerServiceMapper.getPxExtendedServiceOfferingCredentialSubject(dataOfferingRequest,
                 serviceOfferingId, assetId, edcProtocolUrl, policy);
         } else { // base service offering

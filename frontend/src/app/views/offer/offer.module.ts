@@ -33,36 +33,38 @@ import {ContractsComponent} from "./contracts/contracts.component";
 import { TransferComponent } from './transfer/transfer.component';
 import {MatStepperModule} from "@angular/material/stepper";
 import {MatButtonModule} from "@angular/material/button";
+import {MatIconModule} from "@angular/material/icon";
 
 @NgModule({
-  imports: [
-    CommonViewsModule,
-    OfferRoutingModule,
-    CardModule,
-    NavModule,
-    IconModule,
-    TabsModule,
-    CommonModule,
-    GridModule,
-    ProgressModule,
-    ReactiveFormsModule,
-    ButtonModule,
-    FormModule,
-    ButtonModule,
-    ButtonGroupModule,
-    AvatarModule,
-    TableModule,
-    FormsModule,
-    AccordionComponent,
-    AccordionItemComponent,
-    TemplateIdDirective,
-    AccordionButtonDirective,
-    BadgeComponent,
-    WizardExtensionModule,
-    TooltipModule,
-    MatStepperModule,
-    MatButtonModule
-  ],
+    imports: [
+        CommonViewsModule,
+        OfferRoutingModule,
+        CardModule,
+        NavModule,
+        IconModule,
+        TabsModule,
+        CommonModule,
+        GridModule,
+        ProgressModule,
+        ReactiveFormsModule,
+        ButtonModule,
+        FormModule,
+        ButtonModule,
+        ButtonGroupModule,
+        AvatarModule,
+        TableModule,
+        FormsModule,
+        AccordionComponent,
+        AccordionItemComponent,
+        TemplateIdDirective,
+        AccordionButtonDirective,
+        BadgeComponent,
+        WizardExtensionModule,
+        TooltipModule,
+        MatStepperModule,
+        MatButtonModule,
+        MatIconModule
+    ],
   declarations: [ProvideComponent, ConsumeComponent, AcceptComponent, SelectComponent, ContractsComponent, TransferComponent],
   exports: [
     TransferComponent

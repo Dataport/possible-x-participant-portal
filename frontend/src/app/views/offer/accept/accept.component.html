@@ -69,6 +69,12 @@
             <b>Exposed through:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:exposedThrough"].id }} <br/>
             <b>Contains personal identifiable Information
               (PII):</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:containsPII"] }} <br/>
+            <div *ngIf="containsPII(offer.catalogOffering)">
+              <b>Data Protection Contact:</b>
+              {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:legitimateInterest"]["gx:dataProtectionContact"] }} <br/>
+              <b>Legal Basis:</b>
+              {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:legitimateInterest"]["gx:legalBasis"] }} <br/>
+            </div>
             <br/><br/>
             <b>Offer name:</b> {{ offer.catalogOffering["schema:name"] }} <br/>
             <b>Description:</b> {{ offer.catalogOffering["schema:description"] }} <br/>

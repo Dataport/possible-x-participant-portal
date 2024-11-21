@@ -13,11 +13,12 @@ export interface IProviderRestApi {
 }
 
 export interface IResourceShapeRestApi {
-    gxInstantiatedVirtualResourceShape: string;
     gxDataResourceShape: string;
+    gxInstantiatedVirtualResourceShape: string;
     gxPhysicalResourceShape: string;
     gxSoftwareResourceShape: string;
     gxVirtualResourceShape: string;
+    gxLegitimateInterestShape: string;
 }
 
 export interface IServiceOfferingShapeRestApi {
@@ -66,6 +67,7 @@ export interface IContractAgreementTOBuilder {
 export interface ICreateDataOfferingRequestTO extends ICreateServiceOfferingRequestTO {
     dataResourceCredentialSubject: IGxDataResourceCredentialSubject;
     fileName: string;
+    legitimateInterest: IGxLegitimateInterest;
 }
 
 export interface ICreateDataOfferingRequestTOBuilder<C, B> extends ICreateServiceOfferingRequestTOBuilder<C, B> {
@@ -204,6 +206,21 @@ export interface IGxDataResourceCredentialSubjectBuilderImpl extends IGxDataReso
     "schema:description": string;
 }
 
+export interface IGxLegitimateInterest {
+    "@type": string;
+    "gx:dataProtectionContact": string;
+    "gx:legalBasis": string;
+}
+
+export interface IGxLegitimateInterestBuilder<C, B> {
+}
+
+export interface IGxLegitimateInterestBuilderImpl extends IGxLegitimateInterestBuilder<IGxLegitimateInterest, IGxLegitimateInterestBuilderImpl> {
+    "gx:dataProtectionContact": string;
+    "gx:legalBasis": string;
+    "@type": string;
+}
+
 export interface IGxServiceOfferingCredentialSubject extends IPojoCredentialSubject {
     "@type": "gx:ServiceOffering";
     "gx:providedBy": INodeKindIRITypeId;
@@ -304,6 +321,7 @@ export interface IPxExtendedDataResourceCredentialSubject {
     "gx:policy": string[];
     "gx:license": string[];
     "gx:containsPII": boolean;
+    "gx:legitimateInterest": IGxLegitimateInterest;
     "schema:name": string;
     "schema:description": string;
     "@context": { [index: string]: string };
@@ -397,6 +415,14 @@ export class RestApplicationClient {
      */
     getGxInstantiatedVirtualResourceShape(): RestResponse<string> {
         return this.httpClient.request({ method: "GET", url: uriEncoding`shapes/gx/resource/instantiatedvirtualresource` });
+    }
+
+    /**
+     * HTTP GET /shapes/gx/resource/legitimateinterest
+     * Java method: eu.possiblex.participantportal.application.boundary.ShapeRestApiImpl.getGxLegitimateInterestShape
+     */
+    getGxLegitimateInterestShape(): RestResponse<string> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`shapes/gx/resource/legitimateinterest` });
     }
 
     /**
