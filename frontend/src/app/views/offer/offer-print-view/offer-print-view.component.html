@@ -93,9 +93,9 @@
   <c-modal-footer>
     <ng-container *ngIf="offer">
       <div class="flex justify-end p-3 gap-2">
-        <button cButton color="primary" shape="rounded-0" printSectionId="print-section" ngxPrint printTitle="offerPrintView_{{ getFormattedTimestamp(printTimestamp) }}_{{ getUrnUuid(offer.catalogOffering.id)}}">Print</button>
+        <button [useExistingCss]="true" cButton color="primary" shape="rounded-0" printSectionId="print-section" ngxPrint printTitle="offerPrintView_{{ getFormattedTimestamp(printTimestamp) }}_{{ getUrnUuid(offer.catalogOffering.id)}}">Print</button>
       </div>
-      <button cButton color="primary" shape="rounded-0" [cModalToggle]="modalOfferPrintView.id">Close</button>
     </ng-container>
+    <button cButton color="primary" shape="rounded-0" [cModalToggle]="modalOfferPrintView.id">Close</button>
   </c-modal-footer>
 </c-modal>
