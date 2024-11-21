@@ -19,6 +19,6 @@ public class FhCatalogClientFake implements FhCatalogClient {
 
     @Override
     public void deleteServiceOfferingFromFhCatalog(String offeringId, boolean doesContainData) {
-
+        
     }
 }

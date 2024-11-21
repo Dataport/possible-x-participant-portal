@@ -40,9 +40,16 @@ public class BooleanDeserializer extends StdDeserializer<Boolean> {
         throws IOException {
 
         JsonNode node = jsonParser.getCodec().readTree(jsonParser);
-        if (node.get("@type") != null && node.get("@type").textValue().equals("xsd:boolean")) {
-            return node.get("@value").booleanValue();
+        if (node.get("@type") != null && (node.get("@type").textValue().equals("xsd:boolean"))) {
+             return handleNodeValue(node.get("@value"));
         }
-        return node.booleanValue();
+        return handleNodeValue(node);
+    }
+
+    private boolean handleNodeValue(JsonNode booleanNode) {
+        if (booleanNode.isTextual()) {
+            return booleanNode.textValue().equals("true");
+        }
+        return booleanNode.booleanValue();
     }
 }
