@@ -233,7 +233,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
     if (this.isOfferingDataOffering()) {
       let gxDataResourceJsonSd: IGxDataResourceCredentialSubject = this.gxDataResourceWizard.generateJsonCs();
       gxServiceOfferingCs["schema:name"] = "Data Offering Service - " + (gxDataResourceJsonSd["schema:name"] ? gxDataResourceJsonSd["schema:name"]["@value"] : "data resource name not available");
-      gxServiceOfferingCs["schema:description"] = " ";//"Data Offering Service provides data (" + (gxDataResourceJsonSd["schema:name"] ? gxDataResourceJsonSd["schema:name"]["@value"] : "data resource name not available") + ") securely through the Possible Dataspace software solution. The Data Offering Service enables secure and sovereign data exchange between different organizations using the Eclipse Dataspace Connector (EDC). The service seamlessly integrates with IONOS S3 buckets to ensure reliable and scalable data storage and transfer.";
+      //gxServiceOfferingCs["schema:description"] = " ";//"Data Offering Service provides data (" + (gxDataResourceJsonSd["schema:name"] ? gxDataResourceJsonSd["schema:name"]["@value"] : "data resource name not available") + ") securely through the Possible Dataspace software solution. The Data Offering Service enables secure and sovereign data exchange between different organizations using the Eclipse Dataspace Connector (EDC). The service seamlessly integrates with IONOS S3 buckets to ensure reliable and scalable data storage and transfer.";
     }
 
     this.loadShape(this.gxServiceOfferingWizard, this.serviceOfferingShapeSource, TBR_SERVICE_OFFERING_ID).then(_ => {
