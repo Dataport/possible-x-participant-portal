@@ -20,8 +20,11 @@ import {
   TabsModule,
   TemplateIdDirective,
   TooltipModule,
+  ModalModule
 } from '@coreui/angular';
 import {IconModule} from '@coreui/icons-angular';
+
+import { NgxPrintModule } from 'ngx-print';
 
 import {OfferRoutingModule} from './offer-routing.module';
 import {ProvideComponent} from './provide/provide.component';
@@ -33,6 +36,7 @@ import {ContractsComponent} from "./contracts/contracts.component";
 import { TransferComponent } from './transfer/transfer.component';
 import {MatStepperModule} from "@angular/material/stepper";
 import {MatButtonModule} from "@angular/material/button";
+import { OfferPrintViewComponent } from './offer-print-view/offer-print-view.component';
 
 @NgModule({
   imports: [
@@ -61,9 +65,11 @@ import {MatButtonModule} from "@angular/material/button";
     WizardExtensionModule,
     TooltipModule,
     MatStepperModule,
-    MatButtonModule
+    MatButtonModule,
+    ModalModule,
+    NgxPrintModule
   ],
-  declarations: [ProvideComponent, ConsumeComponent, AcceptComponent, SelectComponent, ContractsComponent, TransferComponent],
+  declarations: [ProvideComponent, ConsumeComponent, AcceptComponent, SelectComponent, ContractsComponent, TransferComponent, OfferPrintViewComponent],
   exports: [
     TransferComponent
   ]

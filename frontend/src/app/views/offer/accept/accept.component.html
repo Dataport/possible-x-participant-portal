@@ -105,6 +105,9 @@
               </li>
             </ul>
           </div>
+          <div class="flex justify-end p-3">
+          <button (click)="setTimestamp()" [cModalToggle]="'modalOfferPrintView'" cButton color="primary" shape="rounded-0" class="px-2 py-2">Print View</button>
+          </div>
         </ng-template>
       </c-accordion-item>
     </c-accordion>
@@ -130,3 +133,5 @@
       </app-status-message>
     </div>
   </div>
+
+  <app-offer-print-view [offer]="offer" [contractParties]="contractParties" [printTimestamp]="printTimestamp"></app-offer-print-view>

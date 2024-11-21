@@ -12,7 +12,7 @@ import {ApiService} from '../../../services/mgmt/api/api.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {StatusMessageComponent} from '../../common-views/status-message/status-message.component';
 import {
-  IAcceptOfferResponseTO,
+  IAcceptOfferResponseTO, IContractPartiesTO,
   IOfferDetailsTO,
   IPxExtendedServiceOfferingCredentialSubject
 } from '../../../services/mgmt/api/backend';
@@ -32,6 +32,8 @@ export class AcceptComponent implements OnChanges {
   @ViewChild('accordion', { read: TemplateRef, static: true }) accordion: TemplateRef<any>;
 
   isAcceptButtonDisabled = false;
+  contractParties?: IContractPartiesTO = undefined;
+  printTimestamp?: Date;
 
   constructor(private apiService: ApiService) {
   }
@@ -39,6 +41,7 @@ export class AcceptComponent implements OnChanges {
   ngOnChanges(): void {
     if(this.offer) {
       this.viewContainerRef.createEmbeddedView(this.accordion);
+      this.getContractPartiesDetails();
     } else {
       this.viewContainerRef.clear();
     }
@@ -62,12 +65,28 @@ export class AcceptComponent implements OnChanges {
     });
   };
 
+  async getContractPartiesDetails() {
+    console.log("Retrieve Contract Parties Details");
+    this.apiService.getContractParties({
+      providerId: this.offer.catalogOffering["gx:providedBy"].id,
+    }).then(response => {
+      console.log(response);
+      this.contractParties = response;
+    }).catch((e: HttpErrorResponse) => {
+      console.error(e.error.detail || e.error || e.message);
+    });
+  };
+
   cancel(): void {
     this.dismiss.emit();
   }
 
   containsPII(catalogOffering: IPxExtendedServiceOfferingCredentialSubject): boolean {
     return catalogOffering["gx:aggregationOf"][0]["gx:containsPII"];
+  }
+
+  setTimestamp(){
+   this.printTimestamp = new Date();
   }
 
   isHttpOrHttps(url: string): boolean {
