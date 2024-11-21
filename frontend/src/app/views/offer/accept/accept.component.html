@@ -103,10 +103,10 @@
             <b>Enforcement Policies:</b>
           </div>
           <div *ngFor="let ep of offer.enforcementPolicies">
-            <div *ngIf="ep['@type'] === 'EverythingAllowedPolicy'">
+            <div *ngIf="isEverythingAllowedPolicy(ep)">
               <b>Everything is allowed</b>
             </div>
-            <div *ngIf="ep['@type'] === 'ParticipantRestrictionPolicy'">
+            <div *ngIf="isParticipantRestrictionPolicy(ep)">
               <b>Restricted to the following organizations:</b>
               <ul *ngFor="let org of asParticipantRestrictionPolicy(ep).allowedParticipants">
                 <li>

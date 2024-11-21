@@ -34,6 +34,12 @@ export class AcceptComponent implements OnChanges {
 
   isAcceptButtonDisabled = false;
 
+  protected isEverythingAllowedPolicy: (policy: IEnforcementPolicy) => boolean
+    = policy => (policy['@type'] === 'EverythingAllowedPolicy');
+
+  protected isParticipantRestrictionPolicy: (policy: IEnforcementPolicy) => boolean
+    = policy => (policy['@type'] === 'ParticipantRestrictionPolicy');
+
   protected asEverythingAllowedPolicy: (policy: IEnforcementPolicy) => IEverythingAllowedPolicy
     = policy => (policy as IEverythingAllowedPolicy);
 
