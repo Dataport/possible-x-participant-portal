@@ -112,7 +112,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
     if (this.isPolicyChecked) {
       policy = {
         "@type": "ParticipantRestrictionPolicy",
-        allowedParticipants: this.dapsIDs
+        allowedParticipants: this.trimStringsInDataStructure(this.dapsIDs)
       } as IParticipantRestrictionPolicy;
     } else {
       policy = {
@@ -121,7 +121,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
     }
 
     let createOfferTo: any = {
-      serviceOfferingCredentialSubject: gxOfferingJsonSd,
+      serviceOfferingCredentialSubject: this.trimStringsInDataStructure(gxOfferingJsonSd),
       enforcementPolicies: [
         policy
       ]
@@ -134,8 +134,8 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
       let gxDataResourceJsonSd: IGxDataResourceCredentialSubject = this.gxDataResourceWizard.generateJsonCs();
       gxDataResourceJsonSd["gx:exposedThrough"] = {id: gxOfferingJsonSd.id} as INodeKindIRITypeId;
 
-      createOfferTo.dataResourceCredentialSubject = gxDataResourceJsonSd;
-      createOfferTo.fileName = this.selectedFileName;
+      createOfferTo.dataResourceCredentialSubject = this.trimStringsInDataStructure(gxDataResourceJsonSd);
+      createOfferTo.fileName = this.trimStringsInDataStructure(this.selectedFileName);
 
       createOfferMethod = this.apiService.createDataOffering.bind(this.apiService);
     }
@@ -232,7 +232,8 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
 
     if (this.isOfferingDataOffering()) {
       let gxDataResourceJsonSd: IGxDataResourceCredentialSubject = this.gxDataResourceWizard.generateJsonCs();
-      gxServiceOfferingCs["schema:name"] = "Data Offering Service - " + (gxDataResourceJsonSd["schema:name"] ? gxDataResourceJsonSd["schema:name"]["@value"] : "data resource name not available");
+      let trimmedGxDataResourceJsonSd = this.trimStringsInDataStructure(gxDataResourceJsonSd);
+      gxServiceOfferingCs["schema:name"] = "Data Offering Service - " + (trimmedGxDataResourceJsonSd["schema:name"] ? trimmedGxDataResourceJsonSd["schema:name"]["@value"] : "data resource name not available");
       //gxServiceOfferingCs["schema:description"] = " ";//"Data Offering Service provides data (" + (gxDataResourceJsonSd["schema:name"] ? gxDataResourceJsonSd["schema:name"]["@value"] : "data resource name not available") + ") securely through the Possible Dataspace software solution. The Data Offering Service enables secure and sovereign data exchange between different organizations using the Eclipse Dataspace Connector (EDC). The service seamlessly integrates with IONOS S3 buckets to ensure reliable and scalable data storage and transfer.";
     }
 
@@ -297,6 +298,20 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
       this.gxDataResourceWizard.prefillFields(cs, []);
     }
 
+  }
+
+  trimStringsInDataStructure(obj: any): any {
+    if (typeof obj === 'string') {
+      return obj.trim();
+    } else if (Array.isArray(obj)) {
+      return obj.map(this.trimStringsInDataStructure);
+    } else if (typeof obj === 'object' && obj !== null) {
+      return Object.keys(obj).reduce((acc, key) => {
+        acc[key] = this.trimStringsInDataStructure(obj[key]);
+        return acc;
+      }, {} as any);
+    }
+    return obj;
   }
 
 }
