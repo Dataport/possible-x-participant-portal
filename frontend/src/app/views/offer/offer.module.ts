@@ -33,6 +33,8 @@ import {ContractsComponent} from "./contracts/contracts.component";
 import { TransferComponent } from './transfer/transfer.component';
 import {MatStepperModule} from "@angular/material/stepper";
 import {MatButtonModule} from "@angular/material/button";
+import {MatCheckboxModule} from "@angular/material/checkbox";
+import {MaterialModule} from "../../sdwizard/material.module";
 
 @NgModule({
   imports: [
@@ -61,7 +63,9 @@ import {MatButtonModule} from "@angular/material/button";
     WizardExtensionModule,
     TooltipModule,
     MatStepperModule,
-    MatButtonModule
+    MatButtonModule,
+    MatCheckboxModule,
+    MaterialModule
   ],
   declarations: [ProvideComponent, ConsumeComponent, AcceptComponent, SelectComponent, ContractsComponent, TransferComponent],
   exports: [

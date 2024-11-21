@@ -32,7 +32,8 @@ export class AcceptComponent implements OnChanges {
   @ViewChild('viewContainerRef', { read: ViewContainerRef, static: true }) viewContainerRef: ViewContainerRef;
   @ViewChild('accordion', { read: TemplateRef, static: true }) accordion: TemplateRef<any>;
 
-  isAcceptButtonDisabled = false;
+  isConsumed = false;
+  isPoliciesAccepted = false;
 
   protected isEverythingAllowedPolicy: (policy: IEnforcementPolicy) => boolean
     = policy => (policy['@type'] === 'EverythingAllowedPolicy');
@@ -55,23 +56,24 @@ export class AcceptComponent implements OnChanges {
     } else {
       this.viewContainerRef.clear();
     }
+    this.isConsumed = false;
+    this.isPoliciesAccepted = false;
   }
 
   async acceptContractOffer() {
     this.acceptOfferStatusMessage.showInfoMessage();
     console.log("'Accept Contract Offer' button pressed");
-    this.isAcceptButtonDisabled = true;
     this.apiService.acceptContractOffer({
       counterPartyAddress: this.offer == undefined ? "" : this.offer.catalogOffering["px:providerUrl"],
       edcOfferId: this.offer == undefined ? "" : this.offer.edcOfferId,
       dataOffering: this.offer == undefined ? false : this.offer.dataOffering
     }).then(response => {
       console.log(response);
+      this.isConsumed = true;
       this.negotiatedContract.emit(response);
       this.acceptOfferStatusMessage.showSuccessMessage("Contract Agreement ID: " + response.contractAgreementId);
     }).catch((e: HttpErrorResponse) => {
       this.acceptOfferStatusMessage.showErrorMessage(e.error.detail || e.error || e.message);
-      this.isAcceptButtonDisabled = false;
     });
   };
 
@@ -81,5 +83,9 @@ export class AcceptComponent implements OnChanges {
 
   isHttpOrHttps(url: string): boolean {
     return url.startsWith('http://') || url.startsWith('https://');
+  }
+
+  isButtonDisabled(): boolean {
+    return !this.isPoliciesAccepted || this.isConsumed;
   }
 }
