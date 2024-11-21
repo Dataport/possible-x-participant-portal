@@ -20,8 +20,7 @@ public class ProviderServiceFake implements ProviderService {
      * @return create offer response object
      */
     @Override
-    public CreateOfferResponseTO createOffering(CreateServiceOfferingRequestBE requestBE)
-        throws FhOfferCreationException, EdcOfferCreationException {
+    public CreateOfferResponseTO createOffering(CreateServiceOfferingRequestBE requestBE) {
 
         return CreateOfferResponseTO.builder().edcResponseId(CREATE_OFFER_RESPONSE_ID)
             .fhResponseId(CREATE_OFFER_RESPONSE_ID).build();

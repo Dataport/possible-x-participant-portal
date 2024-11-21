@@ -175,9 +175,9 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
   }
 
   public ngOnDestroy() {
-    this.gxServiceOfferingWizard.ngOnDestroy();
-    this.gxDataResourceWizard.ngOnDestroy();
-    this.gxLegitimateInterestWizard.ngOnDestroy();
+    this.gxServiceOfferingWizard?.ngOnDestroy();
+    this.gxDataResourceWizard?.ngOnDestroy();
+    this.gxLegitimateInterestWizard?.ngOnDestroy();
     this.resetPossibleSpecificFormValues();
     this.resetAccordionItem();
     this.offerCreationStatusMessage.hideAllMessages();

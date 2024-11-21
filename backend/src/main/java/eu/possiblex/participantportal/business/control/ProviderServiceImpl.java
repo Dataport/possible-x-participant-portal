@@ -1,8 +1,10 @@
 package eu.possiblex.participantportal.business.control;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import eu.possiblex.participantportal.application.entity.CreateOfferResponseTO;
 import eu.possiblex.participantportal.application.entity.ParticipantIdTO;
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
+import eu.possiblex.participantportal.application.entity.exception.OfferingComplianceException;
 import eu.possiblex.participantportal.application.entity.policies.EnforcementPolicy;
 import eu.possiblex.participantportal.application.entity.policies.ParticipantRestrictionPolicy;
 import eu.possiblex.participantportal.business.entity.CreateDataOfferingRequestBE;
@@ -22,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,6 +99,9 @@ public class ProviderServiceImpl implements ProviderService {
         } catch (FhOfferCreationException e) {
             throw new PossibleXException("Failed to create offer. FhOfferCreationException: " + e,
                 HttpStatus.BAD_REQUEST);
+        } catch (OfferingComplianceException e) {
+            throw new PossibleXException("Failed to create offer. Compliance not attested: " + e.getMessage(),
+                HttpStatus.UNPROCESSABLE_ENTITY);
         } catch (Exception e) {
             throw new PossibleXException("Failed to create offer. Other Exception: " + e);
         }
@@ -155,15 +161,27 @@ public class ProviderServiceImpl implements ProviderService {
      * @throws FhOfferCreationException if FH offer creation fails
      */
     private FhCatalogIdResponse createFhCatalogOffer(
-        PxExtendedServiceOfferingCredentialSubject serviceOfferingCredentialSubject) throws FhOfferCreationException {
+        PxExtendedServiceOfferingCredentialSubject serviceOfferingCredentialSubject)
+        throws FhOfferCreationException, OfferingComplianceException {
 
         try {
             log.info("Adding Service Offering to Fraunhofer Catalog {}", serviceOfferingCredentialSubject);
 
             return fhCatalogClient.addServiceOfferingToFhCatalog(serviceOfferingCredentialSubject);
+        } catch (WebClientResponseException e) {
+            throw buildComplianceException(e);
         } catch (Exception e) {
             throw new FhOfferCreationException("An error occurred during Fh offer creation: " + e.getMessage());
         }
+    }
+
+    private OfferingComplianceException buildComplianceException(WebClientResponseException e) {
+
+        JsonNode error = e.getResponseBodyAs(JsonNode.class);
+        if (error != null && error.get("error") != null) {
+            return new OfferingComplianceException(error.get("error").textValue(), e);
+        }
+        return new OfferingComplianceException("Unknown catalog processing exception", e);
     }
 
     /**
