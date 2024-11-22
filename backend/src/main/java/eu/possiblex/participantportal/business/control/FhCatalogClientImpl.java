@@ -70,22 +70,7 @@ public class FhCatalogClientImpl implements FhCatalogClient {
 
     }
 
-    private <T> T parseCatalogContent(String id, boolean isOffer, Class<T> returnType) throws OfferNotFoundException,
-        ParticipantNotFoundException {
-        log.info("fetching " + (isOffer ? "offer" : "participant") + " for fh catalog ID " + id);
-        String jsonContent = null;
-        try {
-            jsonContent = isOffer ? technicalFhCatalogClient.getFhCatalogOffer(id) : technicalFhCatalogClient.getFhCatalogParticipant(id);
-        } catch (WebClientResponseException e) {
-            if (e.getStatusCode().value() == 404 && isOffer) {
-                throw new OfferNotFoundException("no FH Catalog offer found with ID " + id);
-            }
-            if (e.getStatusCode().value() == 404 && !isOffer) {
-                throw new ParticipantNotFoundException("no FH Catalog participant found with ID " + id);
-            }
-            throw e;
-        }
-
+    private <T> T parseCatalogContent(String jsonContent, boolean isOffer, Class<T> returnType) {
         try {
             JsonDocument input = JsonDocument.of(new StringReader(jsonContent));
             JsonDocument offeringFrame = isOffer ? getFrameByType(PxExtendedServiceOfferingCredentialSubject.TYPE,
@@ -99,12 +84,33 @@ public class FhCatalogClientImpl implements FhCatalogClient {
             throw new RuntimeException("failed to parse fh catalog " + (isOffer ? "offer" : "participant") + " json: " + jsonContent, e);
         }
     }
+
+    private String getFhCatalogContent(String id, boolean isOffer) throws OfferNotFoundException, ParticipantNotFoundException {
+        log.info("fetching " + (isOffer ? "offer" : "participant") + " for fh catalog ID " + id);
+        String jsonContent;
+        try {
+            jsonContent = isOffer ? technicalFhCatalogClient.getFhCatalogOffer(id) : technicalFhCatalogClient.getFhCatalogParticipant(
+                id);
+        } catch (WebClientResponseException e) {
+            if (e.getStatusCode().value() == 404 && isOffer) {
+                throw new OfferNotFoundException("no FH Catalog offer found with ID " + id);
+            }
+            if (e.getStatusCode().value() == 404 && !isOffer) {
+                throw new ParticipantNotFoundException("no FH Catalog participant found with ID " + id);
+            }
+            throw e;
+        }
+        return jsonContent;
+    }
+
     @Override
     public PxExtendedServiceOfferingCredentialSubject getFhCatalogOffer(String offeringId) throws OfferNotFoundException {
         try {
-            return parseCatalogContent(offeringId, true, PxExtendedServiceOfferingCredentialSubject.class);
+            boolean isOffer = true;
+            String jsonContent = getFhCatalogContent(offeringId, isOffer);
+            return parseCatalogContent(jsonContent, isOffer, PxExtendedServiceOfferingCredentialSubject.class);
         } catch (ParticipantNotFoundException e) {
-            throw new OfferNotFoundException(e.getMessage());
+            throw new OfferNotFoundException("Something went wrong: ParticipantNotFoundException in getFhCatalogOffer method: " + e.getMessage());
         }
     }
 
@@ -112,9 +118,11 @@ public class FhCatalogClientImpl implements FhCatalogClient {
     public PxExtendedLegalParticipantCredentialSubjectSubset getFhCatalogParticipant(String participantId) throws
         ParticipantNotFoundException {
         try {
-            return parseCatalogContent(participantId, false, PxExtendedLegalParticipantCredentialSubjectSubset.class);
+            boolean isOffer = false;
+            String jsonContent = getFhCatalogContent(participantId, isOffer);
+            return parseCatalogContent(jsonContent, isOffer, PxExtendedLegalParticipantCredentialSubjectSubset.class);
         } catch (OfferNotFoundException e) {
-            throw new ParticipantNotFoundException(e.getMessage());
+            throw new ParticipantNotFoundException("Something went wrong: OfferNotFoundException in getFhCatalogParticipant method: " + e.getMessage());
         }
     }
 }

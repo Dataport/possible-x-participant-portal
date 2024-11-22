@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedLegalParticipantCredentialSubjectSubset;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
+import eu.possiblex.participantportal.business.entity.exception.ParticipantNotFoundException;
 import eu.possiblex.participantportal.utils.TestUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -12,7 +13,7 @@ import org.mockito.Mockito;
 class FhCatalogClientImplTest {
 
     @Test
-    void parseDataCorrectly() throws OfferNotFoundException {
+    void parseDataCorrectly() throws OfferNotFoundException, ParticipantNotFoundException {
         // GIVEN a mocked technical client that returns a test FH Catalog offer
 
         String fhCatalogOfferContent = TestUtils.loadTextFile("unit_tests/FHCatalogClientImplTest/validFhOffer.json");
@@ -42,7 +43,7 @@ class FhCatalogClientImplTest {
     }
 
     @Test
-    void parseDataCorrectlyNoDataOffering() throws OfferNotFoundException {
+    void parseDataCorrectlyNoDataOffering() throws OfferNotFoundException, ParticipantNotFoundException {
         // GIVEN a mocked technical client that returns a test FH Catalog offer
 
         String fhCatalogOfferContent = TestUtils.loadTextFile(
