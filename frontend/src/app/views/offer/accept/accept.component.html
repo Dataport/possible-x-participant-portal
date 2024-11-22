@@ -96,6 +96,22 @@
             </li>
           </ul>
         </div>
+        <div>
+          <b>Enforcement Policies:</b>
+        </div>
+        <div *ngFor="let ep of offer.enforcementPolicies">
+          <div *ngIf="isEverythingAllowedPolicy(ep)">
+            <b>Everything is allowed</b>
+          </div>
+          <div *ngIf="isParticipantRestrictionPolicy(ep)">
+            Contracting is restricted to the following organizations:
+            <ul *ngFor="let org of asParticipantRestrictionPolicy(ep).allowedParticipants">
+              <li>
+                {{ org }}
+              </li>
+            </ul>
+          </div>
+        </div>
       </mat-expansion-panel>
 
       <mat-expansion-panel #enforcementPolicies>
@@ -105,8 +121,7 @@
         </mat-expansion-panel-header>
         <div>
           Please accept the policies for the provided offer.
-        </div>
-        <br>
+        </div><br/>
         <div *ngFor="let ep of offer.enforcementPolicies">
           <div *ngIf="isEverythingAllowedPolicy(ep)">
             <b>Everything is allowed</b>
@@ -120,6 +135,28 @@
             </ul>
           </div>
         </div>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel #termsAndConditions>
+        <mat-expansion-panel-header>
+          <mat-panel-title class="font-bold">Accept Terms & Conditions</mat-panel-title>
+          <mat-checkbox [(ngModel)]="isTnCAccepted" required></mat-checkbox>
+        </mat-expansion-panel-header>
+        <div>
+          Please accept the Terms and Conditions for the provided offer.
+        </div><br/>
+        <b>Terms & Conditions:</b>
+        <ul *ngFor="let tnc of offer.catalogOffering['gx:termsAndConditions']">
+          <li>
+            <div *ngIf="isHttpOrHttps(tnc['gx:URL']); else textUrl">
+              <a href="{{ tnc['gx:URL'] }}">{{ tnc['gx:URL'] }}</a>
+            </div>
+            <ng-template #textUrl>
+              <span>{{ tnc['gx:URL'] }}</span>
+            </ng-template>
+            (Hash: {{ tnc["gx:hash"] }})
+          </li>
+        </ul>
       </mat-expansion-panel>
     </mat-accordion>
     </ng-template>

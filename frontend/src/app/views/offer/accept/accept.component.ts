@@ -34,6 +34,7 @@ export class AcceptComponent implements OnChanges {
 
   isConsumed = false;
   isPoliciesAccepted = false;
+  isTnCAccepted = false;
 
   protected isEverythingAllowedPolicy: (policy: IEnforcementPolicy) => boolean
     = policy => (policy['@type'] === 'EverythingAllowedPolicy');
@@ -58,6 +59,7 @@ export class AcceptComponent implements OnChanges {
     }
     this.isConsumed = false;
     this.isPoliciesAccepted = false;
+    this.isTnCAccepted = false;
   }
 
   async acceptContractOffer() {
@@ -86,6 +88,6 @@ export class AcceptComponent implements OnChanges {
   }
 
   isButtonDisabled(): boolean {
-    return !this.isPoliciesAccepted || this.isConsumed;
+    return !this.isPoliciesAccepted || !this.isTnCAccepted || this.isConsumed;
   }
 }
