@@ -13,7 +13,6 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-
 <div class="mb-3 flex-1" xmlns="http://www.w3.org/1999/html">
   <mat-stepper #stepper linear orientation="vertical">
     <mat-step>
@@ -103,8 +102,9 @@
           </c-accordion-item>
       </c-accordion>
       <div class="flex justify-between pt-4">
-        <button cButton color="secondary" matStepperPrevious shape="rounded-0">Back</button>
-        <button (click)="prefillServiceOfferingWizard()" [disabled]="!isDataResourceValid()" cButton color="primary"
+        <button (click)="prepareStepBeforeDataResource()" cButton color="secondary" matStepperPrevious shape="rounded-0">Back</button>
+        <button (click)="prepareStepAfterDataResource()" [disabled]="!isDataResourceValid()" cButton
+                color="primary"
                 matStepperNext shape="rounded-0"
                 type="submit">
           Next
@@ -112,7 +112,26 @@
       </div>
     </mat-step>
 
-    <mat-step [completed]="isServiceOfferingValid()" errorMessage="Missing fields">
+    <mat-step *ngIf="isContainingPII()" [completed]="isLegitimateInterestValid()" errorMessage="Missing fields" [ngClass]="{'hidden': !isContainingPII()}">
+      <ng-template matStepLabel>Define Legitimate Interest</ng-template>
+      <div>
+        In the previous step, it was indicated that the data contains personal identifiable information.
+        It is therefore necessary to specify the legitimate interest in this additional step.
+        <br/><br/>
+      </div>
+      <app-base-wizard-extension #gxLegitimateInterestWizard></app-base-wizard-extension>
+      <div class="flex justify-between pt-4">
+        <button cButton color="secondary" matStepperPrevious shape="rounded-0">Back</button>
+        <button (click)="prefillServiceOfferingWizard()" [disabled]="!isLegitimateInterestValid()" cButton
+                color="primary"
+                matStepperNext shape="rounded-0"
+                type="submit">
+          Next
+        </button>
+      </div>
+    </mat-step>
+
+    <mat-step errorMessage="Missing fields">
       <ng-template matStepLabel>Define Service Offering</ng-template>
       <app-base-wizard-extension #gxServiceOfferingWizard></app-base-wizard-extension>
       <br/>
@@ -348,5 +367,10 @@
         </button>
       </div>
     </mat-step>
+
+    <!-- Icon overrides. -->
+    <ng-template matStepperIcon="edit">
+      <mat-icon>done</mat-icon>
+    </ng-template>
   </mat-stepper>
 </div>

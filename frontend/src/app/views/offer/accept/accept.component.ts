@@ -15,7 +15,8 @@ import {
   IAcceptOfferResponseTO,
   IEnforcementPolicy,
   IEverythingAllowedPolicy, IEverythingAllowedPolicyBuilder,
-  IOfferDetailsTO, IParticipantRestrictionPolicy
+  IOfferDetailsTO, IParticipantRestrictionPolicy,
+  IPxExtendedServiceOfferingCredentialSubject
 } from '../../../services/mgmt/api/backend';
 
 @Component({
@@ -81,6 +82,10 @@ export class AcceptComponent implements OnChanges {
 
   cancel(): void {
     this.dismiss.emit();
+  }
+
+  containsPII(catalogOffering: IPxExtendedServiceOfferingCredentialSubject): boolean {
+    return catalogOffering["gx:aggregationOf"][0]["gx:containsPII"];
   }
 
   isHttpOrHttps(url: string): boolean {
