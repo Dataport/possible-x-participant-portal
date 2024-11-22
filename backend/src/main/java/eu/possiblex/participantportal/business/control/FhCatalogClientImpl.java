@@ -73,17 +73,17 @@ public class FhCatalogClientImpl implements FhCatalogClient {
     private <T> T parseCatalogContent(String jsonContent, boolean isOffer, Class<T> returnType) {
         try {
             JsonDocument input = JsonDocument.of(new StringReader(jsonContent));
-            JsonDocument offeringFrame;
+            JsonDocument frame;
             if (isOffer) {
-                offeringFrame = getFrameByType(PxExtendedServiceOfferingCredentialSubject.TYPE,
+                frame = getFrameByType(PxExtendedServiceOfferingCredentialSubject.TYPE,
                     PxExtendedServiceOfferingCredentialSubject.CONTEXT);
             } else {
-                offeringFrame = getFrameByType(PxExtendedLegalParticipantCredentialSubjectSubset.TYPE,
+                frame = getFrameByType(PxExtendedLegalParticipantCredentialSubjectSubset.TYPE,
                     PxExtendedLegalParticipantCredentialSubjectSubset.CONTEXT);
             }
-            JsonObject framedOffering = JsonLd.frame(input, offeringFrame).get();
+            JsonObject framedContent = JsonLd.frame(input, frame).get();
 
-            return objectMapper.readValue(framedOffering.toString(), returnType);
+            return objectMapper.readValue(framedContent.toString(), returnType);
         } catch (JsonLdError | JsonProcessingException e) {
             throw new RuntimeException("failed to parse fh catalog " + (isOffer ? "offer" : "participant") + " json: " + jsonContent, e);
         }
