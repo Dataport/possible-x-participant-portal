@@ -114,10 +114,11 @@ public class ConsumerServiceImpl implements ConsumerService {
 
         ContractNegotiation contractNegotiation = negotiateOffer(negotiationInitiateRequest);
 
-        PxExtendedLegalParticipantCredentialSubjectSubset providerDid = fhCatalogClient.getFhCatalogParticipant(request.getProvidedBy());
+        PxExtendedLegalParticipantCredentialSubjectSubset provider = fhCatalogClient.getFhCatalogParticipant(request.getProvidedBy());
+        log.info("got fh provider participant: " + provider);
 
         return new AcceptOfferResponseBE(contractNegotiation.getState(), contractNegotiation.getContractAgreementId(),
-            request.isDataOffering(), providerDid.getMailAddress());
+            request.isDataOffering(), provider.getMailAddress());
     }
 
     @Override

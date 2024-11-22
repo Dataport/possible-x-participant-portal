@@ -52,12 +52,11 @@ export class AcceptComponent implements OnChanges {
       counterPartyAddress: this.offer == undefined ? "" : this.offer.catalogOffering["px:providerUrl"],
       edcOfferId: this.offer == undefined ? "" : this.offer.edcOfferId,
       dataOffering: this.offer == undefined ? false : this.offer.dataOffering,
-      providedBy: this.offer == undefined ? "" : this.offer.catalogOffering["px:providedBy"].id,
+      providedBy: this.offer == undefined ? "" : this.offer.catalogOffering["gx:providedBy"].id,
     }).then(response => {
       console.log(response);
       this.negotiatedContract.emit(response);
-      this.acceptOfferStatusMessage.showSuccessMessage("Contract Agreement ID: " + response.contractAgreementId + ";" +
-        " Contact Email Address: " + response.providerEmail);
+      this.acceptOfferStatusMessage.showSuccessMessage("Contract Agreement ID: " + response.contractAgreementId);
     }).catch((e: HttpErrorResponse) => {
       this.acceptOfferStatusMessage.showErrorMessage(e.error.detail || e.error || e.message);
       this.isAcceptButtonDisabled = false;

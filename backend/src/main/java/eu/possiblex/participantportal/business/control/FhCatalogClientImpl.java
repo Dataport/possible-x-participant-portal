@@ -88,8 +88,10 @@ public class FhCatalogClientImpl implements FhCatalogClient {
 
         try {
             JsonDocument input = JsonDocument.of(new StringReader(jsonContent));
-            JsonDocument offeringFrame = getFrameByType(PxExtendedServiceOfferingCredentialSubject.TYPE,
-                PxExtendedServiceOfferingCredentialSubject.CONTEXT);
+            JsonDocument offeringFrame = isOffer ? getFrameByType(PxExtendedServiceOfferingCredentialSubject.TYPE,
+                PxExtendedServiceOfferingCredentialSubject.CONTEXT)
+                : getFrameByType(PxExtendedLegalParticipantCredentialSubjectSubset.TYPE,
+                    PxExtendedLegalParticipantCredentialSubjectSubset.CONTEXT);
             JsonObject framedOffering = JsonLd.frame(input, offeringFrame).get();
 
             return objectMapper.readValue(framedOffering.toString(), returnType);

@@ -40,7 +40,7 @@ public interface TechnicalFhCatalogClient {
     @GetExchange("/resources/service-offering/{offering_id}")
     String getFhCatalogOffer(@PathVariable String offering_id);
 
-    @GetExchange("/resources/legal-participant/{offering_id}")
+    @GetExchange("/resources/legal-participant/{participant_id}")
     String getFhCatalogParticipant(@PathVariable String participant_id);
 }
 
