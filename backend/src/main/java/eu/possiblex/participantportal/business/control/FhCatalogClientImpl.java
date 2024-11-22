@@ -22,6 +22,8 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import java.io.StringReader;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 @Service
 @Slf4j
@@ -70,37 +72,23 @@ public class FhCatalogClientImpl implements FhCatalogClient {
 
     }
 
-    private <T> T parseCatalogContent(String jsonContent, boolean isOffer, Class<T> returnType) {
+    private JsonObject parseCatalogContent(String jsonContent, List<String> type, Map<String, String> context) {
         try {
             JsonDocument input = JsonDocument.of(new StringReader(jsonContent));
-            JsonDocument frame;
-            if (isOffer) {
-                frame = getFrameByType(PxExtendedServiceOfferingCredentialSubject.TYPE,
-                    PxExtendedServiceOfferingCredentialSubject.CONTEXT);
-            } else {
-                frame = getFrameByType(PxExtendedLegalParticipantCredentialSubjectSubset.TYPE,
-                    PxExtendedLegalParticipantCredentialSubjectSubset.CONTEXT);
-            }
-            JsonObject framedContent = JsonLd.frame(input, frame).get();
-
-            return objectMapper.readValue(framedContent.toString(), returnType);
+            JsonDocument frame = getFrameByType(type, context);
+            return JsonLd.frame(input, frame).get();
         } catch (JsonLdError | JsonProcessingException e) {
             throw new RuntimeException("failed to parse fh catalog " + (isOffer ? "offer" : "participant") + " json: " + jsonContent, e);
         }
     }
 
-    private String getFhCatalogContent(String id, boolean isOffer) throws OfferNotFoundException, ParticipantNotFoundException {
-        log.info("fetching " + (isOffer ? "offer" : "participant") + " for fh catalog ID " + id);
+    private String getFhCatalogContent(String id, UnaryOperator<String> fetchFunction) {
         String jsonContent;
         try {
-            jsonContent = isOffer ? technicalFhCatalogClient.getFhCatalogOffer(id) : technicalFhCatalogClient.getFhCatalogParticipant(
-                id);
+            jsonContent = fetchFunction.apply(id);
         } catch (WebClientResponseException e) {
-            if (e.getStatusCode().value() == 404 && isOffer) {
+            if (e.getStatusCode().value() == 404) {
                 throw new OfferNotFoundException("no FH Catalog offer found with ID " + id);
-            }
-            if (e.getStatusCode().value() == 404 && !isOffer) {
-                throw new ParticipantNotFoundException("no FH Catalog participant found with ID " + id);
             }
             throw e;
         }
@@ -123,7 +111,7 @@ public class FhCatalogClientImpl implements FhCatalogClient {
         ParticipantNotFoundException {
         try {
             boolean isOffer = false;
-            String jsonContent = getFhCatalogContent(participantId, isOffer);
+            String jsonContent = getFhCatalogContent(participantId, this.technicalFhCatalogClient::getFhCatalogParticipant);
             return parseCatalogContent(jsonContent, isOffer, PxExtendedLegalParticipantCredentialSubjectSubset.class);
         } catch (OfferNotFoundException e) {
             throw new ParticipantNotFoundException("Something went wrong: OfferNotFoundException in getFhCatalogParticipant method: " + e.getMessage());
