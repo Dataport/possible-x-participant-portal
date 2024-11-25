@@ -10,10 +10,7 @@ import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedS
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.ParticipantNotFoundException;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
-import jakarta.json.Json;
-import jakarta.json.JsonArrayBuilder;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
+import jakarta.json.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -103,7 +100,7 @@ public class FhCatalogClientImpl implements FhCatalogClient {
                 JsonObject parsedCatalogOffer = parseCatalogContent(jsonContent, PxExtendedServiceOfferingCredentialSubject.TYPE, PxExtendedServiceOfferingCredentialSubject.CONTEXT);
                 return objectMapper.readValue(parsedCatalogOffer.toString(), PxExtendedServiceOfferingCredentialSubject.class);
             } catch (JsonProcessingException e) {
-                throw new RuntimeException("failed to parse fh catalog offer json: " + jsonContent, e);
+                throw new JsonException("failed to parse fh catalog offer json: " + jsonContent, e);
             }
         } catch (RuntimeException e) {
             throw new OfferNotFoundException("Offer not found: " + e.getMessage());
@@ -119,7 +116,7 @@ public class FhCatalogClientImpl implements FhCatalogClient {
                 JsonObject parsedCatalogParticipant = parseCatalogContent(jsonContent, PxExtendedLegalParticipantCredentialSubjectSubset.TYPE, PxExtendedLegalParticipantCredentialSubjectSubset.CONTEXT);
                 return objectMapper.readValue(parsedCatalogParticipant.toString(), PxExtendedLegalParticipantCredentialSubjectSubset.class);
             } catch (JsonProcessingException e) {
-                throw new RuntimeException("failed to parse fh catalog participant json: " + jsonContent, e);
+                throw new JsonException("failed to parse fh catalog participant json: " + jsonContent, e);
             }
         } catch (RuntimeException e) {
             throw new ParticipantNotFoundException("Participant not found: " + e.getMessage());
