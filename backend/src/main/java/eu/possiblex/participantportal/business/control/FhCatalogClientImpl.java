@@ -100,7 +100,12 @@ public class FhCatalogClientImpl implements FhCatalogClient {
     @Override
     public PxExtendedServiceOfferingCredentialSubject getFhCatalogOffer(String offeringId) throws OfferNotFoundException {
         try {
-            String jsonContent = getFhCatalogContent(offeringId, technicalFhCatalogClient::getFhCatalogOffer);
+            String jsonContent;
+            try {
+                jsonContent = getFhCatalogContent(offeringId, technicalFhCatalogClient::getFhCatalogOfferWithData);
+            } catch (RuntimeException e) {
+                jsonContent = getFhCatalogContent(offeringId, technicalFhCatalogClient::getFhCatalogOffer);
+            }
             try {
                 JsonObject parsedCatalogOffer = parseCatalogContent(jsonContent, PxExtendedServiceOfferingCredentialSubject.TYPE, PxExtendedServiceOfferingCredentialSubject.CONTEXT);
                 return objectMapper.readValue(parsedCatalogOffer.toString(), PxExtendedServiceOfferingCredentialSubject.class);

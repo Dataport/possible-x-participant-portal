@@ -1,7 +1,6 @@
 package eu.possiblex.participantportal.business.control;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
 import eu.possiblex.participantportal.business.entity.*;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedLegalParticipantCredentialSubjectSubset;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
@@ -16,12 +15,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -46,7 +44,6 @@ class ConsumerServiceTest {
         reset(edcClient);
         reset(fhCatalogClient);
         PxExtendedServiceOfferingCredentialSubject fhCatalogOffer = new PxExtendedServiceOfferingCredentialSubject();
-        fhCatalogOffer.setProvidedBy(new NodeKindIRITypeId("did:web:example.com"));
         fhCatalogOffer.setAssetId(EdcClientFake.FAKE_ID);
         Mockito.when(fhCatalogClient.getFhCatalogOffer(EdcClientFake.FAKE_ID)).thenReturn(fhCatalogOffer);
 
@@ -64,43 +61,52 @@ class ConsumerServiceTest {
     }
 
     @Test
-    void acceptContractOfferSucceeds()
-        throws NegotiationFailedException, OfferNotFoundException, ParticipantNotFoundException {
+    void acceptContractOfferSucceeds() throws NegotiationFailedException, ParticipantNotFoundException, OfferNotFoundException {
 
         // GIVEN
 
         reset(edcClient);
+        reset(fhCatalogClient);
+        PxExtendedLegalParticipantCredentialSubjectSubset fhCatalogParticipant = new PxExtendedLegalParticipantCredentialSubjectSubset();
+        fhCatalogParticipant.setId(FhCatalogClientFake.FAKE_PROVIDER_ID);
+        fhCatalogParticipant.setMailAddress(FhCatalogClientFake.FAKE_EMAIL_ADDRESS);
+        Mockito.when(fhCatalogClient.getFhCatalogParticipant(Mockito.eq(FhCatalogClientFake.FAKE_PROVIDER_ID))).thenReturn(fhCatalogParticipant);
 
         // WHEN
 
         AcceptOfferResponseBE response = sut.acceptContractOffer(
-            ConsumeOfferRequestBE.builder().counterPartyAddress("http://example.com").edcOfferId(EdcClientFake.FAKE_ID)
+            ConsumeOfferRequestBE.builder().counterPartyAddress("http://example.com").edcOfferId(EdcClientFake.FAKE_ID).providedBy(FhCatalogClientFake.FAKE_PROVIDER_ID)
                 .dataOffering(true).build());
 
         // THEN
 
         verify(edcClient).negotiateOffer(any());
+        verify(fhCatalogClient).getFhCatalogParticipant(any());
 
         assertNotNull(response);
     }
 
     @Test
-    void acceptContractOfferSucceedsNoTransfer()
-        throws NegotiationFailedException, OfferNotFoundException, ParticipantNotFoundException {
+    void acceptContractOfferSucceedsNoTransfer() throws NegotiationFailedException, ParticipantNotFoundException, OfferNotFoundException {
 
         // GIVEN
 
         reset(edcClient);
-
+        reset(fhCatalogClient);
+        PxExtendedLegalParticipantCredentialSubjectSubset fhCatalogParticipant = new PxExtendedLegalParticipantCredentialSubjectSubset();
+        fhCatalogParticipant.setId(FhCatalogClientFake.FAKE_PROVIDER_ID);
+        fhCatalogParticipant.setMailAddress(FhCatalogClientFake.FAKE_EMAIL_ADDRESS);
+        Mockito.when(fhCatalogClient.getFhCatalogParticipant(Mockito.eq(FhCatalogClientFake.FAKE_PROVIDER_ID))).thenReturn(fhCatalogParticipant);
         // WHEN
 
         AcceptOfferResponseBE response = sut.acceptContractOffer(
-            ConsumeOfferRequestBE.builder().counterPartyAddress("http://example.com").edcOfferId(EdcClientFake.FAKE_ID)
+            ConsumeOfferRequestBE.builder().counterPartyAddress("http://example.com").edcOfferId(EdcClientFake.FAKE_ID).providedBy(FhCatalogClientFake.FAKE_PROVIDER_ID)
                 .dataOffering(false).build());
 
         // THEN
 
         verify(edcClient).negotiateOffer(any());
+        verify(fhCatalogClient).getFhCatalogParticipant(any());
 
         assertNotNull(response);
     }

@@ -5,6 +5,10 @@ import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedS
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
 
 public class FhCatalogClientFake implements FhCatalogClient {
+    public static final String FAKE_PROVIDER_ID = "providerId";
+
+    public static final String FAKE_EMAIL_ADDRESS = "example@mail.com";
+
     @Override
     public FhCatalogIdResponse addServiceOfferingToFhCatalog(
         PxExtendedServiceOfferingCredentialSubject serviceOfferingCredentialSubject, boolean doesContainData) {
