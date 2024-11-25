@@ -11,6 +11,8 @@ fh:
     url: url
     secret-key: secret
 
+participant-id: "did:web:example-organization.eu"
+
 s3:
   bucket-storage-region: "eu-central-3"
   bucket-top-level-folder: "possiblex_data_transfers"

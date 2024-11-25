@@ -39,6 +39,10 @@ class ProviderTestParent {
         return TestUtils.loadTextFile(TEST_FILES_PATH + "serviceOfferingPayload.json");
     }
 
+    String getCreateServiceOfferingWithDataTOJsonString() {
+        return TestUtils.loadTextFile(TEST_FILES_PATH + "serviceOfferingPayloadWithData.json");
+    }
+
     String getCreateDataOfferingTOJsonString() {
         return TestUtils.loadTextFile(TEST_FILES_PATH + "dataOfferingPayload.json");
     }

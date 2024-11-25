@@ -1,14 +1,13 @@
 package eu.possiblex.participantportal.business.control;
 
-import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedLegalParticipantCredentialSubject;
+import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedLegalParticipantCredentialSubjectSubset;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
-import eu.possiblex.participantportal.business.entity.exception.ParticipantNotFoundException;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
 
 public class FhCatalogClientFake implements FhCatalogClient {
     @Override
     public FhCatalogIdResponse addServiceOfferingToFhCatalog(
-        PxExtendedServiceOfferingCredentialSubject serviceOfferingCredentialSubject) {
+        PxExtendedServiceOfferingCredentialSubject serviceOfferingCredentialSubject, boolean doesContainData) {
 
         return new FhCatalogIdResponse("id");
     }
@@ -20,9 +19,12 @@ public class FhCatalogClientFake implements FhCatalogClient {
     }
 
     @Override
-    public PxExtendedLegalParticipantCredentialSubject getParticipantFromCatalog(String participantId)
-        throws ParticipantNotFoundException {
+    public PxExtendedLegalParticipantCredentialSubjectSubset getFhCatalogParticipant(String participant_id) {
 
         return null;
+    }
+
+    public void deleteServiceOfferingFromFhCatalog(String offeringId, boolean doesContainData) {
+
     }
 }

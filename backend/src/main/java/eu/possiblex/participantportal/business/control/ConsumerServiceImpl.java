@@ -2,8 +2,11 @@ package eu.possiblex.participantportal.business.control;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.possiblex.participantportal.application.entity.policies.EnforcementPolicy;
+import eu.possiblex.participantportal.application.entity.policies.EverythingAllowedPolicy;
+import eu.possiblex.participantportal.application.entity.policies.ParticipantRestrictionPolicy;
 import eu.possiblex.participantportal.business.entity.*;
-import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedLegalParticipantCredentialSubject;
+import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedLegalParticipantCredentialSubjectSubset;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.edc.DataspaceErrorMessage;
 import eu.possiblex.participantportal.business.entity.edc.asset.DataAddress;
@@ -16,6 +19,9 @@ import eu.possiblex.participantportal.business.entity.edc.negotiation.ContractNe
 import eu.possiblex.participantportal.business.entity.edc.negotiation.ContractOffer;
 import eu.possiblex.participantportal.business.entity.edc.negotiation.NegotiationInitiateRequest;
 import eu.possiblex.participantportal.business.entity.edc.negotiation.NegotiationState;
+import eu.possiblex.participantportal.business.entity.edc.policy.OdrlConstraint;
+import eu.possiblex.participantportal.business.entity.edc.policy.OdrlPermission;
+import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import eu.possiblex.participantportal.business.entity.edc.transfer.IonosS3TransferProcess;
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcess;
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcessState;
@@ -33,7 +39,10 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -97,13 +106,14 @@ public class ConsumerServiceImpl implements ConsumerService {
         response.setEdcOffer(edcCatalogOffer);
         response.setCatalogOffering(fhCatalogOffer);
         response.setDataOffering(isDataOffering);
+        response.setEnforcementPolicies(getEnforcementPoliciesFromEdcPolicies(edcCatalogOffer.getHasPolicy()));
 
         return response;
     }
 
     @Override
     public AcceptOfferResponseBE acceptContractOffer(ConsumeOfferRequestBE request)
-        throws OfferNotFoundException, NegotiationFailedException {
+        throws OfferNotFoundException, ParticipantNotFoundException, NegotiationFailedException {
 
         // query edcOffer
         DcatCatalog edcOffer = queryEdcCatalog(
@@ -118,8 +128,11 @@ public class ConsumerServiceImpl implements ConsumerService {
 
         ContractNegotiation contractNegotiation = negotiateOffer(negotiationInitiateRequest);
 
+        PxExtendedLegalParticipantCredentialSubjectSubset provider = fhCatalogClient.getFhCatalogParticipant(request.getProvidedBy());
+        log.info("got fh provider participant: " + provider);
+
         return new AcceptOfferResponseBE(contractNegotiation.getState(), contractNegotiation.getContractAgreementId(),
-            request.isDataOffering());
+            request.isDataOffering(), provider.getMailAddress());
     }
 
     @Override
@@ -146,8 +159,8 @@ public class ConsumerServiceImpl implements ConsumerService {
     @Override
     public ContractPartiesBE getContractParties(ContractPartiesRequestBE request) throws ParticipantNotFoundException {
 
-        PxExtendedLegalParticipantCredentialSubject consumer = fhCatalogClient.getParticipantFromCatalog(participantId);
-        PxExtendedLegalParticipantCredentialSubject provider = fhCatalogClient.getParticipantFromCatalog(request.getProviderId());
+        PxExtendedLegalParticipantCredentialSubjectSubset consumer = fhCatalogClient.getFhCatalogParticipant(participantId);
+        PxExtendedLegalParticipantCredentialSubjectSubset provider = fhCatalogClient.getFhCatalogParticipant(request.getProviderId());
         return new ContractPartiesBE(consumer, provider);
     }
 
@@ -254,5 +267,37 @@ public class ConsumerServiceImpl implements ConsumerService {
         } catch (InterruptedException ie) {
             Thread.currentThread().interrupt();
         }
+    }
+
+    /**
+     * Given the ODRL Policy stored in the EDC, build the correspondig list of enforcement policies.
+     *
+     * @param policies ODRL Policies
+     * @return enforcement policies
+     */
+    private List<EnforcementPolicy> getEnforcementPoliciesFromEdcPolicies(List<Policy> policies) {
+
+        List<OdrlConstraint> constraints = new ArrayList<>();
+        for (Policy policy : policies) {
+            for (OdrlPermission permission : policy.getPermission()) {
+                constraints.addAll(permission.getConstraint());
+            }
+        }
+
+        Set<EnforcementPolicy> enforcementPolicies = new HashSet<>();
+        for (OdrlConstraint constraint : constraints) {
+            if (constraint.getLeftOperand().equals("did")) {
+                enforcementPolicies.add(
+                    new ParticipantRestrictionPolicy(List.of(constraint.getRightOperand().split(","))));
+            } else {
+                log.warn("Encountered unknown constraint: {}", constraint);
+            }
+        }
+
+        if (enforcementPolicies.isEmpty()) {
+            enforcementPolicies.add(new EverythingAllowedPolicy());
+        }
+
+        return enforcementPolicies.stream().toList();
     }
 }

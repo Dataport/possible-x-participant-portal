@@ -25,6 +25,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.test.context.ContextConfiguration;
@@ -194,8 +195,59 @@ class ConsumerModuleTest {
 
         // let the FH catalog provide the test data offer
         String fhCatalogOfferContent = TestUtils.loadTextFile(TEST_FILES_PATH + "validFhOffer.json");
-        Mockito.when(technicalFhCatalogClientMock.getFhCatalogOffer(ConsumerServiceFake.VALID_FH_OFFER_ID))
+        Mockito.when(technicalFhCatalogClientMock.getFhCatalogOfferWithData(ConsumerServiceFake.VALID_FH_OFFER_ID))
             .thenReturn(fhCatalogOfferContent);
+
+        String expectedEdcProviderUrl = "EXPECTED_PROVIDER_URL_VALUE"; // from the "px:providerURL" attribute in the test data offer
+        String expectedAssetId = "EXPECTED_ASSET_ID_VALUE"; // from the "px:assetId" attribute in the test data offer
+
+        // let the EDC provide the test data catalog
+        DcatDataset mockDatasetWrongOne = new DcatDataset(); // an offer in the EDC Catalog which the user does not look for
+        mockDatasetWrongOne.setAssetId("assetIdWhichTheUserDoesNotLookFor");
+        mockDatasetWrongOne.setName("wrong");
+        mockDatasetWrongOne.setContenttype("wrong");
+        mockDatasetWrongOne.setDescription("wrong");
+        DcatDataset mockDatasetCorrectOne = new DcatDataset(); // the offer in the EDC Catalog which the user looks for
+        mockDatasetCorrectOne.setAssetId(expectedAssetId);
+        mockDatasetCorrectOne.setName("correctName");
+        mockDatasetCorrectOne.setContenttype("correctContentType");
+        mockDatasetCorrectOne.setDescription("correctDescription");
+        DcatCatalog edcCatalogAnswerMock = new DcatCatalog();
+        edcCatalogAnswerMock.setDataset(List.of(mockDatasetWrongOne, mockDatasetCorrectOne));
+        Mockito.when(edcClientMock.queryCatalog(Mockito.any())).thenReturn(edcCatalogAnswerMock);
+
+        // WHEN/THEN
+
+        this.mockMvc.perform(post("/consumer/offer/select").content(RestApiHelper.asJsonString(
+                    SelectOfferRequestTO.builder().fhCatalogOfferId(ConsumerServiceFake.VALID_FH_OFFER_ID).build()))
+                .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
+            .andExpect(jsonPath("$.catalogOffering['px:providerUrl']").value(expectedEdcProviderUrl))
+            .andExpect(jsonPath("$.edcOfferId").value(expectedAssetId))
+            .andExpect(jsonPath("$.dataOffering").value(true));
+
+        // THEN
+
+        // FH Catalog should have been queried with the offer ID given in the request
+        verify(technicalFhCatalogClientMock, Mockito.times(1)).getFhCatalogOfferWithData(ConsumerServiceFake.VALID_FH_OFFER_ID);
+    }
+
+    @Test
+    void selectingOfferWithoutDataSucceeds() throws Exception {
+
+        // GIVEN
+
+        reset(edcClientMock);
+        reset(technicalFhCatalogClientMock);
+
+        // FH catalog does not find offer with data
+        WebClientResponseException offerNotFoundEx = Mockito.mock(WebClientResponseException.class);
+        Mockito.when(offerNotFoundEx.getStatusCode()).thenReturn(HttpStatusCode.valueOf(404));
+        Mockito.when(technicalFhCatalogClientMock.getFhCatalogOfferWithData(Mockito.eq(ConsumerServiceFake.VALID_FH_OFFER_ID)))
+                .thenThrow(offerNotFoundEx);
+        // let the FH catalog provide the test offer without data
+        String fhCatalogOfferContent = TestUtils.loadTextFile(TEST_FILES_PATH + "validFhOfferWithoutData.json");
+        Mockito.when(technicalFhCatalogClientMock.getFhCatalogOffer(Mockito.eq(ConsumerServiceFake.VALID_FH_OFFER_ID)))
+                .thenReturn(fhCatalogOfferContent);
 
         String expectedEdcProviderUrl = "EXPECTED_PROVIDER_URL_VALUE"; // from the "px:providerURL" attribute in the test data offer
         String expectedAssetId = "EXPECTED_ASSET_ID_VALUE"; // from the "px:assetId" attribute in the test data offer
@@ -218,15 +270,16 @@ class ConsumerModuleTest {
         // WHEN/THEN
 
         this.mockMvc.perform(post("/consumer/offer/select").content(RestApiHelper.asJsonString(
-                    SelectOfferRequestTO.builder().fhCatalogOfferId(ConsumerServiceFake.VALID_FH_OFFER_ID).build()))
-                .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
-            .andExpect(jsonPath("$.catalogOffering['px:providerUrl']").value(expectedEdcProviderUrl))
-            .andExpect(jsonPath("$.edcOfferId").value(expectedAssetId))
-            .andExpect(jsonPath("$.dataOffering").value(true));
+                                SelectOfferRequestTO.builder().fhCatalogOfferId(ConsumerServiceFake.VALID_FH_OFFER_ID).build()))
+                        .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
+                .andExpect(jsonPath("$.catalogOffering['px:providerUrl']").value(expectedEdcProviderUrl))
+                .andExpect(jsonPath("$.edcOfferId").value(expectedAssetId))
+                .andExpect(jsonPath("$.dataOffering").value(false));
 
         // THEN
 
         // FH Catalog should have been queried with the offer ID given in the request
+        verify(technicalFhCatalogClientMock, Mockito.times(1)).getFhCatalogOfferWithData(ConsumerServiceFake.VALID_FH_OFFER_ID);
         verify(technicalFhCatalogClientMock, Mockito.times(1)).getFhCatalogOffer(ConsumerServiceFake.VALID_FH_OFFER_ID);
     }
 
@@ -240,7 +293,7 @@ class ConsumerModuleTest {
 
         // let the FH catalog provide the test data offer
         String fhCatalogOfferContent = TestUtils.loadTextFile(TEST_FILES_PATH + "validFhOffer.json");
-        Mockito.when(technicalFhCatalogClientMock.getFhCatalogOffer(Mockito.eq(ConsumerServiceFake.VALID_FH_OFFER_ID)))
+        Mockito.when(technicalFhCatalogClientMock.getFhCatalogOfferWithData(Mockito.eq(ConsumerServiceFake.VALID_FH_OFFER_ID)))
             .thenReturn(fhCatalogOfferContent);
 
         // let the EDC provide the test data catalog which does not contain the offer from the user
@@ -272,8 +325,10 @@ class ConsumerModuleTest {
         // let the FH catalog client throw a 404 error
         WebClientResponseException expectedException = Mockito.mock(WebClientResponseException.class);
         Mockito.when(expectedException.getStatusCode()).thenReturn(HttpStatus.NOT_FOUND);
-        Mockito.when(technicalFhCatalogClientMock.getFhCatalogOffer(ConsumerServiceFake.VALID_FH_OFFER_ID))
+        Mockito.when(technicalFhCatalogClientMock.getFhCatalogOfferWithData(ConsumerServiceFake.VALID_FH_OFFER_ID))
             .thenThrow(expectedException);
+        Mockito.when(technicalFhCatalogClientMock.getFhCatalogOffer(ConsumerServiceFake.VALID_FH_OFFER_ID))
+                .thenThrow(expectedException);
 
         // WHEN/THEN
 
@@ -293,7 +348,7 @@ class ConsumerModuleTest {
 
         // let the FH catalog provide the test data offer which does not contain an asset ID
         String fhCatalogOfferContent = TestUtils.loadTextFile(TEST_FILES_PATH + "invalidFhOfferNoAssetId.json");
-        Mockito.when(technicalFhCatalogClientMock.getFhCatalogOffer(ConsumerServiceFake.VALID_FH_OFFER_ID))
+        Mockito.when(technicalFhCatalogClientMock.getFhCatalogOfferWithData(ConsumerServiceFake.VALID_FH_OFFER_ID))
             .thenReturn(fhCatalogOfferContent);
 
         // WHEN/THEN
@@ -313,7 +368,7 @@ class ConsumerModuleTest {
 
         // let the FH catalog provide the test data offer which does not contain an asset ID
         String fhCatalogOfferContent = TestUtils.loadTextFile(TEST_FILES_PATH + "invalidFhOfferNoAccessUrl.json");
-        Mockito.when(technicalFhCatalogClientMock.getFhCatalogOffer(ConsumerServiceFake.VALID_FH_OFFER_ID))
+        Mockito.when(technicalFhCatalogClientMock.getFhCatalogOfferWithData(ConsumerServiceFake.VALID_FH_OFFER_ID))
             .thenReturn(fhCatalogOfferContent);
 
         // WHEN/THEN

@@ -1,0 +1,51 @@
+{
+  "@graph": [
+    {
+      "@id": "_:b0",
+      "vcard:postal-code": "12345",
+      "vcard:street-address": "Some Street 123",
+      "gx:countryCode": "DE",
+      "@type": "vcard:Address",
+      "vcard:locality": "Berlin",
+      "gx:countrySubdivisionCode": "DE-BE"
+    },
+    {
+      "@id": "https://piveau.io/set/resource/legal-participant/validDid",
+      "@type": [
+        "gx:LegalParticipant",
+        "http://w3id.org/gaia-x/possible-x#PossibleXLegalParticipantExtension"
+      ],
+      "gx:legalRegistrationNumber": {
+        "@id": "_:b1"
+      },
+      "schema:name": "Some Orga Ltd.",
+      "gx:headquarterAddress": {
+        "@id": "_:b2"
+      },
+      "gx:legalAddress": {
+        "@id": "_:b0"
+      },
+      "schema:description": "Some description",
+      "http://w3id.org/gaia-x/possible-x#mailAddress": "EXPECTED_MAIL_ADDRESS_VALUE"
+    },
+    {
+      "@id": "_:b1",
+      "gx:leiCode": "894500MQZ65CN32S9A66",
+      "@type": "gx:legalRegistrationNumber"
+    },
+    {
+      "@id": "_:b2",
+      "vcard:postal-code": "12345",
+      "@type": "vcard:Address",
+      "gx:countryCode": "DE",
+      "vcard:locality": "Berlin",
+      "gx:countrySubdivisionCode": "DE-BE",
+      "vcard:street-address": "Some Street 123"
+    }
+  ],
+  "@context": {
+    "gx": "https://w3id.org/gaia-x/development#",
+    "vcard": "http://www.w3.org/2006/vcard/ns#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  }
+}

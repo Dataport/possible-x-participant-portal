@@ -24,4 +24,9 @@ public class ConsumeOfferRequestTO {
      * Does this offer contain Data Resources.
      */
     private boolean dataOffering;
+
+    /**
+     * @see eu.possiblex.participantportal.application.entity.OfferDetailsTO#catalogOffering.providedBy
+     */
+    private String providedBy;
 }
