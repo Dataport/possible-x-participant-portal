@@ -140,7 +140,9 @@ class ConsumerRestApiTest {
                     ContractPartiesRequestTO.builder().providerId(ConsumerServiceFake.OTHER_PARTICIPANT_ID).build()))
             .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
             .andExpect(jsonPath("$.consumerDetails.participantName").value(ConsumerServiceFake.PARTICIPANT_NAME))
-            .andExpect(jsonPath("$.providerDetails.participantName").value(ConsumerServiceFake.OTHER_PARTICIPANT_NAME));
+            .andExpect(jsonPath("$.consumerDetails.participantEmail").value(ConsumerServiceFake.PARTICIPANT_EMAIL))
+            .andExpect(jsonPath("$.providerDetails.participantName").value(ConsumerServiceFake.OTHER_PARTICIPANT_NAME))
+            .andExpect(jsonPath("$.providerDetails.participantEmail").value(ConsumerServiceFake.OTHER_PARTICIPANT_EMAIL));
     }
 
     @Test

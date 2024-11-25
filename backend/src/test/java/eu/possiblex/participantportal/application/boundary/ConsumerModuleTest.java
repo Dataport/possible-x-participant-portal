@@ -123,16 +123,11 @@ class ConsumerModuleTest {
         transferProcess.setState(TransferProcessState.COMPLETED);
         Mockito.when(edcClientMock.checkTransferStatus(any())).thenReturn(transferProcess);
 
-        //define FhCatalogClient behaviour
-        String fhCatalogParticipant = TestUtils.loadTextFile(
-            "unit_tests/FHCatalogClientImplTest/validFhParticipant.json");
-        Mockito.when(technicalFhCatalogClientMock.getFhCatalogParticipant(Mockito.eq(providerId))).thenReturn(fhCatalogParticipant);
-
         // WHEN/THEN
 
         this.mockMvc.perform(post("/consumer/offer/accept").content(RestApiHelper.asJsonString(
                 ConsumeOfferRequestTO.builder().edcOfferId(edcOfferId).counterPartyAddress(counterPartyAddress)
-                    .dataOffering(true).providedBy(providerId).build())).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+                    .dataOffering(true).build())).contentType(MediaType.APPLICATION_JSON)).andDo(print())
             .andExpect(status().isOk());
 
         // THEN
@@ -183,16 +178,11 @@ class ConsumerModuleTest {
         transferProcess.setState(TransferProcessState.COMPLETED);
         Mockito.when(edcClientMock.checkTransferStatus(any())).thenReturn(transferProcess);
 
-        //define FhCatalogClient behaviour
-        String fhCatalogParticipant = TestUtils.loadTextFile(
-            "unit_tests/FHCatalogClientImplTest/validFhParticipant.json");
-        Mockito.when(technicalFhCatalogClientMock.getFhCatalogParticipant(Mockito.eq(providerId))).thenReturn(fhCatalogParticipant);
-
         // WHEN/THEN
 
         this.mockMvc.perform(post("/consumer/offer/accept").content(RestApiHelper.asJsonString(
                 ConsumeOfferRequestTO.builder().edcOfferId(edcOfferId).counterPartyAddress(counterPartyAddress)
-                    .dataOffering(false).providedBy(providerId).build())).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+                    .dataOffering(false).build())).contentType(MediaType.APPLICATION_JSON)).andDo(print())
             .andExpect(status().isOk());
 
         // THEN
@@ -414,7 +404,9 @@ class ConsumerModuleTest {
             .thenReturn(providerParticipantContent);
 
         String expectedConsumerName = "Test Organization"; // from the "name" attribute in the consumer participant
+        String expectedConsumerEmail = "test@org.de"; // from the "name" attribute in the consumer participant
         String expectedProviderName = "Other Organization"; // from the "name" attribute in the provider participant
+        String expectedProviderEmail = "other@org.de"; // from the "name" attribute in the provider participant
 
 
         // WHEN/THEN
@@ -423,7 +415,9 @@ class ConsumerModuleTest {
                 ContractPartiesRequestTO.builder().providerId(ConsumerServiceFake.OTHER_PARTICIPANT_ID).build()))
             .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
             .andExpect(jsonPath("$.consumerDetails.participantName").value(expectedConsumerName))
-            .andExpect(jsonPath("$.providerDetails.participantName").value(expectedProviderName));
+            .andExpect(jsonPath("$.consumerDetails.participantEmail").value(expectedConsumerEmail))
+            .andExpect(jsonPath("$.providerDetails.participantName").value(expectedProviderName))
+            .andExpect(jsonPath("$.providerDetails.participantEmail").value(expectedProviderEmail));
 
         // FH Catalog should have been queried with the consumer and provider participant IDs
         verify(technicalFhCatalogClientMock, Mockito.times(1)).getFhCatalogParticipant(ConsumerServiceFake.PARTICIPANT_ID);

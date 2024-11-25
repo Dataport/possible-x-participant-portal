@@ -75,13 +75,12 @@ class ConsumerServiceTest {
         // WHEN
 
         AcceptOfferResponseBE response = sut.acceptContractOffer(
-            ConsumeOfferRequestBE.builder().counterPartyAddress("http://example.com").edcOfferId(EdcClientFake.FAKE_ID).providedBy(FhCatalogClientFake.FAKE_PROVIDER_ID)
+            ConsumeOfferRequestBE.builder().counterPartyAddress("http://example.com").edcOfferId(EdcClientFake.FAKE_ID)
                 .dataOffering(true).build());
 
         // THEN
 
         verify(edcClient).negotiateOffer(any());
-        verify(fhCatalogClient).getFhCatalogParticipant(any());
 
         assertNotNull(response);
     }
@@ -100,13 +99,12 @@ class ConsumerServiceTest {
         // WHEN
 
         AcceptOfferResponseBE response = sut.acceptContractOffer(
-            ConsumeOfferRequestBE.builder().counterPartyAddress("http://example.com").edcOfferId(EdcClientFake.FAKE_ID).providedBy(FhCatalogClientFake.FAKE_PROVIDER_ID)
+            ConsumeOfferRequestBE.builder().counterPartyAddress("http://example.com").edcOfferId(EdcClientFake.FAKE_ID)
                 .dataOffering(false).build());
 
         // THEN
 
         verify(edcClient).negotiateOffer(any());
-        verify(fhCatalogClient).getFhCatalogParticipant(any());
 
         assertNotNull(response);
     }
@@ -170,10 +168,12 @@ class ConsumerServiceTest {
 
         PxExtendedLegalParticipantCredentialSubjectSubset consumer = new PxExtendedLegalParticipantCredentialSubjectSubset();
         consumer.setName("Test Organization");
+        consumer.setMailAddress("test@org.de");
         Mockito.when(fhCatalogClient.getFhCatalogParticipant("did:web:test.com")).thenReturn(consumer);
 
         PxExtendedLegalParticipantCredentialSubjectSubset provider = new PxExtendedLegalParticipantCredentialSubjectSubset();
         provider.setName("Other Organization");
+        provider.setMailAddress("other@org.de");
         Mockito.when(fhCatalogClient.getFhCatalogParticipant("did:web:other.com")).thenReturn(provider);
 
         ContractPartiesBE response = sut.getContractParties(
@@ -197,6 +197,7 @@ class ConsumerServiceTest {
 
         PxExtendedLegalParticipantCredentialSubjectSubset consumer = new PxExtendedLegalParticipantCredentialSubjectSubset();
         consumer.setName("Test Organization");
+        consumer.setMailAddress("test@org.de");
         Mockito.when(fhCatalogClient.getFhCatalogParticipant("did:web:test.com")).thenReturn(consumer);
 
         ParticipantNotFoundException expectedException = Mockito.mock(ParticipantNotFoundException.class);

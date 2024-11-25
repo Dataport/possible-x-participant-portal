@@ -35,9 +35,13 @@ public class ConsumerServiceFake implements ConsumerService {
 
     public static final String PARTICIPANT_NAME = "Test Organization";
 
+    public static final String PARTICIPANT_EMAIL = "test@org.de";
+
     public static final String OTHER_PARTICIPANT_ID = "did:web:other.eu";
 
     public static final String OTHER_PARTICIPANT_NAME = "Other Organization";
+
+    public static final String OTHER_PARTICIPANT_EMAIL = "other@org.de";
 
     public static final String UNKNOWN_PARTICIPANT_ID = "did:web:unknown.eu";
 
@@ -94,9 +98,9 @@ public class ConsumerServiceFake implements ConsumerService {
         }
 
         PxExtendedLegalParticipantCredentialSubjectSubset consumer = PxExtendedLegalParticipantCredentialSubjectSubset.builder()
-            .id(PARTICIPANT_ID).name(PARTICIPANT_NAME).build();
+            .id(PARTICIPANT_ID).name(PARTICIPANT_NAME).mailAddress(PARTICIPANT_EMAIL).build();
         PxExtendedLegalParticipantCredentialSubjectSubset provider = PxExtendedLegalParticipantCredentialSubjectSubset.builder()
-            .id(OTHER_PARTICIPANT_ID).name(OTHER_PARTICIPANT_NAME).build();
+            .id(OTHER_PARTICIPANT_ID).name(OTHER_PARTICIPANT_NAME).mailAddress(OTHER_PARTICIPANT_EMAIL).build();
 
         return new ContractPartiesBE(consumer, provider);
     }

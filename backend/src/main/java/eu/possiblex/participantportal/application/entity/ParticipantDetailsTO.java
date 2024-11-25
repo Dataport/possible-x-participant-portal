@@ -9,7 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ParticipantIdNameTO {
+public class ParticipantDetailsTO {
     private String participantId;
     private String participantName;
+    private String participantEmail;
 }

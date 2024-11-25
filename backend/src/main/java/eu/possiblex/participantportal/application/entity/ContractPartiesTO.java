@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ContractPartiesTO {
-    private ParticipantIdNameTO consumerDetails;
-    private ParticipantIdNameTO providerDetails;
+    private ParticipantDetailsTO consumerDetails;
+    private ParticipantDetailsTO providerDetails;
 }

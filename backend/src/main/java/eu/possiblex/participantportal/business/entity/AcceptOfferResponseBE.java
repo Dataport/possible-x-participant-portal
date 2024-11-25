@@ -21,5 +21,4 @@ public class AcceptOfferResponseBE {
      */
     private boolean dataOffering;
 
-    private String providerEmail;
 }

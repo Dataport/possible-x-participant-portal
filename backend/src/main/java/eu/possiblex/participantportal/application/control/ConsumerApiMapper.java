@@ -37,8 +37,10 @@ public interface ConsumerApiMapper {
 
     @Mapping(target = "consumerDetails.participantId", source = "consumer.id", qualifiedByName = "extractParticipantDidWeb")
     @Mapping(target = "consumerDetails.participantName", source = "consumer.name")
+    @Mapping(target = "consumerDetails.participantEmail", source = "consumer.mailAddress")
     @Mapping(target = "providerDetails.participantId", source = "provider.id", qualifiedByName = "extractParticipantDidWeb")
     @Mapping(target = "providerDetails.participantName", source = "provider.name")
+    @Mapping(target = "providerDetails.participantEmail", source = "provider.mailAddress")
     ContractPartiesTO contractPartiesBEToContractPartiesTO(ContractPartiesBE contractPartiesBE);
 
     @Named("extractParticipantDidWeb")
