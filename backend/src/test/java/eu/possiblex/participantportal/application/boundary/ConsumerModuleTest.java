@@ -112,7 +112,7 @@ class ConsumerModuleTest {
         Mockito.when(edcClientMock.negotiateOffer(any())).thenReturn(negotiation);
         ContractNegotiation contractNegotiation = new ContractNegotiation();
         contractNegotiation.setState(NegotiationState.FINALIZED);
-        Mockito.when(edcClientMock.checkOfferStatus(Mockito.eq(negotiation.getId()))).thenReturn(contractNegotiation);
+        Mockito.when(edcClientMock.checkOfferStatus(negotiation.getId())).thenReturn(contractNegotiation);
         IdResponse transfer = new IdResponse();
         transfer.setId("transferId");
         Mockito.when(edcClientMock.initiateTransfer(any())).thenReturn(transfer);
@@ -166,7 +166,7 @@ class ConsumerModuleTest {
         Mockito.when(edcClientMock.negotiateOffer(any())).thenReturn(negotiation);
         ContractNegotiation contractNegotiation = new ContractNegotiation();
         contractNegotiation.setState(NegotiationState.FINALIZED);
-        Mockito.when(edcClientMock.checkOfferStatus(Mockito.eq(negotiation.getId()))).thenReturn(contractNegotiation);
+        Mockito.when(edcClientMock.checkOfferStatus(negotiation.getId())).thenReturn(contractNegotiation);
         IdResponse transfer = new IdResponse();
         transfer.setId("transferId");
         Mockito.when(edcClientMock.initiateTransfer(any())).thenReturn(transfer);
@@ -242,11 +242,11 @@ class ConsumerModuleTest {
         // FH catalog does not find offer with data
         WebClientResponseException offerNotFoundEx = Mockito.mock(WebClientResponseException.class);
         Mockito.when(offerNotFoundEx.getStatusCode()).thenReturn(HttpStatusCode.valueOf(404));
-        Mockito.when(technicalFhCatalogClientMock.getFhCatalogOfferWithData(Mockito.eq(ConsumerServiceFake.VALID_FH_OFFER_ID)))
+        Mockito.when(technicalFhCatalogClientMock.getFhCatalogOfferWithData(ConsumerServiceFake.VALID_FH_OFFER_ID))
                 .thenThrow(offerNotFoundEx);
         // let the FH catalog provide the test offer without data
         String fhCatalogOfferContent = TestUtils.loadTextFile(TEST_FILES_PATH + "validFhOfferWithoutData.json");
-        Mockito.when(technicalFhCatalogClientMock.getFhCatalogOffer(Mockito.eq(ConsumerServiceFake.VALID_FH_OFFER_ID)))
+        Mockito.when(technicalFhCatalogClientMock.getFhCatalogOffer(ConsumerServiceFake.VALID_FH_OFFER_ID))
                 .thenReturn(fhCatalogOfferContent);
 
         String expectedEdcProviderUrl = "EXPECTED_PROVIDER_URL_VALUE"; // from the "px:providerURL" attribute in the test data offer
@@ -293,7 +293,7 @@ class ConsumerModuleTest {
 
         // let the FH catalog provide the test data offer
         String fhCatalogOfferContent = TestUtils.loadTextFile(TEST_FILES_PATH + "validFhOffer.json");
-        Mockito.when(technicalFhCatalogClientMock.getFhCatalogOfferWithData(Mockito.eq(ConsumerServiceFake.VALID_FH_OFFER_ID)))
+        Mockito.when(technicalFhCatalogClientMock.getFhCatalogOfferWithData(ConsumerServiceFake.VALID_FH_OFFER_ID))
             .thenReturn(fhCatalogOfferContent);
 
         // let the EDC provide the test data catalog which does not contain the offer from the user
@@ -388,11 +388,11 @@ class ConsumerModuleTest {
 
         // let the FH catalog provide test participants
         String consumerParticipantContent = TestUtils.loadTextFile(TEST_FILES_PATH + "consumerParticipant.json");
-        Mockito.when(technicalFhCatalogClientMock.getParticipantFromCatalog(ConsumerServiceFake.PARTICIPANT_ID))
+        Mockito.when(technicalFhCatalogClientMock.getFhCatalogParticipant(ConsumerServiceFake.PARTICIPANT_ID))
             .thenReturn(consumerParticipantContent);
 
         String providerParticipantContent = TestUtils.loadTextFile(TEST_FILES_PATH + "providerParticipant.json");
-        Mockito.when(technicalFhCatalogClientMock.getParticipantFromCatalog(ConsumerServiceFake.OTHER_PARTICIPANT_ID))
+        Mockito.when(technicalFhCatalogClientMock.getFhCatalogParticipant(ConsumerServiceFake.OTHER_PARTICIPANT_ID))
             .thenReturn(providerParticipantContent);
 
         String expectedConsumerName = "Test Organization"; // from the "name" attribute in the consumer participant
@@ -408,8 +408,8 @@ class ConsumerModuleTest {
             .andExpect(jsonPath("$.providerDetails.participantName").value(expectedProviderName));
 
         // FH Catalog should have been queried with the consumer and provider participant IDs
-        verify(technicalFhCatalogClientMock, Mockito.times(1)).getParticipantFromCatalog(ConsumerServiceFake.PARTICIPANT_ID);
-        verify(technicalFhCatalogClientMock, Mockito.times(1)).getParticipantFromCatalog(ConsumerServiceFake.OTHER_PARTICIPANT_ID);
+        verify(technicalFhCatalogClientMock, Mockito.times(1)).getFhCatalogParticipant(ConsumerServiceFake.PARTICIPANT_ID);
+        verify(technicalFhCatalogClientMock, Mockito.times(1)).getFhCatalogParticipant(ConsumerServiceFake.OTHER_PARTICIPANT_ID);
     }
 
     @Test
@@ -423,7 +423,7 @@ class ConsumerModuleTest {
         // let the FH catalog throw a 404 error
         WebClientResponseException expectedException = Mockito.mock(WebClientResponseException.class);
         Mockito.when(expectedException.getStatusCode()).thenReturn(HttpStatus.NOT_FOUND);
-        Mockito.when(technicalFhCatalogClientMock.getParticipantFromCatalog(any()))
+        Mockito.when(technicalFhCatalogClientMock.getFhCatalogParticipant(any()))
             .thenThrow(expectedException);
 
         // WHEN/THEN

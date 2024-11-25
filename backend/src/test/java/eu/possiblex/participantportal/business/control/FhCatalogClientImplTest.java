@@ -87,13 +87,13 @@ class FhCatalogClientImplTest {
             "unit_tests/FHCatalogClientImplTest/participant.json");
 
         TechnicalFhCatalogClient technicalFhCatalogClientMock = Mockito.mock(TechnicalFhCatalogClient.class);
-        Mockito.when(technicalFhCatalogClientMock.getParticipantFromCatalog(Mockito.anyString()))
+        Mockito.when(technicalFhCatalogClientMock.getFhCatalogParticipant(Mockito.anyString()))
             .thenReturn(participantContent);
         FhCatalogClientImpl sut = new FhCatalogClientImpl(technicalFhCatalogClientMock, new ObjectMapper());
 
         // WHEN a participant is retrieved
 
-        PxExtendedLegalParticipantCredentialSubjectSubset participant = sut.getParticipantFromCatalog("some ID");
+        PxExtendedLegalParticipantCredentialSubjectSubset participant = sut.getFhCatalogParticipant("some ID");
 
         // THEN the participant should contain the data parsed from the test participant
 

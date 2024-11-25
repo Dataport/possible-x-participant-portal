@@ -1,7 +1,7 @@
 package eu.possiblex.participantportal.business.control;
 
 import eu.possiblex.participantportal.business.entity.*;
-import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedLegalParticipantCredentialSubject;
+import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedLegalParticipantCredentialSubjectSubset;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.edc.catalog.DcatDataset;
 import eu.possiblex.participantportal.business.entity.edc.negotiation.NegotiationState;
@@ -93,9 +93,9 @@ public class ConsumerServiceFake implements ConsumerService {
             throw new ParticipantNotFoundException("not found");
         }
 
-        PxExtendedLegalParticipantCredentialSubject consumer = PxExtendedLegalParticipantCredentialSubject.builder()
+        PxExtendedLegalParticipantCredentialSubjectSubset consumer = PxExtendedLegalParticipantCredentialSubjectSubset.builder()
             .id(PARTICIPANT_ID).name(PARTICIPANT_NAME).build();
-        PxExtendedLegalParticipantCredentialSubject provider = PxExtendedLegalParticipantCredentialSubject.builder()
+        PxExtendedLegalParticipantCredentialSubjectSubset provider = PxExtendedLegalParticipantCredentialSubjectSubset.builder()
             .id(OTHER_PARTICIPANT_ID).name(OTHER_PARTICIPANT_NAME).build();
 
         return new ContractPartiesBE(consumer, provider);

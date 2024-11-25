@@ -3,7 +3,7 @@ package eu.possiblex.participantportal.business.control;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
 import eu.possiblex.participantportal.business.entity.*;
-import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedLegalParticipantCredentialSubject;
+import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedLegalParticipantCredentialSubjectSubset;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.exception.NegotiationFailedException;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
@@ -64,7 +64,8 @@ class ConsumerServiceTest {
     }
 
     @Test
-    void acceptContractOfferSucceeds() throws NegotiationFailedException, OfferNotFoundException {
+    void acceptContractOfferSucceeds()
+        throws NegotiationFailedException, OfferNotFoundException, ParticipantNotFoundException {
 
         // GIVEN
 
@@ -84,7 +85,8 @@ class ConsumerServiceTest {
     }
 
     @Test
-    void acceptContractOfferSucceedsNoTransfer() throws NegotiationFailedException, OfferNotFoundException {
+    void acceptContractOfferSucceedsNoTransfer()
+        throws NegotiationFailedException, OfferNotFoundException, ParticipantNotFoundException {
 
         // GIVEN
 
@@ -152,7 +154,7 @@ class ConsumerServiceTest {
     }
 
     @Test
-    void contractPartiesDetailsSucceeds() {
+    void contractPartiesDetailsSucceeds() throws ParticipantNotFoundException {
 
         // GIVEN
 
@@ -160,26 +162,26 @@ class ConsumerServiceTest {
 
         // WHEN
 
-        PxExtendedLegalParticipantCredentialSubject consumer = new PxExtendedLegalParticipantCredentialSubject();
+        PxExtendedLegalParticipantCredentialSubjectSubset consumer = new PxExtendedLegalParticipantCredentialSubjectSubset();
         consumer.setName("Test Organization");
-        Mockito.when(fhCatalogClient.getParticipantFromCatalog("did:web:test.com")).thenReturn(consumer);
+        Mockito.when(fhCatalogClient.getFhCatalogParticipant("did:web:test.com")).thenReturn(consumer);
 
-        PxExtendedLegalParticipantCredentialSubject provider = new PxExtendedLegalParticipantCredentialSubject();
+        PxExtendedLegalParticipantCredentialSubjectSubset provider = new PxExtendedLegalParticipantCredentialSubjectSubset();
         provider.setName("Other Organization");
-        Mockito.when(fhCatalogClient.getParticipantFromCatalog("did:web:other.com")).thenReturn(provider);
+        Mockito.when(fhCatalogClient.getFhCatalogParticipant("did:web:other.com")).thenReturn(provider);
 
         ContractPartiesBE response = sut.getContractParties(
             ContractPartiesRequestBE.builder().providerId("did:web:other.com").build());
 
         // THEN
 
-        verify(fhCatalogClient, times(2)).getParticipantFromCatalog(any());
+        verify(fhCatalogClient, times(2)).getFhCatalogParticipant(any());
 
         assertNotNull(response);
     }
 
     @Test
-    void contractPartiesDetailsNotFound() {
+    void contractPartiesDetailsNotFound() throws ParticipantNotFoundException {
 
         // GIVEN
 
@@ -187,12 +189,12 @@ class ConsumerServiceTest {
 
         // WHEN
 
-        PxExtendedLegalParticipantCredentialSubject consumer = new PxExtendedLegalParticipantCredentialSubject();
+        PxExtendedLegalParticipantCredentialSubjectSubset consumer = new PxExtendedLegalParticipantCredentialSubjectSubset();
         consumer.setName("Test Organization");
-        Mockito.when(fhCatalogClient.getParticipantFromCatalog("did:web:test.com")).thenReturn(consumer);
+        Mockito.when(fhCatalogClient.getFhCatalogParticipant("did:web:test.com")).thenReturn(consumer);
 
         ParticipantNotFoundException expectedException = Mockito.mock(ParticipantNotFoundException.class);
-        Mockito.when(fhCatalogClient.getParticipantFromCatalog("did:web:unknown.com")).thenThrow(expectedException);
+        Mockito.when(fhCatalogClient.getFhCatalogParticipant("did:web:unknown.com")).thenThrow(expectedException);
 
         ContractPartiesRequestBE request = ContractPartiesRequestBE.builder().providerId("did:web:unknown.com").build();
 
@@ -200,7 +202,7 @@ class ConsumerServiceTest {
 
         // THEN
 
-        verify(fhCatalogClient, times(2)).getParticipantFromCatalog(any());
+        verify(fhCatalogClient, times(2)).getFhCatalogParticipant(any());
     }
 
     // Test-specific configuration to provide mocks
