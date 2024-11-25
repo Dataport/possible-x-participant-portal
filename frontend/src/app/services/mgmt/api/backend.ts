@@ -13,12 +13,12 @@ export interface IProviderRestApi {
 }
 
 export interface IResourceShapeRestApi {
-    gxInstantiatedVirtualResourceShape: string;
-    gxDataResourceShape: string;
-    gxPhysicalResourceShape: string;
     gxSoftwareResourceShape: string;
     gxVirtualResourceShape: string;
     gxLegitimateInterestShape: string;
+    gxPhysicalResourceShape: string;
+    gxDataResourceShape: string;
+    gxInstantiatedVirtualResourceShape: string;
 }
 
 export interface IServiceOfferingShapeRestApi {
@@ -29,7 +29,6 @@ export interface IAcceptOfferResponseTO {
     negotiationState: INegotiationState;
     contractAgreementId: string;
     dataOffering: boolean;
-    providerEmail: string;
 }
 
 export interface IAcceptOfferResponseTOBuilder {
@@ -47,7 +46,6 @@ export interface IConsumeOfferRequestTO {
     counterPartyAddress: string;
     edcOfferId: string;
     dataOffering: boolean;
-    providedBy: string;
 }
 
 export interface IConsumeOfferRequestTOBuilder {
@@ -74,8 +72,8 @@ export interface IContractPartiesRequestTOBuilder {
 }
 
 export interface IContractPartiesTO {
-    consumerDetails: IParticipantIdNameTO;
-    providerDetails: IParticipantIdNameTO;
+    consumerDetails: IParticipantDetailsTO;
+    providerDetails: IParticipantDetailsTO;
 }
 
 export interface IContractPartiesTOBuilder {
@@ -122,12 +120,13 @@ export interface IOfferDetailsTO {
 export interface IOfferDetailsTOBuilder {
 }
 
-export interface IParticipantIdNameTO {
+export interface IParticipantDetailsTO {
     participantId: string;
     participantName: string;
+    participantEmail: string;
 }
 
-export interface IParticipantIdNameTOBuilder {
+export interface IParticipantDetailsTOBuilder {
 }
 
 export interface IParticipantIdTO {

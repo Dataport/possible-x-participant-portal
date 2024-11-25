@@ -27,6 +27,7 @@ export class AcceptComponent implements OnChanges {
   @Input() offer?: IOfferDetailsTO = undefined;
   @Output() dismiss: EventEmitter<any> = new EventEmitter();
   @Output() negotiatedContract: EventEmitter<IAcceptOfferResponseTO> = new EventEmitter();
+  @Output() retrievedContractParties: EventEmitter<IContractPartiesTO> = new EventEmitter();
   @ViewChild('acceptOfferStatusMessage') acceptOfferStatusMessage!: StatusMessageComponent;
 
   @ViewChild('viewContainerRef', { read: ViewContainerRef, static: true }) viewContainerRef: ViewContainerRef;
@@ -70,7 +71,6 @@ export class AcceptComponent implements OnChanges {
       counterPartyAddress: this.offer == undefined ? "" : this.offer.catalogOffering["px:providerUrl"],
       edcOfferId: this.offer == undefined ? "" : this.offer.edcOfferId,
       dataOffering: this.offer == undefined ? false : this.offer.dataOffering,
-      providedBy: this.offer == undefined ? "" : this.offer.catalogOffering["gx:providedBy"].id,
     }).then(response => {
       console.log(response);
       this.negotiatedContract.emit(response);
@@ -87,6 +87,7 @@ export class AcceptComponent implements OnChanges {
       providerId: this.offer.catalogOffering["gx:providedBy"].id,
     }).then(response => {
       console.log(response);
+      this.retrievedContractParties.emit(response);
       this.contractParties = response;
     }).catch((e: HttpErrorResponse) => {
       console.error(e.error.detail || e.error || e.message);
