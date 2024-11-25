@@ -13,7 +13,6 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-
 <div class="mb-3 flex-1" xmlns="http://www.w3.org/1999/html">
   <mat-stepper #stepper linear orientation="vertical">
     <mat-step>
@@ -116,7 +115,7 @@
     <mat-step *ngIf="isContainingPII()" [completed]="isLegitimateInterestValid()" errorMessage="Missing fields" [ngClass]="{'hidden': !isContainingPII()}">
       <ng-template matStepLabel>Define Legitimate Interest</ng-template>
       <div>
-        In the previous step, it was indicated that the data contains personal identifiable information. 
+        In the previous step, it was indicated that the data contains personal identifiable information.
         It is therefore necessary to specify the legitimate interest in this additional step.
         <br/><br/>
       </div>
@@ -132,7 +131,7 @@
       </div>
     </mat-step>
 
-    <mat-step [completed]="isServiceOfferingValid()" errorMessage="Missing fields">
+    <mat-step errorMessage="Missing fields">
       <ng-template matStepLabel>Define Service Offering</ng-template>
       <app-base-wizard-extension #gxServiceOfferingWizard></app-base-wizard-extension>
       <br/>
@@ -368,5 +367,10 @@
         </button>
       </div>
     </mat-step>
+
+    <!-- Icon overrides. -->
+    <ng-template matStepperIcon="edit">
+      <mat-icon>done</mat-icon>
+    </ng-template>
   </mat-stepper>
 </div>

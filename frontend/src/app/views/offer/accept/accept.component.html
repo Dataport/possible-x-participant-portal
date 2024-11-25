@@ -1,5 +1,5 @@
   <div class="flex justify-between w-full max-w-3xl mb-6 bg-white">
-    <div class="font-bold text-lg p-3">
+    <div class="font-bold text-lg text-brand-800 p-3">
       {{ offer?.catalogOffering["schema:name"] }}
     </div>
   </div>
@@ -7,107 +7,164 @@
   <div class="w-full max-w-3xl pb-6">
     <div #viewContainerRef></div>
     <ng-template #accordion>
-    <c-accordion [alwaysOpen]="true" [flush]="true">
-      <c-accordion-item #contractDetails="cAccordionItem" [visible]="false">
-        <ng-template cTemplateId="accordionHeaderTemplate">
-          <button (click)="contractDetails.toggleItem()" [collapsed]="!contractDetails.visible" cAccordionButton>
-            View contract details
-          </button>
-        </ng-template>
-        <ng-template cTemplateId="accordionBodyTemplate">
-          <div *ngIf="!offer.dataOffering" class="accordion-body">
-            <b>Offer ID:</b> {{ offer.catalogOffering.id }} <br/>
-            <b>Offer name:</b> {{ offer.catalogOffering["schema:name"] }} <br/>
-            <b>Provided by:</b> {{ offer.catalogOffering["gx:providedBy"].id }} <br/>
-            <b>Publisher:</b> Not implemented yet <br/>
-            <b>Description:</b> {{ offer.catalogOffering["schema:description"] }} <br/>
-            <b>Terms & Conditions:</b> <br/>
-            <ul *ngFor="let tnc of offer.catalogOffering['gx:termsAndConditions']">
+    <mat-accordion multi togglePosition="before">
+      <mat-expansion-panel #contractDetails>
+        <mat-expansion-panel-header>
+          <mat-panel-title class="font-bold">View contract details</mat-panel-title>
+        </mat-expansion-panel-header>
+        <div *ngIf="!offer.dataOffering" class="accordion-body">
+          <b>Offer ID:</b> {{ offer.catalogOffering.id }} <br/>
+          <b>Offer name:</b> {{ offer.catalogOffering["schema:name"] }} <br/>
+          <b>Provided by:</b> {{ offer.catalogOffering["gx:providedBy"].id }} <br/>
+          <b>Publisher:</b> Not implemented yet <br/>
+          <b>Description:</b> {{ offer.catalogOffering["schema:description"] }} <br/>
+          <b>Terms & Conditions:</b> <br/>
+          <ul *ngFor="let tnc of offer.catalogOffering['gx:termsAndConditions']">
+            <li>
+              <div *ngIf="isHttpOrHttps(tnc['gx:URL']); else textUrl">
+                <a href="{{ tnc['gx:URL'] }}">{{ tnc['gx:URL'] }}</a>
+              </div>
+              <ng-template #textUrl>
+                <span>{{ tnc['gx:URL'] }}</span>
+              </ng-template>
+              (Hash: {{ tnc["gx:hash"] }})
+            </li>
+          </ul>
+          <b>Policy:</b> <br/>
+          <ul *ngFor="let p of offer.catalogOffering['gx:policy']">
+            <li>{{ p }}</li>
+          </ul>
+          <b>Data Protection Regime:</b> <br/>
+          <ul *ngFor="let r of offer.catalogOffering['gx:dataProtectionRegime']">
+            <li>{{ r }}</li>
+          </ul>
+          <b>Data Account Export:</b> <br/>
+          <ul *ngFor="let e of offer.catalogOffering['gx:dataAccountExport']">
+            <li>Format Type: {{ e["gx:formatType"] }} <br/>Access Type: {{ e["gx:accessType"] }}
+              <br/>Request Type: {{ e["gx:requestType"] }}
+            </li>
+          </ul>
+        </div>
+        <div *ngIf="offer.dataOffering" class="accordion-body">
+          <b>Offer ID:</b> {{ offer.catalogOffering.id }} <br/>
+          <b>Data Ressource Name:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["schema:name"] }} <br/>
+          <b>Provided by:</b> {{ offer.catalogOffering["gx:providedBy"].id }} <br/>
+          <b>Publisher:</b> Not implemented yet <br/>
+          <b>Data Ressource Description:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["schema:description"] }}
+          <br/>
+          <b>Data Ressource Policy:</b><br/>
+          <ul *ngFor="let p of offer.catalogOffering['gx:aggregationOf'][0]['gx:policy']">
+            <li>{{ p }}</li>
+          </ul>
+          <b>License:</b> <br/>
+          <ul *ngFor="let l of offer.catalogOffering['gx:aggregationOf'][0]['gx:license']">
+            <li>{{ l }}</li>
+          </ul>
+          <b>Copyright owned by:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:copyrightOwnedBy"].id }}
+          <br/>
+          <b>Produced by:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:producedBy"].id }} <br/>
+          <b>Exposed through:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:exposedThrough"].id }} <br/>
+          <b>Contains personal identifiable Information
+            (PII):</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:containsPII"] }} <br/>
+          <div *ngIf="containsPII(offer.catalogOffering)">
+            <b>Data Protection Contact:</b>
+            {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:legitimateInterest"]["gx:dataProtectionContact"] }} <br/>
+            <b>Legal Basis:</b>
+            {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:legitimateInterest"]["gx:legalBasis"] }} <br/>
+          </div>
+          <br/><br/>
+          <b>Offer name:</b> {{ offer.catalogOffering["schema:name"] }} <br/>
+          <b>Description:</b> {{ offer.catalogOffering["schema:description"] }} <br/>
+          <b>Terms & Conditions:</b> <br/>
+          <ul *ngFor="let tnc of offer.catalogOffering['gx:termsAndConditions']">
+            <li>
+              <div *ngIf="isHttpOrHttps(tnc['gx:URL']); else textUrl">
+                <a href="{{ tnc['gx:URL'] }}">{{ tnc['gx:URL'] }}</a>
+              </div>
+              <ng-template #textUrl>
+                <span>{{ tnc['gx:URL'] }}</span>
+              </ng-template>
+              (Hash: {{ tnc["gx:hash"] }})
+            </li>
+          </ul>
+          <b>Policy:</b> <br/>
+          <ul *ngFor="let p of offer.catalogOffering['gx:policy']">
+            <li>{{ p }}</li>
+          </ul>
+          <b>Data Protection Regime:</b><br/>
+          <ul *ngFor="let r of offer.catalogOffering['gx:dataProtectionRegime']">
+            <li>{{ r }}</li>
+          </ul>
+          <b>Data Account Export:</b> <br/>
+          <ul *ngFor="let e of offer.catalogOffering['gx:dataAccountExport']">
+            <li>Format Type: {{ e["gx:formatType"] }} <br/>Access Type: {{ e["gx:accessType"] }}
+              <br/>Request Type: {{ e["gx:requestType"] }}
+            </li>
+          </ul>
+        </div>
+        <div>
+          <b>Enforcement Policies:</b>
+        </div>
+        <div *ngFor="let ep of offer.enforcementPolicies">
+          <div *ngIf="isEverythingAllowedPolicy(ep)">
+            <b>Everything is allowed</b>
+          </div>
+          <div *ngIf="isParticipantRestrictionPolicy(ep)">
+            Contracting is restricted to the following organizations:
+            <ul *ngFor="let org of asParticipantRestrictionPolicy(ep).allowedParticipants">
               <li>
-                <div *ngIf="isHttpOrHttps(tnc['gx:URL']); else textUrl">
-                  <a href="{{ tnc['gx:URL'] }}">{{ tnc['gx:URL'] }}</a>
-                </div>
-                <ng-template #textUrl>
-                  <span>{{ tnc['gx:URL'] }}</span>
-                </ng-template>
-                (Hash: {{ tnc["gx:hash"] }})
-              </li>
-            </ul>
-            <b>Policy:</b> <br/>
-            <ul *ngFor="let p of offer.catalogOffering['gx:policy']">
-              <li>{{ p }}</li>
-            </ul>
-            <b>Data Protection Regime:</b> <br/>
-            <ul *ngFor="let r of offer.catalogOffering['gx:dataProtectionRegime']">
-              <li>{{ r }}</li>
-            </ul>
-            <b>Data Account Export:</b> <br/>
-            <ul *ngFor="let e of offer.catalogOffering['gx:dataAccountExport']">
-              <li>Format Type: {{ e["gx:formatType"] }} <br/>Access Type: {{ e["gx:accessType"] }}
-                <br/>Request Type: {{ e["gx:requestType"] }}
+                {{ org }}
               </li>
             </ul>
           </div>
-          <div *ngIf="offer.dataOffering" class="accordion-body">
-            <b>Offer ID:</b> {{ offer.catalogOffering.id }} <br/>
-            <b>Data Ressource Name:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["schema:name"] }} <br/>
-            <b>Provided by:</b> {{ offer.catalogOffering["gx:providedBy"].id }} <br/>
-            <b>Publisher:</b> Not implemented yet <br/>
-            <b>Data Ressource Description:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["schema:description"] }}
-            <br/>
-            <b>Data Ressource Policy:</b><br/>
-            <ul *ngFor="let p of offer.catalogOffering['gx:aggregationOf'][0]['gx:policy']">
-              <li>{{ p }}</li>
+        </div>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel #enforcementPolicies>
+        <mat-expansion-panel-header>
+          <mat-panel-title class="font-bold">Accept Enforcement Policies</mat-panel-title>
+          <mat-checkbox [(ngModel)]="isPoliciesAccepted" required></mat-checkbox>
+        </mat-expansion-panel-header>
+        <div>
+          Please accept the policies for the provided offer.
+        </div><br/>
+        <div *ngFor="let ep of offer.enforcementPolicies">
+          <div *ngIf="isEverythingAllowedPolicy(ep)">
+            <b>Everything is allowed</b>
+          </div>
+          <div *ngIf="isParticipantRestrictionPolicy(ep)">
+            <b>Restricted to the following organizations:</b>
+            <ul *ngFor="let org of asParticipantRestrictionPolicy(ep).allowedParticipants">
+              <li>
+                {{ org }}
+              </li>
             </ul>
-            <b>License:</b> <br/>
-            <ul *ngFor="let l of offer.catalogOffering['gx:aggregationOf'][0]['gx:license']">
-              <li>{{ l }}</li>
-            </ul>
-            <b>Copyright owned by:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:copyrightOwnedBy"].id }}
-            <br/>
-            <b>Produced by:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:producedBy"].id }} <br/>
-            <b>Exposed through:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:exposedThrough"].id }} <br/>
-            <b>Contains personal identifiable Information
-              (PII):</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:containsPII"] }} <br/>
-            <div *ngIf="containsPII(offer.catalogOffering)">
-              <b>Data Protection Contact:</b>
-              {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:legitimateInterest"]["gx:dataProtectionContact"] }} <br/>
-              <b>Legal Basis:</b>
-              {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:legitimateInterest"]["gx:legalBasis"] }} <br/>
+          </div>
+        </div>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel #termsAndConditions>
+        <mat-expansion-panel-header>
+          <mat-panel-title class="font-bold">Accept Terms & Conditions</mat-panel-title>
+          <mat-checkbox [(ngModel)]="isTnCAccepted" required></mat-checkbox>
+        </mat-expansion-panel-header>
+        <div>
+          Please accept the Terms and Conditions for the provided offer.
+        </div><br/>
+        <b>Terms & Conditions:</b>
+        <ul *ngFor="let tnc of offer.catalogOffering['gx:termsAndConditions']">
+          <li>
+            <div *ngIf="isHttpOrHttps(tnc['gx:URL']); else textUrl">
+              <a href="{{ tnc['gx:URL'] }}">{{ tnc['gx:URL'] }}</a>
             </div>
-            <br/><br/>
-            <b>Offer name:</b> {{ offer.catalogOffering["schema:name"] }} <br/>
-            <b>Description:</b> {{ offer.catalogOffering["schema:description"] }} <br/>
-            <b>Terms & Conditions:</b> <br/>
-            <ul *ngFor="let tnc of offer.catalogOffering['gx:termsAndConditions']">
-              <li>
-                <div *ngIf="isHttpOrHttps(tnc['gx:URL']); else textUrl">
-                  <a href="{{ tnc['gx:URL'] }}">{{ tnc['gx:URL'] }}</a>
-                </div>
-                <ng-template #textUrl>
-                  <span>{{ tnc['gx:URL'] }}</span>
-                </ng-template>
-                (Hash: {{ tnc["gx:hash"] }})
-              </li>
-            </ul>
-            <b>Policy:</b> <br/>
-            <ul *ngFor="let p of offer.catalogOffering['gx:policy']">
-              <li>{{ p }}</li>
-            </ul>
-            <b>Data Protection Regime:</b><br/>
-            <ul *ngFor="let r of offer.catalogOffering['gx:dataProtectionRegime']">
-              <li>{{ r }}</li>
-            </ul>
-            <b>Data Account Export:</b> <br/>
-            <ul *ngFor="let e of offer.catalogOffering['gx:dataAccountExport']">
-              <li>Format Type: {{ e["gx:formatType"] }} <br/>Access Type: {{ e["gx:accessType"] }}
-                <br/>Request Type: {{ e["gx:requestType"] }}
-              </li>
-            </ul>
-          </div>
-        </ng-template>
-      </c-accordion-item>
-    </c-accordion>
+            <ng-template #textUrl>
+              <span>{{ tnc['gx:URL'] }}</span>
+            </ng-template>
+            (Hash: {{ tnc["gx:hash"] }})
+          </li>
+        </ul>
+      </mat-expansion-panel>
+    </mat-accordion>
     </ng-template>
   </div>
 
@@ -116,7 +173,7 @@
       <button (click)="cancel()" cButton color="secondary" shape="rounded-0">
         Cancel
       </button>
-      <button (click)="acceptContractOffer()" [disabled]="isAcceptButtonDisabled" cButton color="primary" shape="rounded-0" type="submit">
+      <button (click)="acceptContractOffer()" [disabled]="isButtonDisabled()" cButton color="primary" shape="rounded-0" type="submit">
         Accept
       </button>
     </div>

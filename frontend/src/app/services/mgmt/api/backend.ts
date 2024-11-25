@@ -101,6 +101,7 @@ export interface IOfferDetailsTO {
     edcOfferId: string;
     catalogOffering: IPxExtendedServiceOfferingCredentialSubject;
     dataOffering: boolean;
+    enforcementPolicies: IEnforcementPolicyUnion[];
 }
 
 export interface IOfferDetailsTOBuilder {

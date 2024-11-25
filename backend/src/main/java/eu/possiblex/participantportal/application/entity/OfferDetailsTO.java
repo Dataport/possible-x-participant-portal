@@ -1,10 +1,13 @@
 package eu.possiblex.participantportal.application.entity;
 
+import eu.possiblex.participantportal.application.entity.policies.EnforcementPolicy;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @Builder
@@ -26,4 +29,9 @@ public class OfferDetailsTO {
      * Does this offer contain Data Resources.
      */
     private boolean dataOffering;
+
+    /**
+     * The enforcement policies for this offer.
+     */
+    private List<EnforcementPolicy> enforcementPolicies;
 }

@@ -9,6 +9,8 @@ import eu.possiblex.participantportal.utils.TestUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 class FhCatalogClientImplTest {
 
@@ -21,7 +23,7 @@ class FhCatalogClientImplTest {
             "unit_tests/FHCatalogClientImplTest/validFhParticipant.json");
 
         TechnicalFhCatalogClient technicalFhCatalogClientMock = Mockito.mock(TechnicalFhCatalogClient.class);
-        Mockito.when(technicalFhCatalogClientMock.getFhCatalogOffer(Mockito.anyString()))
+        Mockito.when(technicalFhCatalogClientMock.getFhCatalogOfferWithData(Mockito.anyString()))
             .thenReturn(fhCatalogOfferContent);
         Mockito.when(technicalFhCatalogClientMock.getFhCatalogParticipant(Mockito.anyString()))
             .thenReturn(fhCatalogParticipant);
@@ -52,6 +54,10 @@ class FhCatalogClientImplTest {
             "unit_tests/FHCatalogClientImplTest/validFhParticipant.json");
 
         TechnicalFhCatalogClient technicalFhCatalogClientMock = Mockito.mock(TechnicalFhCatalogClient.class);
+        WebClientResponseException expectedException = Mockito.mock(WebClientResponseException.class);
+        Mockito.when(expectedException.getStatusCode()).thenReturn(HttpStatus.NOT_FOUND);
+        Mockito.when(technicalFhCatalogClientMock.getFhCatalogOfferWithData(Mockito.anyString()))
+                .thenThrow(expectedException);
         Mockito.when(technicalFhCatalogClientMock.getFhCatalogOffer(Mockito.anyString()))
             .thenReturn(fhCatalogOfferContent);
         Mockito.when(technicalFhCatalogClientMock.getFhCatalogParticipant(Mockito.anyString()))

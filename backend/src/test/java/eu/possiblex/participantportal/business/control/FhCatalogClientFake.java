@@ -7,7 +7,7 @@ import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
 public class FhCatalogClientFake implements FhCatalogClient {
     @Override
     public FhCatalogIdResponse addServiceOfferingToFhCatalog(
-        PxExtendedServiceOfferingCredentialSubject serviceOfferingCredentialSubject) {
+        PxExtendedServiceOfferingCredentialSubject serviceOfferingCredentialSubject, boolean doesContainData) {
 
         return new FhCatalogIdResponse("id");
     }
@@ -22,5 +22,9 @@ public class FhCatalogClientFake implements FhCatalogClient {
     public PxExtendedLegalParticipantCredentialSubjectSubset getFhCatalogParticipant(String participant_id) {
 
         return null;
+    }
+
+    public void deleteServiceOfferingFromFhCatalog(String offeringId, boolean doesContainData) {
+
     }
 }

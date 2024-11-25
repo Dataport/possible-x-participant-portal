@@ -27,6 +27,11 @@
         <ng-template matStepLabel>Verify Negotiation</ng-template>
         <app-transfer #transfer [offer]="selectedOffer" [contract]="negotiatedContract" (dismiss)="resetSelection()"></app-transfer>
       </mat-step>
+
+      <!-- Icon overrides. -->
+      <ng-template matStepperIcon="edit">
+        <mat-icon>done</mat-icon>
+      </ng-template>
     </mat-stepper>
   </div>
 </div>

@@ -5,3 +5,8 @@
 .content {
   @apply flex-1 mx-auto h-auto lg:max-w-screen-xl;
 }
+
+.mat-expansion-panel {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}

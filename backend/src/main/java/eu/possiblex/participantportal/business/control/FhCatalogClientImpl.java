@@ -52,14 +52,19 @@ public class FhCatalogClientImpl implements FhCatalogClient {
 
     @Override
     public FhCatalogIdResponse addServiceOfferingToFhCatalog(
-        PxExtendedServiceOfferingCredentialSubject serviceOfferingCredentialSubject) {
+        PxExtendedServiceOfferingCredentialSubject serviceOfferingCredentialSubject, boolean doesContainData) {
 
         log.info("sending to catalog");
 
         String offerId = serviceOfferingCredentialSubject.getId(); // just use the ID also for the offer in the catalog
         FhCatalogIdResponse catalogOfferId = null;
         try {
-            catalogOfferId = technicalFhCatalogClient.addServiceOfferingToFhCatalog(serviceOfferingCredentialSubject, offerId);
+            if( doesContainData ) {
+                catalogOfferId = technicalFhCatalogClient.addServiceOfferingWithDataToFhCatalog(serviceOfferingCredentialSubject, offerId);
+            }
+            else {
+                catalogOfferId = technicalFhCatalogClient.addServiceOfferingToFhCatalog(serviceOfferingCredentialSubject, offerId);
+            }
         } catch (Exception e){
             log.error("error when trying to send offer to catalog!", e);
             throw e;
@@ -120,6 +125,25 @@ public class FhCatalogClientImpl implements FhCatalogClient {
             }
         } catch (RuntimeException e) {
             throw new ParticipantNotFoundException("Participant not found: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void deleteServiceOfferingFromFhCatalog(String offeringId, boolean doesContainData) {
+        log.info("deleting offer from fh catalog with ID {}, contains data: {}", offeringId, doesContainData);
+        try {
+            if( doesContainData ) {
+                technicalFhCatalogClient.deleteServiceOfferingWithDataFromFhCatalog(offeringId);
+            }
+            else {
+                technicalFhCatalogClient.deleteServiceOfferingFromFhCatalog(offeringId);
+            }
+        } catch (WebClientResponseException e) {
+            if (e.getStatusCode().value() == 404) {
+                log.warn("no FH Catalog offer found with ID {} - nothing to delete", offeringId);
+            } else {
+                log.error("error when trying to delete offer from catalog!", e);
+            }
         }
     }
 }
