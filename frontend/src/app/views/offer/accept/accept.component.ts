@@ -14,7 +14,6 @@ import {StatusMessageComponent} from '../../common-views/status-message/status-m
 import {
   IAcceptOfferResponseTO,
   IEnforcementPolicy,
-  IEverythingAllowedPolicy, IEverythingAllowedPolicyBuilder,
   IOfferDetailsTO, IParticipantRestrictionPolicy,
   IPxExtendedServiceOfferingCredentialSubject
 } from '../../../services/mgmt/api/backend';
@@ -43,9 +42,6 @@ export class AcceptComponent implements OnChanges {
   protected isParticipantRestrictionPolicy: (policy: IEnforcementPolicy) => boolean
     = policy => (policy['@type'] === 'ParticipantRestrictionPolicy');
 
-  protected asEverythingAllowedPolicy: (policy: IEnforcementPolicy) => IEverythingAllowedPolicy
-    = policy => (policy as IEverythingAllowedPolicy);
-
   protected asParticipantRestrictionPolicy: (policy: IEnforcementPolicy) => IParticipantRestrictionPolicy
     = policy => (policy as IParticipantRestrictionPolicy);
 
@@ -64,6 +60,7 @@ export class AcceptComponent implements OnChanges {
   }
 
   async acceptContractOffer() {
+    this.isConsumed = true;
     this.acceptOfferStatusMessage.showInfoMessage();
     console.log("'Accept Contract Offer' button pressed");
     this.apiService.acceptContractOffer({
@@ -72,11 +69,11 @@ export class AcceptComponent implements OnChanges {
       dataOffering: this.offer == undefined ? false : this.offer.dataOffering
     }).then(response => {
       console.log(response);
-      this.isConsumed = true;
       this.negotiatedContract.emit(response);
       this.acceptOfferStatusMessage.showSuccessMessage("Contract Agreement ID: " + response.contractAgreementId);
     }).catch((e: HttpErrorResponse) => {
       this.acceptOfferStatusMessage.showErrorMessage(e.error.detail || e.error || e.message);
+      this.isConsumed = false;
     });
   };
 
