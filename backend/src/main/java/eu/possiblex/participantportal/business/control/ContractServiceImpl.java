@@ -1,10 +1,16 @@
 package eu.possiblex.participantportal.business.control;
 
 import eu.possiblex.participantportal.business.entity.ContractAgreementBE;
+import eu.possiblex.participantportal.business.entity.TransferOfferRequestBE;
+import eu.possiblex.participantportal.business.entity.TransferOfferResponseBE;
 import eu.possiblex.participantportal.business.entity.edc.asset.possible.PossibleAsset;
 import eu.possiblex.participantportal.business.entity.edc.contractagreement.ContractAgreement;
+import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
+import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
+import eu.possiblex.participantportal.utilities.PossibleXException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -17,10 +23,12 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ContractServiceImpl implements ContractService {
     private final EdcClient edcClient;
+    private final ConsumerService consumerService;
 
-    public ContractServiceImpl(@Autowired EdcClient edcClient) {
+    public ContractServiceImpl(@Autowired EdcClient edcClient, @Autowired ConsumerService consumerService) {
 
         this.edcClient = edcClient;
+        this.consumerService = consumerService;
     }
 
     /**
@@ -52,5 +60,25 @@ public class ContractServiceImpl implements ContractService {
         List<PossibleAsset> assets = edcClient.queryPossibleAssets();
 
         return assets.stream().collect(Collectors.toMap(PossibleAsset::getId, Function.identity()));
+    }
+
+    @Override
+    public TransferOfferResponseBE transferDataOfferAgain(TransferOfferRequestBE be) {
+
+        TransferOfferResponseBE transferOfferResponseBE;
+        try {
+            transferOfferResponseBE = consumerService.transferDataOffer(be);
+        } catch (OfferNotFoundException e) {
+            throw new PossibleXException(
+                "Failed to select offer with offerId" + be.getEdcOfferId() + ". OfferNotFoundException: " + e,
+                HttpStatus.NOT_FOUND);
+        } catch (TransferFailedException e) {
+            throw new PossibleXException(
+                "Failed to select offer with offerId" + be.getEdcOfferId() + ". TransferFailedException: " + e);
+        } catch (Exception e) {
+            throw new PossibleXException(
+                "Failed to select offer with offerId" + be.getEdcOfferId() + ". Other Exception: " + e);
+        }
+        return transferOfferResponseBE;
     }
 }

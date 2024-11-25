@@ -13,12 +13,12 @@ export interface IProviderRestApi {
 }
 
 export interface IResourceShapeRestApi {
-    gxInstantiatedVirtualResourceShape: string;
-    gxDataResourceShape: string;
     gxPhysicalResourceShape: string;
     gxSoftwareResourceShape: string;
     gxVirtualResourceShape: string;
     gxLegitimateInterestShape: string;
+    gxInstantiatedVirtualResourceShape: string;
+    gxDataResourceShape: string;
 }
 
 export interface IServiceOfferingShapeRestApi {
@@ -406,6 +406,14 @@ export class RestApplicationClient {
      */
     getContractAgreements(): RestResponse<IContractAgreementTO[]> {
         return this.httpClient.request({ method: "GET", url: uriEncoding`contract/agreement` });
+    }
+
+    /**
+     * HTTP GET /contract/transfer
+     * Java method: eu.possiblex.participantportal.application.boundary.ContractRestApiImpl.transferDataOfferAgain
+     */
+    transferDataOfferAgain(request: ITransferOfferRequestTO): RestResponse<ITransferOfferResponseTO> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`contract/transfer`, data: request });
     }
 
     /**
