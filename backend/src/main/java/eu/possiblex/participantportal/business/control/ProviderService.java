@@ -14,8 +14,7 @@ public interface ProviderService {
      * @param request request for creating a service offering
      * @return create offer response object
      */
-    CreateOfferResponseTO createOffering(CreateServiceOfferingRequestBE request)
-        throws FhOfferCreationException, EdcOfferCreationException;
+    CreateOfferResponseTO createOffering(CreateServiceOfferingRequestBE request);
 
     /**
      * Return the participant's id.

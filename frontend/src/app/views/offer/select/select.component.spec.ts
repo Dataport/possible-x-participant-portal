@@ -29,8 +29,6 @@ describe('SelectOfferComponent', () => {
       "schema:description": "description",
       "px:assetId": "assetId",
       "px:providerUrl": "providerUrl",
-      "schema:name": "schema",
-      "schema:description": "schemaDescription",
       "@context": {},
       "@type": []
     } as IPxExtendedServiceOfferingCredentialSubject,

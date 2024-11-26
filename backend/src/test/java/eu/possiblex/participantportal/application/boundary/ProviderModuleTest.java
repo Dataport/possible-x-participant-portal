@@ -5,18 +5,18 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
-import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import eu.possiblex.participantportal.application.control.ProviderApiMapper;
+import eu.possiblex.participantportal.application.entity.CreateDataOfferingRequestTO;
 import eu.possiblex.participantportal.application.entity.CreateServiceOfferingRequestTO;
-import eu.possiblex.participantportal.application.entity.credentials.gx.serviceofferings.GxServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.control.*;
 import eu.possiblex.participantportal.business.entity.common.CommonConstants;
+import eu.possiblex.participantportal.utilities.LogUtils;
+import eu.possiblex.participantportal.utilities.PossibleXException;
 import eu.possiblex.participantportal.utils.TestUtils;
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mapstruct.factory.Mappers;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -28,10 +28,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.support.WebClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 
-import static org.mockito.Mockito.reset;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -69,14 +67,14 @@ class ProviderModuleTest extends ProviderTestParent {
     private static String EDC_SERVICE_PATH = "edc";
 
     @Test
-    void shouldReturnMessageOnCreateServiceOffering() throws Exception {
+    void shouldReturnMessageOnCreateServiceOfferingWithoutData() throws Exception {
 
         // GIVEN
 
         CreateServiceOfferingRequestTO request = objectMapper.readValue(getCreateServiceOfferingTOJsonString(),
                 CreateServiceOfferingRequestTO.class);
 
-        mockFhCatalogCreateServiceOffering();
+        mockFhCatalogCreateServiceOffering("someId");
         mockEdcCreateAsset();
         mockEdcCreatePolicy();
         mockEdcCreateContractDefinition();
@@ -87,15 +85,121 @@ class ProviderModuleTest extends ProviderTestParent {
                         .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk());
     }
 
-    private void mockFhCatalogCreateServiceOffering() {
+    @Test
+    void shouldReturnMessageOnCreateServiceOfferingWithData() throws Exception {
+
+        // GIVEN
+
+        CreateDataOfferingRequestTO request = objectMapper.readValue(getCreateServiceOfferingWithDataTOJsonString(),
+                CreateDataOfferingRequestTO.class);
+
+        mockFhCatalogCreateServiceOfferingWithData("someID");
+        mockEdcCreateAsset();
+        mockEdcCreatePolicy();
+        mockEdcCreateContractDefinition();
+
+        // WHEN/THEN
+
+        this.mockMvc.perform(post("/provider/offer/data").content(RestApiHelper.asJsonString(request))
+                .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk());
+    }
+
+    @Test
+    void shouldDeleteOfferInFhCatalogOnEdcErrorWhenCreatingServiceOfferingWithoutData() throws Exception {
+
+        // GIVEN
+
+        CreateServiceOfferingRequestTO request = objectMapper.readValue(getCreateServiceOfferingTOJsonString(),
+                CreateServiceOfferingRequestTO.class);
+
+        String id = "someID";
+        mockFhCatalogCreateServiceOffering(id);
+        mockEdcCreateAssetFailing();
+        mockFhCatalogDeleteServiceOfferWithoutData();
+
+        // WHEN/THEN
+
+        Exception e = null;
+        try {
+            this.mockMvc.perform(post("/provider/offer/service").content(RestApiHelper.asJsonString(request))
+                    .contentType(MediaType.APPLICATION_JSON));
+        } catch (Exception ex) {
+            e = ex;
+        }
+
+        Assertions.assertNotNull(e);
+
+        String deleteUrl = "/" + FH_CATALOG_SERVICE_PATH + "/resources/service-offering/" + id;
+        wmExt.verify(WireMock.exactly(1), WireMock.deleteRequestedFor(WireMock.urlEqualTo(deleteUrl)));
+    }
+
+    @Test
+    void shouldDeleteOfferInFhCatalogOnEdcErrorWhenCreatingServiceOfferingWithData() throws Exception {
+
+        // GIVEN
+
+        CreateDataOfferingRequestTO request = objectMapper.readValue(getCreateServiceOfferingWithDataTOJsonString(),
+                CreateDataOfferingRequestTO.class);
+
+        String id = "someID";
+        mockFhCatalogCreateServiceOfferingWithData(id);
+        mockEdcCreateAssetFailing();
+        mockFhCatalogDeleteServiceOfferWithData();
+
+        // WHEN/THEN
+
+        Exception e = null;
+        try {
+            this.mockMvc.perform(post("/provider/offer/data").content(RestApiHelper.asJsonString(request))
+                    .contentType(MediaType.APPLICATION_JSON));
+        } catch (Exception ex) {
+            e = ex;
+        }
+
+        Assertions.assertNotNull(e);
+
+        String deleteUrl = "/" + FH_CATALOG_SERVICE_PATH + "/resources/data-product/" + id;
+        wmExt.verify(WireMock.exactly(1), WireMock.deleteRequestedFor(WireMock.urlEqualTo(deleteUrl)));
+    }
+
+    private void mockFhCatalogDeleteServiceOfferWithData() {
         WireMockRuntimeInfo wm1RuntimeInfo = wmExt.getRuntimeInfo();
-        wmExt.stubFor(WireMock.put(WireMock.urlPathMatching("/" + FH_CATALOG_SERVICE_PATH + CommonConstants.REST_PATH_FH_CATALOG_SERVICE_OFFER + ".*"))
+        wmExt.stubFor(WireMock.delete(WireMock.urlPathMatching("/" + FH_CATALOG_SERVICE_PATH + "/resources/data-product" + ".*"))
+                .willReturn(WireMock.aResponse()
+                        .withStatus(200)));
+    }
+
+    private void mockFhCatalogDeleteServiceOfferWithoutData() {
+        WireMockRuntimeInfo wm1RuntimeInfo = wmExt.getRuntimeInfo();
+        wmExt.stubFor(WireMock.delete(WireMock.urlPathMatching("/" + FH_CATALOG_SERVICE_PATH + "/resources/service-offering" + ".*"))
+                .willReturn(WireMock.aResponse()
+                        .withStatus(200)));
+    }
+
+    private void mockFhCatalogCreateServiceOfferingWithData(String id) {
+        WireMockRuntimeInfo wm1RuntimeInfo = wmExt.getRuntimeInfo();
+        wmExt.stubFor(WireMock.put(WireMock.urlPathMatching("/" + FH_CATALOG_SERVICE_PATH + "/trust/data-product" + ".*"))
                 .willReturn(WireMock.aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json")
-                        .withBody("""
-                                { "id":"someId" }
-                                """)));
+                        .withBody("{ \"id\":\"" + id + "\" }")));
+    }
+
+    private void mockFhCatalogCreateServiceOffering(String id) {
+        WireMockRuntimeInfo wm1RuntimeInfo = wmExt.getRuntimeInfo();
+        wmExt.stubFor(WireMock.put(WireMock.urlPathMatching("/" + FH_CATALOG_SERVICE_PATH + "/trust/service-offering" + ".*"))
+                .willReturn(WireMock.aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody("{ \"id\":\"" + id + "\" }")));
+    }
+
+    private void mockEdcCreateAssetFailing() {
+        String edcResponseBody = TestUtils.loadTextFile(TEST_FILES_PATH + "edc_create_asset_response.json");
+        WireMockRuntimeInfo wm1RuntimeInfo = wmExt.getRuntimeInfo();
+        wmExt.stubFor(WireMock.post("/" + EDC_SERVICE_PATH + "/v3/assets")
+                .willReturn(WireMock.aResponse()
+                        .withStatus(500)));
     }
 
     private void mockEdcCreateAsset() {
@@ -134,7 +238,7 @@ class ProviderModuleTest extends ProviderTestParent {
         @Bean
         public TechnicalFhCatalogClient technicalFhCatalogClient() {
             String baseUrl = "http://localhost:" + String.valueOf(WIREMOCK_PORT) + "/" + FH_CATALOG_SERVICE_PATH;
-            WebClient webClient = WebClient.builder().baseUrl(baseUrl).defaultHeaders(httpHeaders -> {
+            WebClient webClient = WebClient.builder().clientConnector(LogUtils.createHttpClient()).baseUrl(baseUrl).defaultHeaders(httpHeaders -> {
                 httpHeaders.set("Content-Type", "application/json");
             }).build();
             HttpServiceProxyFactory httpServiceProxyFactory = HttpServiceProxyFactory.builder()
@@ -145,7 +249,7 @@ class ProviderModuleTest extends ProviderTestParent {
         @Bean
         public EdcClient edcClient() {
             String baseUrl = "http://localhost:" + String.valueOf(WIREMOCK_PORT) + "/" + EDC_SERVICE_PATH;
-            WebClient webClient = WebClient.builder().baseUrl(baseUrl).build();
+            WebClient webClient = WebClient.builder().clientConnector(LogUtils.createHttpClient()).baseUrl(baseUrl).build();
             HttpServiceProxyFactory httpServiceProxyFactory = HttpServiceProxyFactory.builder()
                     .exchangeAdapter(WebClientAdapter.create(webClient)).build();
             return httpServiceProxyFactory.createClient(EdcClient.class);

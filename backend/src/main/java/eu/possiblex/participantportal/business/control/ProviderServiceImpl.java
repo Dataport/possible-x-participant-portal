@@ -1,8 +1,10 @@
 package eu.possiblex.participantportal.business.control;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import eu.possiblex.participantportal.application.entity.CreateOfferResponseTO;
 import eu.possiblex.participantportal.application.entity.ParticipantIdTO;
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
+import eu.possiblex.participantportal.application.entity.exception.OfferingComplianceException;
 import eu.possiblex.participantportal.application.entity.policies.EnforcementPolicy;
 import eu.possiblex.participantportal.application.entity.policies.ParticipantRestrictionPolicy;
 import eu.possiblex.participantportal.business.entity.CreateDataOfferingRequestBE;
@@ -22,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,27 +81,35 @@ public class ProviderServiceImpl implements ProviderService {
      */
     @Override
     public CreateOfferResponseTO createOffering(CreateServiceOfferingRequestBE request) {
-
         Policy policy = createEdcPolicyFromEnforcementPolicies(request.getEnforcementPolicies());
 
         PxExtendedServiceOfferingCredentialSubject pxExtendedServiceOfferingCs = createCombinedCsFromRequest(request,
             policy);
         CreateEdcOfferBE createEdcOfferBE = createEdcBEFromRequest(request, pxExtendedServiceOfferingCs.getId(),
             pxExtendedServiceOfferingCs.getAssetId(), policy);
+        boolean isOfferWithData = isServiceOfferWithData(pxExtendedServiceOfferingCs);
 
+        FhCatalogIdResponse fhResponseId;
         try {
-            FhCatalogIdResponse fhResponseId = createFhCatalogOffer(pxExtendedServiceOfferingCs);
-            IdResponse edcResponseId = createEdcOffer(createEdcOfferBE);
-            return new CreateOfferResponseTO(edcResponseId.getId(), fhResponseId.getId());
-        } catch (EdcOfferCreationException e) {
-            throw new PossibleXException("Failed to create offer. EdcOfferCreationException: " + e,
-                HttpStatus.BAD_REQUEST);
+            fhResponseId = createFhCatalogOffer(pxExtendedServiceOfferingCs);
         } catch (FhOfferCreationException e) {
             throw new PossibleXException("Failed to create offer. FhOfferCreationException: " + e,
                 HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            throw new PossibleXException("Failed to create offer. Other Exception: " + e);
+        } catch (OfferingComplianceException e) {
+            throw new PossibleXException("Failed to create offer. Compliance not attested: " + e.getMessage(),
+                HttpStatus.UNPROCESSABLE_ENTITY);
         }
+
+        IdResponse edcResponseId;
+        try {
+            edcResponseId = createEdcOffer(createEdcOfferBE);
+        } catch (EdcOfferCreationException e) {
+            // rollback catalog offering creation
+            fhCatalogClient.deleteServiceOfferingFromFhCatalog(fhResponseId.getId(), isOfferWithData);
+            throw new PossibleXException("Failed to create offer. EdcOfferCreationException: " + e,
+                HttpStatus.BAD_REQUEST);
+        }
+        return new CreateOfferResponseTO(edcResponseId.getId(), fhResponseId.getId());
     }
 
     /**
@@ -128,12 +139,17 @@ public class ProviderServiceImpl implements ProviderService {
             log.info("Creating Asset {}", assetCreateRequest);
             IdResponse assetIdResponse = edcClient.createAsset(assetCreateRequest);
 
-            PolicyCreateRequest policyCreateRequest = requestBuilder.buildPolicyRequest();
-            log.info("Creating Policy {}", policyCreateRequest);
-            IdResponse policyIdResponse = edcClient.createPolicy(policyCreateRequest);
+            PolicyCreateRequest accessPolicyCreateRequest = requestBuilder.buildPolicyRequest(
+                getEverythingAllowedPolicy());
+            log.info("Creating access Policy {}", accessPolicyCreateRequest);
+            IdResponse accessPolicyIdResponse = edcClient.createPolicy(accessPolicyCreateRequest);
+
+            PolicyCreateRequest contractPolicyCreateRequest = requestBuilder.buildPolicyRequest();
+            log.info("Creating contract Policy {}", contractPolicyCreateRequest);
+            IdResponse contractPolicyIdResponse = edcClient.createPolicy(contractPolicyCreateRequest);
 
             ContractDefinitionCreateRequest contractDefinitionCreateRequest = requestBuilder.buildContractDefinitionRequest(
-                policyIdResponse, assetIdResponse);
+                accessPolicyIdResponse, contractPolicyIdResponse, assetIdResponse);
             log.info("Creating Contract Definition {}", contractDefinitionCreateRequest);
 
             return edcClient.createContractDefinition(contractDefinitionCreateRequest);
@@ -150,15 +166,41 @@ public class ProviderServiceImpl implements ProviderService {
      * @throws FhOfferCreationException if FH offer creation fails
      */
     private FhCatalogIdResponse createFhCatalogOffer(
-        PxExtendedServiceOfferingCredentialSubject serviceOfferingCredentialSubject) throws FhOfferCreationException {
+        PxExtendedServiceOfferingCredentialSubject serviceOfferingCredentialSubject)
+        throws FhOfferCreationException, OfferingComplianceException {
 
         try {
-            log.info("Adding Service Offering to Fraunhofer Catalog {}", serviceOfferingCredentialSubject);
+            boolean isOfferWithData = isServiceOfferWithData(serviceOfferingCredentialSubject);
+            log.info("Adding Service Offering to Fraunhofer Catalog {}, with data: {}", serviceOfferingCredentialSubject, isOfferWithData);
 
-            return fhCatalogClient.addServiceOfferingToFhCatalog(serviceOfferingCredentialSubject);
+            return fhCatalogClient.addServiceOfferingToFhCatalog(serviceOfferingCredentialSubject, isOfferWithData);
+        } catch (WebClientResponseException e) {
+            throw buildComplianceException(e);
         } catch (Exception e) {
             throw new FhOfferCreationException("An error occurred during Fh offer creation: " + e.getMessage());
         }
+    }
+
+    /**
+     * Check if the service offer payload contains data.
+     * Currently, the check is just if gx:aggregationOf is empty.
+     *
+     * @param serviceOfferPayload the service offer payload
+     * @return true: The service offer contains data. false: otherwise
+     */
+    private boolean isServiceOfferWithData(PxExtendedServiceOfferingCredentialSubject serviceOfferPayload) {
+        boolean serviceOfferContainsData = !serviceOfferPayload.getAggregationOf().isEmpty();
+
+        return serviceOfferContainsData;
+    }
+
+    private OfferingComplianceException buildComplianceException(WebClientResponseException e) {
+
+        JsonNode error = e.getResponseBodyAs(JsonNode.class);
+        if (error != null && error.get("error") != null) {
+            return new OfferingComplianceException(error.get("error").textValue(), e);
+        }
+        return new OfferingComplianceException("Unknown catalog processing exception", e);
     }
 
     /**
@@ -178,7 +220,6 @@ public class ProviderServiceImpl implements ProviderService {
         if (request instanceof CreateDataOfferingRequestBE dataOfferingRequest) { // data offering
             dataOfferingRequest.getDataResource().setId(dataResourceId);
             dataOfferingRequest.getDataResource().setExposedThrough(new NodeKindIRITypeId(serviceOfferingId));
-
             return providerServiceMapper.getPxExtendedServiceOfferingCredentialSubject(dataOfferingRequest,
                 serviceOfferingId, assetId, edcProtocolUrl, policy);
         } else { // base service offering
@@ -230,7 +271,7 @@ public class ProviderServiceImpl implements ProviderService {
             if (enforcementPolicy instanceof ParticipantRestrictionPolicy participantRestrictionPolicy) { // restrict to participants
 
                 // create constraint
-                OdrlConstraint participantConstraint = OdrlConstraint.builder().leftOperand("connectorId")
+                OdrlConstraint participantConstraint = OdrlConstraint.builder().leftOperand("did")
                     .operator(OdrlOperator.IN)
                     .rightOperand(String.join(",", participantRestrictionPolicy.getAllowedParticipants())).build();
                 constraints.add(participantConstraint);
@@ -238,15 +279,27 @@ public class ProviderServiceImpl implements ProviderService {
         }
 
         // apply constraints to both use and transfer permission
-        OdrlPermission usePermission = OdrlPermission.builder().action(OdrlAction.USE).constraint(constraints).build();
-        OdrlPermission transferPermission = OdrlPermission.builder().action(OdrlAction.TRANSFER).constraint(constraints)
-            .build();
+        Policy policy = getEverythingAllowedPolicy();
+
+        policy.getPermission().forEach(permission -> permission.setConstraint(constraints));
+
+        return policy;
+    }
+
+    /**
+     * Get base policy that can be extended with constraints.
+     *
+     * @return everything allowed policy
+     */
+    private Policy getEverythingAllowedPolicy() {
+
+        OdrlPermission usePermission = OdrlPermission.builder().action(OdrlAction.USE).build();
+        OdrlPermission transferPermission = OdrlPermission.builder().action(OdrlAction.TRANSFER).build();
 
         // add permissions to ODRL policy
         Policy policy = new Policy();
         policy.getPermission().add(usePermission);
         policy.getPermission().add(transferPermission);
-
         return policy;
     }
 

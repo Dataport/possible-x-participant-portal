@@ -1,0 +1,43 @@
+{
+  "@graph": [
+    {
+      "@id": "_:b0",
+      "gx:accessType": "digital",
+      "gx:requestType": "API",
+      "gx:formatType": "application/json"
+    },
+    {
+      "@id": "https://piveau.io/set/resource/service-offering/urn:uuid:a29a5623-bcc8-4f08-a155-97e19e9f5678",
+      "schema:description": "steffens test service offer",
+      "@type": [
+        "http://w3id.org/gaia-x/possible-x#PossibleXServiceOfferingExtension",
+        "gx:ServiceOffering"
+      ],
+      "gx:providedBy": {
+        "@id": "did:web:portal.dev.possible-x.de:participant:df15587a-0760-32b5-9c42-bb7be66e8076"
+      },
+      "http://w3id.org/gaia-x/possible-x#assetId": "EXPECTED_ASSET_ID_VALUE",
+      "gx:description": "This is the service offering description.",
+      "gx:termsAndConditions": {
+        "@id": "_:b1"
+      },
+      "schema:name": "SteffenServiceOffer222",
+      "gx:dataAccountExport": {
+        "@id": "_:b0"
+      },
+      "gx:policy": "{\n  \"@type\": \"odrl:Set\",\n  \"odrl:permission\": [\n    {\n      \"odrl:action\": {\n        \"odrl:type\": \"http://www.w3.org/ns/odrl/2/use\"\n      }\n    },\n    {\n      \"odrl:action\": {\n        \"odrl:type\": \"http://www.w3.org/ns/odrl/2/transfer\"\n      }\n    }\n  ],\n  \"odrl:prohibition\": [],\n  \"odrl:obligation\": []\n}",
+      "http://w3id.org/gaia-x/possible-x#providerUrl": "EXPECTED_PROVIDER_URL_VALUE",
+      "gx:name": "SteffenServiceOffer222_2"
+    },
+    {
+      "@id": "_:b1",
+      "gx:URL": "test.eu/tnc",
+      "gx:hash": "hash123"
+    }
+  ],
+  "@context": {
+    "schema": "https://schema.org/",
+    "gx": "https://w3id.org/gaia-x/development#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  }
+}

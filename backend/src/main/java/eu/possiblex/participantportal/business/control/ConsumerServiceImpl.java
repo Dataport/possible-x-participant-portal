@@ -1,7 +1,14 @@
 package eu.possiblex.participantportal.business.control;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.possiblex.participantportal.application.entity.policies.EnforcementPolicy;
+import eu.possiblex.participantportal.application.entity.policies.EverythingAllowedPolicy;
+import eu.possiblex.participantportal.application.entity.policies.ParticipantRestrictionPolicy;
 import eu.possiblex.participantportal.business.entity.*;
+import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedLegalParticipantCredentialSubjectSubset;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
+import eu.possiblex.participantportal.business.entity.edc.DataspaceErrorMessage;
 import eu.possiblex.participantportal.business.entity.edc.asset.DataAddress;
 import eu.possiblex.participantportal.business.entity.edc.asset.ionoss3extension.IonosS3DataDestination;
 import eu.possiblex.participantportal.business.entity.edc.catalog.CatalogRequest;
@@ -12,12 +19,16 @@ import eu.possiblex.participantportal.business.entity.edc.negotiation.ContractNe
 import eu.possiblex.participantportal.business.entity.edc.negotiation.ContractOffer;
 import eu.possiblex.participantportal.business.entity.edc.negotiation.NegotiationInitiateRequest;
 import eu.possiblex.participantportal.business.entity.edc.negotiation.NegotiationState;
+import eu.possiblex.participantportal.business.entity.edc.policy.OdrlConstraint;
+import eu.possiblex.participantportal.business.entity.edc.policy.OdrlPermission;
+import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import eu.possiblex.participantportal.business.entity.edc.transfer.IonosS3TransferProcess;
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcess;
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcessState;
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferRequest;
 import eu.possiblex.participantportal.business.entity.exception.NegotiationFailedException;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
+import eu.possiblex.participantportal.business.entity.exception.ParticipantNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +39,10 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -38,6 +52,10 @@ public class ConsumerServiceImpl implements ConsumerService {
     private static final int MAX_NEGOTIATION_CHECK_ATTEMPTS = 15;
 
     private static final int MAX_TRANSFER_CHECK_ATTEMPTS = 30;
+
+    private static final String UNKNOWN_ERROR = "Unknown Error.";
+
+    private final ObjectMapper objectMapper;
 
     private final EdcClient edcClient;
 
@@ -51,10 +69,12 @@ public class ConsumerServiceImpl implements ConsumerService {
 
     private final String bucketTopLevelFolder;
 
-    public ConsumerServiceImpl(@Autowired EdcClient edcClient, @Autowired FhCatalogClient fhCatalogClient,
-        @Autowired TaskScheduler taskScheduler, @Value("${s3.bucket-storage-region}") String bucketStorageRegion,
-        @Value("${s3.bucket-name}") String bucketName, @Value("${s3.bucket-top-level-folder}") String bucketTopLevelFolder) {
+    public ConsumerServiceImpl(@Autowired ObjectMapper objectMapper, @Autowired EdcClient edcClient,
+        @Autowired FhCatalogClient fhCatalogClient, @Autowired TaskScheduler taskScheduler,
+        @Value("${s3.bucket-storage-region}") String bucketStorageRegion, @Value("${s3.bucket-name}") String bucketName,
+        @Value("${s3.bucket-top-level-folder}") String bucketTopLevelFolder) {
 
+        this.objectMapper = objectMapper;
         this.edcClient = edcClient;
         this.fhCatalogClient = fhCatalogClient;
         this.taskScheduler = taskScheduler;
@@ -82,13 +102,14 @@ public class ConsumerServiceImpl implements ConsumerService {
         response.setEdcOffer(edcCatalogOffer);
         response.setCatalogOffering(fhCatalogOffer);
         response.setDataOffering(isDataOffering);
+        response.setEnforcementPolicies(getEnforcementPoliciesFromEdcPolicies(edcCatalogOffer.getHasPolicy()));
 
         return response;
     }
 
     @Override
     public AcceptOfferResponseBE acceptContractOffer(ConsumeOfferRequestBE request)
-        throws OfferNotFoundException, NegotiationFailedException {
+        throws OfferNotFoundException, ParticipantNotFoundException, NegotiationFailedException {
 
         // query edcOffer
         DcatCatalog edcOffer = queryEdcCatalog(
@@ -103,8 +124,11 @@ public class ConsumerServiceImpl implements ConsumerService {
 
         ContractNegotiation contractNegotiation = negotiateOffer(negotiationInitiateRequest);
 
+        PxExtendedLegalParticipantCredentialSubjectSubset provider = fhCatalogClient.getFhCatalogParticipant(request.getProvidedBy());
+        log.info("got fh provider participant: " + provider);
+
         return new AcceptOfferResponseBE(contractNegotiation.getState(), contractNegotiation.getContractAgreementId(),
-            request.isDataOffering());
+            request.isDataOffering(), provider.getMailAddress());
     }
 
     @Override
@@ -160,9 +184,21 @@ public class ConsumerServiceImpl implements ConsumerService {
             contractNegotiation = edcClient.checkOfferStatus(negotiation.getId());
             log.info("Negotiation {}", contractNegotiation);
             negotiationCheckAttempts += 1;
-            if (negotiationCheckAttempts >= MAX_NEGOTIATION_CHECK_ATTEMPTS || contractNegotiation.getState()
-                .equals(NegotiationState.TERMINATED)) {
-                throw new NegotiationFailedException("Negotiation never reached FINALIZED state.");
+            if (negotiationCheckAttempts >= MAX_NEGOTIATION_CHECK_ATTEMPTS) {
+                throw new NegotiationFailedException("Negotiation never reached FINALIZED state and timed out.");
+            } else if (contractNegotiation.getState().equals(NegotiationState.TERMINATED)) {
+                String errorReason;
+                try {
+                    errorReason = contractNegotiation.getErrorDetail() == null
+                        ? UNKNOWN_ERROR
+                        : objectMapper.readValue(contractNegotiation.getErrorDetail(), DataspaceErrorMessage.class)
+                            .getReason();
+                } catch (JsonProcessingException e) {
+                    log.warn("Failed to read error message from payload", e);
+                    errorReason = UNKNOWN_ERROR;
+                }
+
+                throw new NegotiationFailedException("Negotiation was terminated. " + errorReason);
             }
         } while (!contractNegotiation.getState().equals(NegotiationState.FINALIZED));
         return contractNegotiation;
@@ -181,11 +217,24 @@ public class ConsumerServiceImpl implements ConsumerService {
             transferProcess = edcClient.checkTransferStatus(transfer.getId());
             log.info("Transfer Process {}", transferProcess);
             transferCheckAttempts += 1;
-            if (transferCheckAttempts >= MAX_TRANSFER_CHECK_ATTEMPTS || transferProcess.getState()
-                .equals(TransferProcessState.TERMINATED)) {
-
+            if (transferCheckAttempts >= MAX_TRANSFER_CHECK_ATTEMPTS) {
                 deprovisionTransfer(transferProcess.getId());
-                throw new TransferFailedException("Transfer never reached COMPLETED state.");
+                throw new TransferFailedException("Transfer never reached COMPLETED state and timed out.");
+            } else if (transferProcess.getState().equals(TransferProcessState.TERMINATED)) {
+                deprovisionTransfer(transferProcess.getId());
+
+                String errorReason;
+                try {
+                    errorReason = transferProcess.getErrorDetail() == null
+                        ? UNKNOWN_ERROR
+                        : objectMapper.readValue(transferProcess.getErrorDetail(), DataspaceErrorMessage.class)
+                            .getReason();
+                } catch (JsonProcessingException e) {
+                    log.warn("Failed to read error message from payload", e);
+                    errorReason = UNKNOWN_ERROR;
+                }
+
+                throw new TransferFailedException("Transfer was terminated. " + errorReason);
             }
         } while (!transferProcess.getState().equals(TransferProcessState.COMPLETED));
 
@@ -206,5 +255,37 @@ public class ConsumerServiceImpl implements ConsumerService {
         } catch (InterruptedException ie) {
             Thread.currentThread().interrupt();
         }
+    }
+
+    /**
+     * Given the ODRL Policy stored in the EDC, build the correspondig list of enforcement policies.
+     *
+     * @param policies ODRL Policies
+     * @return enforcement policies
+     */
+    private List<EnforcementPolicy> getEnforcementPoliciesFromEdcPolicies(List<Policy> policies) {
+
+        List<OdrlConstraint> constraints = new ArrayList<>();
+        for (Policy policy : policies) {
+            for (OdrlPermission permission : policy.getPermission()) {
+                constraints.addAll(permission.getConstraint());
+            }
+        }
+
+        Set<EnforcementPolicy> enforcementPolicies = new HashSet<>();
+        for (OdrlConstraint constraint : constraints) {
+            if (constraint.getLeftOperand().equals("did")) {
+                enforcementPolicies.add(
+                    new ParticipantRestrictionPolicy(List.of(constraint.getRightOperand().split(","))));
+            } else {
+                log.warn("Encountered unknown constraint: {}", constraint);
+            }
+        }
+
+        if (enforcementPolicies.isEmpty()) {
+            enforcementPolicies.add(new EverythingAllowedPolicy());
+        }
+
+        return enforcementPolicies.stream().toList();
     }
 }

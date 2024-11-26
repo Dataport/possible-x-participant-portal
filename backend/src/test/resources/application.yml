@@ -17,3 +17,7 @@ s3:
   bucket-storage-region: "something"
   bucket-name: "something"
   bucket-top-level-folder: "something/"
+
+logging:
+  level:
+    reactor.netty.http.client: DEBUG

@@ -15,9 +15,12 @@ import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedS
 import eu.possiblex.participantportal.business.entity.edc.asset.AssetCreateRequest;
 import eu.possiblex.participantportal.business.entity.edc.asset.ionoss3extension.IonosS3DataSource;
 import eu.possiblex.participantportal.business.entity.edc.asset.possible.PossibleAssetProperties;
+import eu.possiblex.participantportal.business.entity.edc.contractdefinition.ContractDefinitionCreateRequest;
+import eu.possiblex.participantportal.business.entity.edc.policy.OdrlPermission;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyCreateRequest;
 import eu.possiblex.participantportal.business.entity.exception.EdcOfferCreationException;
 import eu.possiblex.participantportal.business.entity.exception.FhOfferCreationException;
+import eu.possiblex.participantportal.utilities.PossibleXException;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import org.mockito.ArgumentCaptor;
@@ -26,16 +29,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentCaptor.forClass;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ContextConfiguration(classes = { ProviderServiceTest.TestConfig.class, ProviderServiceImpl.class })
@@ -55,7 +58,7 @@ class ProviderServiceTest {
     ObjectMapper objectMapper;
 
     @Test
-    void testCreateServiceOffering() throws EdcOfferCreationException, FhOfferCreationException {
+    void testCreateServiceOffering() {
 
         reset(fhCatalogClient);
         reset(edcClient);
@@ -76,11 +79,13 @@ class ProviderServiceTest {
         //then
         ArgumentCaptor<AssetCreateRequest> assetCreateRequestCaptor = forClass(AssetCreateRequest.class);
         ArgumentCaptor<PolicyCreateRequest> policyCreateRequestCaptor = forClass(PolicyCreateRequest.class);
+        ArgumentCaptor<ContractDefinitionCreateRequest> contractDefinitionCreateRequestCaptor = forClass(
+            ContractDefinitionCreateRequest.class);
 
         ArgumentCaptor<PxExtendedServiceOfferingCredentialSubject> serviceOfferingCaptor = forClass(
             PxExtendedServiceOfferingCredentialSubject.class);
 
-        verify(fhCatalogClient).addServiceOfferingToFhCatalog(serviceOfferingCaptor.capture());
+        verify(fhCatalogClient).addServiceOfferingToFhCatalog(serviceOfferingCaptor.capture(), Mockito.anyBoolean());
 
         PxExtendedServiceOfferingCredentialSubject pxExtSoCs = serviceOfferingCaptor.getValue();
         assertTrue(pxExtSoCs.getId()
@@ -93,8 +98,8 @@ class ProviderServiceTest {
         assertThat(pxExtSoCs.getPolicy()).hasSize(2).contains("dummyServiceOfferingPolicy");
 
         verify(edcClient).createAsset(assetCreateRequestCaptor.capture());
-        verify(edcClient).createPolicy(policyCreateRequestCaptor.capture());
-        verify(edcClient).createContractDefinition(any());
+        verify(edcClient, times(2)).createPolicy(policyCreateRequestCaptor.capture());
+        verify(edcClient).createContractDefinition(contractDefinitionCreateRequestCaptor.capture());
 
         AssetCreateRequest assetCreateRequest = assetCreateRequestCaptor.getValue();
         //validate asset properties
@@ -114,10 +119,24 @@ class ProviderServiceTest {
         assertEquals("", assetCreateRequest.getDataAddress().getKeyName());
         assertEquals("", ((IonosS3DataSource) assetCreateRequest.getDataAddress()).getBlobName());
 
-        PolicyCreateRequest policyCreateRequest = policyCreateRequestCaptor.getValue();
-        //check if policyId is set correctly
-        assertTrue(policyCreateRequest.getId()
-            .matches("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"));
+        ContractDefinitionCreateRequest contractDefinitionCreateRequest = contractDefinitionCreateRequestCaptor.getValue();
+
+        List<PolicyCreateRequest> policyCreateRequests = policyCreateRequestCaptor.getAllValues();
+        boolean foundAccessPolicy = false;
+        for (var policy : policyCreateRequests) {
+            //check if policyId is set correctly
+            assertTrue(
+                policy.getId().matches("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"));
+
+            if (contractDefinitionCreateRequest.getAccessPolicyId().equals(policy.getId())) {
+                foundAccessPolicy = true;
+                // for access policy make sure there are no constraints
+                for (OdrlPermission permission : policy.getPolicy().getPermission()) {
+                    assertTrue(permission.getConstraint().isEmpty());
+                }
+            }
+        }
+        assertTrue(foundAccessPolicy);
 
         assertNotNull(response);
         assertNotNull(response.getEdcResponseId());
@@ -125,7 +144,7 @@ class ProviderServiceTest {
     }
 
     @Test
-    void testCreateDataOffering() throws EdcOfferCreationException, FhOfferCreationException {
+    void testCreateDataOffering() {
 
         reset(fhCatalogClient);
         reset(edcClient);
@@ -147,11 +166,13 @@ class ProviderServiceTest {
         //then
         ArgumentCaptor<AssetCreateRequest> assetCreateRequestCaptor = forClass(AssetCreateRequest.class);
         ArgumentCaptor<PolicyCreateRequest> policyCreateRequestCaptor = forClass(PolicyCreateRequest.class);
+        ArgumentCaptor<ContractDefinitionCreateRequest> contractDefinitionCreateRequestCaptor = forClass(
+            ContractDefinitionCreateRequest.class);
 
         ArgumentCaptor<PxExtendedServiceOfferingCredentialSubject> serviceOfferingCaptor = forClass(
             PxExtendedServiceOfferingCredentialSubject.class);
 
-        verify(fhCatalogClient).addServiceOfferingToFhCatalog(serviceOfferingCaptor.capture());
+        verify(fhCatalogClient).addServiceOfferingToFhCatalog(serviceOfferingCaptor.capture(), Mockito.anyBoolean());
 
         PxExtendedServiceOfferingCredentialSubject pxExtSoCs = serviceOfferingCaptor.getValue();
         assertNotNull(pxExtSoCs);
@@ -171,8 +192,8 @@ class ProviderServiceTest {
         assertThat(pxExtSoCs.getAggregationOf().get(0).getPolicy()).contains("dummyDataResourcePolicy");
 
         verify(edcClient).createAsset(assetCreateRequestCaptor.capture());
-        verify(edcClient).createPolicy(policyCreateRequestCaptor.capture());
-        verify(edcClient).createContractDefinition(any());
+        verify(edcClient, times(2)).createPolicy(policyCreateRequestCaptor.capture());
+        verify(edcClient).createContractDefinition(contractDefinitionCreateRequestCaptor.capture());
 
         AssetCreateRequest assetCreateRequest = assetCreateRequestCaptor.getValue();
         //validate asset properties
@@ -197,14 +218,49 @@ class ProviderServiceTest {
         assertEquals(FILE_NAME, assetCreateRequest.getDataAddress().getKeyName());
         assertEquals(FILE_NAME, ((IonosS3DataSource) assetCreateRequest.getDataAddress()).getBlobName());
 
-        PolicyCreateRequest policyCreateRequest = policyCreateRequestCaptor.getValue();
-        //check if policyId is set correctly
-        assertTrue(policyCreateRequest.getId()
-            .matches("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"));
+        ContractDefinitionCreateRequest contractDefinitionCreateRequest = contractDefinitionCreateRequestCaptor.getValue();
+
+        List<PolicyCreateRequest> policyCreateRequests = policyCreateRequestCaptor.getAllValues();
+
+        boolean foundAccessPolicy = false;
+        for (var policy : policyCreateRequests) {
+            //check if policyId is set correctly
+            assertTrue(
+                policy.getId().matches("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"));
+
+            if (contractDefinitionCreateRequest.getAccessPolicyId().equals(policy.getId())) {
+                foundAccessPolicy = true;
+                // for access policy make sure there are no constraints
+                for (OdrlPermission permission : policy.getPolicy().getPermission()) {
+                    assertTrue(permission.getConstraint().isEmpty());
+                }
+            }
+        }
+        assertTrue(foundAccessPolicy);
 
         assertNotNull(response);
         assertNotNull(response.getEdcResponseId());
         assertNotNull(response.getFhResponseId());
+    }
+
+    @Test
+    void testCreateServiceOfferingEdcError() {
+
+        reset(fhCatalogClient);
+        reset(edcClient);
+
+        //given
+        GxServiceOfferingCredentialSubject offeringCs = getGxServiceOfferingCredentialSubject();
+
+        CreateServiceOfferingRequestBE be = CreateServiceOfferingRequestBE.builder()
+            .enforcementPolicies(List.of(new EverythingAllowedPolicy())).providedBy(offeringCs.getProvidedBy())
+            .name(EdcClientFake.BAD_GATEWAY_ASSET_ID).description(offeringCs.getDescription())
+            .termsAndConditions(offeringCs.getTermsAndConditions()).dataAccountExport(offeringCs.getDataAccountExport())
+            .policy(offeringCs.getPolicy()).dataProtectionRegime(offeringCs.getDataProtectionRegime()).build();
+
+        //when
+        assertThrows(PossibleXException.class, () -> providerService.createOffering(be));
+        verify(fhCatalogClient).deleteServiceOfferingFromFhCatalog(any(), Mockito.anyBoolean());
     }
 
     @Test

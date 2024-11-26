@@ -2,3 +2,11 @@ ul {
   list-style-type: square;
   padding-left: 2em;
 }
+
+.mat-expansion-panel {
+  @apply text-brand-800;
+}
+
+.mat-expansion-panel-header-title {
+  @apply text-brand-800;
+}

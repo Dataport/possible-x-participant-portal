@@ -58,13 +58,7 @@ public class ProviderRestApiImpl implements ProviderRestApi {
         CreateServiceOfferingRequestBE createOfferingRequestBE = providerApiMapper.getCreateOfferingRequestBE(
             createServiceOfferingRequestTO);
 
-        try {
-            return providerService.createOffering(createOfferingRequestBE);
-        } catch (EdcOfferCreationException e) {
-            throw new PossibleXException("EDC offer creation failed: " + e, HttpStatus.BAD_REQUEST);
-        } catch (FhOfferCreationException e) {
-            throw new PossibleXException("Fraunhofer catalog offer creation failed: " + e, HttpStatus.BAD_REQUEST);
-        }
+        return providerService.createOffering(createOfferingRequestBE);
     }
 
     /**
@@ -82,13 +76,7 @@ public class ProviderRestApiImpl implements ProviderRestApi {
         CreateDataOfferingRequestBE createOfferingRequestBE = providerApiMapper.getCreateOfferingRequestBE(
             createDataOfferingRequestTO);
 
-        try {
-            return providerService.createOffering(createOfferingRequestBE);
-        } catch (EdcOfferCreationException e) {
-            throw new PossibleXException("EDC offer creation failed: " + e, HttpStatus.BAD_REQUEST);
-        } catch (FhOfferCreationException e) {
-            throw new PossibleXException("Fraunhofer catalog offer creation failed: " + e, HttpStatus.BAD_REQUEST);
-        }
+        return providerService.createOffering(createOfferingRequestBE);
     }
 
     /**

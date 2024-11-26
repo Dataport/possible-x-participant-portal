@@ -7,6 +7,7 @@ import eu.possiblex.participantportal.business.entity.edc.asset.ionoss3extension
 import eu.possiblex.participantportal.business.entity.edc.common.IdResponse;
 import eu.possiblex.participantportal.business.entity.edc.contractdefinition.ContractDefinitionCreateRequest;
 import eu.possiblex.participantportal.business.entity.edc.contractdefinition.Criterion;
+import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyCreateRequest;
 
 import java.util.List;
@@ -52,23 +53,34 @@ public class ProviderRequestBuilder {
      */
     public PolicyCreateRequest buildPolicyRequest() {
 
-        return PolicyCreateRequest.builder().id(UUID.randomUUID().toString()).policy(createEdcOfferBE.getPolicy())
-            .build();
+        return buildPolicyRequest(createEdcOfferBE.getPolicy());
+    }
+
+    /**
+     * Builds a PolicyCreateRequest for a given policy for the EDC offer.
+     *
+     * @param policy the policy
+     * @return the PolicyCreateRequest
+     */
+    public PolicyCreateRequest buildPolicyRequest(Policy policy) {
+
+        return PolicyCreateRequest.builder().id(UUID.randomUUID().toString()).policy(policy).build();
     }
 
     /**
      * Builds a ContractDefinitionCreateRequest for the EDC offer.
      *
-     * @param policyIdResponse the policy ID response
+     * @param accessPolicyIdResponse the policy ID response for the access policy
+     * @param contractPolicyIdResponse the policy ID response for the contract policy
      * @param assetIdResponse the asset ID response
      * @return the ContractDefinitionCreateRequest
      */
-    public ContractDefinitionCreateRequest buildContractDefinitionRequest(IdResponse policyIdResponse,
-        IdResponse assetIdResponse) {
+    public ContractDefinitionCreateRequest buildContractDefinitionRequest(IdResponse accessPolicyIdResponse,
+        IdResponse contractPolicyIdResponse, IdResponse assetIdResponse) {
 
         return ContractDefinitionCreateRequest.builder().id(UUID.randomUUID().toString())
-            .contractPolicyId(policyIdResponse.getId()).accessPolicyId(policyIdResponse.getId()).assetsSelector(List.of(
-                Criterion.builder().operandLeft("https://w3id.org/edc/v0.0.1/ns/id").operator("=")
-                    .operandRight(assetIdResponse.getId()).build())).build();
+            .contractPolicyId(contractPolicyIdResponse.getId()).accessPolicyId(accessPolicyIdResponse.getId())
+            .assetsSelector(List.of(Criterion.builder().operandLeft("https://w3id.org/edc/v0.0.1/ns/id").operator("=")
+                .operandRight(assetIdResponse.getId()).build())).build();
     }
 }
