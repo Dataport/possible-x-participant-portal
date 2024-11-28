@@ -1,0 +1,50 @@
+{
+  "@graph": [
+    {
+     "@id": "_:b0",
+     "@type": "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#legalRegistrationNumber",
+     "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#vatID": "DE269448547"
+    },
+    {
+     "@id": "_:b1",
+     "gx:countryCode": "DE",
+     "vcard:street-address": "Example Street 1",
+     "gx:countrySubdivisionCode": "DE-MV",
+     "vcard:locality": "Rostock",
+     "vcard:postal-code": "18055"
+    },
+    {
+     "@id": "https://piveau.io/set/resource/legal-participant/someDid",
+     "gx:legalRegistrationNumber": {
+       "@id": "_:b0"
+     },
+     "schema:name": "Example",
+     "http://w3id.org/gaia-x/possible-x#mailAddress": "EXPECTED_MAIL_ADDRESS_VALUE",
+     "gx:headquarterAddress": {
+       "@id": "_:b2"
+     },
+     "@type": [
+       "gx:LegalParticipant",
+       "http://w3id.org/gaia-x/possible-x#PossibleXLegalParticipantExtension"
+     ],
+     "gx:legalAddress": {
+       "@id": "_:b1"
+     },
+     "schema:description": "This is an Example Org"
+    },
+    {
+     "@id": "_:b2",
+     "vcard:locality": "Rostock",
+     "vcard:postal-code": "18055",
+     "gx:countryCode": "DE",
+     "gx:countrySubdivisionCode": "DE-MV",
+     "vcard:street-address": "Example Street 1"
+    }
+    ],
+    "@context": {
+    "schema": "https://schema.org/",
+    "gx": "https://w3id.org/gaia-x/development#",
+    "vcard": "http://www.w3.org/2006/vcard/ns#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  }
+}

@@ -3,6 +3,7 @@ package eu.possiblex.participantportal.business.control;
 import eu.possiblex.participantportal.business.entity.*;
 import eu.possiblex.participantportal.business.entity.exception.NegotiationFailedException;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
+import eu.possiblex.participantportal.business.entity.exception.ParticipantNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
 
 public interface ConsumerService {
@@ -24,7 +25,7 @@ public interface ConsumerService {
      * @throws NegotiationFailedException failed to negotiate over the offer
      */
     AcceptOfferResponseBE acceptContractOffer(ConsumeOfferRequestBE request)
-        throws OfferNotFoundException, NegotiationFailedException;
+        throws OfferNotFoundException, ParticipantNotFoundException, NegotiationFailedException;
 
     /**
      * Given a request for a transfer, transfer the data using the data transfer component.

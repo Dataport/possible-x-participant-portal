@@ -40,6 +40,7 @@ export class TransferComponent implements OnChanges {
     } else {
       this.viewContainerRef.clear();
     }
+    this.isTransferButtonDisabled = false;
   }
 
   async transfer() {

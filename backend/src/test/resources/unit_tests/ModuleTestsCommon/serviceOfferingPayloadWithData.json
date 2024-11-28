@@ -1,0 +1,107 @@
+{
+  "serviceOfferingCredentialSubject": {
+    "@context": {
+      "schema": "https://schema.org/",
+      "gx": "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "sh": "http://www.w3.org/ns/shacl#",
+      "xsd": "http://www.w3.org/2001/XMLSchema#",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "vcard": "http://www.w3.org/2006/vcard/ns#"
+    },
+    "@type": "gx:ServiceOffering",
+    "gx:providedBy": {
+      "@id": "did:web:didwebservice.dev.possible-x.de:participant:901e847f-bded-32d5-8301-c0e2dfa8439f"
+    },
+    "schema:name": {
+      "@value": "Data Offering Service - the name",
+      "@type": "xsd:string"
+    },
+    "schema:description": {
+      "@value": " other description",
+      "@type": "xsd:string"
+    },
+    "gx:dataProtectionRegime": {
+      "@value": "GDPR2016",
+      "@type": "xsd:string"
+    },
+    "gx:policy": {
+      "@value": "other policy",
+      "@type": "xsd:string"
+    },
+    "gx:dataAccountExport": {
+      "@type": "gx:DataAccountExport",
+      "gx:formatType": {
+        "@value": "application/json",
+        "@type": "xsd:string"
+      },
+      "gx:accessType": {
+        "@value": "digital",
+        "@type": "xsd:string"
+      },
+      "gx:requestType": {
+        "@value": "API",
+        "@type": "xsd:string"
+      }
+    },
+    "gx:termsAndConditions": {
+      "@type": "gx:SOTermsAndConditions",
+      "gx:URL": {
+        "@value": "theurl",
+        "@type": "xsd:string"
+      },
+      "gx:hash": {
+        "@value": "thehash",
+        "@type": "xsd:string"
+      }
+    },
+    "id": "urn:uuid:GENERATED_SERVICE_OFFERING_ID"
+  },
+  "enforcementPolicies": [
+    {
+      "@type": "EverythingAllowedPolicy"
+    }
+  ],
+  "dataResourceCredentialSubject": {
+    "@context": {
+      "schema": "https://schema.org/",
+      "gx": "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "sh": "http://www.w3.org/ns/shacl#",
+      "xsd": "http://www.w3.org/2001/XMLSchema#",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "vcard": "http://www.w3.org/2006/vcard/ns#"
+    },
+    "@type": "gx:DataResource",
+    "schema:name": {
+      "@value": "the name",
+      "@type": "xsd:string"
+    },
+    "schema:description": {
+      "@value": "the description",
+      "@type": "xsd:string"
+    },
+    "gx:copyrightOwnedBy": {
+      "@id": "did:web:didwebservice.dev.possible-x.de:participant:901e847f-bded-32d5-8301-c0e2dfa8439f"
+    },
+    "gx:license": {
+      "@value": "ADSL",
+      "@type": "xsd:string"
+    },
+    "gx:producedBy": {
+      "@id": "did:web:didwebservice.dev.possible-x.de:participant:901e847f-bded-32d5-8301-c0e2dfa8439f"
+    },
+    "gx:containsPII": false,
+    "gx:policy": {
+      "@value": "all ok",
+      "@type": "xsd:string"
+    },
+    "id": "urn:uuid:GENERATED_DATA_RESOURCE_ID",
+    "gx:exposedThrough": {
+      "id": "urn:uuid:GENERATED_SERVICE_OFFERING_ID"
+    }
+  },
+  "fileName": "filetitle"
+}

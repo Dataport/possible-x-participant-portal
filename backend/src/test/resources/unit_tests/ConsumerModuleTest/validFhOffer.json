@@ -2,58 +2,61 @@
   "@graph": [
     {
       "@id": "_:b0",
-      "gx:accessType": "digital",
-      "gx:requestType": "API",
-      "gx:formatType": "application/json"
-    },
-    {
-      "@id": "_:b1",
       "gx:hash": "hash123",
       "gx:URL": "test.eu/tnc"
     },
     {
-      "@id": "https://piveau.io/set/resource/service-offering/steffenofferingtest123",
-      "@type": [
-        "gx:ServiceOffering",
-        "http://w3id.org/gaia-x/possible-x#PossibleXServiceOfferingExtension"
-      ],
-      "http://w3id.org/gaia-x/possible-x#assetId": "EXPECTED_ASSET_ID_VALUE",
-      "schema:description": "This is the service offering description.",
-      "http://w3id.org/gaia-x/possible-x#providerUrl": "EXPECTED_PROVIDER_URL_VALUE",
-      "schema:name": "SteffenServiceOffer222_2",
-      "gx:dataAccountExport": {
-        "@id": "_:b0"
-      },
-      "gx:aggregationOf": {
-        "@id": "_:b2"
-      },
-      "gx:providedBy": {
-        "@id": "_:b3"
-      },
-      "gx:policy": "{\n  \"@type\": \"odrl:Set\",\n  \"odrl:permission\": [\n    {\n      \"odrl:action\": {\n        \"odrl:type\": \"http://www.w3.org/ns/odrl/2/use\"\n      }\n    },\n    {\n      \"odrl:action\": {\n        \"odrl:type\": \"http://www.w3.org/ns/odrl/2/transfer\"\n      }\n    }\n  ],\n  \"odrl:prohibition\": [],\n  \"odrl:obligation\": []\n}",
-      "gx:termsAndConditions": {
-        "@id": "_:b1"
-      }
+      "@id": "_:b1",
+      "gx:requestType": "API",
+      "gx:formatType": "application/json",
+      "gx:accessType": "digital"
     },
     {
-      "@id": "_:b2",
-      "gx:containsPII": {
-        "@value": "true",
-        "@type": "http://www.w3.org/2001/XMLSchema#boolean"
+      "@id": "https://piveau.io/set/resource/data-product/urn:uuid:a29a5623-bcc8-4f08-a155-97e19e9f1234",
+      "gx:termsAndConditions": {
+        "@id": "_:b0"
+      },
+      "gx:policy": "{\n  \"@type\": \"odrl:Set\",\n  \"odrl:permission\": [\n    {\n      \"odrl:action\": {\n        \"odrl:type\": \"http://www.w3.org/ns/odrl/2/use\"\n      }\n    },\n    {\n      \"odrl:action\": {\n        \"odrl:type\": \"http://www.w3.org/ns/odrl/2/transfer\"\n      }\n    }\n  ],\n  \"odrl:prohibition\": [],\n  \"odrl:obligation\": []\n}",
+      "gx:dataAccountExport": {
+        "@id": "_:b1"
+      },
+      "@type": [
+        "http://w3id.org/gaia-x/possible-x#DataProduct",
+        "http://w3id.org/gaia-x/possible-x#PossibleXServiceOfferingExtension"
+      ],
+      "gx:aggregationOf": {
+        "@id": "urn:uuid:0364b5ad-96bc-4b86-9281-f2c8bd3d0cba"
+      },
+      "gx:name": "SteffenServiceOffer222_2",
+      "schema:description": "steffens test service offer",
+      "gx:description": "This is the service offering description.",
+      "http://w3id.org/gaia-x/possible-x#providerUrl": "EXPECTED_PROVIDER_URL_VALUE",
+      "schema:name": "SteffenServiceOffer222",
+      "gx:providedBy": {
+        "@id": "did:web:portal.dev.possible-x.de:participant:df15587a-0760-32b5-9c42-bb7be66e8076"
+      },
+      "http://w3id.org/gaia-x/possible-x#assetId": "EXPECTED_ASSET_ID_VALUE"
+    },
+    {
+      "@id": "urn:uuid:0364b5ad-96bc-4b86-9281-f2c8bd3d0cba",
+      "gx:producedBy": {
+        "@id": "did:web:portal.dev.possible-x.de:participant:df15587a-0760-32b5-9c42-bb7be66e8076"
+      },
+      "gx:exposedThrough": {
+        "@id": "https://piveau.io/set/resource/data-product/urn:uuid:a29a5623-bcc8-4f08-a155-97e19e9f1234"
       },
       "@type": "gx:DataResource",
       "gx:policy": "{\n  \"@type\": \"odrl:Set\",\n  \"odrl:permission\": [\n    {\n      \"odrl:action\": {\n        \"odrl:type\": \"http://www.w3.org/ns/odrl/2/use\"\n      }\n    },\n    {\n      \"odrl:action\": {\n        \"odrl:type\": \"http://www.w3.org/ns/odrl/2/transfer\"\n      }\n    }\n  ],\n  \"odrl:prohibition\": [],\n  \"odrl:obligation\": []\n}",
-      "gx:exposedThrough": {
-        "@id": "_:b4"
-      },
       "gx:license": "AGPL-1.0-only",
-      "gx:producedBy": {
-        "@id": "_:b5"
-      },
       "gx:copyrightOwnedBy": {
-        "@id": "_:b6"
+        "@id": "did:web:portal.dev.possible-x.de:participant:df15587a-0760-32b5-9c42-bb7be66e8076"
       },
-      "schema:name": "Test Dataset"
+      "gx:name": "Test Dataset",
+      "gx:description": "This is the data resource description.",
+      "gx:containsPII": {
+        "@value": "false",
+        "@type": "http://www.w3.org/2001/XMLSchema#boolean"
+      }
     }
   ],
   "@context": {

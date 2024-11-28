@@ -75,6 +75,14 @@ class ShapeRestApiTest {
             .andExpect(jsonPath("$.someKey").value("someValue"));
     }
 
+    @Test
+    void getGxLegitimateInterestShape() throws Exception {
+
+        this.mockMvc.perform(get("/shapes/gx/resource/legitimateinterest").contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
+            .andExpect(jsonPath("$.someKey").value("someValue"));
+    }
+
     @TestConfiguration
     static class TestConfig {
         @Bean
