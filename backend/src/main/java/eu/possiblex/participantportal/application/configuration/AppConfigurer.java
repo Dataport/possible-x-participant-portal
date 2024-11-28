@@ -52,7 +52,7 @@ public class AppConfigurer {
     @Bean
     public TechnicalFhCatalogClient technicalFhCatalogClient() {
 
-        WebClient webClient = WebClient.builder().baseUrl(fhCatalogUrl).clientConnector(LogUtils.createHttpClient()).defaultHeaders(httpHeaders -> {
+        WebClient webClient = WebClient.builder().baseUrl(fhCatalogUrl + "/api/hub/repo").clientConnector(LogUtils.createHttpClient()).defaultHeaders(httpHeaders -> {
             httpHeaders.set("Content-Type", "application/json");
             httpHeaders.set("Authorization", "Bearer " + fhCatalogSecretKey);
         }).build();
@@ -63,8 +63,7 @@ public class AppConfigurer {
 
     @Bean
     public SparqlFhCatalogClient sparqlFhCatalogClient() {
-        String sparqlUrl = fhCatalogUrl.replace("/api/hub/repo","/ld/sparql/");
-        WebClient webClient = WebClient.builder().baseUrl(sparqlUrl).clientConnector(LogUtils.createHttpClient()).defaultHeaders(httpHeaders -> {
+        WebClient webClient = WebClient.builder().baseUrl(fhCatalogUrl + "/ld/sparql/").clientConnector(LogUtils.createHttpClient()).defaultHeaders(httpHeaders -> {
             httpHeaders.set("Content-Type", "application/json");
             httpHeaders.set("Authorization", "Bearer " + fhCatalogSecretKey);
         }).build();

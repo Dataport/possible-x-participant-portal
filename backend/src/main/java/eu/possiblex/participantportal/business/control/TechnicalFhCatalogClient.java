@@ -41,7 +41,6 @@ public interface TechnicalFhCatalogClient {
     FhCatalogIdResponse addServiceOfferingToFhCatalog(
         @RequestBody PxExtendedServiceOfferingCredentialSubject serviceOfferingCs, @RequestParam String id);
 
-
     @PutExchange(CommonConstants.REST_PATH_FH_CATALOG_SERVICE_OFFER_WITH_DATA)
     FhCatalogIdResponse addServiceOfferingWithDataToFhCatalog(
             @RequestBody PxExtendedServiceOfferingCredentialSubject serviceOfferingCs, @RequestParam String id);
