@@ -1,10 +1,13 @@
 package eu.possiblex.participantportal.business.control;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import eu.possiblex.participantportal.business.entity.TransferOfferRequestBE;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedLegalParticipantCredentialSubjectSubset;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
+import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsQueryResult;
+import eu.possiblex.participantportal.business.entity.fh.ParticipantNameQueryResult;
+
+import java.util.Collection;
+import java.util.Map;
 
 public class FhCatalogClientFake implements FhCatalogClient {
     public static final String FAKE_PROVIDER_ID = "providerId";
@@ -35,7 +38,14 @@ public class FhCatalogClientFake implements FhCatalogClient {
     }
 
     @Override
-    public JsonNode getSparqlQuery(String query) {
-        return null;
+    public Map<String, ParticipantNameQueryResult> getParticipantNames(Collection<String> dapsIds) {
+
+        return Map.of();
+    }
+
+    @Override
+    public Map<String, OfferingDetailsQueryResult> getOfferingDetails(Collection<String> assetIds) {
+
+        return Map.of();
     }
 }

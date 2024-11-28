@@ -166,12 +166,6 @@ public class FhCatalogClientImpl implements FhCatalogClient {
         }
     }
 
-    @Override
-    public JsonNode getSparqlQuery(String query) {
-
-        return null;
-    }
-
     public Map<String, ParticipantNameQueryResult> getParticipantNames(Collection<String> dapsIds) {
         String query = """
             PREFIX gx: <https://w3id.org/gaia-x/development#>

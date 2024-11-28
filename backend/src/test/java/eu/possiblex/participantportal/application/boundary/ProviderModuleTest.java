@@ -64,6 +64,8 @@ class ProviderModuleTest extends ProviderTestParent {
 
     private static String FH_CATALOG_SERVICE_PATH = "fhcatalog";
 
+    private static String FH_CATALOG_SPARQL_PATH = "fhcatalog/sparql";
+
     private static String EDC_SERVICE_PATH = "edc";
 
     @Test
@@ -244,6 +246,17 @@ class ProviderModuleTest extends ProviderTestParent {
             HttpServiceProxyFactory httpServiceProxyFactory = HttpServiceProxyFactory.builder()
                     .exchangeAdapter(WebClientAdapter.create(webClient)).build();
             return httpServiceProxyFactory.createClient(TechnicalFhCatalogClient.class);
+        }
+
+        @Bean
+        public SparqlFhCatalogClient sparqlFhCatalogClient() {
+            String baseUrl = "http://localhost:" + String.valueOf(WIREMOCK_PORT) + "/" + FH_CATALOG_SPARQL_PATH;
+            WebClient webClient = WebClient.builder().clientConnector(LogUtils.createHttpClient()).baseUrl(baseUrl).defaultHeaders(httpHeaders -> {
+                httpHeaders.set("Content-Type", "application/json");
+            }).build();
+            HttpServiceProxyFactory httpServiceProxyFactory = HttpServiceProxyFactory.builder()
+                .exchangeAdapter(WebClientAdapter.create(webClient)).build();
+            return httpServiceProxyFactory.createClient(SparqlFhCatalogClient.class);
         }
 
         @Bean

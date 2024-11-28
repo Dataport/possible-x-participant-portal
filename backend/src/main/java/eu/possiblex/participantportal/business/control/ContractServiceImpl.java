@@ -12,8 +12,10 @@ import eu.possiblex.participantportal.business.entity.edc.contractagreement.Cont
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcessState;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
+import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsQueryResult;
 import eu.possiblex.participantportal.utilities.PossibleXException;
 import jakarta.json.JsonException;
+import jakarta.validation.constraints.Null;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -72,16 +74,18 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     public TransferOfferResponseBE transferDataOfferAgain(TransferOfferRequestBE be) throws OfferNotFoundException, TransferFailedException {
-        String prefix = "PREFIX gx:<https://w3id.org/gaia-x/development#> PREFIX px:<http://w3id.org/gaia-x/possible-x#>";
-        String where = " ?offer a gx:ServiceOffering; px:providerUrl ?providerUrl; px:assetId \"" + be.getEdcOfferId() + "\"";
-        JsonNode res = fhCatalogClient.getSparqlQuery(prefix+" SELECT * WHERE { " + where + " }");
-        if (res.get("results").get("bindings").size() == 0) {
-            throw new OfferNotFoundException("Offer not found for assetId: " + be.getEdcOfferId());
-        }
-        if (res.get("results").get("bindings").size() > 1) {
+        Map<String, OfferingDetailsQueryResult> offeringDetailsMap = fhCatalogClient.getOfferingDetails(List.of(be.getEdcOfferId()));
+        if (offeringDetailsMap.size() > 1) {
             throw new OfferNotFoundException("Multiple offers found for assetId: " + be.getEdcOfferId());
         }
-        String providerUrl = res.get("results").get("bindings").get(0).get("providerUrl").get("value").asText();
+        String providerUrl;
+        OfferingDetailsQueryResult offeringDetails;
+        try {
+            offeringDetails = offeringDetailsMap.get(be.getEdcOfferId());
+        } catch (NullPointerException e) {
+            throw new OfferNotFoundException("Offer not found for assetId: " + be.getEdcOfferId());
+        }
+        providerUrl = offeringDetails.getUri();
         if (providerUrl == null) {
             throw new OfferNotFoundException("Provider URL not found for assetId: " + be.getEdcOfferId());
         }

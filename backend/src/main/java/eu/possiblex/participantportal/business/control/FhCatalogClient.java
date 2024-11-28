@@ -36,8 +36,6 @@ public interface FhCatalogClient {
      */
     void deleteServiceOfferingFromFhCatalog(String offeringId, boolean doesContainData);
 
-    JsonNode getSparqlQuery(String query);
-
     Map<String, ParticipantNameQueryResult> getParticipantNames(Collection<String> dapsIds);
 
     Map<String, OfferingDetailsQueryResult> getOfferingDetails(Collection<String> assetIds);

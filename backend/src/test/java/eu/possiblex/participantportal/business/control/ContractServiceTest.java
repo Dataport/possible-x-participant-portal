@@ -21,6 +21,7 @@ import org.springframework.test.context.ContextConfiguration;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.reset;
@@ -32,7 +33,13 @@ class ContractServiceTest {
     private EdcClient edcClient;
 
     @Autowired
+    private FhCatalogClient fhCatalogClient;
+
+    @Autowired
     private ContractService contractService;
+
+    @Autowired
+    private ConsumerService consumerService;
 
     @Test
     void testGetContractAgreementsAsProviderOfAssets() {
@@ -119,9 +126,21 @@ class ContractServiceTest {
     @TestConfiguration
     static class TestConfig {
         @Bean
+        public ConsumerService consumerService() {
+
+            return Mockito.spy(new ConsumerServiceFake());
+        }
+
+        @Bean
         public EdcClient edcClient() {
 
             return Mockito.spy(new EdcClientFake());
+        }
+
+        @Bean
+        public FhCatalogClient fhCatalogClient() {
+
+            return Mockito.spy(new FhCatalogClientFake());
         }
     }
 

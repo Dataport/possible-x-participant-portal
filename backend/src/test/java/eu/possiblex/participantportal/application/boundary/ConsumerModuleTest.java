@@ -69,6 +69,9 @@ public class ConsumerModuleTest {
     @Autowired
     private TechnicalFhCatalogClient technicalFhCatalogClientMock;
 
+    @Autowired
+    private SparqlFhCatalogClient sparqlFhCatalogClientMock;
+
     @BeforeEach
     void setup() {
 
@@ -416,6 +419,12 @@ public class ConsumerModuleTest {
         public TechnicalFhCatalogClient technicalFhCatalogClientMock() {
 
             return Mockito.mock(TechnicalFhCatalogClient.class);
+        }
+
+        @Bean
+        public SparqlFhCatalogClient sparqlFhCatalogClient() {
+
+            return Mockito.mock(SparqlFhCatalogClient.class);
         }
     }
 
