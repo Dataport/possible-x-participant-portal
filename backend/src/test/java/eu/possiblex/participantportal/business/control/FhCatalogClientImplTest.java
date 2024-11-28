@@ -70,7 +70,7 @@ class FhCatalogClientImplTest {
         // GIVEN a mocked technical client that returns a test participant
 
         String participantContent = TestUtils.loadTextFile(
-            "unit_tests/FHCatalogClientImplTest/participant.json");
+            "unit_tests/FHCatalogClientImplTest/validFhParticipant.json");
 
         TechnicalFhCatalogClient technicalFhCatalogClientMock = Mockito.mock(TechnicalFhCatalogClient.class);
         Mockito.when(technicalFhCatalogClientMock.getFhCatalogParticipant(Mockito.anyString()))
@@ -84,8 +84,8 @@ class FhCatalogClientImplTest {
         // THEN the participant should contain the data parsed from the test participant
 
         Assertions.assertNotNull(participant);
-        Assertions.assertEquals("Test Org", participant.getName());
-        Assertions.assertEquals("Test", participant.getDescription());
-        Assertions.assertEquals("test@org.de", participant.getMailAddress());
+        Assertions.assertEquals("Example", participant.getName());
+        Assertions.assertEquals("This is an Example Org", participant.getDescription());
+        Assertions.assertEquals("EXPECTED_MAIL_ADDRESS_VALUE", participant.getMailAddress());
     }
 }

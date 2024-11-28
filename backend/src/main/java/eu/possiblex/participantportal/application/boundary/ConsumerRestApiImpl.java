@@ -2,12 +2,10 @@ package eu.possiblex.participantportal.application.boundary;
 
 import eu.possiblex.participantportal.application.control.ConsumerApiMapper;
 import eu.possiblex.participantportal.application.entity.*;
-import eu.possiblex.participantportal.application.entity.ContractPartiesRequestTO;
 import eu.possiblex.participantportal.business.control.ConsumerService;
 import eu.possiblex.participantportal.business.entity.*;
 import eu.possiblex.participantportal.business.entity.exception.NegotiationFailedException;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
-import eu.possiblex.participantportal.business.entity.exception.ParticipantNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
 import eu.possiblex.participantportal.utilities.PossibleXException;
 import lombok.extern.slf4j.Slf4j;
@@ -109,29 +107,6 @@ public class ConsumerRestApiImpl implements ConsumerRestApi {
         TransferOfferResponseTO response = consumerApiMapper.transferOfferResponseBEToTransferOfferResponseTO(
             transferOfferResponseBE);
         log.info("Returning for transferring data of contract: {}", response);
-        return response;
-    }
-
-    @Override
-    public ContractPartiesTO getContractParties(@RequestBody ContractPartiesRequestTO request) {
-
-        log.info("Retrieving contract parties details with: {}", request);
-        ContractPartiesRequestBE be = consumerApiMapper.contractPartiesRequestTOToBE(request);
-
-        ContractPartiesBE contractPartiesBE;
-        try {
-            contractPartiesBE = consumerService.getContractParties(be);
-        } catch (ParticipantNotFoundException e) {
-            throw new PossibleXException(
-                "Failed to retrieve contract parties details with: " + request + ". ParticipantNotFoundException: " + e,
-                HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            throw new PossibleXException(
-                "Failed to retrieve contract parties details with: " + request + ". Other Exception: " + e);
-        }
-
-        ContractPartiesTO response = consumerApiMapper.contractPartiesBEToContractPartiesTO(contractPartiesBE);
-        log.info("Returning contract parties details: {}", response);
         return response;
     }
 }

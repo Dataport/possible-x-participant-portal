@@ -1,8 +1,7 @@
 import {Component, ViewChild, ElementRef, Input} from '@angular/core';
 
 import {
-  IContractPartiesTO,
-  IOfferDetailsTO,
+  IOfferDetailsTO, IParticipantDetailsTO,
   IPxExtendedServiceOfferingCredentialSubject
 } from "../../../services/mgmt/api/backend";
 import {DatePipe} from "@angular/common";
@@ -15,7 +14,8 @@ import {DatePipe} from "@angular/common";
 })
 export class OfferPrintViewComponent {
   @Input() offer?: IOfferDetailsTO = undefined;
-  @Input() contractParties?: IContractPartiesTO = undefined;
+  @Input() providerDetails?: IParticipantDetailsTO = undefined;
+  @Input() consumerDetails?: IParticipantDetailsTO = undefined;
   @Input() printTimestamp?: Date = undefined;
   @ViewChild('modalContent') modalContent: ElementRef;
 

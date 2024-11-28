@@ -22,8 +22,6 @@ public interface ConsumerApiMapper {
 
     TransferOfferRequestBE transferOfferRequestTOToBE(TransferOfferRequestTO to);
 
-    ContractPartiesRequestBE contractPartiesRequestTOToBE(ContractPartiesRequestTO to);
-
     @Mapping(target = "edcOfferId", source = "edcOffer.assetId")
     @Mapping(target = "catalogOffering", source = "catalogOffering")
     @Mapping(target = "dataOffering", source = "dataOffering")
@@ -35,26 +33,4 @@ public interface ConsumerApiMapper {
     TransferOfferResponseTO transferOfferResponseBEToTransferOfferResponseTO(
         TransferOfferResponseBE transferOfferResponseBE);
 
-    @Mapping(target = "consumerDetails.participantId", source = "consumer.id", qualifiedByName = "extractParticipantDidWeb")
-    @Mapping(target = "consumerDetails.participantName", source = "consumer.name")
-    @Mapping(target = "consumerDetails.participantEmail", source = "consumer.mailAddress")
-    @Mapping(target = "providerDetails.participantId", source = "provider.id", qualifiedByName = "extractParticipantDidWeb")
-    @Mapping(target = "providerDetails.participantName", source = "provider.name")
-    @Mapping(target = "providerDetails.participantEmail", source = "provider.mailAddress")
-    ContractPartiesTO contractPartiesBEToContractPartiesTO(ContractPartiesBE contractPartiesBE);
-
-    @Named("extractParticipantDidWeb")
-    default String extractParticipantDid(String id) {
-
-        String didWebRegex = "did:web.*";
-
-        Pattern pattern = Pattern.compile(didWebRegex);
-        Matcher matcher = pattern.matcher(id);
-
-        String extracted = "";
-        if (matcher.find()) {
-            extracted = matcher.group();
-        }
-        return extracted;
-    }
 }

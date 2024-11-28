@@ -2,7 +2,6 @@ package eu.possiblex.participantportal.application.boundary;
 
 import eu.possiblex.participantportal.application.control.ConsumerApiMapper;
 import eu.possiblex.participantportal.application.entity.ConsumeOfferRequestTO;
-import eu.possiblex.participantportal.application.entity.ContractPartiesRequestTO;
 import eu.possiblex.participantportal.application.entity.SelectOfferRequestTO;
 import eu.possiblex.participantportal.application.entity.TransferOfferRequestTO;
 import eu.possiblex.participantportal.business.control.ConsumerService;
@@ -130,26 +129,6 @@ class ConsumerRestApiTest {
         this.mockMvc.perform(post("/consumer/offer/transfer").content(RestApiHelper.asJsonString(
                 TransferOfferRequestTO.builder().edcOfferId(ConsumerServiceFake.MISSING_OFFER_ID).build()))
             .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isNotFound());
-    }
-
-    @Test
-    void shouldReturnMessageOnGetContractParties() throws Exception {
-        // WHEN/THEN
-        this.mockMvc.perform(post("/consumer/offer/contractparties").content(RestApiHelper.asJsonString(
-                    ContractPartiesRequestTO.builder().providerId(ConsumerServiceFake.OTHER_PARTICIPANT_ID).build()))
-            .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
-            .andExpect(jsonPath("$.consumerDetails.participantName").value(ConsumerServiceFake.PARTICIPANT_NAME))
-            .andExpect(jsonPath("$.consumerDetails.participantEmail").value(ConsumerServiceFake.PARTICIPANT_EMAIL))
-            .andExpect(jsonPath("$.providerDetails.participantName").value(ConsumerServiceFake.OTHER_PARTICIPANT_NAME))
-            .andExpect(jsonPath("$.providerDetails.participantEmail").value(ConsumerServiceFake.OTHER_PARTICIPANT_EMAIL));
-    }
-
-    @Test
-    void shouldReturnMessageOnGetContractPartiesNotFound() throws Exception {
-        // WHEN/THEN
-        this.mockMvc.perform(post("/consumer/offer/contractparties").content(RestApiHelper.asJsonString(
-                    ContractPartiesRequestTO.builder().providerId(ConsumerServiceFake.UNKNOWN_PARTICIPANT_ID).build()))
-                .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isNotFound());
     }
 
     @TestConfiguration

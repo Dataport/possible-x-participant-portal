@@ -89,19 +89,4 @@ public class ConsumerServiceFake implements ConsumerService {
             default -> TransferOfferResponseBE.builder().transferProcessState(TransferProcessState.COMPLETED).build();
         };
     }
-
-    @Override
-    public ContractPartiesBE getContractParties(ContractPartiesRequestBE request) throws ParticipantNotFoundException{
-
-        if(request.getProviderId().equals(UNKNOWN_PARTICIPANT_ID)) {
-            throw new ParticipantNotFoundException("not found");
-        }
-
-        PxExtendedLegalParticipantCredentialSubjectSubset consumer = PxExtendedLegalParticipantCredentialSubjectSubset.builder()
-            .id(PARTICIPANT_ID).name(PARTICIPANT_NAME).mailAddress(PARTICIPANT_EMAIL).build();
-        PxExtendedLegalParticipantCredentialSubjectSubset provider = PxExtendedLegalParticipantCredentialSubjectSubset.builder()
-            .id(OTHER_PARTICIPANT_ID).name(OTHER_PARTICIPANT_NAME).mailAddress(OTHER_PARTICIPANT_EMAIL).build();
-
-        return new ContractPartiesBE(consumer, provider);
-    }
 }

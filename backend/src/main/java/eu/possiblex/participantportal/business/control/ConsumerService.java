@@ -38,10 +38,4 @@ public interface ConsumerService {
     TransferOfferResponseBE transferDataOffer(TransferOfferRequestBE request)
         throws OfferNotFoundException, TransferFailedException;
 
-    /**
-     * Get the contract parties.
-     *
-     * @return the contract parties
-     */
-    ContractPartiesBE getContractParties(ContractPartiesRequestBE request) throws ParticipantNotFoundException;
 }

@@ -29,11 +29,4 @@ public interface ProviderRestApi {
     @PostMapping(value = "/offer/data", produces = MediaType.APPLICATION_JSON_VALUE)
     CreateOfferResponseTO createDataOffering(@RequestBody CreateDataOfferingRequestTO createDataOfferingRequestTO);
 
-    /**
-     * GET endpoint to retrieve the participant's id
-     *
-     * @return participant id
-     */
-    @GetMapping(value = "/id", produces = MediaType.APPLICATION_JSON_VALUE)
-    ParticipantIdTO getParticipantId();
 }

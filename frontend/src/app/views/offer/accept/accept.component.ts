@@ -12,9 +12,9 @@ import {ApiService} from '../../../services/mgmt/api/api.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {StatusMessageComponent} from '../../common-views/status-message/status-message.component';
 import {
-  IAcceptOfferResponseTO, IContractPartiesTO,
+  IAcceptOfferResponseTO,
   IEnforcementPolicy,
-  IOfferDetailsTO, IParticipantRestrictionPolicy,
+  IOfferDetailsTO, IParticipantDetailsTO, IParticipantRestrictionPolicy,
   IPxExtendedServiceOfferingCredentialSubject
 } from '../../../services/mgmt/api/backend';
 
@@ -27,8 +27,10 @@ export class AcceptComponent implements OnChanges {
   @Input() offer?: IOfferDetailsTO = undefined;
   @Output() dismiss: EventEmitter<any> = new EventEmitter();
   @Output() negotiatedContract: EventEmitter<IAcceptOfferResponseTO> = new EventEmitter();
-  @Output() retrievedContractParties: EventEmitter<IContractPartiesTO> = new EventEmitter();
+  @Output() retrievedProviderDetails: EventEmitter<IParticipantDetailsTO> = new EventEmitter();
   @ViewChild('acceptOfferStatusMessage') acceptOfferStatusMessage!: StatusMessageComponent;
+  @ViewChild('retrieveConsumerDetailsMessage') retrieveConsumerDetailsMessage!: StatusMessageComponent;
+  @ViewChild('retrieveProviderDetailsMessage') retrieveProviderDetailsMessage!: StatusMessageComponent;
 
   @ViewChild('viewContainerRef', { read: ViewContainerRef, static: true }) viewContainerRef: ViewContainerRef;
   @ViewChild('accordion', { read: TemplateRef, static: true }) accordion: TemplateRef<any>;
@@ -36,7 +38,8 @@ export class AcceptComponent implements OnChanges {
   isConsumed = false;
   isPoliciesAccepted = false;
   isTnCAccepted = false;
-  contractParties?: IContractPartiesTO = undefined;
+  consumerDetails?: IParticipantDetailsTO = undefined;
+  providerDetails?: IParticipantDetailsTO = undefined;
   printTimestamp?: Date;
 
   protected isEverythingAllowedPolicy: (policy: IEnforcementPolicy) => boolean
@@ -82,15 +85,24 @@ export class AcceptComponent implements OnChanges {
   };
 
   async getContractPartiesDetails() {
-    console.log("Retrieve Contract Parties Details");
-    this.apiService.getContractParties({
-      providerId: this.offer.catalogOffering["gx:providedBy"].id,
-    }).then(response => {
+    console.log("Retrieve Participant Details of Consumer and Provider");
+    this.retrieveConsumerDetailsMessage.hideAllMessages();
+    this.retrieveProviderDetailsMessage.hideAllMessages();
+
+    this.apiService.getParticipantDetails$GET$participant_details_participantId(this.offer.catalogOffering["gx:providedBy"].id)
+      .then(response => {
       console.log(response);
-      this.retrievedContractParties.emit(response);
-      this.contractParties = response;
+      this.retrievedProviderDetails.emit(response);
+      this.providerDetails = response;
     }).catch((e: HttpErrorResponse) => {
-      console.error(e.error.detail || e.error || e.message);
+      this.retrieveProviderDetailsMessage.showErrorMessage(e.error.detail || e.error || e.message);
+    });
+
+    this.apiService.getParticipantDetails$GET$participant_details_me().then(response => {
+      console.log(response);
+      this.consumerDetails = response;
+    }).catch((e: HttpErrorResponse) => {
+      this.retrieveConsumerDetailsMessage.showErrorMessage(e.error.detail || e.error || e.message);
     });
   };
 
@@ -111,6 +123,6 @@ export class AcceptComponent implements OnChanges {
   }
 
   isButtonDisabled(): boolean {
-    return !this.isPoliciesAccepted || !this.isTnCAccepted || this.isConsumed;
+    return !this.isPoliciesAccepted || !this.isTnCAccepted || this.isConsumed || !this.consumerDetails || !this.providerDetails;
   }
 }

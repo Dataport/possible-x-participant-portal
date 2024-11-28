@@ -6,8 +6,8 @@
     <ng-container *ngIf="offer">
       <div id="print-section" class="print-section">
         <div><b>Timestamp:</b> {{ printTimestamp }}</div>
-        <div><b>Provider Participant:</b> {{ contractParties?.providerDetails.participantName }}</div>
-        <div><b>Consumer Participant:</b> {{ contractParties?.consumerDetails.participantName }}</div>
+        <div><b>Provider Participant:</b> {{ providerDetails?.participantName || "Could not be retrieved" }}</div>
+        <div><b>Consumer Participant:</b> {{ consumerDetails?.participantName || "Could not be retrieved" }}</div>
         <br/>
         <div *ngIf="!offer.dataOffering">
           <b>Offer ID:</b> {{ offer.catalogOffering.id }} <br/>

@@ -32,13 +32,4 @@ public interface ConsumerRestApi {
     @PostMapping(value = "/offer/transfer", produces = MediaType.APPLICATION_JSON_VALUE)
     TransferOfferResponseTO transferDataOffer(@RequestBody TransferOfferRequestTO request);
 
-    /**
-     * POST endpoint to get details of the potential contracting parties
-     *
-     * @param request request containing the participant id of the offer provider
-     *
-     * @return details of the potential contracting parties (consumer and provider)
-     */
-    @PostMapping(value = "/offer/contractparties", produces = MediaType.APPLICATION_JSON_VALUE)
-    ContractPartiesTO getContractParties(@RequestBody ContractPartiesRequestTO request);
 }

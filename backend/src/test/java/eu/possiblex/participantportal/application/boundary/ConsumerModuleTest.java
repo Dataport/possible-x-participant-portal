@@ -2,10 +2,8 @@ package eu.possiblex.participantportal.application.boundary;
 
 import eu.possiblex.participantportal.application.control.ConsumerApiMapper;
 import eu.possiblex.participantportal.application.entity.ConsumeOfferRequestTO;
-import eu.possiblex.participantportal.application.entity.ContractPartiesRequestTO;
 import eu.possiblex.participantportal.application.entity.SelectOfferRequestTO;
 import eu.possiblex.participantportal.business.control.*;
-import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedLegalParticipantCredentialSubjectSubset;
 import eu.possiblex.participantportal.business.entity.edc.catalog.DcatCatalog;
 import eu.possiblex.participantportal.business.entity.edc.catalog.DcatDataset;
 import eu.possiblex.participantportal.business.entity.edc.common.IdResponse;
@@ -385,67 +383,6 @@ class ConsumerModuleTest {
                 SelectOfferRequestTO.builder().fhCatalogOfferId(ConsumerServiceFake.VALID_FH_OFFER_ID).build()))
             .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().is5xxServerError());
     }
-
-    @Test
-    void getContractPartiesSucceeds() throws Exception {
-
-        // GIVEN
-
-        reset(edcClientMock);
-        reset(technicalFhCatalogClientMock);
-
-        // let the FH catalog provide test participants
-        String consumerParticipantContent = TestUtils.loadTextFile(TEST_FILES_PATH + "consumerParticipant.json");
-        Mockito.when(technicalFhCatalogClientMock.getFhCatalogParticipant(ConsumerServiceFake.PARTICIPANT_ID))
-            .thenReturn(consumerParticipantContent);
-
-        String providerParticipantContent = TestUtils.loadTextFile(TEST_FILES_PATH + "providerParticipant.json");
-        Mockito.when(technicalFhCatalogClientMock.getFhCatalogParticipant(ConsumerServiceFake.OTHER_PARTICIPANT_ID))
-            .thenReturn(providerParticipantContent);
-
-        String expectedConsumerName = "Test Organization"; // from the "name" attribute in the consumer participant
-        String expectedConsumerEmail = "test@org.de"; // from the "name" attribute in the consumer participant
-        String expectedProviderName = "Other Organization"; // from the "name" attribute in the provider participant
-        String expectedProviderEmail = "other@org.de"; // from the "name" attribute in the provider participant
-
-
-        // WHEN/THEN
-
-        this.mockMvc.perform(post("/consumer/offer/contractparties").content(RestApiHelper.asJsonString(
-                ContractPartiesRequestTO.builder().providerId(ConsumerServiceFake.OTHER_PARTICIPANT_ID).build()))
-            .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
-            .andExpect(jsonPath("$.consumerDetails.participantName").value(expectedConsumerName))
-            .andExpect(jsonPath("$.consumerDetails.participantEmail").value(expectedConsumerEmail))
-            .andExpect(jsonPath("$.providerDetails.participantName").value(expectedProviderName))
-            .andExpect(jsonPath("$.providerDetails.participantEmail").value(expectedProviderEmail));
-
-        // FH Catalog should have been queried with the consumer and provider participant IDs
-        verify(technicalFhCatalogClientMock, Mockito.times(1)).getFhCatalogParticipant(ConsumerServiceFake.PARTICIPANT_ID);
-        verify(technicalFhCatalogClientMock, Mockito.times(1)).getFhCatalogParticipant(ConsumerServiceFake.OTHER_PARTICIPANT_ID);
-    }
-
-    @Test
-    void getContractPartiesThrows404() throws Exception {
-
-        // GIVEN
-
-        reset(edcClientMock);
-        reset(technicalFhCatalogClientMock);
-
-        // let the FH catalog throw a 404 error
-        WebClientResponseException expectedException = Mockito.mock(WebClientResponseException.class);
-        Mockito.when(expectedException.getStatusCode()).thenReturn(HttpStatus.NOT_FOUND);
-        Mockito.when(technicalFhCatalogClientMock.getFhCatalogParticipant(any()))
-            .thenThrow(expectedException);
-
-        // WHEN/THEN
-
-        this.mockMvc.perform(post("/consumer/offer/contractparties").content(RestApiHelper.asJsonString(
-                ContractPartiesRequestTO.builder().providerId(ConsumerServiceFake.OTHER_PARTICIPANT_ID).build()))
-            .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isNotFound());
-    }
-
-
 
     @TestConfiguration
     static class TestConfig {

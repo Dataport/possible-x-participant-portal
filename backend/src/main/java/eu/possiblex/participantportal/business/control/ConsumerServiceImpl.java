@@ -69,13 +69,10 @@ public class ConsumerServiceImpl implements ConsumerService {
 
     private final String bucketTopLevelFolder;
 
-    private final String participantId;
-
     public ConsumerServiceImpl(@Autowired ObjectMapper objectMapper, @Autowired EdcClient edcClient,
         @Autowired FhCatalogClient fhCatalogClient, @Autowired TaskScheduler taskScheduler,
         @Value("${s3.bucket-storage-region}") String bucketStorageRegion, @Value("${s3.bucket-name}") String bucketName,
-        @Value("${s3.bucket-top-level-folder}") String bucketTopLevelFolder,
-        @Value("${participant-id}") String participantId) {
+        @Value("${s3.bucket-top-level-folder}") String bucketTopLevelFolder) {
 
         this.objectMapper = objectMapper;
         this.edcClient = edcClient;
@@ -84,7 +81,6 @@ public class ConsumerServiceImpl implements ConsumerService {
         this.bucketStorageRegion = bucketStorageRegion;
         this.bucketName = bucketName;
         this.bucketTopLevelFolder = bucketTopLevelFolder;
-        this.participantId = participantId;
     }
 
     @Override
@@ -151,14 +147,6 @@ public class ConsumerServiceImpl implements ConsumerService {
             .contractId(request.getContractAgreementId()).dataDestination(dataAddress).build();
         TransferProcessState transferProcessState = performTransfer(transferRequest).getState();
         return new TransferOfferResponseBE(transferProcessState);
-    }
-
-    @Override
-    public ContractPartiesBE getContractParties(ContractPartiesRequestBE request) throws ParticipantNotFoundException {
-
-        PxExtendedLegalParticipantCredentialSubjectSubset consumer = fhCatalogClient.getFhCatalogParticipant(participantId);
-        PxExtendedLegalParticipantCredentialSubjectSubset provider = fhCatalogClient.getFhCatalogParticipant(request.getProviderId());
-        return new ContractPartiesBE(consumer, provider);
     }
 
     private DcatCatalog queryEdcCatalog(CatalogRequest catalogRequest) {
