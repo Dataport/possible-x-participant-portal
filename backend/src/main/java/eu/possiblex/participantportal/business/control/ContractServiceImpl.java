@@ -76,18 +76,17 @@ public class ContractServiceImpl implements ContractService {
     public TransferOfferResponseBE transferDataOfferAgain(TransferOfferRequestBE be) throws OfferNotFoundException, TransferFailedException {
         Map<String, OfferingDetailsQueryResult> offeringDetailsMap = fhCatalogClient.getOfferingDetails(List.of(be.getEdcOfferId()));
         if (offeringDetailsMap.size() > 1) {
-            throw new OfferNotFoundException("Multiple offers found for assetId: " + be.getEdcOfferId());
+            throw new OfferNotFoundException("Multiple offers found in Sparql query result for assetId: " + be.getEdcOfferId());
         }
         String providerUrl;
         OfferingDetailsQueryResult offeringDetails;
-        try {
-            offeringDetails = offeringDetailsMap.get(be.getEdcOfferId());
-        } catch (NullPointerException e) {
-            throw new OfferNotFoundException("Offer not found for assetId: " + be.getEdcOfferId());
+        offeringDetails = offeringDetailsMap.get(be.getEdcOfferId());
+        if (offeringDetails == null) {
+            throw new OfferNotFoundException("No offer found in Sparql query result for assetId: " + be.getEdcOfferId());
         }
-        providerUrl = offeringDetails.getUri();
+        providerUrl = offeringDetails.getProviderUrl();
         if (providerUrl == null) {
-            throw new OfferNotFoundException("Provider URL not found for assetId: " + be.getEdcOfferId());
+            throw new OfferNotFoundException("Provider URL not found in Sparql query result for assetId: " + be.getEdcOfferId());
         }
         be.setCounterPartyAddress(providerUrl);
         TransferOfferResponseBE transferOfferResponseBE;
@@ -95,13 +94,13 @@ public class ContractServiceImpl implements ContractService {
             transferOfferResponseBE = consumerService.transferDataOffer(be);
         } catch (OfferNotFoundException e) {
             throw new OfferNotFoundException(
-                "Failed to transfer offer with offerId" + be.getEdcOfferId() + ". OfferNotFoundException: " + e);
+                "Failed to transfer offer again with offerId" + be.getEdcOfferId() + ". OfferNotFoundException: " + e);
         } catch (TransferFailedException e) {
             throw new TransferFailedException(
-                "Failed to transfer offer with offerId" + be.getEdcOfferId() + ". TransferFailedException: " + e);
+                "Failed to transfer offer again with offerId" + be.getEdcOfferId() + ". TransferFailedException: " + e);
         } catch (Exception e) {
             throw new PossibleXException(
-                "Failed to transfer offer with offerId" + be.getEdcOfferId() + ". Other Exception: " + e);
+                "Failed to transfer offer again with offerId" + be.getEdcOfferId() + ". Other Exception: " + e);
         }
         return transferOfferResponseBE;
     }

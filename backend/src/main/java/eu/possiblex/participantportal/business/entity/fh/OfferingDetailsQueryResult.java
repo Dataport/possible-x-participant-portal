@@ -18,4 +18,7 @@ public class OfferingDetailsQueryResult {
 
     @JsonDeserialize(using = CatalogLiteralDeserializer.class)
     private String description;
+
+    @JsonDeserialize(using = CatalogLiteralDeserializer.class)
+    private String providerUrl;
 }

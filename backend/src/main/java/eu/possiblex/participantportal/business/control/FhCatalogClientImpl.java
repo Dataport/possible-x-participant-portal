@@ -203,6 +203,7 @@ public class FhCatalogClientImpl implements FhCatalogClient {
               ?uri a gx:ServiceOffering;
               gx:name ?name;
               gx:description ?description;
+              px:providerUrl ?providerUrl;
               px:assetId ?assetId .
               FILTER(?assetId IN (""" + String.join(",", assetIds.stream()
             .map(id -> "\"" + id + "\"").toList()) +  "))" + """
