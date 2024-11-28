@@ -1,5 +1,6 @@
 package eu.possiblex.participantportal.business.control;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedLegalParticipantCredentialSubjectSubset;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
@@ -29,4 +30,6 @@ public interface FhCatalogClient {
      * @param doesContainData true: The offer contains data. false: otherwise
      */
     void deleteServiceOfferingFromFhCatalog(String offeringId, boolean doesContainData);
+
+    JsonNode getSparqlQuery(String query);
 }

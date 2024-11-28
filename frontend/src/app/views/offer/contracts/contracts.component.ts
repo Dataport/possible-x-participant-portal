@@ -30,14 +30,14 @@ export class ContractsComponent implements OnInit {
     this.expandedItemId = this.expandedItemId === itemId ? null : itemId;
   }
 
-  transferAgain(contractAgreement: IContractAgreementTO) {
+  async transferAgain(contractAgreement: IContractAgreementTO) {
     this.isTransferButtonDisabled = true;
     this.apiService.transferDataOfferAgain({
       contractAgreementId: contractAgreement.id,
       counterPartyAddress: null,
       edcOfferId: contractAgreement.assetId,
     }).then(response => {
-      console.log(response);
+      console.log(response.transferProcessState);
       //this.dataTransferStatusMessage.showSuccessMessage("Data Transfer successful: " + response.transferProcessState);
     }).catch((e: HttpErrorResponse) => {
       console.log(e);

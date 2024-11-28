@@ -3,6 +3,8 @@ package eu.possiblex.participantportal.business.control;
 import eu.possiblex.participantportal.business.entity.ContractAgreementBE;
 import eu.possiblex.participantportal.business.entity.TransferOfferRequestBE;
 import eu.possiblex.participantportal.business.entity.TransferOfferResponseBE;
+import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
+import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
 
 import java.util.List;
 
@@ -15,5 +17,6 @@ public interface ContractService {
      */
     List<ContractAgreementBE> getContractAgreements();
 
-    TransferOfferResponseBE transferDataOfferAgain(TransferOfferRequestBE request);
+    TransferOfferResponseBE transferDataOfferAgain(TransferOfferRequestBE request) throws OfferNotFoundException,
+        TransferFailedException;
 }

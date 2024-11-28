@@ -4,6 +4,7 @@ import com.apicatalog.jsonld.JsonLd;
 import com.apicatalog.jsonld.JsonLdError;
 import com.apicatalog.jsonld.document.JsonDocument;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedLegalParticipantCredentialSubjectSubset;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
@@ -28,13 +29,16 @@ public class FhCatalogClientImpl implements FhCatalogClient {
 
     private final TechnicalFhCatalogClient technicalFhCatalogClient;
 
+    private final SparqlFhCatalogClient sparqlFhCatalogClient;
+
     private final ObjectMapper objectMapper;
 
     public FhCatalogClientImpl(@Autowired TechnicalFhCatalogClient technicalFhCatalogClient,
-        @Autowired ObjectMapper objectMapper) {
+        @Autowired ObjectMapper objectMapper, @Autowired SparqlFhCatalogClient sparqlFhCatalogClient) {
 
         this.technicalFhCatalogClient = technicalFhCatalogClient;
         this.objectMapper = objectMapper;
+        this.sparqlFhCatalogClient = sparqlFhCatalogClient;
     }
 
     private static JsonDocument getFrameByType(List<String> type, Map<String, String> context) {
@@ -149,6 +153,20 @@ public class FhCatalogClientImpl implements FhCatalogClient {
             } else {
                 log.error("error when trying to delete offer from catalog!", e);
             }
+        }
+    }
+
+    @Override
+    public JsonNode getSparqlQuery(String query) {
+        log.info("executing SPARQL query: {}", query);
+        try {
+            String default_graph_uri="";
+            String format = "application/sparql-results+json";
+            String timeout= "0";
+            String signal_void = "on";
+            return sparqlFhCatalogClient.getSparqlQuery(query, default_graph_uri, format, timeout, signal_void);
+        } catch (WebClientResponseException e) {
+            throw new RuntimeException("Failed to execute SPARQL query: " + e.getResponseBodyAsString(), e);
         }
     }
 }

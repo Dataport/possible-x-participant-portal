@@ -23,11 +23,12 @@ class FhCatalogClientImplTest {
             "unit_tests/FHCatalogClientImplTest/validFhParticipant.json");
 
         TechnicalFhCatalogClient technicalFhCatalogClientMock = Mockito.mock(TechnicalFhCatalogClient.class);
+        SparqlFhCatalogClient sparqlFhCatalogClientMock = Mockito.mock(SparqlFhCatalogClient.class);
         Mockito.when(technicalFhCatalogClientMock.getFhCatalogOfferWithData(Mockito.anyString()))
             .thenReturn(fhCatalogOfferContent);
         Mockito.when(technicalFhCatalogClientMock.getFhCatalogParticipant(Mockito.anyString()))
             .thenReturn(fhCatalogParticipant);
-        FhCatalogClientImpl sut = new FhCatalogClientImpl(technicalFhCatalogClientMock, new ObjectMapper());
+        FhCatalogClientImpl sut = new FhCatalogClientImpl(technicalFhCatalogClientMock, new ObjectMapper(), sparqlFhCatalogClientMock);
 
         // WHEN a dataset is retrieved
 
@@ -54,6 +55,7 @@ class FhCatalogClientImplTest {
             "unit_tests/FHCatalogClientImplTest/validFhParticipant.json");
 
         TechnicalFhCatalogClient technicalFhCatalogClientMock = Mockito.mock(TechnicalFhCatalogClient.class);
+        SparqlFhCatalogClient sparqlFhCatalogClientMock = Mockito.mock(SparqlFhCatalogClient.class);
         WebClientResponseException expectedException = Mockito.mock(WebClientResponseException.class);
         Mockito.when(expectedException.getStatusCode()).thenReturn(HttpStatus.NOT_FOUND);
         Mockito.when(technicalFhCatalogClientMock.getFhCatalogOfferWithData(Mockito.anyString()))
@@ -62,7 +64,7 @@ class FhCatalogClientImplTest {
             .thenReturn(fhCatalogOfferContent);
         Mockito.when(technicalFhCatalogClientMock.getFhCatalogParticipant(Mockito.anyString()))
             .thenReturn(fhCatalogParticipant);
-        FhCatalogClientImpl sut = new FhCatalogClientImpl(technicalFhCatalogClientMock, new ObjectMapper());
+        FhCatalogClientImpl sut = new FhCatalogClientImpl(technicalFhCatalogClientMock, new ObjectMapper(), sparqlFhCatalogClientMock);
 
         // WHEN a dataset is retrieved
 

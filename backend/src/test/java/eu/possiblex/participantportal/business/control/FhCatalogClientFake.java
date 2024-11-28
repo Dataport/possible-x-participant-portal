@@ -1,5 +1,7 @@
 package eu.possiblex.participantportal.business.control;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import eu.possiblex.participantportal.business.entity.TransferOfferRequestBE;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedLegalParticipantCredentialSubjectSubset;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
@@ -30,5 +32,10 @@ public class FhCatalogClientFake implements FhCatalogClient {
 
     public void deleteServiceOfferingFromFhCatalog(String offeringId, boolean doesContainData) {
 
+    }
+
+    @Override
+    public JsonNode getSparqlQuery(String query) {
+        return null;
     }
 }

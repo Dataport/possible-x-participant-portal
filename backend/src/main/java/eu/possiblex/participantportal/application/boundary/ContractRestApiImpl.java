@@ -8,8 +8,12 @@ import eu.possiblex.participantportal.application.entity.TransferOfferResponseTO
 import eu.possiblex.participantportal.business.control.ContractService;
 import eu.possiblex.participantportal.business.entity.TransferOfferRequestBE;
 import eu.possiblex.participantportal.business.entity.TransferOfferResponseBE;
+import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
+import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
+import eu.possiblex.participantportal.utilities.PossibleXException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -51,9 +55,20 @@ public class ContractRestApiImpl implements ContractRestApi {
 
     @Override
     public TransferOfferResponseTO transferDataOfferAgain(@RequestBody TransferOfferRequestTO request) {
-
         TransferOfferRequestBE be = consumerApiMapper.transferOfferRequestTOtoBE(request);
-        TransferOfferResponseBE responseBE = contractService.transferDataOfferAgain(be);
+        TransferOfferResponseBE responseBE;
+        try {
+            responseBE = contractService.transferDataOfferAgain(be);
+        } catch (OfferNotFoundException e) {
+            throw new PossibleXException("" + e,
+                HttpStatus.NOT_FOUND);
+        } catch (TransferFailedException e) {
+            throw new PossibleXException(
+                "" + e);
+        } catch (Exception e) {
+            throw new PossibleXException(
+                "" + e);
+        }
         TransferOfferResponseTO responseTO = consumerApiMapper.transferOfferResponseBEtoTransferOfferResponseTO(responseBE);
         log.info("Returning for transferring data of contract again: " + responseTO);
         return responseTO;
