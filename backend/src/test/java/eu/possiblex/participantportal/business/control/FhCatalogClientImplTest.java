@@ -23,16 +23,19 @@ class FhCatalogClientImplTest {
             "unit_tests/FHCatalogClientImplTest/validFhParticipant.json");
 
         TechnicalFhCatalogClient technicalFhCatalogClientMock = Mockito.mock(TechnicalFhCatalogClient.class);
+        SparqlFhCatalogClient sparqlFhCatalogClient = Mockito.mock(SparqlFhCatalogClient.class);
         Mockito.when(technicalFhCatalogClientMock.getFhCatalogOfferWithData(Mockito.anyString()))
             .thenReturn(fhCatalogOfferContent);
         Mockito.when(technicalFhCatalogClientMock.getFhCatalogParticipant(Mockito.anyString()))
             .thenReturn(fhCatalogParticipant);
-        FhCatalogClientImpl sut = new FhCatalogClientImpl(technicalFhCatalogClientMock, new ObjectMapper());
+        FhCatalogClientImpl sut = new FhCatalogClientImpl(technicalFhCatalogClientMock, sparqlFhCatalogClient,
+            new ObjectMapper());
 
         // WHEN a dataset is retrieved
 
         PxExtendedServiceOfferingCredentialSubject offer = sut.getFhCatalogOffer("some ID");
-        PxExtendedLegalParticipantCredentialSubjectSubset participant = sut.getFhCatalogParticipant("some participant ID");
+        PxExtendedLegalParticipantCredentialSubjectSubset participant = sut.getFhCatalogParticipant(
+            "some participant ID");
 
         // THEN the offer should contain the data parsed from the test FH Catalog offer
 
@@ -54,20 +57,23 @@ class FhCatalogClientImplTest {
             "unit_tests/FHCatalogClientImplTest/validFhParticipant.json");
 
         TechnicalFhCatalogClient technicalFhCatalogClientMock = Mockito.mock(TechnicalFhCatalogClient.class);
+        SparqlFhCatalogClient sparqlFhCatalogClient = Mockito.mock(SparqlFhCatalogClient.class);
         WebClientResponseException expectedException = Mockito.mock(WebClientResponseException.class);
         Mockito.when(expectedException.getStatusCode()).thenReturn(HttpStatus.NOT_FOUND);
         Mockito.when(technicalFhCatalogClientMock.getFhCatalogOfferWithData(Mockito.anyString()))
-                .thenThrow(expectedException);
+            .thenThrow(expectedException);
         Mockito.when(technicalFhCatalogClientMock.getFhCatalogOffer(Mockito.anyString()))
             .thenReturn(fhCatalogOfferContent);
         Mockito.when(technicalFhCatalogClientMock.getFhCatalogParticipant(Mockito.anyString()))
             .thenReturn(fhCatalogParticipant);
-        FhCatalogClientImpl sut = new FhCatalogClientImpl(technicalFhCatalogClientMock, new ObjectMapper());
+        FhCatalogClientImpl sut = new FhCatalogClientImpl(technicalFhCatalogClientMock, sparqlFhCatalogClient,
+            new ObjectMapper());
 
         // WHEN a dataset is retrieved
 
         PxExtendedServiceOfferingCredentialSubject offer = sut.getFhCatalogOffer("some ID");
-        PxExtendedLegalParticipantCredentialSubjectSubset participant = sut.getFhCatalogParticipant("some participant ID");
+        PxExtendedLegalParticipantCredentialSubjectSubset participant = sut.getFhCatalogParticipant(
+            "some participant ID");
 
         // THEN the offer should contain the data parsed from the test FH Catalog offer
 

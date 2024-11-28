@@ -2,6 +2,7 @@ package eu.possiblex.participantportal.business.control;
 
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
 import eu.possiblex.participantportal.business.entity.ContractAgreementBE;
+import eu.possiblex.participantportal.business.entity.OfferingDetailsBE;
 import eu.possiblex.participantportal.business.entity.edc.asset.ionoss3extension.IonosS3DataSource;
 import eu.possiblex.participantportal.business.entity.edc.asset.possible.PossibleAsset;
 import eu.possiblex.participantportal.business.entity.edc.asset.possible.PossibleAssetDataAccountExport;
@@ -63,7 +64,7 @@ public class ContractServiceFake implements ContractService {
             .policy(Policy.builder().target(PolicyTarget.builder().id(FAKE_ID_ASSET).build()).build()).build();
 
         ContractAgreementBE contractAgreementBE = ContractAgreementBE.builder().contractAgreement(contractAgreement)
-            .asset(getPossibleAsset(contractAgreement.getAssetId())).build();
+            .offeringDetails(new OfferingDetailsBE(NAME, DESCRIPTION)).build();
 
         return List.of(contractAgreementBE);
     }

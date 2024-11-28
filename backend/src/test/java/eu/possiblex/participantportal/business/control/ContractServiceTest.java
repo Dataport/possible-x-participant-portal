@@ -2,6 +2,7 @@ package eu.possiblex.participantportal.business.control;
 
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
 import eu.possiblex.participantportal.business.entity.ContractAgreementBE;
+import eu.possiblex.participantportal.business.entity.OfferingDetailsBE;
 import eu.possiblex.participantportal.business.entity.edc.asset.ionoss3extension.IonosS3DataSource;
 import eu.possiblex.participantportal.business.entity.edc.asset.possible.PossibleAsset;
 import eu.possiblex.participantportal.business.entity.edc.asset.possible.PossibleAssetDataAccountExport;
@@ -69,7 +70,7 @@ class ContractServiceTest {
         ContractAgreement contractAgreement = getContractAgreement();
 
         ContractAgreementBE contractAgreementBE = ContractAgreementBE.builder().contractAgreement(contractAgreement)
-            .asset(getPossibleAsset(contractAgreement.getAssetId())).build();
+            .offeringDetails(OfferingDetailsBE.builder().name("name").description("description").build()).build();
 
         return List.of(contractAgreementBE);
     }
@@ -79,7 +80,7 @@ class ContractServiceTest {
         ContractAgreement contractAgreement = getContractAgreement();
 
         ContractAgreementBE contractAgreementBE = ContractAgreementBE.builder().contractAgreement(contractAgreement)
-            .asset(null).build();
+            .offeringDetails(null).build();
 
         return List.of(contractAgreementBE);
     }
@@ -122,6 +123,12 @@ class ContractServiceTest {
         public EdcClient edcClient() {
 
             return Mockito.spy(new EdcClientFake());
+        }
+
+        @Bean
+        public FhCatalogClient fhCatalogClient() {
+
+            return Mockito.spy(new FhCatalogClientFake());
         }
     }
 
