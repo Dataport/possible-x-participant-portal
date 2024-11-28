@@ -37,5 +37,4 @@ public interface ConsumerService {
      */
     TransferOfferResponseBE transferDataOffer(TransferOfferRequestBE request)
         throws OfferNotFoundException, TransferFailedException;
-
 }

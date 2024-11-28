@@ -31,5 +31,4 @@ public interface ConsumerRestApi {
      */
     @PostMapping(value = "/offer/transfer", produces = MediaType.APPLICATION_JSON_VALUE)
     TransferOfferResponseTO transferDataOffer(@RequestBody TransferOfferRequestTO request);
-
 }

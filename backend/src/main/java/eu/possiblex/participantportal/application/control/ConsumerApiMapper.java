@@ -1,17 +1,11 @@
 package eu.possiblex.participantportal.application.control;
 
 import eu.possiblex.participantportal.application.entity.*;
-import eu.possiblex.participantportal.application.entity.policies.EnforcementPolicy;
-import eu.possiblex.participantportal.application.entity.policies.EverythingAllowedPolicy;
 import eu.possiblex.participantportal.business.entity.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Named;
 
 import java.time.OffsetDateTime;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Mapper(componentModel = "spring", imports = { OffsetDateTime.class })
 public interface ConsumerApiMapper {
@@ -32,5 +26,4 @@ public interface ConsumerApiMapper {
 
     TransferOfferResponseTO transferOfferResponseBEToTransferOfferResponseTO(
         TransferOfferResponseBE transferOfferResponseBE);
-
 }

@@ -1,7 +1,6 @@
 package eu.possiblex.participantportal.business.control;
 
 import eu.possiblex.participantportal.business.entity.*;
-import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedLegalParticipantCredentialSubjectSubset;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.edc.catalog.DcatDataset;
 import eu.possiblex.participantportal.business.entity.edc.negotiation.NegotiationState;
@@ -9,7 +8,6 @@ import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcessState;
 import eu.possiblex.participantportal.business.entity.exception.NegotiationFailedException;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
-import eu.possiblex.participantportal.business.entity.exception.ParticipantNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
 
 import java.util.Collections;
@@ -30,20 +28,6 @@ public class ConsumerServiceFake implements ConsumerService {
     public static final String BAD_TRANSFER_OFFER_ID = "badTransfer";
 
     public static final String VALID_COUNTER_PARTY_ADDRESS = "some provider EDC URL";
-
-    public static final String PARTICIPANT_ID = "did:web:test.eu";
-
-    public static final String PARTICIPANT_NAME = "Test Organization";
-
-    public static final String PARTICIPANT_EMAIL = "test@org.de";
-
-    public static final String OTHER_PARTICIPANT_ID = "did:web:other.eu";
-
-    public static final String OTHER_PARTICIPANT_NAME = "Other Organization";
-
-    public static final String OTHER_PARTICIPANT_EMAIL = "other@org.de";
-
-    public static final String UNKNOWN_PARTICIPANT_ID = "did:web:unknown.eu";
 
     @Override
     public SelectOfferResponseBE selectContractOffer(SelectOfferRequestBE request) throws OfferNotFoundException {

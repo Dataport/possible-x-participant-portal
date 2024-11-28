@@ -1,8 +1,5 @@
 package eu.possiblex.participantportal.business.control;
 
-import eu.possiblex.participantportal.application.entity.ParticipantDetailsTO;
-import eu.possiblex.participantportal.business.entity.ContractPartiesBE;
-import eu.possiblex.participantportal.business.entity.ContractPartiesRequestBE;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedLegalParticipantCredentialSubjectSubset;
 import eu.possiblex.participantportal.business.entity.exception.ParticipantNotFoundException;
 import org.junit.jupiter.api.Test;
