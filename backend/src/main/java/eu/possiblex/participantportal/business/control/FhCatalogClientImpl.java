@@ -32,6 +32,8 @@ import java.util.function.UnaryOperator;
 @Slf4j
 public class FhCatalogClientImpl implements FhCatalogClient {
 
+    private static final String PARTICIPANT_URI_PREFIX = "https://piveau.io/set/resource/legal-participant/";
+
     private final TechnicalFhCatalogClient technicalFhCatalogClient;
 
     private final SparqlFhCatalogClient sparqlFhCatalogClient;
@@ -95,18 +97,17 @@ public class FhCatalogClientImpl implements FhCatalogClient {
         }
     }
 
-    public Map<String, ParticipantNameQueryResult> getParticipantNames(Collection<String> dapsIds) {
+    public Map<String, ParticipantNameQueryResult> getParticipantNames(Collection<String> participantDids) {
 
         String query = """
             PREFIX gx: <https://w3id.org/gaia-x/development#>
-            PREFIX px: <http://w3id.org/gaia-x/possible-x#>
+            PREFIX schema: <https://schema.org/>
             
             SELECT ?uri ?dapsId ?name WHERE {
               ?uri a gx:LegalParticipant;
-              px:dapsId ?dapsId;
-              gx:name ?name .
-              FILTER(?dapsId IN (""" + String.join(",", dapsIds.stream().map(id -> "\"" + id + "\"").toList()) + "))"
-            + """
+              schema:name ?name .
+              FILTER(?uri IN (""" + String.join(",",
+            participantDids.stream().map(id -> "<" + PARTICIPANT_URI_PREFIX + id + ">").toList()) + "))" + """
             }
             """;
         String stringResult = sparqlFhCatalogClient.queryCatalog(query, null);
@@ -120,20 +121,22 @@ public class FhCatalogClientImpl implements FhCatalogClient {
         }
 
         return result.getResults().getBindings().stream()
-            .collect(HashMap::new, (map, p) -> map.put(p.getDapsId(), p), HashMap::putAll);
+            .collect(HashMap::new, (map, p) -> map.put(p.getUri().replace(PARTICIPANT_URI_PREFIX, ""), p),
+                HashMap::putAll);
     }
 
     public Map<String, OfferingDetailsQueryResult> getOfferingDetails(Collection<String> assetIds) {
 
         String query = """
             PREFIX gx: <https://w3id.org/gaia-x/development#>
+            PREFIX schema: <https://schema.org/>
             PREFIX px: <http://w3id.org/gaia-x/possible-x#>
             
             SELECT ?uri ?assetId ?name ?description WHERE {
               ?uri a gx:ServiceOffering;
-              gx:name ?name;
-              gx:description ?description;
+              schema:name ?name;
               px:assetId ?assetId .
+              OPTIONAL { ?uri schema:description ?description } .
               FILTER(?assetId IN (""" + String.join(",", assetIds.stream().map(id -> "\"" + id + "\"").toList()) + "))"
             + """
             }

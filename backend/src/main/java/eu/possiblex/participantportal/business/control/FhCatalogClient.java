@@ -24,12 +24,12 @@ public interface FhCatalogClient {
 
     PxExtendedServiceOfferingCredentialSubject getFhCatalogOffer(String offeringId) throws OfferNotFoundException;
 
-    Map<String, ParticipantNameQueryResult> getParticipantNames(Collection<String> dapsIds);
+    Map<String, ParticipantNameQueryResult> getParticipantNames(Collection<String> participantDids);
 
     Map<String, OfferingDetailsQueryResult> getOfferingDetails(Collection<String> assetIds);
 
-    PxExtendedLegalParticipantCredentialSubjectSubset getFhCatalogParticipant(String participant_id) throws
-        ParticipantNotFoundException;
+    PxExtendedLegalParticipantCredentialSubjectSubset getFhCatalogParticipant(String participant_id)
+        throws ParticipantNotFoundException;
 
     /**
      * Delete an offer form the FH catalog.
