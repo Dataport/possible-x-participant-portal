@@ -40,16 +40,8 @@ public interface TechnicalFhCatalogClient {
     FhCatalogIdResponse addServiceOfferingToFhCatalog(
         @RequestBody PxExtendedServiceOfferingCredentialSubject serviceOfferingCs, @RequestParam String id);
 
-    @GetExchange("/api/hub/repo/resources/service-offering/{offering_id}")
+    @GetExchange("/resources/service-offering/{offering_id}")
     String getFhCatalogOffer(@PathVariable String offering_id);
 
-    // TODO check if we can unify these functions
-    @GetExchange("/ld/sparql/")
-    QueryResponse<ParticipantNameQueryResult> queryCatalogForParticipantName(@RequestParam String query,
-        @RequestParam(required = false, defaultValue = "application/sparql-results+json") String format);
-
-    @GetExchange("/ld/sparql/")
-    QueryResponse<OfferingDetailsQueryResult> queryCatalogForOfferingDetails(@RequestParam String query,
-        @RequestParam(required = false, defaultValue = "application/sparql-results+json") String format);
 }
 

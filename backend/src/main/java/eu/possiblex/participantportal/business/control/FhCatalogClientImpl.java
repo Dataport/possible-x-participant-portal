@@ -4,9 +4,11 @@ import com.apicatalog.jsonld.JsonLd;
 import com.apicatalog.jsonld.JsonLdError;
 import com.apicatalog.jsonld.document.JsonDocument;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
+import eu.possiblex.participantportal.business.entity.exception.SparqlQueryException;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
 import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsQueryResult;
 import eu.possiblex.participantportal.business.entity.fh.ParticipantNameQueryResult;
@@ -30,12 +32,16 @@ public class FhCatalogClientImpl implements FhCatalogClient {
 
     private final TechnicalFhCatalogClient technicalFhCatalogClient;
 
+    private final SparqlFhCatalogClient sparqlFhCatalogClient;
+
     private final ObjectMapper objectMapper;
 
     public FhCatalogClientImpl(@Autowired TechnicalFhCatalogClient technicalFhCatalogClient,
+        @Autowired SparqlFhCatalogClient sparqlFhCatalogClient,
         @Autowired ObjectMapper objectMapper) {
 
         this.technicalFhCatalogClient = technicalFhCatalogClient;
+        this.sparqlFhCatalogClient = sparqlFhCatalogClient;
         this.objectMapper = objectMapper;
     }
 
@@ -99,7 +105,7 @@ public class FhCatalogClientImpl implements FhCatalogClient {
     }
 
     public Map<String, ParticipantNameQueryResult> getParticipantNames(Collection<String> dapsIds) {
-        QueryResponse<ParticipantNameQueryResult> result = technicalFhCatalogClient.queryCatalogForParticipantName("""
+        String query = """
             PREFIX gx: <https://w3id.org/gaia-x/development#>
             PREFIX px: <http://w3id.org/gaia-x/possible-x#>
             
@@ -108,17 +114,26 @@ public class FhCatalogClientImpl implements FhCatalogClient {
               px:dapsId ?dapsId;
               gx:name ?name .
               FILTER(?dapsId IN (""" + String.join(",", dapsIds.stream()
-                                        .map(id -> "\"" + id + "\"").toList()) +  "))" + """
+            .map(id -> "\"" + id + "\"").toList()) +  "))" + """
             }
-            """, null);
+            """;
+        String stringResult = sparqlFhCatalogClient.queryCatalog(query, null);
 
-       return result.getResults().getBindings().stream()
+        QueryResponse<ParticipantNameQueryResult> result;
+        try {
+            result = objectMapper.readValue(stringResult, new TypeReference<>(){});
+        } catch (JsonProcessingException e) {
+            throw new SparqlQueryException("Error during query deserialization", e);
+        }
+
+        return result.getResults().getBindings().stream()
             .collect(HashMap::new, (map, p)
                 -> map.put(p.getDapsId(), p), HashMap::putAll);
     }
 
     public Map<String, OfferingDetailsQueryResult> getOfferingDetails(Collection<String> assetIds) {
-        QueryResponse<OfferingDetailsQueryResult> result = technicalFhCatalogClient.queryCatalogForOfferingDetails("""
+
+        String query = """
             PREFIX gx: <https://w3id.org/gaia-x/development#>
             PREFIX px: <http://w3id.org/gaia-x/possible-x#>
             
@@ -128,9 +143,18 @@ public class FhCatalogClientImpl implements FhCatalogClient {
               gx:description ?description;
               px:assetId ?assetId .
               FILTER(?assetId IN (""" + String.join(",", assetIds.stream()
-                                                      .map(id -> "\"" + id + "\"").toList()) +  "))" + """
+            .map(id -> "\"" + id + "\"").toList()) +  "))" + """
             }
-            """, null);
+            """;
+
+        String stringResult = sparqlFhCatalogClient.queryCatalog(query, null);
+
+        QueryResponse<OfferingDetailsQueryResult> result;
+        try {
+            result = objectMapper.readValue(stringResult, new TypeReference<>(){});
+        } catch (JsonProcessingException e) {
+            throw new SparqlQueryException("Error during query deserialization", e);
+        }
 
         return result.getResults().getBindings().stream()
             .collect(HashMap::new, (map, p)

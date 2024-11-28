@@ -2,6 +2,7 @@ package eu.possiblex.participantportal.application.configuration;
 
 import eu.possiblex.participantportal.business.control.EdcClient;
 import eu.possiblex.participantportal.business.control.SdCreationWizardApiClient;
+import eu.possiblex.participantportal.business.control.SparqlFhCatalogClient;
 import eu.possiblex.participantportal.business.control.TechnicalFhCatalogClient;
 import eu.possiblex.participantportal.utilities.LogUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,13 +50,24 @@ public class AppConfigurer {
     @Bean
     public TechnicalFhCatalogClient technicalFhCatalogClient() {
 
-        WebClient webClient = WebClient.builder().baseUrl(fhCatalogUrl).clientConnector(LogUtils.createHttpClient()).defaultHeaders(httpHeaders -> {
+        WebClient webClient = WebClient.builder().baseUrl(fhCatalogUrl + "/api/hub/repo").clientConnector(LogUtils.createHttpClient()).defaultHeaders(httpHeaders -> {
             httpHeaders.set("Content-Type", "application/json");
             httpHeaders.set("Authorization", "Bearer " + fhCatalogSecretKey);
         }).build();
         HttpServiceProxyFactory httpServiceProxyFactory = HttpServiceProxyFactory.builder()
             .exchangeAdapter(WebClientAdapter.create(webClient)).build();
         return httpServiceProxyFactory.createClient(TechnicalFhCatalogClient.class);
+    }
+
+    @Bean
+    public SparqlFhCatalogClient sparqlFhCatalogClient() {
+        WebClient webClient = WebClient.builder().baseUrl(fhCatalogUrl + "/ld/sparql/").clientConnector(LogUtils.createHttpClient()).defaultHeaders(httpHeaders -> {
+            httpHeaders.set("Content-Type", "application/json");
+            httpHeaders.set("Authorization", "Bearer " + fhCatalogSecretKey);
+        }).build();
+        HttpServiceProxyFactory httpServiceProxyFactory = HttpServiceProxyFactory.builder()
+            .exchangeAdapter(WebClientAdapter.create(webClient)).build();
+        return httpServiceProxyFactory.createClient(SparqlFhCatalogClient.class);
     }
 
     @Bean
