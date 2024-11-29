@@ -36,6 +36,7 @@ import {MatButtonModule} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon";
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MaterialModule} from "../../sdwizard/material.module";
+import {MatSnackBarModule} from "@angular/material/snack-bar";
 
 @NgModule({
     imports: [
@@ -67,7 +68,8 @@ import {MaterialModule} from "../../sdwizard/material.module";
         MatButtonModule,
         MatIconModule,
         MatCheckboxModule,
-        MaterialModule
+        MaterialModule,
+        MatSnackBarModule
     ],
   declarations: [ProvideComponent, ConsumeComponent, AcceptComponent, SelectComponent, ContractsComponent, TransferComponent],
   exports: [
