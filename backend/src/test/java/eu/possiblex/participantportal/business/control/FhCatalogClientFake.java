@@ -44,7 +44,13 @@ public class FhCatalogClientFake implements FhCatalogClient {
     }
 
     @Override
-    public Map<String, OfferingDetailsQueryResult> getOfferingDetails(Collection<String> assetIds) {
+    public Map<String, OfferingDetailsQueryResult> getServiceOfferingDetails(Collection<String> assetIds) {
+
+        return Map.of();
+    }
+
+    @Override
+    public Map<String, OfferingDetailsQueryResult> getDataOfferingDetails(Collection<String> assetIds) {
 
         return Map.of();
     }

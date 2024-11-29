@@ -38,5 +38,7 @@ public interface FhCatalogClient {
 
     Map<String, ParticipantNameQueryResult> getParticipantNames(Collection<String> dapsIds);
 
-    Map<String, OfferingDetailsQueryResult> getOfferingDetails(Collection<String> assetIds);
+    Map<String, OfferingDetailsQueryResult> getServiceOfferingDetails(Collection<String> assetIds);
+
+    Map<String, OfferingDetailsQueryResult> getDataOfferingDetails(Collection<String> assetIds);
 }

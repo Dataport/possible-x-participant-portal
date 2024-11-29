@@ -193,14 +193,23 @@ public class FhCatalogClientImpl implements FhCatalogClient {
                 -> map.put(p.getDapsId(), p), HashMap::putAll);
     }
 
-    public Map<String, OfferingDetailsQueryResult> getOfferingDetails(Collection<String> assetIds) {
+    public Map<String, OfferingDetailsQueryResult> getServiceOfferingDetails(Collection<String> assetIds) {
+        return getOfferingDetails(assetIds, "ServiceOffering");
+    }
+
+    public Map<String, OfferingDetailsQueryResult> getDataOfferingDetails(Collection<String> assetIds) {
+        return getOfferingDetails(assetIds, "DataOffering");
+    }
+
+    private Map<String, OfferingDetailsQueryResult> getOfferingDetails(Collection<String> assetIds, String type) {
 
         String query = """
             PREFIX gx: <https://w3id.org/gaia-x/development#>
             PREFIX px: <http://w3id.org/gaia-x/possible-x#>
             
             SELECT ?uri ?assetId ?name ?description WHERE {
-              ?uri a gx:ServiceOffering;
+              ?uri a gx:""" + type + """
+              ;
               gx:name ?name;
               gx:description ?description;
               px:providerUrl ?providerUrl;
