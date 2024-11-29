@@ -234,4 +234,46 @@ public class FhCatalogClientImpl implements FhCatalogClient {
             }
         }
     }
+
+    public Map<String, OfferingDetailsQueryResult> getServiceOfferingDetails(Collection<String> assetIds) {
+
+        return getOfferingDetails(assetIds, "gx:ServiceOffering");
+    }
+
+    public Map<String, OfferingDetailsQueryResult> getDataOfferingDetails(Collection<String> assetIds) {
+
+        return getOfferingDetails(assetIds, "px:DataProduct");
+    }
+
+    private Map<String, OfferingDetailsQueryResult> getOfferingDetails(Collection<String> assetIds, String type) {
+
+        String query = """
+            PREFIX gx: <https://w3id.org/gaia-x/development#>
+            PREFIX px: <http://w3id.org/gaia-x/possible-x#>
+            PREFIX schema: <https://schema.org/>
+            SELECT ?uri ?assetId ?name ?description ?providerUrl WHERE {
+              ?uri a px:DataProduct;
+              schema:name ?name;
+              schema:description ?description;
+              px:providerUrl ?providerUrl;
+              px:assetId ?assetId .
+              FILTER(?assetId IN (""" + String.join(",", assetIds.stream().map(id -> "\"" + id + "\"").toList()) + "))"
+            + """
+            }
+            """;
+        log.info("Query: {}", query);
+        String stringResult = sparqlFhCatalogClient.queryCatalog(query, null);
+        log.info("Query result: {}", stringResult);
+        QueryResponse<OfferingDetailsQueryResult> result;
+        try {
+            result = objectMapper.readValue(stringResult, new TypeReference<>() {
+            });
+        } catch (JsonProcessingException e) {
+            throw new SparqlQueryException("Error during query deserialization", e);
+        }
+
+        return result.getResults().getBindings().stream()
+            .collect(HashMap::new, (map, p) -> map.put(p.getAssetId(), p), HashMap::putAll);
+    }
+
 }
