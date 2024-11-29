@@ -208,7 +208,8 @@ public class FhCatalogClientImpl implements FhCatalogClient {
             PREFIX px: <http://w3id.org/gaia-x/possible-x#>
             PREFIX schema: <https://schema.org/>
             SELECT ?uri ?assetId ?name ?description ?providerUrl WHERE {
-              ?uri a px:DataProduct;
+              ?uri a\s""" + type + """
+              ;
               schema:name ?name;
               schema:description ?description;
               px:providerUrl ?providerUrl;
