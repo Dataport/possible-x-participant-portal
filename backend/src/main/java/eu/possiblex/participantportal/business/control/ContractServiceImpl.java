@@ -74,15 +74,14 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     public TransferOfferResponseBE transferDataOfferAgain(TransferOfferRequestBE be) throws OfferNotFoundException, TransferFailedException {
-        Map<String, OfferingDetailsQueryResult> offeringDetailsMap = fhCatalogClient.getOfferingDetails(List.of(be.getEdcOfferId()));
+        Map<String, OfferingDetailsQueryResult> offeringDetailsMap = fhCatalogClient.getDataOfferingDetails(List.of(be.getEdcOfferId()));
         if (offeringDetailsMap.size() > 1) {
             throw new OfferNotFoundException("Multiple offers found in Sparql query result for assetId: " + be.getEdcOfferId());
         }
         String providerUrl;
-        OfferingDetailsQueryResult offeringDetails;
-        offeringDetails = offeringDetailsMap.get(be.getEdcOfferId());
+        OfferingDetailsQueryResult offeringDetails = offeringDetailsMap.get(be.getEdcOfferId());
         if (offeringDetails == null) {
-            throw new OfferNotFoundException("No offer found in Sparql query result for assetId: " + be.getEdcOfferId());
+            throw new OfferNotFoundException("No Data Offering found in Sparql query result for assetId: " + be.getEdcOfferId());
         }
         providerUrl = offeringDetails.getProviderUrl();
         if (providerUrl == null) {

@@ -218,9 +218,9 @@ public class FhCatalogClientImpl implements FhCatalogClient {
             .map(id -> "\"" + id + "\"").toList()) +  "))" + """
             }
             """;
-        log.info("Query: {}", query);
+        log.info("Sparql Query: {}", query);
         String stringResult = sparqlFhCatalogClient.queryCatalog(query, null);
-        log.info("Query result: {}", stringResult);
+        log.info("Sparql Query Result: {}", stringResult);
         QueryResponse<OfferingDetailsQueryResult> result;
         try {
             result = objectMapper.readValue(stringResult, new TypeReference<>(){});
