@@ -19,6 +19,7 @@ import jakarta.json.*;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
@@ -40,6 +41,9 @@ public class FhCatalogClientImpl implements FhCatalogClient {
     private final SparqlFhCatalogClient sparqlFhCatalogClient;
 
     private final ObjectMapper objectMapper;
+
+    @Value("${participant-id}")
+    private String participantId;
 
     public FhCatalogClientImpl(@Autowired TechnicalFhCatalogClient technicalFhCatalogClient,
         @Autowired ObjectMapper objectMapper, @Autowired SparqlFhCatalogClient sparqlFhCatalogClient) {
@@ -70,12 +74,15 @@ public class FhCatalogClientImpl implements FhCatalogClient {
 
         String offerId = serviceOfferingCredentialSubject.getId(); // just use the ID also for the offer in the catalog
         FhCatalogIdResponse catalogOfferId = null;
+        String verMethod = participantId + "#JWK2020-PossibleLetsEncrypt";
         try {
             if( doesContainData ) {
-                catalogOfferId = technicalFhCatalogClient.addServiceOfferingWithDataToFhCatalog(serviceOfferingCredentialSubject, offerId);
+                catalogOfferId = technicalFhCatalogClient.addServiceOfferingWithDataToFhCatalog(serviceOfferingCredentialSubject,
+                        offerId, verMethod);
             }
             else {
-                catalogOfferId = technicalFhCatalogClient.addServiceOfferingToFhCatalog(serviceOfferingCredentialSubject, offerId);
+                catalogOfferId = technicalFhCatalogClient.addServiceOfferingToFhCatalog(serviceOfferingCredentialSubject,
+                        offerId, verMethod);
             }
         } catch (Exception e){
             log.error("error when trying to send offer to catalog!", e);

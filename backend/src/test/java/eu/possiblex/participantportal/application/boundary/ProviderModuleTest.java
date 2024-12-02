@@ -9,9 +9,7 @@ import eu.possiblex.participantportal.application.control.ProviderApiMapper;
 import eu.possiblex.participantportal.application.entity.CreateDataOfferingRequestTO;
 import eu.possiblex.participantportal.application.entity.CreateServiceOfferingRequestTO;
 import eu.possiblex.participantportal.business.control.*;
-import eu.possiblex.participantportal.business.entity.common.CommonConstants;
 import eu.possiblex.participantportal.utilities.LogUtils;
-import eu.possiblex.participantportal.utilities.PossibleXException;
 import eu.possiblex.participantportal.utils.TestUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -37,7 +35,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * all layers. Only the interface components which connect to other systems are mocked.
  */
 @WebMvcTest(ProviderRestApiImpl.class)
-@ContextConfiguration(classes = {ProviderModuleTest.TestConfig.class, ProviderRestApiImpl.class, ProviderServiceImpl.class, FhCatalogClientImpl.class})
+@ContextConfiguration(classes = {ProviderModuleTest.TestConfig.class, ProviderRestApiImpl.class, ProviderServiceImpl.class,
+        FhCatalogClientImpl.class})
 class ProviderModuleTest extends ProviderTestParent {
 
     @Autowired
@@ -180,7 +179,10 @@ class ProviderModuleTest extends ProviderTestParent {
 
     private void mockFhCatalogCreateServiceOfferingWithData(String id) {
         WireMockRuntimeInfo wm1RuntimeInfo = wmExt.getRuntimeInfo();
-        wmExt.stubFor(WireMock.put(WireMock.urlPathMatching("/" + FH_CATALOG_SERVICE_PATH + "/trust/data-product" + ".*"))
+        wmExt.stubFor(WireMock.put(WireMock.urlPathMatching("/" + FH_CATALOG_SERVICE_PATH + "/trust/data-product"
+                        + ".*"))
+                .withQueryParam("id", WireMock.matching(".*"))
+                .withQueryParam("verificationMethod", WireMock.equalTo("did:web:test.eu#JWK2020-PossibleLetsEncrypt"))
                 .willReturn(WireMock.aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json")
@@ -189,7 +191,10 @@ class ProviderModuleTest extends ProviderTestParent {
 
     private void mockFhCatalogCreateServiceOffering(String id) {
         WireMockRuntimeInfo wm1RuntimeInfo = wmExt.getRuntimeInfo();
-        wmExt.stubFor(WireMock.put(WireMock.urlPathMatching("/" + FH_CATALOG_SERVICE_PATH + "/trust/service-offering" + ".*"))
+        wmExt.stubFor(WireMock.put(WireMock.urlPathMatching("/" + FH_CATALOG_SERVICE_PATH + "/trust/service-offering"
+                        + ".*"))
+                .withQueryParam("id", WireMock.matching(".*"))
+                .withQueryParam("verificationMethod", WireMock.equalTo("did:web:test.eu#JWK2020-PossibleLetsEncrypt"))
                 .willReturn(WireMock.aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json")
