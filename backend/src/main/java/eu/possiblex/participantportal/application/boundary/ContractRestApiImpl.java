@@ -55,7 +55,7 @@ public class ContractRestApiImpl implements ContractRestApi {
 
     @Override
     public TransferOfferResponseTO transferDataOfferAgain(@RequestBody TransferOfferRequestTO request) {
-        TransferOfferRequestBE be = consumerApiMapper.transferOfferRequestTOtoBE(request);
+        TransferOfferRequestBE be = consumerApiMapper.transferOfferRequestTOToBE(request);
         TransferOfferResponseBE responseBE;
         try {
             responseBE = contractService.transferDataOfferAgain(be);
@@ -69,7 +69,7 @@ public class ContractRestApiImpl implements ContractRestApi {
             throw new PossibleXException(
                 "" + e);
         }
-        TransferOfferResponseTO responseTO = consumerApiMapper.transferOfferResponseBEtoTransferOfferResponseTO(responseBE);
+        TransferOfferResponseTO responseTO = consumerApiMapper.transferOfferResponseBEToTransferOfferResponseTO(responseBE);
         log.info("Returning for transferring data of contract again: " + responseTO);
         return responseTO;
     }

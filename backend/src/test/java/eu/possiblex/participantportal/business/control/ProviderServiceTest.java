@@ -263,16 +263,6 @@ class ProviderServiceTest {
         verify(fhCatalogClient).deleteServiceOfferingFromFhCatalog(any(), Mockito.anyBoolean());
     }
 
-    @Test
-    void testGetParticipantId() {
-        //when
-        var participantIdTO = providerService.getParticipantId();
-
-        //then
-        String expectedId = "did:web:test.eu";
-        assertEquals(expectedId, participantIdTO.getParticipantId());
-    }
-
     GxServiceOfferingCredentialSubject getGxServiceOfferingCredentialSubject() {
 
         return GxServiceOfferingCredentialSubject.builder()

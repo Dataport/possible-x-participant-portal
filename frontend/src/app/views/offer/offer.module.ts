@@ -20,8 +20,11 @@ import {
   TabsModule,
   TemplateIdDirective,
   TooltipModule,
+  ModalModule
 } from '@coreui/angular';
 import {IconModule} from '@coreui/icons-angular';
+
+import { NgxPrintModule } from 'ngx-print';
 
 import {OfferRoutingModule} from './offer-routing.module';
 import {ProvideComponent} from './provide/provide.component';
@@ -37,6 +40,7 @@ import {MatIconModule} from "@angular/material/icon";
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MaterialModule} from "../../sdwizard/material.module";
 import {MatSnackBarModule} from "@angular/material/snack-bar";
+import { OfferPrintViewComponent } from './offer-print-view/offer-print-view.component';
 
 @NgModule({
     imports: [
@@ -69,9 +73,11 @@ import {MatSnackBarModule} from "@angular/material/snack-bar";
         MatIconModule,
         MatCheckboxModule,
         MaterialModule,
-        MatSnackBarModule
+        MatSnackBarModule,
+        ModalModule,
+        NgxPrintModule
     ],
-  declarations: [ProvideComponent, ConsumeComponent, AcceptComponent, SelectComponent, ContractsComponent, TransferComponent],
+  declarations: [ProvideComponent, ConsumeComponent, AcceptComponent, SelectComponent, ContractsComponent, TransferComponent, OfferPrintViewComponent],
   exports: [
     TransferComponent
   ]

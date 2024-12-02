@@ -21,3 +21,4 @@ s3:
 logging:
   level:
     reactor.netty.http.client: DEBUG
+version.no: "1.0.0"

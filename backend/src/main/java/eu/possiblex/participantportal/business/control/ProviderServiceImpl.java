@@ -49,8 +49,6 @@ public class ProviderServiceImpl implements ProviderService {
 
     private final String edcProtocolUrl;
 
-    private final String participantId;
-
     /**
      * Constructor for ProviderServiceImpl.
      *
@@ -60,7 +58,7 @@ public class ProviderServiceImpl implements ProviderService {
     @Autowired
     public ProviderServiceImpl(@Autowired EdcClient edcClient, @Autowired FhCatalogClient fhCatalogClient,
         @Autowired ProviderServiceMapper providerServiceMapper,
-        @Value("${edc.protocol-base-url}") String edcProtocolUrl, @Value("${participant-id}") String participantId,
+        @Value("${edc.protocol-base-url}") String edcProtocolUrl,
         @Value("${s3.bucket-storage-region}") String bucketStorageRegion,
         @Value("${s3.bucket-name}") String bucketName) {
 
@@ -68,7 +66,6 @@ public class ProviderServiceImpl implements ProviderService {
         this.fhCatalogClient = fhCatalogClient;
         this.providerServiceMapper = providerServiceMapper;
         this.edcProtocolUrl = edcProtocolUrl;
-        this.participantId = participantId;
         this.bucketStorageRegion = bucketStorageRegion;
         this.bucketName = bucketName;
     }
@@ -110,17 +107,6 @@ public class ProviderServiceImpl implements ProviderService {
                 HttpStatus.BAD_REQUEST);
         }
         return new CreateOfferResponseTO(edcResponseId.getId(), fhResponseId.getId());
-    }
-
-    /**
-     * Return the participant's id.
-     *
-     * @return participant id
-     */
-    @Override
-    public ParticipantIdTO getParticipantId() {
-
-        return new ParticipantIdTO(participantId);
     }
 
     /**

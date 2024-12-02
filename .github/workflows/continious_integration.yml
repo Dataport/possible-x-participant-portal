@@ -53,6 +53,8 @@ jobs:
           push: true
           tags: ${{ steps.management-meta.outputs.tags }}
           labels: ${{ steps.management-meta.outputs.labels }}
+          build-args: |
+            VERSION_NO=${{ github.sha }}
 
   deploy-consumer:
     runs-on: 'ubuntu-latest'

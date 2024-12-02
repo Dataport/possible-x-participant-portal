@@ -42,44 +42,37 @@ class FhCatalogClientImplTest {
     private ObjectMapper objectMapper;
 
     @Test
-    void parseDataCorrectly() throws OfferNotFoundException, ParticipantNotFoundException {
+    void parseOfferDataCorrectly() throws OfferNotFoundException {
         // GIVEN a mocked technical client that returns a test FH Catalog offer
 
         String fhCatalogOfferContent = TestUtils.loadTextFile("unit_tests/FHCatalogClientImplTest/validFhOffer.json");
-        String fhCatalogParticipant = TestUtils.loadTextFile(
-            "unit_tests/FHCatalogClientImplTest/validFhParticipant.json");
 
         reset(technicalFhCatalogClient);
         reset(sparqlFhCatalogClient);
 
         Mockito.when(technicalFhCatalogClient.getFhCatalogOfferWithData(Mockito.anyString()))
             .thenReturn(fhCatalogOfferContent);
-        Mockito.when(technicalFhCatalogClient.getFhCatalogParticipant(Mockito.anyString()))
-            .thenReturn(fhCatalogParticipant);
+
 
         // WHEN a dataset is retrieved
 
         PxExtendedServiceOfferingCredentialSubject offer = fhCatalogClient.getFhCatalogOffer("some ID");
-        PxExtendedLegalParticipantCredentialSubjectSubset participant = fhCatalogClient.getFhCatalogParticipant("some participant ID");
+
 
         // THEN the offer should contain the data parsed from the test FH Catalog offer
 
         Assertions.assertNotNull(offer);
         Assertions.assertFalse(offer.getAggregationOf().isEmpty());
-        Assertions.assertNotNull(participant);
         Assertions.assertEquals("EXPECTED_ASSET_ID_VALUE", offer.getAssetId());
         Assertions.assertEquals("EXPECTED_PROVIDER_URL_VALUE", offer.getProviderUrl());
-        Assertions.assertEquals("EXPECTED_MAIL_ADDRESS_VALUE", participant.getMailAddress());
     }
 
     @Test
-    void parseDataCorrectlyNoDataOffering() throws OfferNotFoundException, ParticipantNotFoundException {
+    void parseOfferDataCorrectlyNoDataResource() throws OfferNotFoundException {
         // GIVEN a mocked technical client that returns a test FH Catalog offer
 
         String fhCatalogOfferContent = TestUtils.loadTextFile(
             "unit_tests/FHCatalogClientImplTest/validFhOfferNoDataResource.json");
-        String fhCatalogParticipant = TestUtils.loadTextFile(
-            "unit_tests/FHCatalogClientImplTest/validFhParticipant.json");
 
         reset(technicalFhCatalogClient);
         reset(sparqlFhCatalogClient);
@@ -90,21 +83,40 @@ class FhCatalogClientImplTest {
                 .thenThrow(expectedException);
         Mockito.when(technicalFhCatalogClient.getFhCatalogOffer(Mockito.anyString()))
             .thenReturn(fhCatalogOfferContent);
-        Mockito.when(technicalFhCatalogClient.getFhCatalogParticipant(Mockito.anyString()))
-            .thenReturn(fhCatalogParticipant);
 
         // WHEN a dataset is retrieved
 
         PxExtendedServiceOfferingCredentialSubject offer = fhCatalogClient.getFhCatalogOffer("some ID");
-        PxExtendedLegalParticipantCredentialSubjectSubset participant = fhCatalogClient.getFhCatalogParticipant("some participant ID");
 
         // THEN the offer should contain the data parsed from the test FH Catalog offer
 
         Assertions.assertNotNull(offer);
-        Assertions.assertNotNull(participant);
         Assertions.assertNull(offer.getAggregationOf());
         Assertions.assertEquals("EXPECTED_ASSET_ID_VALUE", offer.getAssetId());
         Assertions.assertEquals("EXPECTED_PROVIDER_URL_VALUE", offer.getProviderUrl());
+    }
+
+    @Test
+    void parseParticipantDataCorrectly() throws ParticipantNotFoundException {
+        // GIVEN a mocked technical client that returns a test participant
+
+        String participantContent = TestUtils.loadTextFile(
+            "unit_tests/FHCatalogClientImplTest/validFhParticipant.json");
+
+        TechnicalFhCatalogClient technicalFhCatalogClientMock = Mockito.mock(TechnicalFhCatalogClient.class);
+        Mockito.when(technicalFhCatalogClientMock.getFhCatalogParticipant(Mockito.anyString()))
+            .thenReturn(participantContent);
+        FhCatalogClientImpl sut = new FhCatalogClientImpl(technicalFhCatalogClientMock, new ObjectMapper(), sparqlFhCatalogClient);
+
+        // WHEN a participant is retrieved
+
+        PxExtendedLegalParticipantCredentialSubjectSubset participant = sut.getFhCatalogParticipant("some ID");
+
+        // THEN the participant should contain the data parsed from the test participant
+
+        Assertions.assertNotNull(participant);
+        Assertions.assertEquals("Example", participant.getName());
+        Assertions.assertEquals("This is an Example Org", participant.getDescription());
         Assertions.assertEquals("EXPECTED_MAIL_ADDRESS_VALUE", participant.getMailAddress());
     }
 

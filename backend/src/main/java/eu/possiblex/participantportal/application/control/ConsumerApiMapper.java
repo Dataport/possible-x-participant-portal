@@ -10,11 +10,11 @@ import java.time.OffsetDateTime;
 @Mapper(componentModel = "spring", imports = { OffsetDateTime.class })
 public interface ConsumerApiMapper {
 
-    SelectOfferRequestBE selectOfferRequestTOtoBE(SelectOfferRequestTO to);
+    SelectOfferRequestBE selectOfferRequestTOToBE(SelectOfferRequestTO to);
 
-    ConsumeOfferRequestBE consumeOfferRequestTOtoBE(ConsumeOfferRequestTO to);
+    ConsumeOfferRequestBE consumeOfferRequestTOToBE(ConsumeOfferRequestTO to);
 
-    TransferOfferRequestBE transferOfferRequestTOtoBE(TransferOfferRequestTO to);
+    TransferOfferRequestBE transferOfferRequestTOToBE(TransferOfferRequestTO to);
 
     @Mapping(target = "edcOfferId", source = "edcOffer.assetId")
     @Mapping(target = "catalogOffering", source = "catalogOffering")
@@ -22,8 +22,8 @@ public interface ConsumerApiMapper {
     @Mapping(target = "enforcementPolicies", source = "enforcementPolicies")
     OfferDetailsTO selectOfferResponseBEToOfferDetailsTO(SelectOfferResponseBE selectOfferResponseBE);
 
-    AcceptOfferResponseTO acceptOfferResponseBEtoAcceptOfferResponseTO(AcceptOfferResponseBE acceptOfferResponseBE);
+    AcceptOfferResponseTO acceptOfferResponseBEToAcceptOfferResponseTO(AcceptOfferResponseBE acceptOfferResponseBE);
 
-    TransferOfferResponseTO transferOfferResponseBEtoTransferOfferResponseTO(
+    TransferOfferResponseTO transferOfferResponseBEToTransferOfferResponseTO(
         TransferOfferResponseBE transferOfferResponseBE);
 }
