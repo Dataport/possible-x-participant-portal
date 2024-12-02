@@ -6,13 +6,19 @@ import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ParticipantNameQueryResult {
+public class OfferingDetailsSparqlQueryResult {
     @JsonDeserialize(using = CatalogLiteralDeserializer.class)
     private String uri;
 
     @JsonDeserialize(using = CatalogLiteralDeserializer.class)
-    private String dapsId;
+    private String assetId;
 
     @JsonDeserialize(using = CatalogLiteralDeserializer.class)
     private String name;
+
+    @JsonDeserialize(using = CatalogLiteralDeserializer.class)
+    private String description;
+
+    @JsonDeserialize(using = CatalogLiteralDeserializer.class)
+    private String providerUrl;
 }

@@ -40,13 +40,13 @@ export class ContractsComponent implements OnInit {
     }).then(response => {
       console.log(response.transferProcessState);
       this.popUpMessage.open("Data Transfer successful: " + response.transferProcessState, 'Close', {
-        duration: 5000,
+        duration: undefined,
       });
       this.isTransferButtonDisabled = false;
     }).catch((e: HttpErrorResponse) => {
       console.log(e);
       this.popUpMessage.open("Data Transfer failed: " + (e.error.detail || e.error || e.message), 'Close', {
-        duration: 5000,
+        duration: undefined,
       });
       this.isTransferButtonDisabled = false;
     });

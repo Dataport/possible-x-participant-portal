@@ -4,7 +4,6 @@ import com.apicatalog.jsonld.JsonLd;
 import com.apicatalog.jsonld.JsonLdError;
 import com.apicatalog.jsonld.document.JsonDocument;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedLegalParticipantCredentialSubjectSubset;
@@ -13,9 +12,9 @@ import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundExc
 import eu.possiblex.participantportal.business.entity.exception.ParticipantNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.SparqlQueryException;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
-import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsQueryResult;
-import eu.possiblex.participantportal.business.entity.fh.ParticipantNameQueryResult;
-import eu.possiblex.participantportal.business.entity.fh.QueryResponse;
+import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsSparqlQueryResult;
+import eu.possiblex.participantportal.business.entity.fh.ParticipantNameSparqlQueryResult;
+import eu.possiblex.participantportal.business.entity.fh.SparqlQueryResponse;
 import jakarta.json.*;
 
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +26,6 @@ import java.io.StringReader;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 import java.util.*;
@@ -166,7 +164,8 @@ public class FhCatalogClientImpl implements FhCatalogClient {
         }
     }
 
-    public Map<String, ParticipantNameQueryResult> getParticipantNames(Collection<String> dapsIds) {
+    @Override
+    public Map<String, ParticipantNameSparqlQueryResult> getParticipantNames(Collection<String> dapsIds) {
         String query = """
             PREFIX gx: <https://w3id.org/gaia-x/development#>
             PREFIX px: <http://w3id.org/gaia-x/possible-x#>
@@ -181,7 +180,7 @@ public class FhCatalogClientImpl implements FhCatalogClient {
             """;
         String stringResult = sparqlFhCatalogClient.queryCatalog(query, null);
 
-        QueryResponse<ParticipantNameQueryResult> result;
+        SparqlQueryResponse<ParticipantNameSparqlQueryResult> result;
         try {
             result = objectMapper.readValue(stringResult, new TypeReference<>(){});
         } catch (JsonProcessingException e) {
@@ -193,15 +192,17 @@ public class FhCatalogClientImpl implements FhCatalogClient {
                 -> map.put(p.getDapsId(), p), HashMap::putAll);
     }
 
-    public Map<String, OfferingDetailsQueryResult> getServiceOfferingDetails(Collection<String> assetIds) {
+    @Override
+    public Map<String, OfferingDetailsSparqlQueryResult> getServiceOfferingDetails(Collection<String> assetIds) {
         return getOfferingDetails(assetIds, "gx:ServiceOffering");
     }
 
-    public Map<String, OfferingDetailsQueryResult> getDataOfferingDetails(Collection<String> assetIds) {
+    @Override
+    public Map<String, OfferingDetailsSparqlQueryResult> getDataOfferingDetails(Collection<String> assetIds) {
         return getOfferingDetails(assetIds, "px:DataProduct");
     }
 
-    private Map<String, OfferingDetailsQueryResult> getOfferingDetails(Collection<String> assetIds, String type) {
+    private Map<String, OfferingDetailsSparqlQueryResult> getOfferingDetails(Collection<String> assetIds, String type) {
 
         String query = """
             PREFIX gx: <https://w3id.org/gaia-x/development#>
@@ -221,7 +222,7 @@ public class FhCatalogClientImpl implements FhCatalogClient {
         log.info("Sparql Query: {}", query);
         String stringResult = sparqlFhCatalogClient.queryCatalog(query, null);
         log.info("Sparql Query Result: {}", stringResult);
-        QueryResponse<OfferingDetailsQueryResult> result;
+        SparqlQueryResponse<OfferingDetailsSparqlQueryResult> result;
         try {
             result = objectMapper.readValue(stringResult, new TypeReference<>(){});
         } catch (JsonProcessingException e) {

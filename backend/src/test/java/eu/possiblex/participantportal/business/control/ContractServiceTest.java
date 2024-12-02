@@ -15,7 +15,7 @@ import eu.possiblex.participantportal.business.entity.edc.policy.PolicyTarget;
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcessState;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
-import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsQueryResult;
+import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsSparqlQueryResult;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,7 +89,7 @@ class ContractServiceTest {
             .contractAgreementId(EdcClientFake.VALID_CONTRACT_AGREEEMENT_ID)
             .build();
         TransferOfferResponseBE response = TransferOfferResponseBE.builder().transferProcessState(TransferProcessState.COMPLETED).build();
-        OfferingDetailsQueryResult queryResult = new OfferingDetailsQueryResult();
+        OfferingDetailsSparqlQueryResult queryResult = new OfferingDetailsSparqlQueryResult();
         queryResult.setAssetId(EdcClientFake.FAKE_ID);
         queryResult.setProviderUrl(EdcClientFake.VALID_COUNTER_PARTY_ADDRESS);
         Mockito.when(fhCatalogClient.getDataOfferingDetails(any()))

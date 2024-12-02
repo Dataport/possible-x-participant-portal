@@ -21,6 +21,12 @@ public interface ContractRestApi {
     @GetMapping(value = "/agreement", produces = MediaType.APPLICATION_JSON_VALUE)
     List<ContractAgreementTO> getContractAgreements();
 
+    /**
+     * POST request for transferring a data product again from the contracts tab.
+     *
+     * @param request the request containing the assetID, the contract agreement id and the provider url
+     * @return the response containing the status of the transfer process
+     */
     @PostMapping(value = "/transfer", produces = MediaType.APPLICATION_JSON_VALUE)
     TransferOfferResponseTO transferDataOfferAgain(@RequestBody TransferOfferRequestTO request);
 }

@@ -5,7 +5,7 @@ import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedL
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.ParticipantNotFoundException;
-import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsQueryResult;
+import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsSparqlQueryResult;
 import eu.possiblex.participantportal.utils.TestUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -116,8 +116,8 @@ class FhCatalogClientImplTest {
         reset(sparqlFhCatalogClient);
         Mockito.when(sparqlFhCatalogClient.queryCatalog(Mockito.anyString(), Mockito.isNull())).thenReturn(sparqlResponse);
 
-        Map<String, OfferingDetailsQueryResult> queryResultMap = fhCatalogClient.getServiceOfferingDetails(List.of("EXPECTED_ASSET_ID_VALUE"));
-        OfferingDetailsQueryResult queryResult = queryResultMap.get("EXPECTED_ASSET_ID_VALUE");
+        Map<String, OfferingDetailsSparqlQueryResult> queryResultMap = fhCatalogClient.getServiceOfferingDetails(List.of("EXPECTED_ASSET_ID_VALUE"));
+        OfferingDetailsSparqlQueryResult queryResult = queryResultMap.get("EXPECTED_ASSET_ID_VALUE");
 
         verify(sparqlFhCatalogClient).queryCatalog(Mockito.anyString(), Mockito.isNull());
         Assertions.assertNotNull(queryResult);

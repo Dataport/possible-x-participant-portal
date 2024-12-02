@@ -1,24 +1,16 @@
 package eu.possiblex.participantportal.business.control;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import eu.possiblex.participantportal.business.entity.ContractAgreementBE;
 import eu.possiblex.participantportal.business.entity.TransferOfferRequestBE;
 import eu.possiblex.participantportal.business.entity.TransferOfferResponseBE;
 import eu.possiblex.participantportal.business.entity.edc.asset.possible.PossibleAsset;
 import eu.possiblex.participantportal.business.entity.edc.contractagreement.ContractAgreement;
-import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcessState;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
-import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsQueryResult;
+import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsSparqlQueryResult;
 import eu.possiblex.participantportal.utilities.PossibleXException;
-import jakarta.json.JsonException;
-import jakarta.validation.constraints.Null;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -74,12 +66,12 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     public TransferOfferResponseBE transferDataOfferAgain(TransferOfferRequestBE be) throws OfferNotFoundException, TransferFailedException {
-        Map<String, OfferingDetailsQueryResult> offeringDetailsMap = fhCatalogClient.getDataOfferingDetails(List.of(be.getEdcOfferId()));
+        Map<String, OfferingDetailsSparqlQueryResult> offeringDetailsMap = fhCatalogClient.getDataOfferingDetails(List.of(be.getEdcOfferId()));
         if (offeringDetailsMap.size() > 1) {
             throw new OfferNotFoundException("Multiple offers found in Sparql query result for assetId: " + be.getEdcOfferId());
         }
         String providerUrl;
-        OfferingDetailsQueryResult offeringDetails = offeringDetailsMap.get(be.getEdcOfferId());
+        OfferingDetailsSparqlQueryResult offeringDetails = offeringDetailsMap.get(be.getEdcOfferId());
         if (offeringDetails == null) {
             throw new OfferNotFoundException("No Data Offering found in Sparql query result for assetId: " + be.getEdcOfferId());
         }
