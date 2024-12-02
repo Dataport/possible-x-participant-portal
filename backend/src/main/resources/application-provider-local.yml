@@ -8,8 +8,8 @@ edc:
 
 fh:
   catalog:
-    url: https://possible.fokus.fraunhofer.de
-    secret-key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib3BlcmF0b3IiXX19.lMkYKTViVNVPFH49ntdkruLe5EaWRUYt1YL-1Y7b0gc
+    url: url
+    secret-key: secret
 
 participant-id: "did:web:example-organization.eu"
 

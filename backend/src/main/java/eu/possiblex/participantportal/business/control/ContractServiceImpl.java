@@ -4,7 +4,6 @@ import eu.possiblex.participantportal.business.entity.ContractAgreementBE;
 import eu.possiblex.participantportal.business.entity.OfferingDetailsBE;
 import eu.possiblex.participantportal.business.entity.ParticipantDetailsBE;
 import eu.possiblex.participantportal.business.entity.daps.OmejdnConnectorDetailsBE;
-import eu.possiblex.participantportal.business.entity.daps.OmejdnConnectorDetailsRequest;
 import eu.possiblex.participantportal.business.entity.edc.contractagreement.ContractAgreement;
 import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsQueryResult;
 import eu.possiblex.participantportal.business.entity.fh.ParticipantNameQueryResult;
@@ -78,7 +77,7 @@ public class ContractServiceImpl implements ContractService {
     private Map<String, String> getParticipantDids(Collection<String> participantDapsIds) {
 
         Map<String, OmejdnConnectorDetailsBE> connectorDetails = omejdnConnectorApiClient.getConnectorDetails(
-            OmejdnConnectorDetailsRequest.builder().clientIds(participantDapsIds).build());
+            participantDapsIds);
         Map<String, String> participantDids = new HashMap<>();
 
         for (String participantDapsId : participantDapsIds) {

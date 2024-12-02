@@ -130,6 +130,12 @@ class ContractServiceTest {
 
             return Mockito.spy(new FhCatalogClientFake());
         }
+
+        @Bean
+        public OmejdnConnectorApiClient omejdnConnectorApiClient() {
+
+            return Mockito.spy(new OmejdnConnectorApiClientFake());
+        }
     }
 
 }
