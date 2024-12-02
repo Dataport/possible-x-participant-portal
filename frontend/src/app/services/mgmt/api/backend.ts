@@ -1,6 +1,10 @@
 /* tslint:disable */
 /* eslint-disable */
 
+export interface ICommonPortalRestApi {
+    version: IVersionTO;
+}
+
 export interface IConsumerRestApi {
 }
 
@@ -135,6 +139,13 @@ export interface ITransferOfferResponseTO {
 }
 
 export interface ITransferOfferResponseTOBuilder {
+}
+
+export interface IVersionTO {
+    version: string;
+}
+
+export interface IVersionTOBuilder {
 }
 
 export interface IPojoCredentialSubject {
@@ -374,6 +385,14 @@ export interface HttpClient {
 export class RestApplicationClient {
 
     constructor(protected httpClient: HttpClient) {
+    }
+
+    /**
+     * HTTP GET /common/version
+     * Java method: eu.possiblex.participantportal.application.boundary.CommonPortalRestApiImpl.getVersion
+     */
+    getVersion(): RestResponse<IVersionTO> {
+      return this.httpClient.request({ method: "GET", url: uriEncoding`common/version` });
     }
 
     /**
