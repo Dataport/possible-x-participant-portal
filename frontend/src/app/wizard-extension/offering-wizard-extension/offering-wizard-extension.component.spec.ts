@@ -18,9 +18,39 @@ import {ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {OfferingWizardExtensionComponent} from './offering-wizard-extension.component';
 import {ApiService} from "../../services/mgmt/api/api.service";
-import {WizardAppModule} from "../../sdwizard/wizardapp.module";
-import {WizardExtensionModule} from "../wizard-extension.module";
 import {ICreateOfferResponseTO} from "../../services/mgmt/api/backend";
+import {provideAnimations} from "@angular/platform-browser/animations";
+import {Component, Input} from "@angular/core";
+import {BaseWizardExtensionComponent} from "../base-wizard-extension/base-wizard-extension.component";
+import {MatStepperModule} from "@angular/material/stepper";
+import {AccordionModule} from "@coreui/angular";
+import {StatusMessageComponent} from "../../views/common-views/status-message/status-message.component";
+import {FormsModule} from "@angular/forms";
+
+@Component({
+  selector: 'app-status-message',
+  template: ''
+})
+class MockStatusMessageComponent implements Partial<StatusMessageComponent>{
+  @Input() successMessage: string;
+  @Input() errorMessage: string;
+  @Input() infoMessage: string;
+  hideAllMessages() {}
+  showInfoMessage() {}
+  showSuccessMessage(msg: string) {}
+  showErrorMessage(msg: string) {}
+}
+
+@Component({
+  selector: 'app-base-wizard-extension',
+  template: ''
+})
+class MockWizardExtension implements Partial<BaseWizardExtensionComponent>{
+  generateJsonCs() { return { id: 'id' };}
+  prefillFields(selfDescriptionFields: any, disabledFields: string[]) {}
+  isWizardFormInvalid() { return false; }
+  ngOnDestroy() {}
+}
 
 describe('OfferingWizardExtensionComponent', () => {
   let component: OfferingWizardExtensionComponent;
@@ -37,14 +67,12 @@ describe('OfferingWizardExtensionComponent', () => {
       ['createServiceOffering', 'getGxServiceOfferingShape', 'getGxDataResourceShape', 'createDataOffering', 'getParticipantId']);
 
     await TestBed.configureTestingModule({
-      declarations: [OfferingWizardExtensionComponent],
+      declarations: [OfferingWizardExtensionComponent, MockWizardExtension, MockStatusMessageComponent],
       providers: [
-        {provide: ApiService, useValue: apiServiceSpy}
+        {provide: ApiService, useValue: apiServiceSpy},
+        provideAnimations()
       ],
-      imports: [
-        WizardAppModule,
-        WizardExtensionModule
-      ]
+      imports: [AccordionModule, MatStepperModule, FormsModule]
     })
       .compileComponents();
 

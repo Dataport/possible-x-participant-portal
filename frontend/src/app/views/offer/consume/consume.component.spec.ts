@@ -7,7 +7,14 @@ import {
   IOfferDetailsTO,
   IPxExtendedServiceOfferingCredentialSubject
 } from '../../../services/mgmt/api/backend';
-import {NO_ERRORS_SCHEMA} from "@angular/core";
+import {Component, NO_ERRORS_SCHEMA} from "@angular/core";
+import {StatusMessageComponent} from "../../common-views/status-message/status-message.component";
+import {SelectComponent} from "../select/select.component";
+import {FormGroup} from "@angular/forms";
+import {MatStepperModule} from "@angular/material/stepper";
+import {AcceptComponent} from "../accept/accept.component";
+import {TransferComponent} from "../transfer/transfer.component";
+import {provideAnimations} from "@angular/platform-browser/animations";
 
 describe('ConsumeComponent', () => {
   let component: ConsumeComponent;
@@ -39,10 +46,45 @@ describe('ConsumeComponent', () => {
     dataOffering: false
   } as IAcceptOfferResponseTO;
 
+  @Component({
+    selector: 'app-select-offer',
+    template: ''
+  })
+  class MockSelectComponent implements Partial<SelectComponent>{
+    selectionForm = {
+      reset() {}
+    } as FormGroup;
+    queryCatalogStatusMessage = {
+      hideAllMessages: () => {}
+    } as StatusMessageComponent;
+  }
+
+  @Component({
+    selector: 'app-accept-offer',
+    template: ''
+  })
+  class MockAcceptComponent implements Partial<AcceptComponent>{
+    acceptOfferStatusMessage = {
+      hideAllMessages: () => {}
+    } as StatusMessageComponent;
+  }
+
+  @Component({
+    selector: 'app-transfer',
+    template: ''
+  })
+  class MockTransferComponent implements Partial<TransferComponent>{
+    dataTransferStatusMessage = {
+      hideAllMessages: () => {}
+    } as StatusMessageComponent;
+  }
+
   beforeEach(async () => {
 
     await TestBed.configureTestingModule({
-      declarations: [ConsumeComponent],
+      declarations: [ConsumeComponent, MockSelectComponent, MockAcceptComponent, MockTransferComponent],
+      imports: [MatStepperModule],
+      providers: [provideAnimations()],
       schemas: [NO_ERRORS_SCHEMA],
     })
       .compileComponents();
