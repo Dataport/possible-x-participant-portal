@@ -4,6 +4,7 @@ import {HttpErrorResponse} from "@angular/common/http";
 import {StatusMessageComponent} from "../../common-views/status-message/status-message.component";
 import {ApiService} from '../../../services/mgmt/api/api.service';
 import {MatSnackBar} from "@angular/material/snack-bar";
+import {Sort} from "@angular/material/sort";
 
 @Component({
   selector: 'app-contracts',
@@ -13,6 +14,7 @@ import {MatSnackBar} from "@angular/material/snack-bar";
 export class ContractsComponent implements OnInit {
   @ViewChild("requestContractAgreementsStatusMessage") public requestContractAgreementsStatusMessage!: StatusMessageComponent;
   contractAgreements: IContractAgreementTO[] = [];
+  sortedAgreements: IContractAgreementTO[] = [];
   expandedItemId: string | null = null;
   isTransferButtonDisabled = false;
 
@@ -21,6 +23,40 @@ export class ContractsComponent implements OnInit {
 
   async getContractAgreements() {
     this.contractAgreements = await this.apiService.getContractAgreements();
+    this.contractAgreements = this.contractAgreements.sort((a, b) => {
+      return a.contractSigningDate > b.contractSigningDate ? -1 : 1;
+    });
+    this.sortedAgreements = this.contractAgreements.slice();
+  }
+
+  sortData(sort: Sort) {
+    const data = this.contractAgreements.slice();
+    if (!sort.active || sort.direction === '') {
+      this.contractAgreements = data;
+      return;
+    }
+
+    this.sortedAgreements = data.sort((a, b) => {
+      const isAsc = sort.direction === 'asc';
+      switch (sort.active) {
+        case 'contractsigned':
+          return this.compare(a.contractSigningDate, b.contractSigningDate, isAsc);
+        case 'offer':
+          return this.compare(a.assetDetails.name, b.assetDetails.name, isAsc);
+        case 'provider':
+          return this.compare(a.providerDetails.name, b.providerDetails.name, isAsc);
+        case 'consumer':
+          return this.compare(a.consumerDetails.name, b.consumerDetails.name, isAsc);
+        case 'contractagreementid':
+          return this.compare(a.id, b.id, isAsc);
+        default:
+          return 0;
+      }
+    });
+  }
+
+  compare(a: number | string | Date, b: number | string | Date, isAsc: boolean) {
+    return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
   }
 
   ngOnInit(): void {
