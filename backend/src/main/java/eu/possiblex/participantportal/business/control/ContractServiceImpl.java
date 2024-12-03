@@ -46,26 +46,33 @@ public class ContractServiceImpl implements ContractService {
         List<ContractAgreementBE> contractAgreementBEs = new ArrayList<>();
         List<ContractAgreement> contractAgreements = edcClient.queryContractAgreements();
 
+        // Get all referenced assetIds from the contracts
         Set<String> referencedAssetIds = contractAgreements.stream().map(ContractAgreement::getAssetId)
             .collect(Collectors.toSet());
-        Set<String> referencedConsumerDapsIds = contractAgreements.stream().map(ContractAgreement::getConsumerId)
+        // Get all provider and consumer daps ids from the contracts
+        Set<String> refrencedDapsIds = contractAgreements.stream().map(ContractAgreement::getConsumerId)
             .collect(Collectors.toSet());
-        Set<String> referencedProviderDapsIds = contractAgreements.stream().map(ContractAgreement::getProviderId)
-            .collect(Collectors.toSet());
-        Set<String> refrencedDapsIds = new HashSet<>(referencedConsumerDapsIds);
-        refrencedDapsIds.addAll(referencedProviderDapsIds);
+        refrencedDapsIds.addAll(
+            contractAgreements.stream().map(ContractAgreement::getProviderId).collect(Collectors.toSet()));
+
+        // build a map of participant daps ids to dids
         Map<String, String> participantDidMap = getParticipantDids(refrencedDapsIds);
 
+        // build a map of participant dids to participant names
         Map<String, ParticipantNameSparqlQueryResult> participantNames = fhCatalogClient.getParticipantNames(
             participantDidMap.values());
+
+        // build a map of assetIds to offering details
         Map<String, OfferingDetailsSparqlQueryResult> offeringDetails = fhCatalogClient.getOfferingDetails(
             referencedAssetIds);
 
+        // prepare for if the did or asset ID is not found
         ParticipantNameSparqlQueryResult unknownParticipant = ParticipantNameSparqlQueryResult.builder().name("Unknown")
             .build();
         OfferingDetailsSparqlQueryResult unknownOffering = OfferingDetailsSparqlQueryResult.builder().name("Unknown")
             .description("Unknown").build();
 
+        // convert contract agreements to contract agreement BEs
         contractAgreements.forEach(c -> contractAgreementBEs.add(ContractAgreementBE.builder().contractAgreement(c)
             .offeringDetails(OfferingDetailsBE.builder()
                 .name(offeringDetails.getOrDefault(c.getAssetId(), unknownOffering).getName())
