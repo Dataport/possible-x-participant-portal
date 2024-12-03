@@ -40,8 +40,9 @@ public class FhCatalogClientFake implements FhCatalogClient {
     @Override
     public Map<String, OfferingDetailsSparqlQueryResult> getOfferingDetails(Collection<String> assetIds) {
 
-        return Map.of("myId", OfferingDetailsSparqlQueryResult.builder().name("name").description("description")
-            .uri("https://piveau.io/set/resource/service-offering/myId").build());
+        return Map.of(EdcClientFake.FAKE_ID,
+            OfferingDetailsSparqlQueryResult.builder().name("name").description("description")
+                .uri("https://piveau.io/set/resource/service-offering/" + EdcClientFake.FAKE_ID).build());
 
     }
 
