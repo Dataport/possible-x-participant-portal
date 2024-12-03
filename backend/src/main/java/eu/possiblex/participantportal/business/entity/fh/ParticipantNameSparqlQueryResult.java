@@ -17,8 +17,5 @@ public class ParticipantNameSparqlQueryResult {
     private String uri;
 
     @JsonDeserialize(using = CatalogLiteralDeserializer.class)
-    private String dapsId;
-
-    @JsonDeserialize(using = CatalogLiteralDeserializer.class)
     private String name;
 }

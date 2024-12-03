@@ -1,10 +1,7 @@
 package eu.possiblex.participantportal.business.control;
 
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
-import eu.possiblex.participantportal.business.entity.ContractAgreementBE;
-import eu.possiblex.participantportal.business.entity.OfferingDetailsBE;
-import eu.possiblex.participantportal.business.entity.TransferOfferRequestBE;
-import eu.possiblex.participantportal.business.entity.TransferOfferResponseBE;
+import eu.possiblex.participantportal.business.entity.*;
 import eu.possiblex.participantportal.business.entity.edc.asset.ionoss3extension.IonosS3DataSource;
 import eu.possiblex.participantportal.business.entity.edc.asset.possible.PossibleAsset;
 import eu.possiblex.participantportal.business.entity.edc.asset.possible.PossibleAssetDataAccountExport;
@@ -52,25 +49,10 @@ class ContractServiceTest {
     @Test
     void testGetContractAgreementsAsProviderOfAssets() {
 
+        reset(fhCatalogClient);
         reset(edcClient);
-        EdcClientFake.setProvider(true);
 
-        List<ContractAgreementBE> expected = getContractAgreementBEsAsProviderOfAssets();
-        List<ContractAgreementBE> actual = contractService.getContractAgreements();
-
-        assertThat(actual.size()).isEqualTo(expected.size()).isEqualTo(1);
-        assertThat(actual).hasSize(1);
-        assertThat(actual.get(0)).usingRecursiveComparison().isEqualTo(expected.get(0));
-
-    }
-
-    @Test
-    void testGetContractAgreementsNotAsProviderOfAssets() {
-
-        reset(edcClient);
-        EdcClientFake.setProvider(false);
-
-        List<ContractAgreementBE> expected = getContractAgreementBEsNotAsProviderOfAssets();
+        List<ContractAgreementBE> expected = getContractAgreementBEs();
         List<ContractAgreementBE> actual = contractService.getContractAgreements();
 
         assertThat(actual.size()).isEqualTo(expected.size()).isEqualTo(1);
@@ -103,22 +85,15 @@ class ContractServiceTest {
         verify(fhCatalogClient).getOfferingDetails(List.of(EdcClientFake.FAKE_ID));
     }
 
-    private List<ContractAgreementBE> getContractAgreementBEsAsProviderOfAssets() {
+    private List<ContractAgreementBE> getContractAgreementBEs() {
 
         ContractAgreement contractAgreement = getContractAgreement();
 
         ContractAgreementBE contractAgreementBE = ContractAgreementBE.builder().contractAgreement(contractAgreement)
-            .offeringDetails(OfferingDetailsBE.builder().name("name").description("description").build()).build();
-
-        return List.of(contractAgreementBE);
-    }
-
-    private List<ContractAgreementBE> getContractAgreementBEsNotAsProviderOfAssets() {
-
-        ContractAgreement contractAgreement = getContractAgreement();
-
-        ContractAgreementBE contractAgreementBE = ContractAgreementBE.builder().contractAgreement(contractAgreement)
-            .offeringDetails(null).build();
+            .offeringDetails(OfferingDetailsBE.builder().name("name").description("description").build())
+            .consumerDetails(ParticipantDetailsBE.builder().name(OmejdnConnectorApiClientFake.PARTICIPANT_NAME).build())
+            .providerDetails(ParticipantDetailsBE.builder().name(OmejdnConnectorApiClientFake.PARTICIPANT_NAME).build())
+            .build();
 
         return List.of(contractAgreementBE);
     }
@@ -150,7 +125,8 @@ class ContractServiceTest {
     private ContractAgreement getContractAgreement() {
 
         return ContractAgreement.builder().contractSigningDate(BigInteger.valueOf(1728549145)).id(EdcClientFake.FAKE_ID)
-            .assetId(EdcClientFake.FAKE_ID).consumerId(EdcClientFake.FAKE_ID).providerId(EdcClientFake.FAKE_ID)
+            .assetId(EdcClientFake.FAKE_ID).consumerId(OmejdnConnectorApiClientFake.PARTICIPANT_ID)
+            .providerId(OmejdnConnectorApiClientFake.PARTICIPANT_ID)
             .policy(Policy.builder().target(PolicyTarget.builder().id(EdcClientFake.FAKE_ID).build()).build()).build();
     }
 
