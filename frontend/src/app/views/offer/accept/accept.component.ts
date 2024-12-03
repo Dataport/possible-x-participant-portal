@@ -13,10 +13,14 @@ import {HttpErrorResponse} from '@angular/common/http';
 import {StatusMessageComponent} from '../../common-views/status-message/status-message.component';
 import {
   IAcceptOfferResponseTO,
-  IEnforcementPolicy,
-  IOfferDetailsTO, IParticipantDetailsTO, IParticipantRestrictionPolicy,
+  IOfferDetailsTO, IParticipantDetailsTO,
   IPxExtendedServiceOfferingCredentialSubject
 } from '../../../services/mgmt/api/backend';
+import {
+  isEverythingAllowedPolicy,
+  isParticipantRestrictionPolicy,
+  asParticipantRestrictionPolicy
+} from '../../../utils/policy-utils';
 
 @Component({
   selector: 'app-accept-offer',
@@ -38,18 +42,14 @@ export class AcceptComponent implements OnChanges {
   isConsumed = false;
   isPoliciesAccepted = false;
   isTnCAccepted = false;
-  consumerDetails?: IParticipantDetailsTO = undefined;
   providerDetails?: IParticipantDetailsTO = undefined;
   printTimestamp?: Date;
 
-  protected isEverythingAllowedPolicy: (policy: IEnforcementPolicy) => boolean
-    = policy => (policy['@type'] === 'EverythingAllowedPolicy');
+  protected isEverythingAllowedPolicy = isEverythingAllowedPolicy;
 
-  protected isParticipantRestrictionPolicy: (policy: IEnforcementPolicy) => boolean
-    = policy => (policy['@type'] === 'ParticipantRestrictionPolicy');
+  protected isParticipantRestrictionPolicy = isParticipantRestrictionPolicy;
 
-  protected asParticipantRestrictionPolicy: (policy: IEnforcementPolicy) => IParticipantRestrictionPolicy
-    = policy => (policy as IParticipantRestrictionPolicy);
+  protected asParticipantRestrictionPolicy = asParticipantRestrictionPolicy;
 
   constructor(private apiService: ApiService) {
   }
@@ -57,7 +57,7 @@ export class AcceptComponent implements OnChanges {
   ngOnChanges(): void {
     if(this.offer) {
       this.viewContainerRef.createEmbeddedView(this.accordion);
-      this.getContractPartiesDetails();
+      this.getParticipantDetails();
     } else {
       this.viewContainerRef.clear();
     }
@@ -84,9 +84,8 @@ export class AcceptComponent implements OnChanges {
     });
   };
 
-  async getContractPartiesDetails() {
-    console.log("Retrieve Participant Details of Consumer and Provider");
-    this.retrieveConsumerDetailsMessage.hideAllMessages();
+  async getParticipantDetails() {
+    console.log("Retrieve Provider details.");
     this.retrieveProviderDetailsMessage.hideAllMessages();
 
     this.apiService.getParticipantDetails$GET$participant_details_participantId(this.offer.catalogOffering["gx:providedBy"].id)
@@ -98,12 +97,7 @@ export class AcceptComponent implements OnChanges {
       this.retrieveProviderDetailsMessage.showErrorMessage(e.error.detail || e.error || e.message);
     });
 
-    this.apiService.getParticipantDetails$GET$participant_details_me().then(response => {
-      console.log(response);
-      this.consumerDetails = response;
-    }).catch((e: HttpErrorResponse) => {
-      this.retrieveConsumerDetailsMessage.showErrorMessage(e.error.detail || e.error || e.message);
-    });
+    //TODO: Retrieve name of participants in enforced policy
   };
 
   cancel(): void {
@@ -123,6 +117,6 @@ export class AcceptComponent implements OnChanges {
   }
 
   isButtonDisabled(): boolean {
-    return !this.isPoliciesAccepted || !this.isTnCAccepted || this.isConsumed || !this.consumerDetails || !this.providerDetails;
+    return !this.isPoliciesAccepted || !this.isTnCAccepted || this.isConsumed || !this.providerDetails;
   }
 }

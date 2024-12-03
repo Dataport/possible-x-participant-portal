@@ -5,6 +5,11 @@ import {
   IPxExtendedServiceOfferingCredentialSubject
 } from "../../../services/mgmt/api/backend";
 import {DatePipe} from "@angular/common";
+import {
+  isEverythingAllowedPolicy,
+  isParticipantRestrictionPolicy,
+  asParticipantRestrictionPolicy
+} from '../../../utils/policy-utils';
 
 @Component({
   selector: 'app-offer-print-view',
@@ -15,14 +20,23 @@ import {DatePipe} from "@angular/common";
 export class OfferPrintViewComponent {
   @Input() offer?: IOfferDetailsTO = undefined;
   @Input() providerDetails?: IParticipantDetailsTO = undefined;
-  @Input() consumerDetails?: IParticipantDetailsTO = undefined;
   @Input() printTimestamp?: Date = undefined;
   @ViewChild('modalContent') modalContent: ElementRef;
 
   constructor(private datePipe: DatePipe) {}
 
+  protected isEverythingAllowedPolicy = isEverythingAllowedPolicy;
+
+  protected isParticipantRestrictionPolicy = isParticipantRestrictionPolicy;
+
+  protected asParticipantRestrictionPolicy = asParticipantRestrictionPolicy;
+
   containsPII(catalogOffering: IPxExtendedServiceOfferingCredentialSubject): boolean {
     return catalogOffering["gx:aggregationOf"][0]["gx:containsPII"];
+  }
+
+  isDprUndefinedOrEmpty(catalogOffering: IPxExtendedServiceOfferingCredentialSubject): boolean {
+    return !catalogOffering['gx:dataProtectionRegime'] || catalogOffering['gx:dataProtectionRegime'].length === 0;
   }
 
   getUrnUuid(id: string): string {

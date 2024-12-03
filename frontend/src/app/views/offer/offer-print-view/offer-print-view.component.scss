@@ -1,4 +1,9 @@
 ul {
   list-style-type: square;
-  padding-left: 2em;
+  list-style-position: inside;
+}
+
+div {
+  @apply text-center;
+  @apply text-black;
 }

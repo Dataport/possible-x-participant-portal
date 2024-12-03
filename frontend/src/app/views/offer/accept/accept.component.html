@@ -65,12 +65,12 @@
         </div>
         <div *ngIf="offer.dataOffering" class="accordion-body">
           <b>Offer ID:</b> {{ offer.catalogOffering.id }} <br/>
-          <b>Data Ressource Name:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["schema:name"] }} <br/>
+          <b>Data Resource Name:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["schema:name"] }} <br/>
           <b>Provided by:</b> {{ offer.catalogOffering["gx:providedBy"].id }} <br/>
           <b>Publisher:</b> Not implemented yet <br/>
-          <b>Data Ressource Description:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["schema:description"] }}
+          <b>Data Resource Description:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["schema:description"] }}
           <br/>
-          <b>Data Ressource Policy:</b><br/>
+          <b>Data Resource Policy:</b><br/>
           <ul *ngFor="let p of offer.catalogOffering['gx:aggregationOf'][0]['gx:policy']">
             <li>{{ p }}</li>
           </ul>
@@ -209,5 +209,4 @@
     </div>
   </div>
 
-  <app-offer-print-view [offer]="offer" [providerDetails]="providerDetails"
-                        [consumerDetails]="consumerDetails" [printTimestamp]="printTimestamp"></app-offer-print-view>
+  <app-offer-print-view [offer]="offer" [providerDetails]="providerDetails" [printTimestamp]="printTimestamp"></app-offer-print-view>
