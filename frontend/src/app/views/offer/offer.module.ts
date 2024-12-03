@@ -41,6 +41,7 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MaterialModule} from "../../sdwizard/material.module";
 import {MatSnackBarModule} from "@angular/material/snack-bar";
 import { OfferPrintViewComponent } from './offer-print-view/offer-print-view.component';
+import { EnforcementPolicyViewComponent } from './enforcement-policy-view/enforcement-policy-view.component';
 
 @NgModule({
     imports: [
@@ -77,7 +78,7 @@ import { OfferPrintViewComponent } from './offer-print-view/offer-print-view.com
         ModalModule,
         NgxPrintModule
     ],
-  declarations: [ProvideComponent, ConsumeComponent, AcceptComponent, SelectComponent, ContractsComponent, TransferComponent, OfferPrintViewComponent],
+  declarations: [ProvideComponent, ConsumeComponent, AcceptComponent, SelectComponent, ContractsComponent, TransferComponent, OfferPrintViewComponent, EnforcementPolicyViewComponent],
   exports: [
     TransferComponent
   ]

@@ -1,30 +1,30 @@
-  <div class="flex justify-between w-full max-w-3xl mb-6 bg-white">
-    <div class="font-bold text-lg text-brand-800 p-3">
-      {{ offer?.catalogOffering["schema:name"] }}
-    </div>
+<div class="flex justify-between w-full max-w-3xl mb-6 bg-white">
+  <div class="font-bold text-lg text-brand-800 p-3">
+    {{ offer?.catalogOffering["schema:name"] }}
   </div>
+</div>
 
-    <div class="flex justify-between mb-3">
-      <app-status-message
-        #retrieveConsumerDetailsMessage
-        [errorMessage]="'Consumer details retrieval failed.'"
-        [infoMessage]="'Consumer details retrieval ongoing.'"
-        [successMessage]="'Consumer details retrieval successful.'">
-      </app-status-message>
-  </div>
+<div class="flex justify-between mb-3">
+  <app-status-message
+    #retrieveConsumerDetailsMessage
+    [errorMessage]="'Consumer details retrieval failed.'"
+    [infoMessage]="'Consumer details retrieval ongoing.'"
+    [successMessage]="'Consumer details retrieval successful.'">
+  </app-status-message>
+</div>
 
-  <div class="flex justify-between mb-3">
-    <app-status-message
-      #retrieveProviderDetailsMessage
-      [errorMessage]="'Provider details retrieval failed.'"
-      [infoMessage]="'Provider details retrieval ongoing.'"
-      [successMessage]="'Provider details retrieval successful.'">
-    </app-status-message>
-  </div>
+<div class="flex justify-between mb-3">
+  <app-status-message
+    #retrieveProviderDetailsMessage
+    [errorMessage]="'Provider details retrieval failed.'"
+    [infoMessage]="'Provider details retrieval ongoing.'"
+    [successMessage]="'Provider details retrieval successful.'">
+  </app-status-message>
+</div>
 
-  <div class="w-full max-w-3xl pb-6">
-    <div #viewContainerRef></div>
-    <ng-template #accordion>
+<div class="w-full max-w-3xl pb-6">
+  <div #viewContainerRef></div>
+  <ng-template #accordion>
     <mat-accordion multi togglePosition="before">
       <mat-expansion-panel #contractDetails>
         <mat-expansion-panel-header>
@@ -86,7 +86,8 @@
             (PII):</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:containsPII"] }} <br/>
           <div *ngIf="containsPII(offer.catalogOffering)">
             <b>Data Protection Contact:</b>
-            {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:legitimateInterest"]["gx:dataProtectionContact"] }} <br/>
+            {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:legitimateInterest"]["gx:dataProtectionContact"] }}
+            <br/>
             <b>Legal Basis:</b>
             {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:legitimateInterest"]["gx:legalBasis"] }} <br/>
           </div>
@@ -120,24 +121,11 @@
             </li>
           </ul>
         </div>
-        <div>
-          <b>Enforcement Policies:</b>
-        </div>
-        <div *ngFor="let ep of offer.enforcementPolicies">
-          <div *ngIf="isEverythingAllowedPolicy(ep)">
-            <b>Everything is allowed</b>
-          </div>
-          <div *ngIf="isParticipantRestrictionPolicy(ep)">
-            Contracting is restricted to the following organizations:
-            <ul *ngFor="let org of asParticipantRestrictionPolicy(ep).allowedParticipants">
-              <li>
-                {{ org }}
-              </li>
-            </ul>
-          </div>
-        </div>
+        <app-enforcement-policy-view [enforcementPolicies]="offer.enforcementPolicies"/>
         <div class="flex justify-end p-3">
-          <button (click)="setTimestamp()" [cModalToggle]="'modalOfferPrintView'" cButton color="primary" shape="rounded-0">Print View</button>
+          <button (click)="setTimestamp()" [cModalToggle]="'modalOfferPrintView'" cButton color="primary"
+                  shape="rounded-0">Print View
+          </button>
         </div>
       </mat-expansion-panel>
 
@@ -148,20 +136,9 @@
         </mat-expansion-panel-header>
         <div>
           Please accept the policies for the provided offer.
-        </div><br/>
-        <div *ngFor="let ep of offer.enforcementPolicies">
-          <div *ngIf="isEverythingAllowedPolicy(ep)">
-            <b>Everything is allowed</b>
-          </div>
-          <div *ngIf="isParticipantRestrictionPolicy(ep)">
-            <b>Restricted to the following organizations:</b>
-            <ul *ngFor="let org of asParticipantRestrictionPolicy(ep).allowedParticipants">
-              <li>
-                {{ org }}
-              </li>
-            </ul>
-          </div>
         </div>
+        <br/>
+        <app-enforcement-policy-view [enforcementPolicies]="offer.enforcementPolicies"/>
       </mat-expansion-panel>
 
       <mat-expansion-panel #termsAndConditions>
@@ -171,7 +148,8 @@
         </mat-expansion-panel-header>
         <div>
           Please accept the Terms and Conditions for the provided offer.
-        </div><br/>
+        </div>
+        <br/>
         <b>Terms & Conditions:</b>
         <ul *ngFor="let tnc of offer.catalogOffering['gx:termsAndConditions']">
           <li>
@@ -186,28 +164,29 @@
         </ul>
       </mat-expansion-panel>
     </mat-accordion>
-    </ng-template>
+  </ng-template>
+</div>
+
+<div class="w-full max-w-3xl">
+  <div class="flex justify-between">
+    <button (click)="cancel()" cButton color="secondary" shape="rounded-0">
+      Cancel
+    </button>
+    <button (click)="acceptContractOffer()" [disabled]="isButtonDisabled()" cButton color="primary" shape="rounded-0"
+            type="submit">
+      Accept
+    </button>
   </div>
 
-  <div class="w-full max-w-3xl">
-    <div class="flex justify-between">
-      <button (click)="cancel()" cButton color="secondary" shape="rounded-0">
-        Cancel
-      </button>
-      <button (click)="acceptContractOffer()" [disabled]="isButtonDisabled()" cButton color="primary" shape="rounded-0" type="submit">
-        Accept
-      </button>
-    </div>
-
-    <div class="flex justify-between mt-3">
-      <app-status-message
-        #acceptOfferStatusMessage
-        [errorMessage]="'Contract conclusion failed.'"
-        [infoMessage]="'Contract conclusion ongoing.'"
-        [successMessage]="'Contract conclusion successful.'">
-      </app-status-message>
-    </div>
+  <div class="flex justify-between mt-3">
+    <app-status-message
+      #acceptOfferStatusMessage
+      [errorMessage]="'Contract conclusion failed.'"
+      [infoMessage]="'Contract conclusion ongoing.'"
+      [successMessage]="'Contract conclusion successful.'">
+    </app-status-message>
   </div>
+</div>
 
-  <app-offer-print-view [offer]="offer" [providerDetails]="providerDetails"
-                        [consumerDetails]="consumerDetails" [printTimestamp]="printTimestamp"></app-offer-print-view>
+<app-offer-print-view [consumerDetails]="consumerDetails" [offer]="offer"
+                      [printTimestamp]="printTimestamp" [providerDetails]="providerDetails"></app-offer-print-view>

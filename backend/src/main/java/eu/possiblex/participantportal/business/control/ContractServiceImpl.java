@@ -74,14 +74,18 @@ public class ContractServiceImpl implements ContractService {
 
         // convert contract agreements to contract agreement BEs
         contractAgreements.forEach(c -> contractAgreementBEs.add(ContractAgreementBE.builder().contractAgreement(c)
-            .offeringDetails(OfferingDetailsBE.builder()
+            .enforcementPolicies(consumerService.getEnforcementPoliciesFromEdcPolicies(List.of(c.getPolicy())))
+            .offeringDetails(OfferingDetailsBE.builder().assetId(c.getAssetId())
+                .offeringId(offeringDetails.getOrDefault(c.getAssetId(), unknownOffering).getUri())
                 .name(offeringDetails.getOrDefault(c.getAssetId(), unknownOffering).getName())
                 .description(offeringDetails.getOrDefault(c.getAssetId(), unknownOffering).getDescription()).build())
-            .consumerDetails(ParticipantDetailsBE.builder().name(
-                participantNames.getOrDefault(participantDidMap.getOrDefault(c.getConsumerId(), ""), unknownParticipant)
-                    .getName()).build()).providerDetails(ParticipantDetailsBE.builder().name(
-                participantNames.getOrDefault(participantDidMap.getOrDefault(c.getProviderId(), ""), unknownParticipant)
-                    .getName()).build()).build()));
+            .consumerDetails(
+                ParticipantDetailsBE.builder().dapsId(c.getConsumerId()).did(participantDidMap.get(c.getConsumerId()))
+                    .name(participantNames.getOrDefault(participantDidMap.getOrDefault(c.getConsumerId(), ""),
+                        unknownParticipant).getName()).build()).providerDetails(
+                ParticipantDetailsBE.builder().dapsId(c.getProviderId()).did(participantDidMap.get(c.getProviderId()))
+                    .name(participantNames.getOrDefault(participantDidMap.getOrDefault(c.getProviderId(), ""),
+                        unknownParticipant).getName()).build()).build()));
 
         return contractAgreementBEs;
     }

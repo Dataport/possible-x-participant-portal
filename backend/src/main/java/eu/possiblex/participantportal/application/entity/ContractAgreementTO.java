@@ -1,5 +1,6 @@
 package eu.possiblex.participantportal.application.entity;
 
+import eu.possiblex.participantportal.application.entity.policies.EnforcementPolicy;
 import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -21,13 +23,12 @@ public class ContractAgreementTO {
 
     private Policy policy;
 
+    private List<EnforcementPolicy> enforcementPolicies;
+
     private OffsetDateTime contractSigningDate;
 
-    private String consumerId;
+    private ContractParticipantDetailsTO consumerDetails;
 
-    private String consumerName;
+    private ContractParticipantDetailsTO providerDetails;
 
-    private String providerId;
-
-    private String providerName;
 }

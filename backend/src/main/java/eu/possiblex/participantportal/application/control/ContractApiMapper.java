@@ -2,9 +2,10 @@ package eu.possiblex.participantportal.application.control;
 
 import eu.possiblex.participantportal.application.entity.AssetDetailsTO;
 import eu.possiblex.participantportal.application.entity.ContractAgreementTO;
+import eu.possiblex.participantportal.application.entity.ContractParticipantDetailsTO;
 import eu.possiblex.participantportal.business.entity.ContractAgreementBE;
 import eu.possiblex.participantportal.business.entity.OfferingDetailsBE;
-import eu.possiblex.participantportal.business.entity.edc.asset.possible.PossibleAsset;
+import eu.possiblex.participantportal.business.entity.ParticipantDetailsBE;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -22,10 +23,9 @@ public interface ContractApiMapper {
     @Mapping(target = "assetDetails", source = "be.offeringDetails")
     @Mapping(target = "policy", source = "be.contractAgreement.policy")
     @Mapping(target = "contractSigningDate", source = "be.contractAgreement.contractSigningDate", qualifiedByName = "secondsToOffsetDateTime")
-    @Mapping(target = "consumerId", source = "be.contractAgreement.consumerId")
-    @Mapping(target = "consumerName", source = "be.consumerDetails.name")
-    @Mapping(target = "providerId", source = "be.contractAgreement.providerId")
-    @Mapping(target = "providerName", source = "be.providerDetails.name")
+    @Mapping(target = "consumerDetails", source = "be.consumerDetails")
+    @Mapping(target = "providerDetails", source = "be.providerDetails")
+    @Mapping(target = "enforcementPolicies", source = "be.enforcementPolicies")
     ContractAgreementTO contractAgreementBEToTO(ContractAgreementBE be);
 
     @Named("secondsToOffsetDateTime")
@@ -37,4 +37,6 @@ public interface ContractApiMapper {
     }
 
     AssetDetailsTO offeringDetailsBeToTO(OfferingDetailsBE possibleAsset);
+
+    ContractParticipantDetailsTO participantDetailsBEToTO(ParticipantDetailsBE possibleParticipant);
 }

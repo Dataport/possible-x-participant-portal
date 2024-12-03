@@ -11,5 +11,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class OfferingDetailsBE {
     private String name;
+
     private String description;
+
+    private String assetId;
+
+    private String offeringId;
 }

@@ -13,4 +13,8 @@ public class AssetDetailsTO {
     private String name;
 
     private String description;
+
+    private String assetId;
+
+    private String offeringId;
 }
