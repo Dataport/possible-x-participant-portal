@@ -5,11 +5,13 @@ import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedS
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.ParticipantNotFoundException;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
-import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsQueryResult;
-import eu.possiblex.participantportal.business.entity.fh.ParticipantNameQueryResult;
+import eu.possiblex.participantportal.business.entity.fh.ParticipantNameSparqlQueryResult;
+
+import java.util.Map;
 
 import java.util.Collection;
-import java.util.Map;
+import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsSparqlQueryResult;
+
 
 public interface FhCatalogClient {
     /**
@@ -24,10 +26,6 @@ public interface FhCatalogClient {
 
     PxExtendedServiceOfferingCredentialSubject getFhCatalogOffer(String offeringId) throws OfferNotFoundException;
 
-    Map<String, ParticipantNameQueryResult> getParticipantNames(Collection<String> participantDids);
-
-    Map<String, OfferingDetailsQueryResult> getOfferingDetails(Collection<String> assetIds);
-
     PxExtendedLegalParticipantCredentialSubjectSubset getFhCatalogParticipant(String participant_id)
         throws ParticipantNotFoundException;
 
@@ -38,4 +36,20 @@ public interface FhCatalogClient {
      * @param doesContainData true: The offer contains data. false: otherwise
      */
     void deleteServiceOfferingFromFhCatalog(String offeringId, boolean doesContainData);
+
+    /**
+     * Get the names of the legal participants.
+     *
+     * @param dapsIds the IDs of the participants
+     * @return the names of the participants
+     */
+    Map<String, ParticipantNameSparqlQueryResult> getParticipantNames(Collection<String> dapsIds);
+
+    /**
+     * Get the details of the offerings with the type "px:PossibleXServiceOfferingExtension".
+     *
+     * @param assetIds the IDs of the service offerings
+     * @return the details of the service offerings
+     */
+    Map<String, OfferingDetailsSparqlQueryResult> getOfferingDetails(Collection<String> assetIds);
 }

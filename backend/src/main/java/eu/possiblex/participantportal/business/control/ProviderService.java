@@ -16,10 +16,4 @@ public interface ProviderService {
      */
     CreateOfferResponseTO createOffering(CreateServiceOfferingRequestBE request);
 
-    /**
-     * Return the participant's id.
-     *
-     * @return participant id
-     */
-    ParticipantIdTO getParticipantId();
 }

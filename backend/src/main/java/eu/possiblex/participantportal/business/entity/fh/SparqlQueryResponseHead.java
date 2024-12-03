@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class QueryResponseHead {
+public class SparqlQueryResponseHead {
     private List<Object> link;
     private List<String> vars;
 }

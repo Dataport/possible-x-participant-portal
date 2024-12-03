@@ -251,13 +251,11 @@ class ProviderModuleTest extends ProviderTestParent {
         }
 
         @Bean
-        public SparqlFhCatalogClient sparqlFhCatalogClientMock() {
-
+        public SparqlFhCatalogClient sparqlFhCatalogClient() {
             String baseUrl = "http://localhost:" + String.valueOf(WIREMOCK_PORT) + "/" + FH_CATALOG_SPARQL_PATH;
-            WebClient webClient = WebClient.builder().clientConnector(LogUtils.createHttpClient()).baseUrl(baseUrl)
-                .defaultHeaders(httpHeaders -> {
-                    httpHeaders.set("Content-Type", "application/json");
-                }).build();
+            WebClient webClient = WebClient.builder().clientConnector(LogUtils.createHttpClient()).baseUrl(baseUrl).defaultHeaders(httpHeaders -> {
+                httpHeaders.set("Content-Type", "application/json");
+            }).build();
             HttpServiceProxyFactory httpServiceProxyFactory = HttpServiceProxyFactory.builder()
                 .exchangeAdapter(WebClientAdapter.create(webClient)).build();
             return httpServiceProxyFactory.createClient(SparqlFhCatalogClient.class);

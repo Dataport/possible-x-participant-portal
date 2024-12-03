@@ -8,11 +8,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class OfferingDetailsQueryResult {
+public class OfferingDetailsSparqlQueryResult {
     @JsonDeserialize(using = CatalogLiteralDeserializer.class)
     private String uri;
 
@@ -24,4 +24,7 @@ public class OfferingDetailsQueryResult {
 
     @JsonDeserialize(using = CatalogLiteralDeserializer.class)
     private String description;
+
+    @JsonDeserialize(using = CatalogLiteralDeserializer.class)
+    private String providerUrl;
 }

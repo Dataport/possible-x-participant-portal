@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class QueryResponse<T> {
-    private QueryResponseHead head;
-    private QueryResponseResults<T> results;
+public class SparqlQueryResponse<T> {
+    private SparqlQueryResponseHead head;
+    private SparqlQueryResponseResults<T> results;
 }

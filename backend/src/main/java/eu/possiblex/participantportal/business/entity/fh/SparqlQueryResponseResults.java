@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class QueryResponseResults<T> {
+public class SparqlQueryResponseResults<T> {
     private boolean distinct;
     private boolean ordered;
     private List<T> bindings;

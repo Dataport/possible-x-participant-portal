@@ -1,6 +1,10 @@
 package eu.possiblex.participantportal.application.configuration;
 
 import eu.possiblex.participantportal.business.control.*;
+import eu.possiblex.participantportal.business.control.EdcClient;
+import eu.possiblex.participantportal.business.control.SdCreationWizardApiClient;
+import eu.possiblex.participantportal.business.control.SparqlFhCatalogClient;
+import eu.possiblex.participantportal.business.control.TechnicalFhCatalogClient;
 import eu.possiblex.participantportal.utilities.LogUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -10,6 +14,8 @@ import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.support.WebClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
+
+import java.util.Map;
 
 @Configuration
 @EnableScheduling
@@ -77,7 +83,8 @@ public class AppConfigurer {
     @Bean
     public SdCreationWizardApiClient sdCreationWizardApiClient() {
 
-        WebClient webClient = WebClient.builder().baseUrl(sdCreationWizardApiBaseUri).build();
+        WebClient webClient = WebClient.builder().exchangeStrategies(EXCHANGE_STRATEGIES)
+            .baseUrl(sdCreationWizardApiBaseUri).build();
         HttpServiceProxyFactory httpServiceProxyFactory = HttpServiceProxyFactory.builderFor(
             WebClientAdapter.create(webClient)).build();
         return httpServiceProxyFactory.createClient(SdCreationWizardApiClient.class);

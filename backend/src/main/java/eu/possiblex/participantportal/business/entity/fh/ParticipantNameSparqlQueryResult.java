@@ -8,13 +8,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ParticipantNameQueryResult {
+public class ParticipantNameSparqlQueryResult {
     @JsonDeserialize(using = CatalogLiteralDeserializer.class)
     private String uri;
+
+    @JsonDeserialize(using = CatalogLiteralDeserializer.class)
+    private String dapsId;
 
     @JsonDeserialize(using = CatalogLiteralDeserializer.class)
     private String name;

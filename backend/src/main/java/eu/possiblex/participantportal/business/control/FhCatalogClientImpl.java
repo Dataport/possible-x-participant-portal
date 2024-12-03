@@ -12,9 +12,9 @@ import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundExc
 import eu.possiblex.participantportal.business.entity.exception.ParticipantNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.SparqlQueryException;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
-import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsQueryResult;
-import eu.possiblex.participantportal.business.entity.fh.ParticipantNameQueryResult;
-import eu.possiblex.participantportal.business.entity.fh.QueryResponse;
+import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsSparqlQueryResult;
+import eu.possiblex.participantportal.business.entity.fh.ParticipantNameSparqlQueryResult;
+import eu.possiblex.participantportal.business.entity.fh.SparqlQueryResponse;
 import jakarta.json.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,8 +44,8 @@ public class FhCatalogClientImpl implements FhCatalogClient {
         @Autowired SparqlFhCatalogClient sparqlFhCatalogClient, @Autowired ObjectMapper objectMapper) {
 
         this.technicalFhCatalogClient = technicalFhCatalogClient;
-        this.sparqlFhCatalogClient = sparqlFhCatalogClient;
         this.objectMapper = objectMapper;
+        this.sparqlFhCatalogClient = sparqlFhCatalogClient;
     }
 
     private static JsonDocument getFrameByType(List<String> type, Map<String, String> context) {
@@ -97,13 +97,13 @@ public class FhCatalogClientImpl implements FhCatalogClient {
         }
     }
 
-    public Map<String, ParticipantNameQueryResult> getParticipantNames(Collection<String> participantDids) {
+    public Map<String, ParticipantNameSparqlQueryResult> getParticipantNames(Collection<String> participantDids) {
 
         String query = """
             PREFIX gx: <https://w3id.org/gaia-x/development#>
             PREFIX schema: <https://schema.org/>
             
-            SELECT ?uri ?dapsId ?name WHERE {
+            SELECT ?uri ?name WHERE {
               ?uri a gx:LegalParticipant;
               schema:name ?name .
               FILTER(?uri IN (""" + String.join(",",
@@ -112,7 +112,7 @@ public class FhCatalogClientImpl implements FhCatalogClient {
             """;
         String stringResult = sparqlFhCatalogClient.queryCatalog(query, null);
 
-        QueryResponse<ParticipantNameQueryResult> result;
+        SparqlQueryResponse<ParticipantNameSparqlQueryResult> result;
         try {
             result = objectMapper.readValue(stringResult, new TypeReference<>() {
             });
@@ -125,7 +125,7 @@ public class FhCatalogClientImpl implements FhCatalogClient {
                 HashMap::putAll);
     }
 
-    public Map<String, OfferingDetailsQueryResult> getOfferingDetails(Collection<String> assetIds) {
+    public Map<String, OfferingDetailsSparqlQueryResult> getOfferingDetails(Collection<String> assetIds) {
 
         String query = """
             PREFIX gx: <https://w3id.org/gaia-x/development#>
@@ -144,7 +144,7 @@ public class FhCatalogClientImpl implements FhCatalogClient {
 
         String stringResult = sparqlFhCatalogClient.queryCatalog(query, null);
 
-        QueryResponse<OfferingDetailsQueryResult> result;
+        SparqlQueryResponse<OfferingDetailsSparqlQueryResult> result;
         try {
             result = objectMapper.readValue(stringResult, new TypeReference<>() {
             });

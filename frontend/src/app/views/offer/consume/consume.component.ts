@@ -1,5 +1,9 @@
 import {Component, ViewChild} from '@angular/core';
-import {IAcceptOfferResponseTO, IOfferDetailsTO} from '../../../services/mgmt/api/backend';
+import {
+  IAcceptOfferResponseTO,
+  IOfferDetailsTO,
+  IParticipantDetailsTO
+} from '../../../services/mgmt/api/backend';
 import {MatStepper} from "@angular/material/stepper";
 import {SelectComponent} from "../select/select.component";
 import {AcceptComponent} from "../accept/accept.component";
@@ -17,6 +21,7 @@ export class ConsumeComponent {
   @ViewChild("transfer") transfer: TransferComponent;
   selectedOffer?: IOfferDetailsTO = undefined;
   negotiatedContract?: IAcceptOfferResponseTO = undefined;
+  retrievedProviderDetails?: IParticipantDetailsTO = undefined;
 
   setSelectedOffer(offer: IOfferDetailsTO): void {
     this.selectedOffer = offer;
@@ -28,9 +33,14 @@ export class ConsumeComponent {
     this.stepper.next();
   }
 
+  setProviderDetails(providerDetails: IParticipantDetailsTO): void {
+    this.retrievedProviderDetails = providerDetails;
+  }
+
   resetSelection() {
     this.selectedOffer = undefined;
     this.negotiatedContract = undefined;
+    this.retrievedProviderDetails = undefined;
     this.select.queryCatalogStatusMessage.hideAllMessages();
     this.select.selectionForm.reset();
     this.accept.acceptOfferStatusMessage.hideAllMessages();
