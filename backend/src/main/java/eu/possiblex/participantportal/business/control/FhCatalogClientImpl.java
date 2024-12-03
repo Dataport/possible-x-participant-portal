@@ -4,23 +4,32 @@ import com.apicatalog.jsonld.JsonLd;
 import com.apicatalog.jsonld.JsonLdError;
 import com.apicatalog.jsonld.document.JsonDocument;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedLegalParticipantCredentialSubjectSubset;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.ParticipantNotFoundException;
+import eu.possiblex.participantportal.business.entity.exception.SparqlQueryException;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
+import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsSparqlQueryResult;
+import eu.possiblex.participantportal.business.entity.fh.ParticipantNameSparqlQueryResult;
+import eu.possiblex.participantportal.business.entity.fh.SparqlQueryResponse;
 import jakarta.json.*;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.io.StringReader;
+
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.function.UnaryOperator;
+
+import java.util.*;
+
 
 @Service
 @Slf4j
@@ -28,13 +37,16 @@ public class FhCatalogClientImpl implements FhCatalogClient {
 
     private final TechnicalFhCatalogClient technicalFhCatalogClient;
 
+    private final SparqlFhCatalogClient sparqlFhCatalogClient;
+
     private final ObjectMapper objectMapper;
 
     public FhCatalogClientImpl(@Autowired TechnicalFhCatalogClient technicalFhCatalogClient,
-        @Autowired ObjectMapper objectMapper) {
+        @Autowired ObjectMapper objectMapper, @Autowired SparqlFhCatalogClient sparqlFhCatalogClient) {
 
         this.technicalFhCatalogClient = technicalFhCatalogClient;
         this.objectMapper = objectMapper;
+        this.sparqlFhCatalogClient = sparqlFhCatalogClient;
     }
 
     private static JsonDocument getFrameByType(List<String> type, Map<String, String> context) {
@@ -151,4 +163,75 @@ public class FhCatalogClientImpl implements FhCatalogClient {
             }
         }
     }
+
+    @Override
+    public Map<String, ParticipantNameSparqlQueryResult> getParticipantNames(Collection<String> dapsIds) {
+        String query = """
+            PREFIX gx: <https://w3id.org/gaia-x/development#>
+            PREFIX px: <http://w3id.org/gaia-x/possible-x#>
+            
+            SELECT ?uri ?dapsId ?name WHERE {
+              ?uri a gx:LegalParticipant;
+              px:dapsId ?dapsId;
+              gx:name ?name .
+              FILTER(?dapsId IN (""" + String.join(",", dapsIds.stream()
+            .map(id -> "\"" + id + "\"").toList()) +  "))" + """
+            }
+            """;
+        String stringResult = sparqlFhCatalogClient.queryCatalog(query, null);
+
+        SparqlQueryResponse<ParticipantNameSparqlQueryResult> result;
+        try {
+            result = objectMapper.readValue(stringResult, new TypeReference<>(){});
+        } catch (JsonProcessingException e) {
+            throw new SparqlQueryException("Error during query deserialization", e);
+        }
+
+        return result.getResults().getBindings().stream()
+            .collect(HashMap::new, (map, p)
+                -> map.put(p.getDapsId(), p), HashMap::putAll);
+    }
+
+    @Override
+    public Map<String, OfferingDetailsSparqlQueryResult> getServiceOfferingDetails(Collection<String> assetIds) {
+        return getOfferingDetails(assetIds, "gx:ServiceOffering");
+    }
+
+    @Override
+    public Map<String, OfferingDetailsSparqlQueryResult> getDataOfferingDetails(Collection<String> assetIds) {
+        return getOfferingDetails(assetIds, "px:DataProduct");
+    }
+
+    private Map<String, OfferingDetailsSparqlQueryResult> getOfferingDetails(Collection<String> assetIds, String type) {
+
+        String query = """
+            PREFIX gx: <https://w3id.org/gaia-x/development#>
+            PREFIX px: <http://w3id.org/gaia-x/possible-x#>
+            PREFIX schema: <https://schema.org/>
+            SELECT ?uri ?assetId ?name ?description ?providerUrl WHERE {
+              ?uri a\s""" + type + """
+              ;
+              schema:name ?name;
+              schema:description ?description;
+              px:providerUrl ?providerUrl;
+              px:assetId ?assetId .
+              FILTER(?assetId IN (""" + String.join(",", assetIds.stream()
+            .map(id -> "\"" + id + "\"").toList()) +  "))" + """
+            }
+            """;
+        log.info("Sparql Query: {}", query);
+        String stringResult = sparqlFhCatalogClient.queryCatalog(query, null);
+        log.info("Sparql Query Result: {}", stringResult);
+        SparqlQueryResponse<OfferingDetailsSparqlQueryResult> result;
+        try {
+            result = objectMapper.readValue(stringResult, new TypeReference<>(){});
+        } catch (JsonProcessingException e) {
+            throw new SparqlQueryException("Error during query deserialization", e);
+        }
+
+        return result.getResults().getBindings().stream()
+            .collect(HashMap::new, (map, p)
+                -> map.put(p.getAssetId(), p), HashMap::putAll);
+    }
+
 }

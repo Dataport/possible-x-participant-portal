@@ -1,8 +1,8 @@
 package eu.possiblex.participantportal.application.boundary;
 
+import eu.possiblex.participantportal.application.control.ConsumerApiMapper;
 import eu.possiblex.participantportal.application.control.ContractApiMapper;
-import eu.possiblex.participantportal.business.control.ContractService;
-import eu.possiblex.participantportal.business.control.ContractServiceFake;
+import eu.possiblex.participantportal.business.control.*;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import org.mockito.Mockito;
@@ -27,6 +27,9 @@ class ContractRestApiTest {
     @Autowired
     private ContractService contractService;
 
+    @Autowired
+    private ConsumerApiMapper consumerApiMapper;
+
     @Test
     void shouldReturnMessageOnGetContractAgreements() throws Exception {
         //when
@@ -49,13 +52,19 @@ class ContractRestApiTest {
     @TestConfiguration
     static class TestConfig {
         @Bean
-        public ContractService consumerService() {
+        public ContractService contractService() {
 
             return Mockito.spy(new ContractServiceFake());
         }
 
         @Bean
-        public ContractApiMapper consumerApiMapper() {
+        public ConsumerApiMapper consumerApiMapper() {
+
+            return Mappers.getMapper(ConsumerApiMapper.class);
+        }
+
+        @Bean
+        public ContractApiMapper contractApiMapper() {
 
             return Mappers.getMapper(ContractApiMapper.class);
         }

@@ -45,7 +45,7 @@ class ConsumerServiceTest {
         reset(fhCatalogClient);
         PxExtendedServiceOfferingCredentialSubject fhCatalogOffer = new PxExtendedServiceOfferingCredentialSubject();
         fhCatalogOffer.setAssetId(EdcClientFake.FAKE_ID);
-        Mockito.when(fhCatalogClient.getFhCatalogOffer(Mockito.eq(EdcClientFake.FAKE_ID))).thenReturn(fhCatalogOffer);
+        Mockito.when(fhCatalogClient.getFhCatalogOffer(EdcClientFake.FAKE_ID)).thenReturn(fhCatalogOffer);
 
         // WHEN
 
@@ -75,13 +75,12 @@ class ConsumerServiceTest {
         // WHEN
 
         AcceptOfferResponseBE response = sut.acceptContractOffer(
-            ConsumeOfferRequestBE.builder().counterPartyAddress("http://example.com").edcOfferId(EdcClientFake.FAKE_ID).providedBy(FhCatalogClientFake.FAKE_PROVIDER_ID)
+            ConsumeOfferRequestBE.builder().counterPartyAddress("http://example.com").edcOfferId(EdcClientFake.FAKE_ID)
                 .dataOffering(true).build());
 
         // THEN
 
         verify(edcClient).negotiateOffer(any());
-        verify(fhCatalogClient).getFhCatalogParticipant(any());
 
         assertNotNull(response);
     }
@@ -100,13 +99,12 @@ class ConsumerServiceTest {
         // WHEN
 
         AcceptOfferResponseBE response = sut.acceptContractOffer(
-            ConsumeOfferRequestBE.builder().counterPartyAddress("http://example.com").edcOfferId(EdcClientFake.FAKE_ID).providedBy(FhCatalogClientFake.FAKE_PROVIDER_ID)
+            ConsumeOfferRequestBE.builder().counterPartyAddress("http://example.com").edcOfferId(EdcClientFake.FAKE_ID)
                 .dataOffering(false).build());
 
         // THEN
 
         verify(edcClient).negotiateOffer(any());
-        verify(fhCatalogClient).getFhCatalogParticipant(any());
 
         assertNotNull(response);
     }

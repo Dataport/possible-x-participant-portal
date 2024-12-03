@@ -1,6 +1,10 @@
 /* tslint:disable */
 /* eslint-disable */
 
+export interface ICommonPortalRestApi {
+    version: IVersionTO;
+}
+
 export interface IConsumerRestApi {
 }
 
@@ -8,8 +12,12 @@ export interface IContractRestApi {
     contractAgreements: IContractAgreementTO[];
 }
 
-export interface IProviderRestApi {
+export interface IParticipantRestApi {
+    participantDetails: IParticipantDetailsTO;
     participantId: IParticipantIdTO;
+}
+
+export interface IProviderRestApi {
 }
 
 export interface IResourceShapeRestApi {
@@ -29,7 +37,6 @@ export interface IAcceptOfferResponseTO {
     negotiationState: INegotiationState;
     contractAgreementId: string;
     dataOffering: boolean;
-    providerEmail: string;
 }
 
 export interface IAcceptOfferResponseTOBuilder {
@@ -47,7 +54,6 @@ export interface IConsumeOfferRequestTO {
     counterPartyAddress: string;
     edcOfferId: string;
     dataOffering: boolean;
-    providedBy: string;
 }
 
 export interface IConsumeOfferRequestTOBuilder {
@@ -107,6 +113,15 @@ export interface IOfferDetailsTO {
 export interface IOfferDetailsTOBuilder {
 }
 
+export interface IParticipantDetailsTO {
+    participantId: string;
+    participantName: string;
+    participantEmail: string;
+}
+
+export interface IParticipantDetailsTOBuilder {
+}
+
 export interface IParticipantIdTO {
     participantId: string;
 }
@@ -135,6 +150,13 @@ export interface ITransferOfferResponseTO {
 }
 
 export interface ITransferOfferResponseTOBuilder {
+}
+
+export interface IVersionTO {
+    version: string;
+}
+
+export interface IVersionTOBuilder {
 }
 
 export interface IPojoCredentialSubject {
@@ -377,6 +399,14 @@ export class RestApplicationClient {
     }
 
     /**
+     * HTTP GET /common/version
+     * Java method: eu.possiblex.participantportal.application.boundary.CommonPortalRestApiImpl.getVersion
+     */
+    getVersion(): RestResponse<IVersionTO> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`common/version` });
+    }
+
+    /**
      * HTTP POST /consumer/offer/accept
      * Java method: eu.possiblex.participantportal.application.boundary.ConsumerRestApiImpl.acceptContractOffer
      */
@@ -409,11 +439,35 @@ export class RestApplicationClient {
     }
 
     /**
-     * HTTP GET /provider/id
-     * Java method: eu.possiblex.participantportal.application.boundary.ProviderRestApiImpl.getParticipantId
+     * HTTP POST /contract/transfer
+     * Java method: eu.possiblex.participantportal.application.boundary.ContractRestApiImpl.transferDataOfferAgain
+     */
+    transferDataOfferAgain(request: ITransferOfferRequestTO): RestResponse<ITransferOfferResponseTO> {
+        return this.httpClient.request({ method: "POST", url: uriEncoding`contract/transfer`, data: request });
+    }
+
+    /**
+     * HTTP GET /participant/details/me
+     * Java method: eu.possiblex.participantportal.application.boundary.ParticipantRestApiImpl.getParticipantDetails
+     */
+    getParticipantDetails$GET$participant_details_me(): RestResponse<IParticipantDetailsTO> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`participant/details/me` });
+    }
+
+    /**
+     * HTTP GET /participant/details/{participantId}
+     * Java method: eu.possiblex.participantportal.application.boundary.ParticipantRestApiImpl.getParticipantDetails
+     */
+    getParticipantDetails$GET$participant_details_participantId(participantId: string): RestResponse<IParticipantDetailsTO> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`participant/details/${participantId}` });
+    }
+
+    /**
+     * HTTP GET /participant/id/me
+     * Java method: eu.possiblex.participantportal.application.boundary.ParticipantRestApiImpl.getParticipantId
      */
     getParticipantId(): RestResponse<IParticipantIdTO> {
-        return this.httpClient.request({ method: "GET", url: uriEncoding`provider/id` });
+        return this.httpClient.request({ method: "GET", url: uriEncoding`participant/id/me` });
     }
 
     /**

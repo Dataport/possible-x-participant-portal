@@ -142,13 +142,6 @@ class ProviderRestApiTest extends ProviderTestParent {
             .isEqualTo(createDataOfferingRequestBE.getDataResource());
     }
 
-    @Test
-    void shouldReturnMessageOnGetParticipantId() throws Exception {
-        // WHEN/THEN
-        this.mockMvc.perform(get("/provider/id")).andDo(print()).andExpect(status().isOk())
-            .andExpect(jsonPath("$.participantId").value(ProviderServiceFake.PARTICIPANT_ID));
-    }
-
     GxServiceOfferingCredentialSubject getGxServiceOfferingCredentialSubject() {
 
         return GxServiceOfferingCredentialSubject.builder()

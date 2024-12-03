@@ -3,6 +3,7 @@ import {IContractAgreementTO, IPolicy} from '../../../services/mgmt/api/backend'
 import {HttpErrorResponse} from "@angular/common/http";
 import {StatusMessageComponent} from "../../common-views/status-message/status-message.component";
 import {ApiService} from '../../../services/mgmt/api/api.service';
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-contracts',
@@ -13,8 +14,9 @@ export class ContractsComponent implements OnInit {
   @ViewChild("requestContractAgreementsStatusMessage") public requestContractAgreementsStatusMessage!: StatusMessageComponent;
   contractAgreements: IContractAgreementTO[] = [];
   expandedItemId: string | null = null;
+  isTransferButtonDisabled = false;
 
-  constructor(private apiService: ApiService) {
+  constructor(private apiService: ApiService, private popUpMessage: MatSnackBar) {
   }
 
   async getContractAgreements() {
@@ -27,6 +29,27 @@ export class ContractsComponent implements OnInit {
 
   toggleAccordion(itemId: string): void {
     this.expandedItemId = this.expandedItemId === itemId ? null : itemId;
+  }
+
+  async transferAgain(contractAgreement: IContractAgreementTO) {
+    this.isTransferButtonDisabled = true;
+    this.apiService.transferDataOfferAgain({
+      contractAgreementId: contractAgreement.id,
+      counterPartyAddress: null,
+      edcOfferId: contractAgreement.assetId,
+    }).then(response => {
+      console.log(response.transferProcessState);
+      this.popUpMessage.open("Data Transfer successful: " + response.transferProcessState, 'Close', {
+        duration: undefined,
+      });
+      this.isTransferButtonDisabled = false;
+    }).catch((e: HttpErrorResponse) => {
+      console.log(e);
+      this.popUpMessage.open("Data Transfer failed: " + (e.error.detail || e.error || e.message), 'Close', {
+        duration: undefined,
+      });
+      this.isTransferButtonDisabled = false;
+    });
   }
 
   getPolicyAsString(policy: IPolicy): string {
