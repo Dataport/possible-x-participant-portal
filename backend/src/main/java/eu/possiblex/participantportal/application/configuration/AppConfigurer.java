@@ -37,6 +37,9 @@ public class AppConfigurer {
     @Value("${fh.catalog.secret-key}")
     private String fhCatalogSecretKey;
 
+    @Value("${prefill-fields.data-product.json-file-path}")
+    private String prefillFieldsDataProductJsonFilePath;
+
     @Bean
     public EdcClient edcClient() {
 

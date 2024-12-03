@@ -37,3 +37,7 @@ s3:
 logging:
   level:
     reactor.netty.http.client: DEBUG
+
+prefill-fields:
+  data-product:
+    json-file-path: "src/main/resources/prefillFieldsDataResource.json"
