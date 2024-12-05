@@ -14,8 +14,11 @@ public class CommonPortalRestApiImpl implements CommonPortalRestApi {
     @Value("${version.no}")
     private String version;
 
+    @Value("${version.date}")
+    private String versionDate;
+
     @Override
     public VersionTO getVersion() {
-        return new VersionTO(version);
+        return new VersionTO(version, versionDate);
     }
 }
