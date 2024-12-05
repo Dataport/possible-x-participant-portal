@@ -2,6 +2,7 @@ package eu.possiblex.participantportal.business.control;
 
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
 import eu.possiblex.participantportal.business.entity.*;
+import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.edc.asset.ionoss3extension.IonosS3DataSource;
 import eu.possiblex.participantportal.business.entity.edc.asset.possible.PossibleAsset;
 import eu.possiblex.participantportal.business.entity.edc.asset.possible.PossibleAssetDataAccountExport;
@@ -15,6 +16,7 @@ import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundExc
 import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
 import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsSparqlQueryResult;
 import eu.possiblex.participantportal.business.entity.fh.ParticipantNameSparqlQueryResult;
+import eu.possiblex.participantportal.utils.TestUtils;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,8 @@ import static org.mockito.Mockito.verify;
 @SpringBootTest
 @ContextConfiguration(classes = { ContractServiceTest.TestConfig.class, ContractServiceImpl.class })
 class ContractServiceTest {
+    private static final String TEST_FILES_PATH = "unit_tests/ConsumerModuleTest/";
+
     @Autowired
     private EdcClient edcClient;
 
@@ -53,10 +57,13 @@ class ContractServiceTest {
         reset(fhCatalogClient);
         reset(edcClient);
 
+        PxExtendedServiceOfferingCredentialSubject pxExtendedServiceOfferingCredentialSubject = new PxExtendedServiceOfferingCredentialSubject();
+        pxExtendedServiceOfferingCredentialSubject.setAggregationOf(List.of());
         Mockito.when(fhCatalogClient.getParticipantNames(any())).thenReturn(Map.of(OmejdnConnectorApiClientFake.PARTICIPANT_ID,
             ParticipantNameSparqlQueryResult.builder().name(OmejdnConnectorApiClientFake.PARTICIPANT_NAME).build()));
         Mockito.when(fhCatalogClient.getOfferingDetails(any())).thenReturn(Map.of(EdcClientFake.FAKE_ID,
             OfferingDetailsSparqlQueryResult.builder().assetId(EdcClientFake.FAKE_ID).build()));
+        Mockito.when(fhCatalogClient.getFhCatalogOffer(any())).thenReturn(pxExtendedServiceOfferingCredentialSubject);
 
         List<ContractAgreementBE> expected = getContractAgreementBEs();
         List<ContractAgreementBE> actual = contractService.getContractAgreements();
@@ -105,6 +112,7 @@ class ContractServiceTest {
             .offeringDetails(OfferingDetailsBE.builder().name("name").description("description").build())
             .consumerDetails(ParticipantDetailsBE.builder().name(OmejdnConnectorApiClientFake.PARTICIPANT_NAME).build())
             .providerDetails(ParticipantDetailsBE.builder().name(OmejdnConnectorApiClientFake.PARTICIPANT_NAME).build())
+            .isDataOffering(false)
             .build();
 
         return List.of(contractAgreementBE);
