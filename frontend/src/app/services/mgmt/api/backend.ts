@@ -12,6 +12,11 @@ export interface IContractRestApi {
     contractAgreements: IContractAgreementTO[];
 }
 
+export interface IParticipantRestApi {
+    participantId: IParticipantIdTO;
+    participantDetails: IParticipantDetailsTO;
+}
+
 export interface IProviderRestApi {
     prefillFields: IPrefillFieldsTO;
 }
