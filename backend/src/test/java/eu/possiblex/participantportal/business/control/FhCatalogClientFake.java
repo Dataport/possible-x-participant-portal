@@ -4,7 +4,7 @@ import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedL
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
 import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsSparqlQueryResult;
-import eu.possiblex.participantportal.business.entity.fh.ParticipantNameSparqlQueryResult;
+import eu.possiblex.participantportal.business.entity.fh.ParticipantDetailsSparqlQueryResult;
 
 import java.util.Collection;
 import java.util.Map;
@@ -30,10 +30,10 @@ public class FhCatalogClientFake implements FhCatalogClient {
     }
 
     @Override
-    public Map<String, ParticipantNameSparqlQueryResult> getParticipantNames(Collection<String> dids) {
+    public Map<String, ParticipantDetailsSparqlQueryResult> getParticipantDetails(Collection<String> dids) {
 
         return Map.of(FAKE_DID,
-            ParticipantNameSparqlQueryResult.builder().name(OmejdnConnectorApiClientFake.PARTICIPANT_NAME)
+            ParticipantDetailsSparqlQueryResult.builder().name(OmejdnConnectorApiClientFake.PARTICIPANT_NAME)
                 .uri("https://piveau.io/set/resource/legal-participant/" + FAKE_DID).build());
     }
 

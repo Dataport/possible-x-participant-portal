@@ -12,10 +12,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ParticipantNameSparqlQueryResult {
+public class ParticipantDetailsSparqlQueryResult {
     @JsonDeserialize(using = CatalogLiteralDeserializer.class)
     private String uri;
 
     @JsonDeserialize(using = CatalogLiteralDeserializer.class)
     private String name;
+
+    @JsonDeserialize(using = CatalogLiteralDeserializer.class)
+    private String mailAddress;
 }

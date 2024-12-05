@@ -2,7 +2,6 @@ package eu.possiblex.participantportal.business.control;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import eu.possiblex.participantportal.application.entity.CreateOfferResponseTO;
-import eu.possiblex.participantportal.application.entity.ParticipantIdTO;
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
 import eu.possiblex.participantportal.application.entity.exception.OfferingComplianceException;
 import eu.possiblex.participantportal.application.entity.policies.EnforcementPolicy;

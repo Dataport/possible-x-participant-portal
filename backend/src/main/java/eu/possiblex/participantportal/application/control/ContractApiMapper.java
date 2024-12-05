@@ -5,7 +5,7 @@ import eu.possiblex.participantportal.application.entity.ContractAgreementTO;
 import eu.possiblex.participantportal.application.entity.ContractParticipantDetailsTO;
 import eu.possiblex.participantportal.business.entity.ContractAgreementBE;
 import eu.possiblex.participantportal.business.entity.OfferingDetailsBE;
-import eu.possiblex.participantportal.business.entity.ParticipantDetailsBE;
+import eu.possiblex.participantportal.business.entity.ParticipantWithDapsBE;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -39,5 +39,5 @@ public interface ContractApiMapper {
 
     AssetDetailsTO offeringDetailsBeToTO(OfferingDetailsBE offeringDetailsBE);
 
-    ContractParticipantDetailsTO participantDetailsBEToTO(ParticipantDetailsBE possibleParticipant);
+    ContractParticipantDetailsTO participantDetailsBEToTO(ParticipantWithDapsBE possibleParticipant);
 }

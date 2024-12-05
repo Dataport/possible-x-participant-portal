@@ -13,7 +13,7 @@ import eu.possiblex.participantportal.business.entity.exception.ParticipantNotFo
 import eu.possiblex.participantportal.business.entity.exception.SparqlQueryException;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
 import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsSparqlQueryResult;
-import eu.possiblex.participantportal.business.entity.fh.ParticipantNameSparqlQueryResult;
+import eu.possiblex.participantportal.business.entity.fh.ParticipantDetailsSparqlQueryResult;
 import eu.possiblex.participantportal.business.entity.fh.SparqlQueryResponse;
 import jakarta.json.*;
 import lombok.extern.slf4j.Slf4j;
@@ -97,22 +97,23 @@ public class FhCatalogClientImpl implements FhCatalogClient {
         }
     }
 
-    public Map<String, ParticipantNameSparqlQueryResult> getParticipantNames(Collection<String> participantDids) {
+    public Map<String, ParticipantDetailsSparqlQueryResult> getParticipantDetails(Collection<String> participantDids) {
 
         String query = """
             PREFIX gx: <https://w3id.org/gaia-x/development#>
             PREFIX schema: <https://schema.org/>
             
-            SELECT ?uri ?name WHERE {
+            SELECT ?uri ?name ?mailAddress WHERE {
               ?uri a gx:LegalParticipant;
-              schema:name ?name .
+              schema:name ?name;
+              px:mailAddress ?mailAddress .
               FILTER(?uri IN (""" + String.join(",",
             participantDids.stream().map(id -> "<" + PARTICIPANT_URI_PREFIX + id + ">").toList()) + "))" + """
             }
             """;
         String stringResult = sparqlFhCatalogClient.queryCatalog(query, null);
 
-        SparqlQueryResponse<ParticipantNameSparqlQueryResult> result;
+        SparqlQueryResponse<ParticipantDetailsSparqlQueryResult> result;
         try {
             result = objectMapper.readValue(stringResult, new TypeReference<>() {
             });

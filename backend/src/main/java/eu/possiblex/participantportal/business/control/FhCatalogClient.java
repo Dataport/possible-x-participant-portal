@@ -5,7 +5,7 @@ import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedS
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.ParticipantNotFoundException;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
-import eu.possiblex.participantportal.business.entity.fh.ParticipantNameSparqlQueryResult;
+import eu.possiblex.participantportal.business.entity.fh.ParticipantDetailsSparqlQueryResult;
 
 import java.util.Map;
 
@@ -40,10 +40,10 @@ public interface FhCatalogClient {
     /**
      * Get the names of the legal participants.
      *
-     * @param dapsIds the IDs of the participants
+     * @param participantDids the IDs of the participants
      * @return the names of the participants
      */
-    Map<String, ParticipantNameSparqlQueryResult> getParticipantNames(Collection<String> dapsIds);
+    Map<String, ParticipantDetailsSparqlQueryResult> getParticipantDetails(Collection<String> participantDids);
 
     /**
      * Get the details of the offerings with the type "px:PossibleXServiceOfferingExtension".

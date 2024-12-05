@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ParticipantDetailsTO {
     private String participantId;
+
     private String participantName;
+
     private String participantEmail;
 }

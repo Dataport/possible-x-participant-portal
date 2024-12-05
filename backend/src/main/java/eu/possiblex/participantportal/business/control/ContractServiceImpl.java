@@ -6,7 +6,7 @@ import eu.possiblex.participantportal.business.entity.edc.contractagreement.Cont
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
 import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsSparqlQueryResult;
-import eu.possiblex.participantportal.business.entity.fh.ParticipantNameSparqlQueryResult;
+import eu.possiblex.participantportal.business.entity.fh.ParticipantDetailsSparqlQueryResult;
 import eu.possiblex.participantportal.utilities.PossibleXException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,14 +59,14 @@ public class ContractServiceImpl implements ContractService {
         Map<String, String> participantDidMap = getParticipantDids(refrencedDapsIds);
 
         // build a map of participant dids to participant names
-        Map<String, ParticipantNameSparqlQueryResult> participantNames = fhCatalogClient.getParticipantNames(
+        Map<String, ParticipantDetailsSparqlQueryResult> participantNames = fhCatalogClient.getParticipantNames(
             participantDidMap.values());
 
         // build a map of assetIds to offering details
         Map<String, OfferingDetailsSparqlQueryResult> offeringDetails = fhCatalogClient.getOfferingDetails(
             referencedAssetIds);
         // prepare for if the did or asset ID is not found
-        ParticipantNameSparqlQueryResult unknownParticipant = ParticipantNameSparqlQueryResult.builder().name("Unknown")
+        ParticipantDetailsSparqlQueryResult unknownParticipant = ParticipantDetailsSparqlQueryResult.builder().name("Unknown")
             .build();
         OfferingDetailsSparqlQueryResult unknownOffering = OfferingDetailsSparqlQueryResult.builder().name("Unknown")
             .description("Unknown").uri("Unknown").build();
@@ -79,10 +79,10 @@ public class ContractServiceImpl implements ContractService {
                 .name(offeringDetails.getOrDefault(c.getAssetId(), unknownOffering).getName())
                 .description(offeringDetails.getOrDefault(c.getAssetId(), unknownOffering).getDescription()).build())
             .consumerDetails(
-                ParticipantDetailsBE.builder().dapsId(c.getConsumerId()).did(participantDidMap.get(c.getConsumerId()))
+                ParticipantWithDapsBE.builder().dapsId(c.getConsumerId()).did(participantDidMap.get(c.getConsumerId()))
                     .name(participantNames.getOrDefault(participantDidMap.getOrDefault(c.getConsumerId(), ""),
                         unknownParticipant).getName()).build()).providerDetails(
-                ParticipantDetailsBE.builder().dapsId(c.getProviderId()).did(participantDidMap.get(c.getProviderId()))
+                ParticipantWithDapsBE.builder().dapsId(c.getProviderId()).did(participantDidMap.get(c.getProviderId()))
                     .name(participantNames.getOrDefault(participantDidMap.getOrDefault(c.getProviderId(), ""),
                         unknownParticipant).getName()).build()).build()));
 

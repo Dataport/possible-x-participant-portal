@@ -18,9 +18,9 @@ public class ContractAgreementBE {
 
     private OfferingDetailsBE offeringDetails;
 
-    private ParticipantDetailsBE providerDetails;
+    private ParticipantWithDapsBE providerDetails;
 
-    private ParticipantDetailsBE consumerDetails;
+    private ParticipantWithDapsBE consumerDetails;
 
     private List<EnforcementPolicy> enforcementPolicies;
 

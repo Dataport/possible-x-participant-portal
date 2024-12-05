@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ParticipantIdTO {
+public class ParticipantNameTO {
     private String participantId;
+
+    private String participantName;
 }

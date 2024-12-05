@@ -1,12 +1,6 @@
 package eu.possiblex.participantportal.business.control;
 
-import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
 import eu.possiblex.participantportal.business.entity.*;
-import eu.possiblex.participantportal.business.entity.edc.asset.ionoss3extension.IonosS3DataSource;
-import eu.possiblex.participantportal.business.entity.edc.asset.possible.PossibleAsset;
-import eu.possiblex.participantportal.business.entity.edc.asset.possible.PossibleAssetDataAccountExport;
-import eu.possiblex.participantportal.business.entity.edc.asset.possible.PossibleAssetProperties;
-import eu.possiblex.participantportal.business.entity.edc.asset.possible.PossibleAssetTnC;
 import eu.possiblex.participantportal.business.entity.edc.contractagreement.ContractAgreement;
 import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyTarget;
@@ -17,7 +11,6 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Map;
 
 public class ContractServiceFake implements ContractService {
 
@@ -64,8 +57,8 @@ public class ContractServiceFake implements ContractService {
 
         ContractAgreementBE contractAgreementBE = ContractAgreementBE.builder().contractAgreement(contractAgreement)
             .offeringDetails(new OfferingDetailsBE(NAME, DESCRIPTION, FAKE_ID_ASSET, FAKE_ID_OFFERING))
-            .providerDetails(new ParticipantDetailsBE())
-            .consumerDetails(new ParticipantDetailsBE())
+            .providerDetails(new ParticipantWithDapsBE())
+            .consumerDetails(new ParticipantWithDapsBE())
             .build();
 
         return List.of(contractAgreementBE);

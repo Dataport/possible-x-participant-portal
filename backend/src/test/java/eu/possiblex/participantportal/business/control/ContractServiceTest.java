@@ -15,8 +15,7 @@ import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProce
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
 import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsSparqlQueryResult;
-import eu.possiblex.participantportal.business.entity.fh.ParticipantNameSparqlQueryResult;
-import eu.possiblex.participantportal.utils.TestUtils;
+import eu.possiblex.participantportal.business.entity.fh.ParticipantDetailsSparqlQueryResult;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,8 +58,8 @@ class ContractServiceTest {
 
         PxExtendedServiceOfferingCredentialSubject pxExtendedServiceOfferingCredentialSubject = new PxExtendedServiceOfferingCredentialSubject();
         pxExtendedServiceOfferingCredentialSubject.setAggregationOf(List.of());
-        Mockito.when(fhCatalogClient.getParticipantNames(any())).thenReturn(Map.of(OmejdnConnectorApiClientFake.PARTICIPANT_ID,
-            ParticipantNameSparqlQueryResult.builder().name(OmejdnConnectorApiClientFake.PARTICIPANT_NAME).build()));
+        Mockito.when(fhCatalogClient.getParticipantDetails(any())).thenReturn(Map.of(OmejdnConnectorApiClientFake.PARTICIPANT_ID,
+            ParticipantDetailsSparqlQueryResult.builder().name(OmejdnConnectorApiClientFake.PARTICIPANT_NAME).build()));
         Mockito.when(fhCatalogClient.getOfferingDetails(any())).thenReturn(Map.of(EdcClientFake.FAKE_ID,
             OfferingDetailsSparqlQueryResult.builder().assetId(EdcClientFake.FAKE_ID).build()));
         Mockito.when(fhCatalogClient.getFhCatalogOffer(any())).thenReturn(pxExtendedServiceOfferingCredentialSubject);
@@ -68,7 +67,7 @@ class ContractServiceTest {
         List<ContractAgreementBE> expected = getContractAgreementBEs();
         List<ContractAgreementBE> actual = contractService.getContractAgreements();
 
-        verify(fhCatalogClient).getParticipantNames(any());
+        verify(fhCatalogClient).getParticipantDetails(any());
         verify(fhCatalogClient).getOfferingDetails(any());
         verify(edcClient).queryContractAgreements();
 
@@ -110,8 +109,8 @@ class ContractServiceTest {
 
         ContractAgreementBE contractAgreementBE = ContractAgreementBE.builder().contractAgreement(contractAgreement)
             .offeringDetails(OfferingDetailsBE.builder().name("name").description("description").build())
-            .consumerDetails(ParticipantDetailsBE.builder().name(OmejdnConnectorApiClientFake.PARTICIPANT_NAME).build())
-            .providerDetails(ParticipantDetailsBE.builder().name(OmejdnConnectorApiClientFake.PARTICIPANT_NAME).build())
+            .consumerDetails(ParticipantWithDapsBE.builder().name(OmejdnConnectorApiClientFake.PARTICIPANT_NAME).build())
+            .providerDetails(ParticipantWithDapsBE.builder().name(OmejdnConnectorApiClientFake.PARTICIPANT_NAME).build())
             .isDataOffering(false)
             .build();
 
