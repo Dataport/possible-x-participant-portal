@@ -25,6 +25,7 @@ public interface ContractApiMapper {
     @Mapping(target = "contractSigningDate", source = "be.contractAgreement.contractSigningDate", qualifiedByName = "secondsToOffsetDateTime")
     @Mapping(target = "consumerDetails", source = "be.consumerDetails")
     @Mapping(target = "providerDetails", source = "be.providerDetails")
+    @Mapping(target = "isDataOffering", source = "be.dataOffering")
     @Mapping(target = "enforcementPolicies", source = "be.enforcementPolicies")
     ContractAgreementTO contractAgreementBEToTO(ContractAgreementBE be);
 

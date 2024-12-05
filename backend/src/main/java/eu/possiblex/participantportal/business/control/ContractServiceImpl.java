@@ -41,7 +41,7 @@ public class ContractServiceImpl implements ContractService {
      * @return List of contract agreements.
      */
     @Override
-    public List<ContractAgreementBE> getContractAgreements() {
+    public List<ContractAgreementBE> getContractAgreements() throws OfferNotFoundException {
 
         List<ContractAgreementBE> contractAgreementBEs = new ArrayList<>();
         List<ContractAgreement> contractAgreements = edcClient.queryContractAgreements();
@@ -88,14 +88,15 @@ public class ContractServiceImpl implements ContractService {
 
         for (ContractAgreementBE contractAgreementBE : contractAgreementBEs) {
             try {
-                if (fhCatalogClient.getFhCatalogOffer(contractAgreementBE.getOfferingDetails().getAssetId()).getAggregationOf() != null) {
-                    contractAgreementBE.setDataOffering(true);
-                } else {
+                if (fhCatalogClient.getFhCatalogOffer(contractAgreementBE.getOfferingDetails().getAssetId()).getAggregationOf().isEmpty()) {
                     contractAgreementBE.setDataOffering(false);
+                } else {
+                    contractAgreementBE.setDataOffering(true);
                 }
             } catch (OfferNotFoundException e) {
                 log.error("Failed to check if offer is a data product for contractAgreementBE with assetId: {}",
                 contractAgreementBE.getOfferingDetails().getAssetId());
+                throw new OfferNotFoundException(e.getMessage());
             }
         }
         return contractAgreementBEs;

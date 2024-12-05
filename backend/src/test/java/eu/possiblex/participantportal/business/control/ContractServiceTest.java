@@ -48,7 +48,7 @@ class ContractServiceTest {
     private ConsumerService consumerService;
 
     @Test
-    void testGetContractAgreementsAsProviderOfAssets() {
+    void testGetContractAgreementsAsProviderOfAssets() throws OfferNotFoundException {
 
         reset(fhCatalogClient);
         reset(edcClient);
