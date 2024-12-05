@@ -15,7 +15,7 @@ public interface ContractService {
      *
      * @return List of contract agreements.
      */
-    List<ContractAgreementBE> getContractAgreements();
+    List<ContractAgreementBE> getContractAgreements() throws OfferNotFoundException;
 
     TransferOfferResponseBE transferDataOfferAgain(TransferOfferRequestBE request) throws OfferNotFoundException,
         TransferFailedException;

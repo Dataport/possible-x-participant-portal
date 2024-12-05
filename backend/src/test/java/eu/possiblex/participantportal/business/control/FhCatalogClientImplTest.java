@@ -21,7 +21,6 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import java.util.List;
 import java.util.Map;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 
@@ -53,11 +52,9 @@ class FhCatalogClientImplTest {
         Mockito.when(technicalFhCatalogClient.getFhCatalogOfferWithData(Mockito.anyString()))
             .thenReturn(fhCatalogOfferContent);
 
-
         // WHEN a dataset is retrieved
 
         PxExtendedServiceOfferingCredentialSubject offer = fhCatalogClient.getFhCatalogOffer("some ID");
-
 
         // THEN the offer should contain the data parsed from the test FH Catalog offer
 
@@ -80,9 +77,8 @@ class FhCatalogClientImplTest {
         WebClientResponseException expectedException = Mockito.mock(WebClientResponseException.class);
         Mockito.when(expectedException.getStatusCode()).thenReturn(HttpStatus.NOT_FOUND);
         Mockito.when(technicalFhCatalogClient.getFhCatalogOfferWithData(Mockito.anyString()))
-                .thenThrow(expectedException);
-        Mockito.when(technicalFhCatalogClient.getFhCatalogOffer(Mockito.anyString()))
-            .thenReturn(fhCatalogOfferContent);
+            .thenThrow(expectedException);
+        Mockito.when(technicalFhCatalogClient.getFhCatalogOffer(Mockito.anyString())).thenReturn(fhCatalogOfferContent);
 
         // WHEN a dataset is retrieved
 
@@ -106,7 +102,8 @@ class FhCatalogClientImplTest {
         TechnicalFhCatalogClient technicalFhCatalogClientMock = Mockito.mock(TechnicalFhCatalogClient.class);
         Mockito.when(technicalFhCatalogClientMock.getFhCatalogParticipant(Mockito.anyString()))
             .thenReturn(participantContent);
-        FhCatalogClientImpl sut = new FhCatalogClientImpl(technicalFhCatalogClientMock, new ObjectMapper(), sparqlFhCatalogClient);
+        FhCatalogClientImpl sut = new FhCatalogClientImpl(technicalFhCatalogClientMock, sparqlFhCatalogClient,
+            new ObjectMapper());
 
         // WHEN a participant is retrieved
 
@@ -122,13 +119,16 @@ class FhCatalogClientImplTest {
 
     @Test
     void parseSparqlDataOfferCorrectly() {
+
         String sparqlResponse = TestUtils.loadTextFile("unit_tests/FHCatalogClientImplTest/validSparqlResult.json");
 
         reset(technicalFhCatalogClient);
         reset(sparqlFhCatalogClient);
-        Mockito.when(sparqlFhCatalogClient.queryCatalog(Mockito.anyString(), Mockito.isNull())).thenReturn(sparqlResponse);
+        Mockito.when(sparqlFhCatalogClient.queryCatalog(Mockito.anyString(), Mockito.isNull()))
+            .thenReturn(sparqlResponse);
 
-        Map<String, OfferingDetailsSparqlQueryResult> queryResultMap = fhCatalogClient.getServiceOfferingDetails(List.of("EXPECTED_ASSET_ID_VALUE"));
+        Map<String, OfferingDetailsSparqlQueryResult> queryResultMap = fhCatalogClient.getOfferingDetails(
+            List.of("EXPECTED_ASSET_ID_VALUE"));
         OfferingDetailsSparqlQueryResult queryResult = queryResultMap.get("EXPECTED_ASSET_ID_VALUE");
 
         verify(sparqlFhCatalogClient).queryCatalog(Mockito.anyString(), Mockito.isNull());
@@ -145,16 +145,19 @@ class FhCatalogClientImplTest {
 
         @Bean
         public SparqlFhCatalogClient sparqlFhCatalogClient() {
+
             return Mockito.mock(SparqlFhCatalogClient.class);
         }
 
         @Bean
         public TechnicalFhCatalogClient technicalFhCatalogClient() {
+
             return Mockito.mock(TechnicalFhCatalogClient.class);
         }
 
         @Bean
         public ObjectMapper objectMapper() {
+
             return new ObjectMapper();
         }
     }

@@ -1,4 +1,4 @@
-package eu.possiblex.participantportal.application.entity;
+package eu.possiblex.participantportal.business.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class AssetDetailsTO {
+@NoArgsConstructor
+public class OfferingDetailsBE {
     private String name;
 
     private String description;

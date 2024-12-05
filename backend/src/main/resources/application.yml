@@ -29,6 +29,9 @@ sd-creation-wizard-api:
 
 participant-id: "did:web:example-organization.eu"
 
+daps-server:
+  base-url: http://localhost:4567
+
 s3:
   bucket-storage-region: "eu-central-3"
   bucket-top-level-folder: "possiblex_data_transfers"

@@ -1,0 +1,22 @@
+<mat-accordion multi togglePosition="before">
+  <mat-expansion-panel>
+    <mat-expansion-panel-header (click)="$event.stopPropagation();">
+      <mat-panel-title class="font-bold">Enforcement Policies</mat-panel-title>
+    </mat-expansion-panel-header>
+    <div (click)="$event.stopPropagation();">
+      <div *ngFor="let ep of enforcementPolicies">
+        <div *ngIf="isEverythingAllowedPolicy(ep)">
+          <b>Everything is allowed</b>
+        </div>
+        <div *ngIf="isParticipantRestrictionPolicy(ep)">
+          <b>Contracting is restricted to the following organizations:</b>
+          <ul *ngFor="let org of asParticipantRestrictionPolicy(ep).allowedParticipants">
+            <li>
+              {{ org }}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </mat-expansion-panel>
+</mat-accordion>

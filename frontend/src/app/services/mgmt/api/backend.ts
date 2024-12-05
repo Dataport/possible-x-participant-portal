@@ -21,8 +21,8 @@ export interface IProviderRestApi {
 }
 
 export interface IResourceShapeRestApi {
-    gxInstantiatedVirtualResourceShape: string;
     gxDataResourceShape: string;
+    gxInstantiatedVirtualResourceShape: string;
     gxPhysicalResourceShape: string;
     gxSoftwareResourceShape: string;
     gxVirtualResourceShape: string;
@@ -45,6 +45,8 @@ export interface IAcceptOfferResponseTOBuilder {
 export interface IAssetDetailsTO {
     name: string;
     description: string;
+    assetId: string;
+    offeringId: string;
 }
 
 export interface IAssetDetailsTOBuilder {
@@ -64,12 +66,23 @@ export interface IContractAgreementTO {
     assetId: string;
     assetDetails: IAssetDetailsTO;
     policy: IPolicy;
+    enforcementPolicies: IEnforcementPolicyUnion[];
     contractSigningDate: Date;
-    consumerId: string;
-    providerId: string;
+    consumerDetails: IContractParticipantDetailsTO;
+    providerDetails: IContractParticipantDetailsTO;
+    dataOffering: boolean;
 }
 
 export interface IContractAgreementTOBuilder {
+}
+
+export interface IContractParticipantDetailsTO {
+    name: string;
+    did: string;
+    dapsId: string;
+}
+
+export interface IContractParticipantDetailsTOBuilder {
 }
 
 export interface ICreateDataOfferingRequestTO extends ICreateServiceOfferingRequestTO {

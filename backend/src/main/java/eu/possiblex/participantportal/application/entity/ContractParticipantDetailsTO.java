@@ -9,12 +9,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AssetDetailsTO {
+public class ContractParticipantDetailsTO {
     private String name;
 
-    private String description;
+    private String did;
 
-    private String assetId;
-
-    private String offeringId;
+    private String dapsId;
 }

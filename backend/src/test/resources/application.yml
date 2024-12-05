@@ -13,6 +13,9 @@ sd-creation-wizard-api:
 
 participant-id: "did:web:test.eu"
 
+daps-server:
+  base-url: http://localhost:4567
+
 s3:
   bucket-storage-region: "something"
   bucket-name: "something"

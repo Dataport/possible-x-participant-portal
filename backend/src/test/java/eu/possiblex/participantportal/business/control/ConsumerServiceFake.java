@@ -1,5 +1,6 @@
 package eu.possiblex.participantportal.business.control;
 
+import eu.possiblex.participantportal.application.entity.policies.EnforcementPolicy;
 import eu.possiblex.participantportal.business.entity.*;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.edc.catalog.DcatDataset;
@@ -72,5 +73,11 @@ public class ConsumerServiceFake implements ConsumerService {
             case BAD_TRANSFER_OFFER_ID -> throw new TransferFailedException("transfer failed");
             default -> TransferOfferResponseBE.builder().transferProcessState(TransferProcessState.COMPLETED).build();
         };
+    }
+
+    @Override
+    public List<EnforcementPolicy> getEnforcementPoliciesFromEdcPolicies(List<Policy> policies) {
+
+        return List.of();
     }
 }
