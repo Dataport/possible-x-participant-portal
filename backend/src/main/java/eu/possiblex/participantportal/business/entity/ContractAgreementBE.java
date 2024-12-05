@@ -23,4 +23,6 @@ public class ContractAgreementBE {
     private ParticipantDetailsBE consumerDetails;
 
     private List<EnforcementPolicy> enforcementPolicies;
+
+    private boolean isDataOffering;
 }

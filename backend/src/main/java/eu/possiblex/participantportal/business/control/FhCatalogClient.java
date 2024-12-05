@@ -48,7 +48,7 @@ public interface FhCatalogClient {
     /**
      * Get the details of the offerings with the type "px:PossibleXServiceOfferingExtension".
      *
-     * @param assetIds the IDs of the service offerings
+     * @param assetIds referenced in the offerings
      * @return the details of the service offerings
      */
     Map<String, OfferingDetailsSparqlQueryResult> getOfferingDetails(Collection<String> assetIds);

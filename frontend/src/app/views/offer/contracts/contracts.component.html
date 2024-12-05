@@ -40,19 +40,19 @@
               <button (click)="toggleAccordion(item.id)" cButton class="rounded-none">Details</button>
             </td>
             <td>
-              <button (click)="transferAgain(item)" [disabled]=isTransferButtonDisabled cButton class="rounded-none">
+              <button *ngIf="isDataOffering(item)" (click)="transferAgain(item)" [disabled]=isTransferButtonDisabled cButton class="rounded-none">
                 Transfer
               </button>
             </td>
           </tr>
           <tr *ngIf="item.id === expandedItemId">
             <td colspan="8">
-              <span *ngIf="item.assetDetails"><b>Consumer Name:</b> {{ item.consumerDetails.name }}<br></span>
-              <span *ngIf="item.assetDetails"><b>Consumer DID:</b> {{ item.consumerDetails.did }}<br></span>
-              <span *ngIf="item.assetDetails"><b>Consumer DAPS ID:</b> {{ item.consumerDetails.dapsId }}<br><br></span>
-              <span *ngIf="item.assetDetails"><b>Provider Name:</b> {{ item.providerDetails.name }}<br></span>
-              <span *ngIf="item.assetDetails"><b>Provider DID:</b> {{ item.providerDetails.did }}<br></span>
-              <span *ngIf="item.assetDetails"><b>Provider DAPS ID:</b> {{ item.providerDetails.dapsId }}<br><br></span>
+              <span *ngIf="item.consumerDetails"><b>Consumer Name:</b> {{ item.consumerDetails.name }}<br></span>
+              <span *ngIf="item.consumerDetails"><b>Consumer DID:</b> {{ item.consumerDetails.did }}<br></span>
+              <span *ngIf="item.consumerDetails"><b>Consumer DAPS ID:</b> {{ item.consumerDetails.dapsId }}<br><br></span>
+              <span *ngIf="item.providerDetails"><b>Provider Name:</b> {{ item.providerDetails.name }}<br></span>
+              <span *ngIf="item.providerDetails"><b>Provider DID:</b> {{ item.providerDetails.did }}<br></span>
+              <span *ngIf="item.providerDetails"><b>Provider DAPS ID:</b> {{ item.providerDetails.dapsId }}<br><br></span>
               <span *ngIf="item.assetDetails"><b>Offering Name:</b> {{ item.assetDetails.name }}<br></span>
               <span *ngIf="item.assetDetails"><b>Offering Description:</b> {{ item.assetDetails.description }}
                 <br></span>

@@ -31,4 +31,6 @@ public class ContractAgreementTO {
 
     private ContractParticipantDetailsTO providerDetails;
 
+    private boolean isDataOffering;
+
 }

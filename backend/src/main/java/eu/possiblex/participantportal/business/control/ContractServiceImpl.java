@@ -65,12 +65,11 @@ public class ContractServiceImpl implements ContractService {
         // build a map of assetIds to offering details
         Map<String, OfferingDetailsSparqlQueryResult> offeringDetails = fhCatalogClient.getOfferingDetails(
             referencedAssetIds);
-
         // prepare for if the did or asset ID is not found
         ParticipantNameSparqlQueryResult unknownParticipant = ParticipantNameSparqlQueryResult.builder().name("Unknown")
             .build();
         OfferingDetailsSparqlQueryResult unknownOffering = OfferingDetailsSparqlQueryResult.builder().name("Unknown")
-            .description("Unknown").build();
+            .description("Unknown").uri("Unknown").build();
 
         // convert contract agreements to contract agreement BEs
         contractAgreements.forEach(c -> contractAgreementBEs.add(ContractAgreementBE.builder().contractAgreement(c)
@@ -87,6 +86,18 @@ public class ContractServiceImpl implements ContractService {
                     .name(participantNames.getOrDefault(participantDidMap.getOrDefault(c.getProviderId(), ""),
                         unknownParticipant).getName()).build()).build()));
 
+        for (ContractAgreementBE contractAgreementBE : contractAgreementBEs) {
+            try {
+                if (fhCatalogClient.getFhCatalogOffer(contractAgreementBE.getOfferingDetails().getAssetId()).getAggregationOf() != null) {
+                    contractAgreementBE.setDataOffering(true);
+                } else {
+                    contractAgreementBE.setDataOffering(false);
+                }
+            } catch (OfferNotFoundException e) {
+                log.error("Failed to check if offer is a data product for contractAgreementBE with assetId: {}",
+                contractAgreementBE.getOfferingDetails().getAssetId());
+            }
+        }
         return contractAgreementBEs;
     }
 

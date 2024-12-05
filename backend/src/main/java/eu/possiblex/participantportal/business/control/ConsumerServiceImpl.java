@@ -258,6 +258,7 @@ public class ConsumerServiceImpl implements ConsumerService {
      * @param policies ODRL Policies
      * @return enforcement policies
      */
+    @Override
     public List<EnforcementPolicy> getEnforcementPoliciesFromEdcPolicies(List<Policy> policies) {
 
         List<OdrlConstraint> constraints = new ArrayList<>();

@@ -36,7 +36,7 @@ public interface ContractApiMapper {
         return zonedDateTime.toOffsetDateTime();
     }
 
-    AssetDetailsTO offeringDetailsBeToTO(OfferingDetailsBE possibleAsset);
+    AssetDetailsTO offeringDetailsBeToTO(OfferingDetailsBE offeringDetailsBE);
 
     ContractParticipantDetailsTO participantDetailsBEToTO(ParticipantDetailsBE possibleParticipant);
 }

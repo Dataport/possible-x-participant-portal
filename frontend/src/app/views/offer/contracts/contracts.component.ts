@@ -18,6 +18,7 @@ export class ContractsComponent implements OnInit {
   expandedItemId: string | null = null;
   isTransferButtonDisabled = false;
 
+
   constructor(private apiService: ApiService, private popUpMessage: MatSnackBar) {
   }
 
@@ -98,5 +99,13 @@ export class ContractsComponent implements OnInit {
     }).catch(_ => {
       this.requestContractAgreementsStatusMessage.showErrorMessage("Unknown error occurred");
     });
+  }
+
+  isDataOffering(item: IContractAgreementTO) {
+    if (item.dataOffering === true) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }

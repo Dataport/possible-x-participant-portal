@@ -135,6 +135,7 @@ public class FhCatalogClientImpl implements FhCatalogClient {
             SELECT ?uri ?assetId ?name ?description WHERE {
               ?uri a px:PossibleXServiceOfferingExtension;
               schema:name ?name;
+              px:providerUrl ?providerUrl;
               px:assetId ?assetId .
               OPTIONAL { ?uri schema:description ?description } .
               FILTER(?assetId IN (""" + String.join(",", assetIds.stream().map(id -> "\"" + id + "\"").toList()) + "))"

@@ -124,12 +124,6 @@ class ConsumerModuleTest {
         transferProcess.setState(TransferProcessState.COMPLETED);
         Mockito.when(edcClientMock.checkTransferStatus(any())).thenReturn(transferProcess);
 
-        //define FhCatalogClient behaviour
-        String fhCatalogParticipant = TestUtils.loadTextFile(
-            "unit_tests/FHCatalogClientImplTest/validFhParticipant.json");
-        Mockito.when(technicalFhCatalogClientMock.getFhCatalogParticipant(providerId))
-            .thenReturn(fhCatalogParticipant);
-
         // WHEN/THEN
 
         this.mockMvc.perform(post("/consumer/offer/accept").content(RestApiHelper.asJsonString(
@@ -184,12 +178,6 @@ class ConsumerModuleTest {
         IonosS3TransferProcess transferProcess = new IonosS3TransferProcess();
         transferProcess.setState(TransferProcessState.COMPLETED);
         Mockito.when(edcClientMock.checkTransferStatus(any())).thenReturn(transferProcess);
-
-        //define FhCatalogClient behaviour
-        String fhCatalogParticipant = TestUtils.loadTextFile(
-            "unit_tests/FHCatalogClientImplTest/validFhParticipant.json");
-        Mockito.when(technicalFhCatalogClientMock.getFhCatalogParticipant(Mockito.eq(providerId)))
-            .thenReturn(fhCatalogParticipant);
 
         // WHEN/THEN
 

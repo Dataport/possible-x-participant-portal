@@ -14,6 +14,7 @@ import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProce
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
 import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsSparqlQueryResult;
+import eu.possiblex.participantportal.business.entity.fh.ParticipantNameSparqlQueryResult;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,12 +53,23 @@ class ContractServiceTest {
         reset(fhCatalogClient);
         reset(edcClient);
 
+        Mockito.when(fhCatalogClient.getParticipantNames(any())).thenReturn(Map.of(OmejdnConnectorApiClientFake.PARTICIPANT_ID,
+            ParticipantNameSparqlQueryResult.builder().name(OmejdnConnectorApiClientFake.PARTICIPANT_NAME).build()));
+        Mockito.when(fhCatalogClient.getOfferingDetails(any())).thenReturn(Map.of(EdcClientFake.FAKE_ID,
+            OfferingDetailsSparqlQueryResult.builder().assetId(EdcClientFake.FAKE_ID).build()));
+
         List<ContractAgreementBE> expected = getContractAgreementBEs();
         List<ContractAgreementBE> actual = contractService.getContractAgreements();
 
-        assertThat(actual.size()).isEqualTo(expected.size()).isEqualTo(1);
-        assertThat(actual).hasSize(1);
-        assertThat(actual.get(0)).usingRecursiveComparison().isEqualTo(expected.get(0));
+        verify(fhCatalogClient).getParticipantNames(any());
+        verify(fhCatalogClient).getOfferingDetails(any());
+        verify(edcClient).queryContractAgreements();
+
+        assertThat(!actual.isEmpty());
+        assertThat(actual.size()).isEqualTo(1).isEqualTo(expected.size());
+        assertThat(actual.get(0).getOfferingDetails().getAssetId()).isEqualTo(EdcClientFake.FAKE_ID);
+        assertThat(actual.get(0).getProviderDetails().getName()).isEqualTo("Unknown");
+        assertThat(actual.get(0).getConsumerDetails().getName()).isEqualTo("Unknown");
 
     }
 
