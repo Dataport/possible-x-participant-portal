@@ -1,6 +1,10 @@
 /* tslint:disable */
 /* eslint-disable */
 
+export interface ICommonPortalRestApi {
+    version: IVersionTO;
+}
+
 export interface IConsumerRestApi {
 }
 
@@ -9,7 +13,7 @@ export interface IContractRestApi {
 }
 
 export interface IProviderRestApi {
-    participantId: IParticipantIdTO;
+    prefillFields: IPrefillFieldsTO;
 }
 
 export interface IResourceShapeRestApi {
@@ -97,6 +101,14 @@ export interface ICreateServiceOfferingRequestTOBuilder<C, B> {
 export interface ICreateServiceOfferingRequestTOBuilderImpl extends ICreateServiceOfferingRequestTOBuilder<ICreateServiceOfferingRequestTO, ICreateServiceOfferingRequestTOBuilderImpl> {
 }
 
+export interface IDataProductPrefillFieldsTO {
+    serviceOfferingName: string;
+    serviceOfferingDescription: string;
+}
+
+export interface IDataProductPrefillFieldsTOBuilder {
+}
+
 export interface IOfferDetailsTO {
     edcOfferId: string;
     catalogOffering: IPxExtendedServiceOfferingCredentialSubject;
@@ -112,6 +124,14 @@ export interface IParticipantIdTO {
 }
 
 export interface IParticipantIdTOBuilder {
+}
+
+export interface IPrefillFieldsTO {
+    participantId: string;
+    dataProductPrefillFields: IDataProductPrefillFieldsTO;
+}
+
+export interface IPrefillFieldsTOBuilder {
 }
 
 export interface ISelectOfferRequestTO {
@@ -135,6 +155,13 @@ export interface ITransferOfferResponseTO {
 }
 
 export interface ITransferOfferResponseTOBuilder {
+}
+
+export interface IVersionTO {
+    version: string;
+}
+
+export interface IVersionTOBuilder {
 }
 
 export interface IPojoCredentialSubject {
@@ -377,6 +404,14 @@ export class RestApplicationClient {
     }
 
     /**
+     * HTTP GET /common/version
+     * Java method: eu.possiblex.participantportal.application.boundary.CommonPortalRestApiImpl.getVersion
+     */
+    getVersion(): RestResponse<IVersionTO> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`common/version` });
+    }
+
+    /**
      * HTTP POST /consumer/offer/accept
      * Java method: eu.possiblex.participantportal.application.boundary.ConsumerRestApiImpl.acceptContractOffer
      */
@@ -409,14 +444,6 @@ export class RestApplicationClient {
     }
 
     /**
-     * HTTP GET /provider/id
-     * Java method: eu.possiblex.participantportal.application.boundary.ProviderRestApiImpl.getParticipantId
-     */
-    getParticipantId(): RestResponse<IParticipantIdTO> {
-        return this.httpClient.request({ method: "GET", url: uriEncoding`provider/id` });
-    }
-
-    /**
      * HTTP POST /provider/offer/data
      * Java method: eu.possiblex.participantportal.application.boundary.ProviderRestApiImpl.createDataOffering
      */
@@ -430,6 +457,14 @@ export class RestApplicationClient {
      */
     createServiceOffering(createServiceOfferingRequestTO: ICreateServiceOfferingRequestTO): RestResponse<ICreateOfferResponseTO> {
         return this.httpClient.request({ method: "POST", url: uriEncoding`provider/offer/service`, data: createServiceOfferingRequestTO });
+    }
+
+    /**
+     * HTTP GET /provider/prefillFields
+     * Java method: eu.possiblex.participantportal.application.boundary.ProviderRestApiImpl.getPrefillFields
+     */
+    getPrefillFields(): RestResponse<IPrefillFieldsTO> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`provider/prefillFields` });
     }
 
     /**
