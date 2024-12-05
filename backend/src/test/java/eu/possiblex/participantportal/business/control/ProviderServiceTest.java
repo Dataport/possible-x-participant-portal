@@ -19,8 +19,7 @@ import eu.possiblex.participantportal.business.entity.edc.asset.possible.Possibl
 import eu.possiblex.participantportal.business.entity.edc.contractdefinition.ContractDefinitionCreateRequest;
 import eu.possiblex.participantportal.business.entity.edc.policy.OdrlPermission;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyCreateRequest;
-import eu.possiblex.participantportal.business.entity.exception.EdcOfferCreationException;
-import eu.possiblex.participantportal.business.entity.exception.FhOfferCreationException;
+
 import eu.possiblex.participantportal.utilities.PossibleXException;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
@@ -30,9 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.List;
 

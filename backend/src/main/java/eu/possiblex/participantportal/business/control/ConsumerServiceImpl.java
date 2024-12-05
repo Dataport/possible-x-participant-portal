@@ -109,7 +109,7 @@ public class ConsumerServiceImpl implements ConsumerService {
 
     @Override
     public AcceptOfferResponseBE acceptContractOffer(ConsumeOfferRequestBE request)
-        throws OfferNotFoundException, ParticipantNotFoundException, NegotiationFailedException {
+        throws OfferNotFoundException, NegotiationFailedException {
 
         // query edcOffer
         DcatCatalog edcOffer = queryEdcCatalog(
@@ -124,11 +124,8 @@ public class ConsumerServiceImpl implements ConsumerService {
 
         ContractNegotiation contractNegotiation = negotiateOffer(negotiationInitiateRequest);
 
-        PxExtendedLegalParticipantCredentialSubjectSubset provider = fhCatalogClient.getFhCatalogParticipant(request.getProvidedBy());
-        log.info("got fh provider participant: " + provider);
-
         return new AcceptOfferResponseBE(contractNegotiation.getState(), contractNegotiation.getContractAgreementId(),
-            request.isDataOffering(), provider.getMailAddress());
+            request.isDataOffering());
     }
 
     @Override

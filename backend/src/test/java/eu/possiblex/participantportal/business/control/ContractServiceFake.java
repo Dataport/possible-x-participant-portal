@@ -2,6 +2,8 @@ package eu.possiblex.participantportal.business.control;
 
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
 import eu.possiblex.participantportal.business.entity.ContractAgreementBE;
+import eu.possiblex.participantportal.business.entity.TransferOfferRequestBE;
+import eu.possiblex.participantportal.business.entity.TransferOfferResponseBE;
 import eu.possiblex.participantportal.business.entity.edc.asset.ionoss3extension.IonosS3DataSource;
 import eu.possiblex.participantportal.business.entity.edc.asset.possible.PossibleAsset;
 import eu.possiblex.participantportal.business.entity.edc.asset.possible.PossibleAssetDataAccountExport;
@@ -89,5 +91,10 @@ public class ContractServiceFake implements ContractService {
 
         return PossibleAsset.builder().id(assetId).type("Asset").properties(properties).context(context)
             .dataAddress(dataAddress).build();
+    }
+
+    @Override
+    public TransferOfferResponseBE transferDataOfferAgain(TransferOfferRequestBE request) {
+        return null;
     }
 }

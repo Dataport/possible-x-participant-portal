@@ -130,9 +130,9 @@ public class ProviderServiceImpl implements ProviderService {
     }
 
     /**
-     * Return the participant's id.
+     * Return the prefill fields.
      *
-     * @return participant id
+     * @return prefill fields
      */
     @Override
     public PrefillFieldsBE getPrefillFields() {

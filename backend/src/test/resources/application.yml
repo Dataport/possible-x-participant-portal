@@ -25,3 +25,5 @@ logging:
 prefill-fields:
   data-product:
     json-file-path: "src/test/resources/prefillFieldsDataResource.json"
+
+version.no: "1.0.0"

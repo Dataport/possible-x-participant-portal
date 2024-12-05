@@ -58,6 +58,10 @@ public class EdcClientFake implements EdcClient {
 
     public static final String VALID_AGREEMENT_ID = "validAgreement";
 
+    public static final String VALID_COUNTER_PARTY_ADDRESS = "validCounterPartyAddress";
+
+    public static final String VALID_CONTRACT_AGREEEMENT_ID = "validContractAgreementId";
+
     public static final String BAD_TRANSFER_ID = "badTransfer";
 
     public static final String BAD_GATEWAY_ASSET_ID = "edcerror";
