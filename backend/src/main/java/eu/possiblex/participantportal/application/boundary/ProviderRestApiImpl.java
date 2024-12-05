@@ -1,19 +1,12 @@
 package eu.possiblex.participantportal.application.boundary;
 
 import eu.possiblex.participantportal.application.control.ProviderApiMapper;
-import eu.possiblex.participantportal.application.entity.CreateDataOfferingRequestTO;
-import eu.possiblex.participantportal.application.entity.CreateOfferResponseTO;
-import eu.possiblex.participantportal.application.entity.CreateServiceOfferingRequestTO;
-import eu.possiblex.participantportal.application.entity.ParticipantIdTO;
+import eu.possiblex.participantportal.application.entity.*;
 import eu.possiblex.participantportal.business.control.ProviderService;
 import eu.possiblex.participantportal.business.entity.CreateDataOfferingRequestBE;
 import eu.possiblex.participantportal.business.entity.CreateServiceOfferingRequestBE;
-import eu.possiblex.participantportal.business.entity.exception.EdcOfferCreationException;
-import eu.possiblex.participantportal.business.entity.exception.FhOfferCreationException;
-import eu.possiblex.participantportal.utilities.PossibleXException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -80,13 +73,13 @@ public class ProviderRestApiImpl implements ProviderRestApi {
     }
 
     /**
-     * GET endpoint to retrieve the participant's id
+     * GET endpoint to retrieve the prefill fields.
      *
-     * @return participant id
+     * @return prefill fields
      */
     @Override
-    public ParticipantIdTO getParticipantId() {
+    public PrefillFieldsTO getPrefillFields() {
 
-        return providerService.getParticipantId();
+        return providerApiMapper.getPrefillFieldsTO(providerService.getPrefillFields());
     }
 }

@@ -145,8 +145,10 @@ class ProviderRestApiTest extends ProviderTestParent {
     @Test
     void shouldReturnMessageOnGetParticipantId() throws Exception {
         // WHEN/THEN
-        this.mockMvc.perform(get("/provider/id")).andDo(print()).andExpect(status().isOk())
-            .andExpect(jsonPath("$.participantId").value(ProviderServiceFake.PARTICIPANT_ID));
+        this.mockMvc.perform(get("/provider/prefillFields")).andDo(print()).andExpect(status().isOk())
+            .andExpect(jsonPath("$.participantId").value(ProviderServiceFake.PARTICIPANT_ID))
+            .andExpect(jsonPath("$.dataProductPrefillFields.serviceOfferingName").value(ProviderServiceFake.SERVICE_OFFERING_NAME))
+            .andExpect(jsonPath("$.dataProductPrefillFields.serviceOfferingDescription").value(ProviderServiceFake.SERVICE_OFFERING_DESCRIPTION));
     }
 
     GxServiceOfferingCredentialSubject getGxServiceOfferingCredentialSubject() {

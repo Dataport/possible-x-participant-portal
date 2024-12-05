@@ -10,6 +10,7 @@ import eu.possiblex.participantportal.application.entity.credentials.gx.serviceo
 import eu.possiblex.participantportal.application.entity.policies.EverythingAllowedPolicy;
 import eu.possiblex.participantportal.business.entity.CreateDataOfferingRequestBE;
 import eu.possiblex.participantportal.business.entity.CreateServiceOfferingRequestBE;
+import eu.possiblex.participantportal.business.entity.PrefillFieldsBE;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedDataResourceCredentialSubject;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.edc.asset.AssetCreateRequest;
@@ -266,11 +267,15 @@ class ProviderServiceTest {
     @Test
     void testGetParticipantId() {
         //when
-        var participantIdTO = providerService.getParticipantId();
+        PrefillFieldsBE prefillFields = providerService.getPrefillFields();
 
         //then
         String expectedId = "did:web:test.eu";
-        assertEquals(expectedId, participantIdTO.getParticipantId());
+        String expectedServiceOfferingName = "Data Product Service for Data Resource <Data resource name>";
+        String expectedServiceOfferingDescription = "Data Product Service provides data (<Data resource name>).";
+        assertEquals(expectedId, prefillFields.getParticipantId());
+        assertEquals(expectedServiceOfferingName, prefillFields.getDataProductPrefillFields().getServiceOfferingName());
+        assertEquals(expectedServiceOfferingDescription, prefillFields.getDataProductPrefillFields().getServiceOfferingDescription());
     }
 
     GxServiceOfferingCredentialSubject getGxServiceOfferingCredentialSubject() {

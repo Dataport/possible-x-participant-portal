@@ -1,16 +1,19 @@
 package eu.possiblex.participantportal.business.control;
 
 import eu.possiblex.participantportal.application.entity.CreateOfferResponseTO;
-import eu.possiblex.participantportal.application.entity.ParticipantIdTO;
 import eu.possiblex.participantportal.business.entity.CreateServiceOfferingRequestBE;
-import eu.possiblex.participantportal.business.entity.exception.EdcOfferCreationException;
-import eu.possiblex.participantportal.business.entity.exception.FhOfferCreationException;
+import eu.possiblex.participantportal.business.entity.DataProductPrefillFieldsBE;
+import eu.possiblex.participantportal.business.entity.PrefillFieldsBE;
 
 public class ProviderServiceFake implements ProviderService {
 
     public static final String CREATE_OFFER_RESPONSE_ID = "abc123";
 
     public static final String PARTICIPANT_ID = "did:web:test.eu";
+
+    public static final String SERVICE_OFFERING_NAME = "Service Offering Name";
+
+    public static final String SERVICE_OFFERING_DESCRIPTION = "Service Offering Description";
 
     /**
      * Given a request for creating an offering in the Fraunhofer catalog and a request for creating an EDC offer,
@@ -32,8 +35,8 @@ public class ProviderServiceFake implements ProviderService {
      * @return participant id
      */
     @Override
-    public ParticipantIdTO getParticipantId() {
+    public PrefillFieldsBE getPrefillFields() {
 
-        return new ParticipantIdTO(PARTICIPANT_ID);
+        return new PrefillFieldsBE(PARTICIPANT_ID, new DataProductPrefillFieldsBE(SERVICE_OFFERING_NAME, SERVICE_OFFERING_DESCRIPTION));
     }
 }

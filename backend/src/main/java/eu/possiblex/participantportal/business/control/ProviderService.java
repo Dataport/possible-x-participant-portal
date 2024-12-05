@@ -1,10 +1,8 @@
 package eu.possiblex.participantportal.business.control;
 
 import eu.possiblex.participantportal.application.entity.CreateOfferResponseTO;
-import eu.possiblex.participantportal.application.entity.ParticipantIdTO;
 import eu.possiblex.participantportal.business.entity.CreateServiceOfferingRequestBE;
-import eu.possiblex.participantportal.business.entity.exception.EdcOfferCreationException;
-import eu.possiblex.participantportal.business.entity.exception.FhOfferCreationException;
+import eu.possiblex.participantportal.business.entity.PrefillFieldsBE;
 
 public interface ProviderService {
     /**
@@ -17,9 +15,9 @@ public interface ProviderService {
     CreateOfferResponseTO createOffering(CreateServiceOfferingRequestBE request);
 
     /**
-     * Return the participant's id.
+     * Return prefill fields.
      *
-     * @return participant id
+     * @return prefill fields
      */
-    ParticipantIdTO getParticipantId();
+    PrefillFieldsBE getPrefillFields();
 }
