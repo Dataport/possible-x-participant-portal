@@ -10,9 +10,7 @@ import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedS
 import eu.possiblex.participantportal.business.entity.edc.DataspaceErrorMessage;
 import eu.possiblex.participantportal.business.entity.edc.asset.DataAddress;
 import eu.possiblex.participantportal.business.entity.edc.asset.ionoss3extension.IonosS3DataDestination;
-import eu.possiblex.participantportal.business.entity.edc.catalog.CatalogRequest;
-import eu.possiblex.participantportal.business.entity.edc.catalog.DcatCatalog;
-import eu.possiblex.participantportal.business.entity.edc.catalog.DcatDataset;
+import eu.possiblex.participantportal.business.entity.edc.catalog.*;
 import eu.possiblex.participantportal.business.entity.edc.common.IdResponse;
 import eu.possiblex.participantportal.business.entity.edc.negotiation.ContractNegotiation;
 import eu.possiblex.participantportal.business.entity.edc.negotiation.ContractOffer;
@@ -91,8 +89,16 @@ public class ConsumerServiceImpl implements ConsumerService {
         log.info("got fh catalog offer " + fhCatalogOffer);
 
         // get offer from EDC Catalog
-        DcatCatalog edcCatalog = queryEdcCatalog(
-            CatalogRequest.builder().counterPartyAddress(fhCatalogOffer.getProviderUrl()).build());
+        DcatCatalog edcCatalog = queryEdcCatalog(CatalogRequest.builder()
+            .counterPartyAddress(fhCatalogOffer.getProviderUrl())
+            .querySpec(QuerySpec.builder()
+                .filterExpression(List.of(FilterExpression.builder()
+                    .operandLeft("id")
+                    .operator("=")
+                    .operandRight(fhCatalogOffer.getAssetId())
+                    .build()))
+                .build())
+            .build());
         log.info("got edc catalog: " + edcCatalog);
         DcatDataset edcCatalogOffer = getDatasetById(edcCatalog, fhCatalogOffer.getAssetId());
 
@@ -110,8 +116,16 @@ public class ConsumerServiceImpl implements ConsumerService {
         throws OfferNotFoundException, NegotiationFailedException {
 
         // query edcOffer
-        DcatCatalog edcOffer = queryEdcCatalog(
-            CatalogRequest.builder().counterPartyAddress(request.getCounterPartyAddress()).build());
+        DcatCatalog edcOffer = queryEdcCatalog(CatalogRequest.builder()
+            .counterPartyAddress(request.getCounterPartyAddress())
+            .querySpec(QuerySpec.builder()
+                .filterExpression(List.of(FilterExpression.builder()
+                    .operandLeft("id")
+                    .operator("=")
+                    .operandRight(request.getEdcOfferId())
+                    .build()))
+                .build())
+            .build());
         DcatDataset dataset = getDatasetById(edcOffer, request.getEdcOfferId());
 
         // initiate negotiation
@@ -132,7 +146,16 @@ public class ConsumerServiceImpl implements ConsumerService {
 
         // query edcOffer
         DcatCatalog edcOffer = queryEdcCatalog(
-            CatalogRequest.builder().counterPartyAddress(request.getCounterPartyAddress()).build());
+            CatalogRequest.builder()
+                .counterPartyAddress(request.getCounterPartyAddress())
+                .querySpec(QuerySpec.builder()
+                    .filterExpression(List.of(FilterExpression.builder()
+                            .operandLeft("id")
+                            .operator("=")
+                            .operandRight(request.getEdcOfferId())
+                        .build()))
+                    .build())
+                .build());
         DcatDataset dataset = getDatasetById(edcOffer, request.getEdcOfferId());
 
         // initiate transfer
