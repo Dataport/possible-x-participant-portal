@@ -15,7 +15,7 @@ public class QuerySpec {
     private List<FilterExpression> filterExpression;
 
     @Builder.Default
-    private int limit=50;
+    private int limit = 50;
 
     private int offset;
 }
