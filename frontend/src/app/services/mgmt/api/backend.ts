@@ -27,7 +27,6 @@ export interface IResourceShapeRestApi {
     gxSoftwareResourceShape: string;
     gxVirtualResourceShape: string;
     gxLegitimateInterestShape: string;
-    gxInstantiatedVirtualResourceShape: string;
 }
 
 export interface IServiceOfferingShapeRestApi {
