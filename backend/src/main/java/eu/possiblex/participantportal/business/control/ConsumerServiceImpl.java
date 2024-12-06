@@ -178,7 +178,7 @@ public class ConsumerServiceImpl implements ConsumerService {
 
     private DcatDataset getDatasetById(DcatCatalog catalog, String assetId) throws OfferNotFoundException {
 
-        List<DcatDataset> datasets = catalog.getDataset().stream().filter(d -> d.getAssetId().equals(assetId)).toList();
+        List<DcatDataset> datasets = catalog.getDataset();
 
         if (datasets.size() == 1) {
             return datasets.get(0);
