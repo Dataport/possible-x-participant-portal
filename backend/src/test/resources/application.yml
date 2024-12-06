@@ -2,11 +2,14 @@ edc:
   x-api-key: test
   mgmt-base-url: test
   protocol-base-url: test
+
 fh:
   catalog:
-    url: test
-    secret-key: test
-    catalog-name: test-provider
+    repo:
+      url: url
+    sparql:
+      url: url
+    secret-key: secret
 
 sd-creation-wizard-api:
   base-url: test
@@ -24,4 +27,9 @@ s3:
 logging:
   level:
     reactor.netty.http.client: DEBUG
+
+prefill-fields:
+  data-product:
+    json-file-path: "src/test/resources/prefillFieldsDataProduct.json"
+
 version.no: "1.0.0"

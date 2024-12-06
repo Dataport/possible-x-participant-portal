@@ -2,6 +2,7 @@ package eu.possiblex.participantportal.business.control;
 
 import eu.possiblex.participantportal.application.entity.CreateOfferResponseTO;
 import eu.possiblex.participantportal.business.entity.CreateServiceOfferingRequestBE;
+import eu.possiblex.participantportal.business.entity.PrefillFieldsBE;
 
 public interface ProviderService {
     /**
@@ -13,4 +14,10 @@ public interface ProviderService {
      */
     CreateOfferResponseTO createOffering(CreateServiceOfferingRequestBE request);
 
+    /**
+     * Return prefill fields.
+     *
+     * @return prefill fields
+     */
+    PrefillFieldsBE getPrefillFields();
 }

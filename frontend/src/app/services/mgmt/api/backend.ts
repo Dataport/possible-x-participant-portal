@@ -13,6 +13,7 @@ export interface IContractRestApi {
 }
 
 export interface IProviderRestApi {
+    prefillFields: IPrefillFieldsTO;
 }
 
 export interface IResourceShapeRestApi {
@@ -111,6 +112,14 @@ export interface ICreateServiceOfferingRequestTOBuilder<C, B> {
 export interface ICreateServiceOfferingRequestTOBuilderImpl extends ICreateServiceOfferingRequestTOBuilder<ICreateServiceOfferingRequestTO, ICreateServiceOfferingRequestTOBuilderImpl> {
 }
 
+export interface IDataProductPrefillFieldsTO {
+    serviceOfferingName: string;
+    serviceOfferingDescription: string;
+}
+
+export interface IDataProductPrefillFieldsTOBuilder {
+}
+
 export interface IOfferDetailsTO {
     edcOfferId: string;
     catalogOffering: IPxExtendedServiceOfferingCredentialSubject;
@@ -144,6 +153,14 @@ export interface IParticipantNameTOBuilder<C, B> {
 export interface IParticipantNameTOBuilderImpl extends IParticipantNameTOBuilder<IParticipantNameTO, IParticipantNameTOBuilderImpl> {
 }
 
+export interface IPrefillFieldsTO {
+    participantId: string;
+    dataProductPrefillFields: IDataProductPrefillFieldsTO;
+}
+
+export interface IPrefillFieldsTOBuilder {
+}
+
 export interface ISelectOfferRequestTO {
     fhCatalogOfferId: string;
 }
@@ -169,6 +186,7 @@ export interface ITransferOfferResponseTOBuilder {
 
 export interface IVersionTO {
     version: string;
+    date: string;
 }
 
 export interface IVersionTOBuilder {
@@ -475,6 +493,14 @@ export class RestApplicationClient {
      */
     createServiceOffering(createServiceOfferingRequestTO: ICreateServiceOfferingRequestTO): RestResponse<ICreateOfferResponseTO> {
         return this.httpClient.request({ method: "POST", url: uriEncoding`provider/offer/service`, data: createServiceOfferingRequestTO });
+    }
+
+    /**
+     * HTTP GET /provider/prefillFields
+     * Java method: eu.possiblex.participantportal.application.boundary.ProviderRestApiImpl.getPrefillFields
+     */
+    getPrefillFields(): RestResponse<IPrefillFieldsTO> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`provider/prefillFields` });
     }
 
     /**

@@ -6,6 +6,9 @@ import eu.possiblex.participantportal.business.entity.*;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedDataResourceCredentialSubject;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedLegalParticipantCredentialSubjectSubset;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
+import eu.possiblex.participantportal.business.entity.edc.catalog.DcatCatalog;
+import eu.possiblex.participantportal.business.entity.edc.catalog.DcatDataset;
+import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import eu.possiblex.participantportal.business.entity.exception.NegotiationFailedException;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.ParticipantNotFoundException;
@@ -57,7 +60,16 @@ class ConsumerServiceTest {
         reset(fhCatalogClient);
         PxExtendedServiceOfferingCredentialSubject fhCatalogOffer = getPxExtendedServiceOfferingCredentialSubject(true);
         Mockito.when(fhCatalogClient.getFhCatalogOffer(EdcClientFake.FAKE_ID)).thenReturn(fhCatalogOffer);
-
+        DcatCatalog catalog = new DcatCatalog();
+        DcatDataset dataset = new DcatDataset();
+        dataset.setId(EdcClientFake.FAKE_ID);
+        dataset.setAssetId(EdcClientFake.FAKE_ID);
+        dataset.setName("correctName");
+        dataset.setContenttype("correctContentType");
+        dataset.setDescription("correctDescription");
+        dataset.setHasPolicy(Collections.emptyList());
+        catalog.setDataset(List.of(dataset));
+        Mockito.when(edcClient.queryCatalog(any())).thenReturn(catalog);
         Map<String, ParticipantDetailsSparqlQueryResult> participantDetails = Map.of(FhCatalogClientFake.FAKE_DID,
             ParticipantDetailsSparqlQueryResult.builder().uri(FhCatalogClientFake.FAKE_DID)
                 .mailAddress(FhCatalogClientFake.FAKE_EMAIL_ADDRESS).build(), FhCatalogClientFake.FAKE_PROVIDER_ID,
@@ -98,7 +110,16 @@ class ConsumerServiceTest {
         PxExtendedServiceOfferingCredentialSubject fhCatalogOffer = getPxExtendedServiceOfferingCredentialSubject(
             false);
         Mockito.when(fhCatalogClient.getFhCatalogOffer(EdcClientFake.FAKE_ID)).thenReturn(fhCatalogOffer);
-
+        DcatCatalog catalog = new DcatCatalog();
+        DcatDataset dataset = new DcatDataset();
+        dataset.setId(EdcClientFake.FAKE_ID);
+        dataset.setAssetId(EdcClientFake.FAKE_ID);
+        dataset.setName("correctName");
+        dataset.setContenttype("correctContentType");
+        dataset.setDescription("correctDescription");
+        dataset.setHasPolicy(Collections.emptyList());
+        catalog.setDataset(List.of(dataset));
+        Mockito.when(edcClient.queryCatalog(any())).thenReturn(catalog);
         Map<String, ParticipantDetailsSparqlQueryResult> participantDetails = Map.of(FhCatalogClientFake.FAKE_DID,
             ParticipantDetailsSparqlQueryResult.builder().uri(FhCatalogClientFake.FAKE_DID)
                 .mailAddress(FhCatalogClientFake.FAKE_EMAIL_ADDRESS).build());
@@ -154,8 +175,17 @@ class ConsumerServiceTest {
         PxExtendedLegalParticipantCredentialSubjectSubset fhCatalogParticipant = new PxExtendedLegalParticipantCredentialSubjectSubset();
         fhCatalogParticipant.setId(FhCatalogClientFake.FAKE_PROVIDER_ID);
         fhCatalogParticipant.setMailAddress(FhCatalogClientFake.FAKE_EMAIL_ADDRESS);
-        Mockito.when(fhCatalogClient.getFhCatalogParticipant(FhCatalogClientFake.FAKE_PROVIDER_ID))
-            .thenReturn(fhCatalogParticipant);
+        Mockito.when(fhCatalogClient.getFhCatalogParticipant(FhCatalogClientFake.FAKE_PROVIDER_ID)).thenReturn(fhCatalogParticipant);
+        DcatCatalog catalog = new DcatCatalog();
+        DcatDataset dataset = new DcatDataset();
+        dataset.setId(EdcClientFake.FAKE_ID);
+        dataset.setAssetId(EdcClientFake.FAKE_ID);
+        dataset.setName("correctName");
+        dataset.setContenttype("correctContentType");
+        dataset.setDescription("correctDescription");
+        dataset.setHasPolicy(List.of(new Policy()));
+        catalog.setDataset(List.of(dataset));
+        Mockito.when(edcClient.queryCatalog(any())).thenReturn(catalog);
 
         // WHEN
 
@@ -181,8 +211,17 @@ class ConsumerServiceTest {
         PxExtendedLegalParticipantCredentialSubjectSubset fhCatalogParticipant = new PxExtendedLegalParticipantCredentialSubjectSubset();
         fhCatalogParticipant.setId(FhCatalogClientFake.FAKE_PROVIDER_ID);
         fhCatalogParticipant.setMailAddress(FhCatalogClientFake.FAKE_EMAIL_ADDRESS);
-        Mockito.when(fhCatalogClient.getFhCatalogParticipant(FhCatalogClientFake.FAKE_PROVIDER_ID))
-            .thenReturn(fhCatalogParticipant);
+        Mockito.when(fhCatalogClient.getFhCatalogParticipant(FhCatalogClientFake.FAKE_PROVIDER_ID)).thenReturn(fhCatalogParticipant);
+        DcatCatalog catalog = new DcatCatalog();
+        DcatDataset dataset = new DcatDataset();
+        dataset.setId(EdcClientFake.FAKE_ID);
+        dataset.setAssetId(EdcClientFake.FAKE_ID);
+        dataset.setName("correctName");
+        dataset.setContenttype("correctContentType");
+        dataset.setDescription("correctDescription");
+        dataset.setHasPolicy(List.of(new Policy()));
+        catalog.setDataset(List.of(dataset));
+        Mockito.when(edcClient.queryCatalog(any())).thenReturn(catalog);
         // WHEN
 
         AcceptOfferResponseBE response = sut.acceptContractOffer(
@@ -209,6 +248,16 @@ class ConsumerServiceTest {
     void shouldAcceptContractOfferBadNegotiation() {
 
         reset(edcClient);
+        DcatCatalog catalog = new DcatCatalog();
+        DcatDataset dataset = new DcatDataset();
+        dataset.setId(EdcClientFake.BAD_NEGOTIATION_ID);
+        dataset.setAssetId(EdcClientFake.BAD_NEGOTIATION_ID);
+        dataset.setName("correctName");
+        dataset.setContenttype("correctContentType");
+        dataset.setDescription("correctDescription");
+        dataset.setHasPolicy(List.of(new Policy()));
+        catalog.setDataset(List.of(dataset));
+        Mockito.when(edcClient.queryCatalog(any())).thenReturn(catalog);
         assertThrows(NegotiationFailedException.class, () -> sut.acceptContractOffer(
             ConsumeOfferRequestBE.builder().counterPartyAddress("http://example.com")
                 .edcOfferId(EdcClientFake.BAD_NEGOTIATION_ID).build()));
@@ -218,6 +267,16 @@ class ConsumerServiceTest {
     void shouldNotTransfer() {
 
         reset(edcClient);
+        DcatCatalog catalog = new DcatCatalog();
+        DcatDataset dataset = new DcatDataset();
+        dataset.setId(EdcClientFake.BAD_TRANSFER_ID);
+        dataset.setAssetId(EdcClientFake.BAD_TRANSFER_ID);
+        dataset.setName("correctName");
+        dataset.setContenttype("correctContentType");
+        dataset.setDescription("correctDescription");
+        dataset.setHasPolicy(Collections.emptyList());
+        catalog.setDataset(List.of(dataset));
+        Mockito.when(edcClient.queryCatalog(any())).thenReturn(catalog);
         assertThrows(TransferFailedException.class, () -> sut.transferDataOffer(
             TransferOfferRequestBE.builder().counterPartyAddress("http://example.com")
                 .edcOfferId(EdcClientFake.BAD_TRANSFER_ID).contractAgreementId(EdcClientFake.VALID_AGREEMENT_ID)
@@ -232,7 +291,16 @@ class ConsumerServiceTest {
         reset(edcClient);
 
         // WHEN
-
+        DcatCatalog catalog = new DcatCatalog();
+        DcatDataset dataset = new DcatDataset();
+        dataset.setId(EdcClientFake.FAKE_ID);
+        dataset.setAssetId(EdcClientFake.FAKE_ID);
+        dataset.setName("correctName");
+        dataset.setContenttype("correctContentType");
+        dataset.setDescription("correctDescription");
+        dataset.setHasPolicy(Collections.emptyList());
+        catalog.setDataset(List.of(dataset));
+        Mockito.when(edcClient.queryCatalog(any())).thenReturn(catalog);
         TransferOfferResponseBE response = sut.transferDataOffer(
             TransferOfferRequestBE.builder().counterPartyAddress("http://example.com").edcOfferId(EdcClientFake.FAKE_ID)
                 .contractAgreementId(EdcClientFake.VALID_AGREEMENT_ID).build());

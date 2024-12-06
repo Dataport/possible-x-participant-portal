@@ -92,11 +92,6 @@ class ConsumerModuleTest {
         String counterPartyAddress = "counterPartyAddress";
 
         // let the EDC provide the test data catalog
-        DcatDataset mockDatasetWrongOne = new DcatDataset(); // an offer in the EDC Catalog which the user does not look for
-        mockDatasetWrongOne.setAssetId("assetIdWhichTheUserDoesNotLookFor");
-        mockDatasetWrongOne.setName("wrong");
-        mockDatasetWrongOne.setContenttype("wrong");
-        mockDatasetWrongOne.setDescription("wrong");
         DcatDataset mockDatasetCorrectOne = new DcatDataset(); // the offer in the EDC Catalog which the user looks for
         mockDatasetCorrectOne.setAssetId(edcOfferId);
         mockDatasetCorrectOne.setName("correctName");
@@ -106,7 +101,7 @@ class ConsumerModuleTest {
         policy.setId("policyId");
         mockDatasetCorrectOne.setHasPolicy(List.of(policy));
         DcatCatalog edcCatalogAnswerMock = new DcatCatalog();
-        edcCatalogAnswerMock.setDataset(List.of(mockDatasetWrongOne, mockDatasetCorrectOne));
+        edcCatalogAnswerMock.setDataset(List.of(mockDatasetCorrectOne));
         Mockito.when(edcClientMock.queryCatalog(any())).thenReturn(edcCatalogAnswerMock);
 
         // define EDC client behaviour for the data transfer so that it goes through
@@ -146,11 +141,6 @@ class ConsumerModuleTest {
         String counterPartyAddress = "counterPartyAddress";
 
         // let the EDC provide the test data catalog
-        DcatDataset mockDatasetWrongOne = new DcatDataset(); // an offer in the EDC Catalog which the user does not look for
-        mockDatasetWrongOne.setAssetId("assetIdWhichTheUserDoesNotLookFor");
-        mockDatasetWrongOne.setName("wrong");
-        mockDatasetWrongOne.setContenttype("wrong");
-        mockDatasetWrongOne.setDescription("wrong");
         DcatDataset mockDatasetCorrectOne = new DcatDataset(); // the offer in the EDC Catalog which the user looks for
         mockDatasetCorrectOne.setAssetId(edcOfferId);
         mockDatasetCorrectOne.setName("correctName");
@@ -160,7 +150,7 @@ class ConsumerModuleTest {
         policy.setId("policyId");
         mockDatasetCorrectOne.setHasPolicy(List.of(policy));
         DcatCatalog edcCatalogAnswerMock = new DcatCatalog();
-        edcCatalogAnswerMock.setDataset(List.of(mockDatasetWrongOne, mockDatasetCorrectOne));
+        edcCatalogAnswerMock.setDataset(List.of(mockDatasetCorrectOne));
         Mockito.when(edcClientMock.queryCatalog(any())).thenReturn(edcCatalogAnswerMock);
 
         // define EDC client behaviour for the data transfer so that it goes through
@@ -211,12 +201,6 @@ class ConsumerModuleTest {
         String expectedProviderId = "did:web:portal.dev.possible-x.de:participant:df15587a-0760-32b5-9c42-bb7be66e8076";
 
         // let the EDC provide the test data catalog
-        DcatDataset mockDatasetWrongOne = new DcatDataset(); // an offer in the EDC Catalog which the user does not look for
-        mockDatasetWrongOne.setAssetId("assetIdWhichTheUserDoesNotLookFor");
-        mockDatasetWrongOne.setName("wrong");
-        mockDatasetWrongOne.setContenttype("wrong");
-        mockDatasetWrongOne.setDescription("wrong");
-        mockDatasetWrongOne.setHasPolicy(Collections.emptyList());
         DcatDataset mockDatasetCorrectOne = new DcatDataset(); // the offer in the EDC Catalog which the user looks for
         mockDatasetCorrectOne.setAssetId(expectedAssetId);
         mockDatasetCorrectOne.setName("correctName");
@@ -224,7 +208,7 @@ class ConsumerModuleTest {
         mockDatasetCorrectOne.setDescription("correctDescription");
         mockDatasetCorrectOne.setHasPolicy(Collections.emptyList());
         DcatCatalog edcCatalogAnswerMock = new DcatCatalog();
-        edcCatalogAnswerMock.setDataset(List.of(mockDatasetWrongOne, mockDatasetCorrectOne));
+        edcCatalogAnswerMock.setDataset(List.of(mockDatasetCorrectOne));
         Mockito.when(edcClientMock.queryCatalog(Mockito.any())).thenReturn(edcCatalogAnswerMock);
 
         // WHEN/THEN
@@ -277,12 +261,6 @@ class ConsumerModuleTest {
         String expectedProviderId = "did:web:portal.dev.possible-x.de:participant:df15587a-0760-32b5-9c42-bb7be66e8076";
 
         // let the EDC provide the test data catalog
-        DcatDataset mockDatasetWrongOne = new DcatDataset(); // an offer in the EDC Catalog which the user does not look for
-        mockDatasetWrongOne.setAssetId("assetIdWhichTheUserDoesNotLookFor");
-        mockDatasetWrongOne.setName("wrong");
-        mockDatasetWrongOne.setContenttype("wrong");
-        mockDatasetWrongOne.setDescription("wrong");
-        mockDatasetWrongOne.setHasPolicy(Collections.emptyList());
         DcatDataset mockDatasetCorrectOne = new DcatDataset(); // the offer in the EDC Catalog which the user looks for
         mockDatasetCorrectOne.setAssetId(expectedAssetId);
         mockDatasetCorrectOne.setName("correctName");
@@ -290,7 +268,7 @@ class ConsumerModuleTest {
         mockDatasetCorrectOne.setDescription("correctDescription");
         mockDatasetCorrectOne.setHasPolicy(Collections.emptyList());
         DcatCatalog edcCatalogAnswerMock = new DcatCatalog();
-        edcCatalogAnswerMock.setDataset(List.of(mockDatasetWrongOne, mockDatasetCorrectOne));
+        edcCatalogAnswerMock.setDataset(List.of(mockDatasetCorrectOne));
         Mockito.when(edcClientMock.queryCatalog(any())).thenReturn(edcCatalogAnswerMock);
 
         // WHEN/THEN
@@ -329,13 +307,8 @@ class ConsumerModuleTest {
             .thenReturn(fhCatalogOfferContent);
 
         // let the EDC provide the test data catalog which does not contain the offer from the user
-        DcatDataset mockDatasetWrongOne = new DcatDataset(); // an offer in the EDC Catalog which the user does not look for
-        mockDatasetWrongOne.setAssetId("assetIdWhichTheUserDoesNotLookFor");
-        mockDatasetWrongOne.setName("wrong");
-        mockDatasetWrongOne.setContenttype("wrong");
-        mockDatasetWrongOne.setDescription("wrong");
         DcatCatalog edcCatalogAnswerMock = new DcatCatalog();
-        edcCatalogAnswerMock.setDataset(List.of(mockDatasetWrongOne));
+        edcCatalogAnswerMock.setDataset(Collections.emptyList());
         Mockito.when(edcClientMock.queryCatalog(any())).thenReturn(edcCatalogAnswerMock);
 
         // WHEN/THEN

@@ -1,9 +1,7 @@
 package eu.possiblex.participantportal.application.boundary;
 
 import eu.possiblex.participantportal.application.control.ProviderApiMapper;
-import eu.possiblex.participantportal.application.entity.CreateDataOfferingRequestTO;
-import eu.possiblex.participantportal.application.entity.CreateOfferResponseTO;
-import eu.possiblex.participantportal.application.entity.CreateServiceOfferingRequestTO;
+import eu.possiblex.participantportal.application.entity.*;
 import eu.possiblex.participantportal.business.control.ProviderService;
 import eu.possiblex.participantportal.business.entity.CreateDataOfferingRequestBE;
 import eu.possiblex.participantportal.business.entity.CreateServiceOfferingRequestBE;
@@ -72,5 +70,16 @@ public class ProviderRestApiImpl implements ProviderRestApi {
             createDataOfferingRequestTO);
 
         return providerService.createOffering(createOfferingRequestBE);
+    }
+
+    /**
+     * GET endpoint to retrieve the prefill fields.
+     *
+     * @return prefill fields
+     */
+    @Override
+    public PrefillFieldsTO getPrefillFields() {
+
+        return providerApiMapper.getPrefillFieldsTO(providerService.getPrefillFields());
     }
 }
