@@ -1,9 +1,6 @@
 package eu.possiblex.participantportal.application.configuration;
 
-import eu.possiblex.participantportal.business.control.EdcClient;
-import eu.possiblex.participantportal.business.control.SdCreationWizardApiClient;
-import eu.possiblex.participantportal.business.control.SparqlFhCatalogClient;
-import eu.possiblex.participantportal.business.control.TechnicalFhCatalogClient;
+import eu.possiblex.participantportal.business.control.*;
 import eu.possiblex.participantportal.utilities.LogUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
