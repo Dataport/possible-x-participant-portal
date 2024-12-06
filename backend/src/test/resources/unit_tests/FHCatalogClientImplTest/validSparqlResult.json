@@ -1,0 +1,40 @@
+{
+  "head": {
+    "link": [],
+    "vars": [
+      "uri",
+      "assetId",
+      "name",
+      "description",
+      "providerUrl"
+    ]
+  },
+  "results": {
+    "distinct": false,
+    "ordered": true,
+    "bindings": [
+      {
+        "uri": {
+          "type": "uri",
+          "value": "EXPECTED_URI_VALUE"
+        },
+        "assetId": {
+          "type": "literal",
+          "value": "EXPECTED_ASSET_ID_VALUE"
+        },
+        "name": {
+          "type": "literal",
+          "value": "EXPECTED_NAME_VALUE"
+        },
+        "description": {
+          "type": "literal",
+          "value": "EXPECTED_DESCRIPTION_VALUE"
+        },
+        "providerUrl": {
+          "type": "literal",
+          "value": "EXPECTED_PROVIDER_URL_VALUE"
+        }
+      }
+    ]
+  }
+}

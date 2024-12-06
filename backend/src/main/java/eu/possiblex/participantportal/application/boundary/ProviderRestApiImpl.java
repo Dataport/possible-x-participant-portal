@@ -78,15 +78,4 @@ public class ProviderRestApiImpl implements ProviderRestApi {
 
         return providerService.createOffering(createOfferingRequestBE);
     }
-
-    /**
-     * GET endpoint to retrieve the participant's id
-     *
-     * @return participant id
-     */
-    @Override
-    public ParticipantIdTO getParticipantId() {
-
-        return providerService.getParticipantId();
-    }
 }

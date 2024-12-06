@@ -38,4 +38,6 @@ logging:
   level:
     reactor.netty.http.client: DEBUG
 
-version.no: "Unknown"
+version.no: "1.0.0"
+
+version.date: "01.01.1970"

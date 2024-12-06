@@ -18,7 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(CommonPortalRestApiImpl.class)
-@TestPropertySource(properties = {"version.no = thisistheversion"})
+@TestPropertySource(properties = {"version.no = thisistheversion", "version.date = 21.03.2022"})
 public class CommonPortalModuleTest {
 
     @Autowired
@@ -28,6 +28,7 @@ public class CommonPortalModuleTest {
     void getVersionSucceeds() throws Exception {
         this.mockMvc.perform(get("/common/version").contentType(MediaType.APPLICATION_JSON)).andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.version").value("thisistheversion"));
+                .andExpect(jsonPath("$.version").value("thisistheversion"))
+                .andExpect(jsonPath("$.date").value("21.03.2022"));
     }
 }

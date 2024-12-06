@@ -2,6 +2,8 @@ package eu.possiblex.participantportal.business.control;
 
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
 import eu.possiblex.participantportal.business.entity.ContractAgreementBE;
+import eu.possiblex.participantportal.business.entity.TransferOfferRequestBE;
+import eu.possiblex.participantportal.business.entity.TransferOfferResponseBE;
 import eu.possiblex.participantportal.business.entity.edc.asset.ionoss3extension.IonosS3DataSource;
 import eu.possiblex.participantportal.business.entity.edc.asset.possible.PossibleAsset;
 import eu.possiblex.participantportal.business.entity.edc.asset.possible.PossibleAssetDataAccountExport;
@@ -10,6 +12,10 @@ import eu.possiblex.participantportal.business.entity.edc.asset.possible.Possibl
 import eu.possiblex.participantportal.business.entity.edc.contractagreement.ContractAgreement;
 import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyTarget;
+import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcessState;
+import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
+import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
+import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsSparqlQueryResult;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +29,9 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
 
 @SpringBootTest
 @ContextConfiguration(classes = { ContractServiceTest.TestConfig.class, ContractServiceImpl.class })
@@ -32,7 +40,13 @@ class ContractServiceTest {
     private EdcClient edcClient;
 
     @Autowired
+    private FhCatalogClient fhCatalogClient;
+
+    @Autowired
     private ContractService contractService;
+
+    @Autowired
+    private ConsumerService consumerService;
 
     @Test
     void testGetContractAgreementsAsProviderOfAssets() {
@@ -62,6 +76,32 @@ class ContractServiceTest {
         assertThat(actual).hasSize(1);
         assertThat(actual.get(0)).usingRecursiveComparison().isEqualTo(expected.get(0));
 
+    }
+
+    @Test
+    void transferDataOfferAgain() throws OfferNotFoundException, TransferFailedException {
+        //GIVEN
+        reset(fhCatalogClient);
+        reset(consumerService);
+
+        TransferOfferRequestBE request = TransferOfferRequestBE.builder()
+            .edcOfferId(EdcClientFake.FAKE_ID)
+            .contractAgreementId(EdcClientFake.VALID_CONTRACT_AGREEEMENT_ID)
+            .build();
+        TransferOfferResponseBE response = TransferOfferResponseBE.builder().transferProcessState(TransferProcessState.COMPLETED).build();
+        OfferingDetailsSparqlQueryResult queryResult = new OfferingDetailsSparqlQueryResult();
+        queryResult.setAssetId(EdcClientFake.FAKE_ID);
+        queryResult.setProviderUrl(EdcClientFake.VALID_COUNTER_PARTY_ADDRESS);
+        Mockito.when(fhCatalogClient.getDataOfferingDetails(any()))
+            .thenReturn(Map.of(EdcClientFake.FAKE_ID, queryResult));
+
+        //WHEN
+        TransferOfferResponseBE actual = contractService.transferDataOfferAgain(request);
+
+        //THEN
+        assertThat(actual.getTransferProcessState()).isEqualTo(response.getTransferProcessState());
+        verify(consumerService).transferDataOffer(any());
+        verify(fhCatalogClient).getDataOfferingDetails(List.of(EdcClientFake.FAKE_ID));
     }
 
     private List<ContractAgreementBE> getContractAgreementBEsAsProviderOfAssets() {
@@ -119,9 +159,21 @@ class ContractServiceTest {
     @TestConfiguration
     static class TestConfig {
         @Bean
+        public ConsumerService consumerService() {
+
+            return Mockito.spy(new ConsumerServiceFake());
+        }
+
+        @Bean
         public EdcClient edcClient() {
 
             return Mockito.spy(new EdcClientFake());
+        }
+
+        @Bean
+        public FhCatalogClient fhCatalogClient() {
+
+            return Mockito.spy(new FhCatalogClientFake());
         }
     }
 

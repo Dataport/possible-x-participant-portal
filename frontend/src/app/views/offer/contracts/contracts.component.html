@@ -17,7 +17,8 @@
           <th class="w-1/6">Provider</th>
           <th class="w-1/6">Consumer</th>
           <th class="w-1/6">Contract Agreement ID</th>
-          <th class="w-16"></th>
+          <th class="w-1/16"></th>
+          <th class="w-1/16"></th>
         </tr>
         </thead>
         <tbody>
@@ -34,10 +35,12 @@
             <td>
               <button (click)="toggleAccordion(item.id)" cButton class="rounded-none">Details</button>
             </td>
-
+            <td>
+              <button (click)="transferAgain(item)" [disabled]=isTransferButtonDisabled cButton class="rounded-none">Transfer</button>
+            </td>
           </tr>
           <tr *ngIf="item.id === expandedItemId">
-            <td (click)="toggleAccordion(item.id)" colspan="7">
+            <td (click)="toggleAccordion(item.id)" colspan="8">
               <span *ngIf="item.assetDetails">Asset Name: {{ item.assetDetails.name }}<br><br></span>
               <span *ngIf="item.assetDetails">Asset Description: {{ item.assetDetails.description }}<br><br></span>
               <span>Policy:</span><br>

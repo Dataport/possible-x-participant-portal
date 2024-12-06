@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(ConsumerRestApiImpl.class)
 @ContextConfiguration(classes = { ConsumerRestApiTest.TestConfig.class, ConsumerRestApiImpl.class })
-public class ConsumerRestApiTest {
+class ConsumerRestApiTest {
 
     @Autowired
     private MockMvc mockMvc;

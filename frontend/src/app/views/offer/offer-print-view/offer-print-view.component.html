@@ -1,0 +1,101 @@
+<c-modal #modalOfferPrintView id="modalOfferPrintView" size="xl" alignment="center">
+  <c-modal-header>
+    <h5 *ngIf="offer" cModalTitle>Offer Print View</h5>
+  </c-modal-header>
+  <c-modal-body>
+    <ng-container *ngIf="offer">
+      <div id="print-section" class="print-section">
+        <div><b>Timestamp:</b> {{ printTimestamp }}</div>
+        <div><b>Provider Participant:</b> {{ providerDetails?.participantName || "Could not be retrieved" }}</div>
+        <div><b>Consumer Participant:</b> {{ consumerDetails?.participantName || "Could not be retrieved" }}</div>
+        <br/>
+        <div *ngIf="!offer.dataOffering">
+          <b>Offer ID:</b> {{ offer.catalogOffering.id }} <br/>
+          <b>Offer name:</b> {{ offer.catalogOffering["schema:name"] }} <br/>
+          <b>Provided by:</b> {{ offer.catalogOffering["gx:providedBy"].id }} <br/>
+          <b>Publisher:</b> Not implemented yet <br/>
+          <b>Description:</b> {{ offer.catalogOffering["schema:description"] }} <br/>
+          <b>Terms & Conditions:</b> <br/>
+          <ul *ngFor="let tnc of offer.catalogOffering['gx:termsAndConditions']">
+            <li>
+              <span>{{ tnc['gx:URL'] }} (Hash: {{ tnc["gx:hash"] }})</span>
+            </li>
+          </ul>
+          <b>Policy:</b> <br/>
+          <ul *ngFor="let p of offer.catalogOffering['gx:policy']">
+            <li>{{ p }}</li>
+          </ul>
+          <b>Data Protection Regime:</b> <br/>
+          <ul *ngFor="let r of offer.catalogOffering['gx:dataProtectionRegime']">
+            <li>{{ r }}</li>
+          </ul>
+          <b>Data Account Export:</b> <br/>
+          <ul *ngFor="let e of offer.catalogOffering['gx:dataAccountExport']">
+            <li>Format Type: {{ e["gx:formatType"] }} <br/>Access Type: {{ e["gx:accessType"] }}
+              <br/>Request Type: {{ e["gx:requestType"] }}
+            </li>
+          </ul>
+        </div>
+        <div *ngIf="offer.dataOffering">
+          <b>Offer ID:</b> {{ offer.catalogOffering.id }} <br/>
+          <b>Data Ressource Name:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["schema:name"] }} <br/>
+          <b>Provided by:</b> {{ offer.catalogOffering["gx:providedBy"].id }} <br/>
+          <b>Publisher:</b> Not implemented yet <br/>
+          <b>Data Ressource Description:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["schema:description"] }}
+          <br/>
+          <b>Data Ressource Policy:</b><br/>
+          <ul *ngFor="let p of offer.catalogOffering['gx:aggregationOf'][0]['gx:policy']">
+            <li>{{ p }}</li>
+          </ul>
+          <b>License:</b> <br/>
+          <ul *ngFor="let l of offer.catalogOffering['gx:aggregationOf'][0]['gx:license']">
+            <li>{{ l }}</li>
+          </ul>
+          <b>Copyright owned by:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:copyrightOwnedBy"].id }}
+          <br/>
+          <b>Produced by:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:producedBy"].id }} <br/>
+          <b>Exposed through:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:exposedThrough"].id }} <br/>
+          <b>Contains personal identifiable Information
+            (PII):</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:containsPII"] }} <br/>
+          <div *ngIf="containsPII(offer.catalogOffering)">
+            <b>Data Protection Contact:</b>
+            {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:legitimateInterest"]["gx:dataProtectionContact"] }} <br/>
+            <b>Legal Basis:</b>
+            {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:legitimateInterest"]["gx:legalBasis"] }} <br/>
+          </div>
+          <br/><br/>
+          <b>Offer name:</b> {{ offer.catalogOffering["schema:name"] }} <br/>
+          <b>Description:</b> {{ offer.catalogOffering["schema:description"] }} <br/>
+          <b>Terms & Conditions:</b> <br/>
+          <ul *ngFor="let tnc of offer.catalogOffering['gx:termsAndConditions']">
+            <li>
+                <span>{{ tnc['gx:URL'] }} (Hash: {{ tnc["gx:hash"] }})</span>
+            </li>
+          </ul>
+          <b>Policy:</b> <br/>
+          <ul *ngFor="let p of offer.catalogOffering['gx:policy']">
+            <li>{{ p }}</li>
+          </ul>
+          <b>Data Protection Regime:</b><br/>
+          <ul *ngFor="let r of offer.catalogOffering['gx:dataProtectionRegime']">
+            <li>{{ r }}</li>
+          </ul>
+          <b>Data Account Export:</b> <br/>
+          <ul *ngFor="let e of offer.catalogOffering['gx:dataAccountExport']">
+            <li>Format Type: {{ e["gx:formatType"] }} <br/>Access Type: {{ e["gx:accessType"] }}
+              <br/>Request Type: {{ e["gx:requestType"] }}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </ng-container>
+  </c-modal-body>
+  <c-modal-footer>
+    <ng-container *ngIf="offer">
+      <div class="flex justify-end p-3 gap-2">
+        <button [useExistingCss]="true" cButton color="primary" shape="rounded-0" printSectionId="print-section" ngxPrint printTitle="offerPrintView_{{ getFormattedTimestamp(printTimestamp) }}_{{ getUrnUuid(offer.catalogOffering.id)}}">Print</button>
+      </div>
+    </ng-container>
+    <button cButton color="primary" shape="rounded-0" [cModalToggle]="modalOfferPrintView.id">Close</button>
+  </c-modal-footer>
+</c-modal>

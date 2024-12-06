@@ -25,7 +25,7 @@ public interface ConsumerService {
      * @throws NegotiationFailedException failed to negotiate over the offer
      */
     AcceptOfferResponseBE acceptContractOffer(ConsumeOfferRequestBE request)
-        throws OfferNotFoundException, ParticipantNotFoundException, NegotiationFailedException;
+        throws OfferNotFoundException, NegotiationFailedException;
 
     /**
      * Given a request for a transfer, transfer the data using the data transfer component.
