@@ -57,12 +57,9 @@ public class ProviderServiceImpl implements ProviderService {
 
     private final String edcProtocolUrl;
 
-    private final String participantId;
-
-    private final String prefillFieldsDataProductJsonFilePath;
-
     private final ObjectMapper objectMapper;
 
+    private final PrefillFieldsBE prefillFields;
 
     /**
      * Constructor for ProviderServiceImpl.
@@ -73,7 +70,8 @@ public class ProviderServiceImpl implements ProviderService {
     @Autowired
     public ProviderServiceImpl(@Autowired EdcClient edcClient, @Autowired FhCatalogClient fhCatalogClient,
         @Autowired ProviderServiceMapper providerServiceMapper,
-        @Value("${edc.protocol-base-url}") String edcProtocolUrl, @Value("${participant-id}") String participantId,
+        @Value("${edc.protocol-base-url}") String edcProtocolUrl,
+        @Value("${participant-id}") String participantId,
         @Value("${s3.bucket-storage-region}") String bucketStorageRegion,
         @Value("${s3.bucket-name}") String bucketName,
         @Value("${prefill-fields.data-product.json-file-path}") String prefillFieldsDataProductJsonFilePath,
@@ -83,11 +81,10 @@ public class ProviderServiceImpl implements ProviderService {
         this.fhCatalogClient = fhCatalogClient;
         this.providerServiceMapper = providerServiceMapper;
         this.edcProtocolUrl = edcProtocolUrl;
-        this.participantId = participantId;
         this.bucketStorageRegion = bucketStorageRegion;
         this.bucketName = bucketName;
-        this.prefillFieldsDataProductJsonFilePath = prefillFieldsDataProductJsonFilePath;
         this.objectMapper = objectMapper;
+        this.prefillFields = getPrefillFields(participantId, prefillFieldsDataProductJsonFilePath);
     }
 
     /**
@@ -137,36 +134,45 @@ public class ProviderServiceImpl implements ProviderService {
     @Override
     public PrefillFieldsBE getPrefillFields() {
 
-        Resource resource = getResource();
+        return this.prefillFields;
+
+    }
+
+    private PrefillFieldsBE getPrefillFields(String participantId, String filePath) {
+        return new PrefillFieldsBE(participantId, readDataProductPrefillFieldsFromFile(filePath));
+    }
+
+    private DataProductPrefillFieldsBE readDataProductPrefillFieldsFromFile(String filePath) {
+
+        Resource resource = getDataResourcePrefillFieldsResource(filePath);
 
         DataProductPrefillFieldsBE dataProductPrefillFields;
 
         try {
             dataProductPrefillFields = objectMapper.readValue(resource.getInputStream(), DataProductPrefillFieldsBE.class);
         } catch (IOException e) {
-            throw new PrefillFieldsProcessingException("Failed to process prefill fields from file at path \""
-                + prefillFieldsDataProductJsonFilePath + "\": " + e.getMessage());
+            throw new PrefillFieldsProcessingException("Failed to process data product prefill fields from file: " + e.getMessage());
         }
 
-        return PrefillFieldsBE.builder().participantId(participantId).dataProductPrefillFields(dataProductPrefillFields).build();
+        return dataProductPrefillFields;
     }
 
     /**
-     * Get the resource for prefill fields.
+     * Get the resource for data product prefill fields from given path.
      *
      * @return the resource
      */
-    private Resource getResource() {
+    private Resource getDataResourcePrefillFieldsResource(String filePath) {
 
         Resource resource;
-        if (prefillFieldsDataProductJsonFilePath == null || prefillFieldsDataProductJsonFilePath.isEmpty()) {
-            resource = new ClassPathResource("prefillFieldsDataResource.json");
+        if (filePath == null || filePath.isEmpty()) {
+            resource = new ClassPathResource("prefillFieldsDataProduct.json");
         } else {
-            File file = new File(prefillFieldsDataProductJsonFilePath);
+            File file = new File(filePath);
             if (file.exists()) {
                 resource = new FileSystemResource(file);
             } else {
-                resource = new ClassPathResource("prefillFieldsDataResource.json");
+                resource = new ClassPathResource("prefillFieldsDataProduct.json");
             }
         }
         return resource;

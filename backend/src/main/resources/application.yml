@@ -40,6 +40,6 @@ logging:
 
 prefill-fields:
   data-product:
-    json-file-path: "src/main/resources/prefillFieldsDataResource.json"
+    json-file-path: "src/main/resources/prefillFieldsDataProduct.json"
 
 version.no: "1.0.0"
