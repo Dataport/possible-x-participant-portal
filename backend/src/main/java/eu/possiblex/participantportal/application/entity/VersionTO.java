@@ -14,4 +14,9 @@ public class VersionTO {
      * the version of the participant portal
      */
     private String version;
+
+    /**
+     * the date of the version of the participant portal
+     */
+    private String date;
 }

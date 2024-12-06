@@ -2,8 +2,10 @@ package eu.possiblex.participantportal.application.control;
 
 import eu.possiblex.participantportal.application.entity.AssetDetailsTO;
 import eu.possiblex.participantportal.application.entity.ContractAgreementTO;
+import eu.possiblex.participantportal.application.entity.ContractParticipantDetailsTO;
 import eu.possiblex.participantportal.business.entity.ContractAgreementBE;
-import eu.possiblex.participantportal.business.entity.edc.asset.possible.PossibleAsset;
+import eu.possiblex.participantportal.business.entity.OfferingDetailsBE;
+import eu.possiblex.participantportal.business.entity.ParticipantDetailsBE;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -18,11 +20,13 @@ import java.time.ZonedDateTime;
 public interface ContractApiMapper {
     @Mapping(target = "id", source = "be.contractAgreement.id")
     @Mapping(target = "assetId", source = "be.contractAgreement.assetId")
-    @Mapping(target = "assetDetails", source = "be.asset")
+    @Mapping(target = "assetDetails", source = "be.offeringDetails")
     @Mapping(target = "policy", source = "be.contractAgreement.policy")
     @Mapping(target = "contractSigningDate", source = "be.contractAgreement.contractSigningDate", qualifiedByName = "secondsToOffsetDateTime")
-    @Mapping(target = "consumerId", source = "be.contractAgreement.consumerId")
-    @Mapping(target = "providerId", source = "be.contractAgreement.providerId")
+    @Mapping(target = "consumerDetails", source = "be.consumerDetails")
+    @Mapping(target = "providerDetails", source = "be.providerDetails")
+    @Mapping(target = "isDataOffering", source = "be.dataOffering")
+    @Mapping(target = "enforcementPolicies", source = "be.enforcementPolicies")
     ContractAgreementTO contractAgreementBEToTO(ContractAgreementBE be);
 
     @Named("secondsToOffsetDateTime")
@@ -33,7 +37,7 @@ public interface ContractApiMapper {
         return zonedDateTime.toOffsetDateTime();
     }
 
-    @Mapping(target = "name", source = "possibleAsset.properties.name")
-    @Mapping(target = "description", source = "possibleAsset.properties.description")
-    AssetDetailsTO possibleAssetToTO(PossibleAsset possibleAsset);
+    AssetDetailsTO offeringDetailsBeToTO(OfferingDetailsBE offeringDetailsBE);
+
+    ContractParticipantDetailsTO participantDetailsBEToTO(ParticipantDetailsBE possibleParticipant);
 }

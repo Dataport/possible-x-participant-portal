@@ -48,9 +48,14 @@ public class ContractRestApiImpl implements ContractRestApi {
      */
     @Override
     public List<ContractAgreementTO> getContractAgreements() {
+        try {
+            return contractService.getContractAgreements().stream().map(contractApiMapper::contractAgreementBEToTO)
+                .toList();
+        } catch (OfferNotFoundException e) {
+            throw new PossibleXException("" + e,
+                HttpStatus.NOT_FOUND);
+        }
 
-        return contractService.getContractAgreements().stream().map(contractApiMapper::contractAgreementBEToTO)
-            .toList();
     }
 
     @Override

@@ -28,18 +28,22 @@ class ContractRestApiTest {
     private ContractService contractService;
 
     @Autowired
+    private ContractApiMapper contractApiMapper;
+
+    @Autowired
     private ConsumerApiMapper consumerApiMapper;
 
     @Test
     void shouldReturnMessageOnGetContractAgreements() throws Exception {
         //when
         //then
+
         this.mockMvc.perform(get("/contract/agreement")).andDo(print()).andExpect(status().isOk())
             .andExpect(jsonPath("$.length()").value(1))
-            .andExpect(jsonPath("$[0].id").value(ContractServiceFake.FAKE_ID_CONTRACT_AGREEMENT)).andExpect(
-                jsonPath("$[0].contractSigningDate").value(ContractServiceFake.getDateAsOffsetDateTime().toString()))
-            .andExpect(jsonPath("$[0].consumerId").value(ContractServiceFake.FAKE_ID_CONSUMER))
-            .andExpect(jsonPath("$[0].providerId").value(ContractServiceFake.FAKE_ID_PROVIDER))
+            .andExpect(jsonPath("$[0].id").value(ContractServiceFake.FAKE_ID_CONTRACT_AGREEMENT))
+            .andExpect(jsonPath("$[0].contractSigningDate").value(ContractServiceFake.getDateAsOffsetDateTime().toString()))
+            .andExpect(jsonPath("$[0].providerDetails").exists())
+            .andExpect(jsonPath("$[0].consumerDetails").exists())
             .andExpect(jsonPath("$[0].assetId").value(ContractServiceFake.FAKE_ID_ASSET))
             .andExpect(jsonPath("$[0].assetDetails.name").value(ContractServiceFake.NAME))
             .andExpect(jsonPath("$[0].assetDetails.description").value(ContractServiceFake.DESCRIPTION))

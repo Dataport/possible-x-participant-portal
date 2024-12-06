@@ -23,6 +23,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Set current date as env variable
+        run: echo "VERSION_DATE=$(date +'%d.%m.%Y')" >> $GITHUB_ENV
+
       - name: Log in to the Container registry
         uses: docker/login-action@v2
         with:
@@ -55,6 +58,7 @@ jobs:
           labels: ${{ steps.management-meta.outputs.labels }}
           build-args: |
             VERSION_NO=${{ github.sha }}
+            VERSION_DATE=${{ env.VERSION_DATE }}
 
   deploy-consumer:
     runs-on: 'ubuntu-latest'

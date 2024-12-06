@@ -40,7 +40,7 @@ public interface TechnicalFhCatalogClient {
 
     @PutExchange(CommonConstants.REST_PATH_FH_CATALOG_SERVICE_OFFER_WITH_DATA)
     FhCatalogIdResponse addServiceOfferingWithDataToFhCatalog(
-            @RequestBody PxExtendedServiceOfferingCredentialSubject serviceOfferingCs, @RequestParam String id);
+        @RequestBody PxExtendedServiceOfferingCredentialSubject serviceOfferingCs, @RequestParam String id);
 
     @GetExchange("/resources/service-offering/{offering_id}")
     String getFhCatalogOffer(@PathVariable String offering_id);
@@ -56,5 +56,6 @@ public interface TechnicalFhCatalogClient {
 
     @DeleteExchange("/resources/data-product/{offeringId}")
     void deleteServiceOfferingWithDataFromFhCatalog(@PathVariable String offeringId);
+
 }
 

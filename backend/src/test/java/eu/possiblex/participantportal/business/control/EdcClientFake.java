@@ -68,8 +68,6 @@ public class EdcClientFake implements EdcClient {
 
     public static final long FAKE_TIMESTAMP = 1234L;
 
-    public static boolean isProvider = true;
-
     private IdResponse generateFakeIdResponse(String id) {
 
         IdResponse response = new IdResponse();
@@ -178,18 +176,15 @@ public class EdcClientFake implements EdcClient {
         Policy policy = Policy.builder().target(PolicyTarget.builder().id(FAKE_ID).build()).build();
 
         ContractAgreement contractAgreement = ContractAgreement.builder()
-            .contractSigningDate(BigInteger.valueOf(1728549145)).id(FAKE_ID).assetId(FAKE_ID).consumerId(FAKE_ID)
-            .providerId(FAKE_ID).policy(policy).build();
+            .contractSigningDate(BigInteger.valueOf(1728549145)).id(FAKE_ID).assetId(FAKE_ID)
+            .consumerId(OmejdnConnectorApiClientFake.PARTICIPANT_ID)
+            .providerId(OmejdnConnectorApiClientFake.PARTICIPANT_ID).policy(policy).build();
 
         return List.of(contractAgreement);
     }
 
     @Override
     public List<PossibleAsset> queryPossibleAssets() {
-
-        if (!isProvider()) {
-            return List.of();
-        }
 
         PossibleAssetTnC assetTnC = PossibleAssetTnC.builder().url("https://example.com").hash("hash1234").build();
 
@@ -212,13 +207,4 @@ public class EdcClientFake implements EdcClient {
             .dataAddress(dataAddress).build());
     }
 
-    public boolean isProvider() {
-
-        return isProvider;
-    }
-
-    public static void setProvider(boolean provider) {
-
-        isProvider = provider;
-    }
 }

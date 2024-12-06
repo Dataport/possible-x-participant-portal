@@ -1,9 +1,7 @@
 package eu.possiblex.participantportal.business.control;
 
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
-import eu.possiblex.participantportal.business.entity.ContractAgreementBE;
-import eu.possiblex.participantportal.business.entity.TransferOfferRequestBE;
-import eu.possiblex.participantportal.business.entity.TransferOfferResponseBE;
+import eu.possiblex.participantportal.business.entity.*;
 import eu.possiblex.participantportal.business.entity.edc.asset.ionoss3extension.IonosS3DataSource;
 import eu.possiblex.participantportal.business.entity.edc.asset.possible.PossibleAsset;
 import eu.possiblex.participantportal.business.entity.edc.asset.possible.PossibleAssetDataAccountExport;
@@ -65,32 +63,12 @@ public class ContractServiceFake implements ContractService {
             .policy(Policy.builder().target(PolicyTarget.builder().id(FAKE_ID_ASSET).build()).build()).build();
 
         ContractAgreementBE contractAgreementBE = ContractAgreementBE.builder().contractAgreement(contractAgreement)
-            .asset(getPossibleAsset(contractAgreement.getAssetId())).build();
+            .offeringDetails(new OfferingDetailsBE(NAME, DESCRIPTION, FAKE_ID_ASSET, FAKE_ID_OFFERING))
+            .providerDetails(new ParticipantDetailsBE())
+            .consumerDetails(new ParticipantDetailsBE())
+            .build();
 
         return List.of(contractAgreementBE);
-    }
-
-    private PossibleAsset getPossibleAsset(String assetId) {
-
-        PossibleAssetDataAccountExport dataAccountExport = PossibleAssetDataAccountExport.builder()
-            .accessType("digital").requestType("API").formatType("application/json").build();
-
-        PossibleAssetTnC assetTnC = PossibleAssetTnC.builder().url("https://example.com").hash("hash1234").build();
-
-        PossibleAssetProperties properties = PossibleAssetProperties.builder().termsAndConditions(List.of(assetTnC))
-            .producedBy(new NodeKindIRITypeId(FAKE_ID_PROVIDER)).providedBy(new NodeKindIRITypeId(FAKE_ID_PROVIDER))
-            .license(List.of("MIT")).copyrightOwnedBy(new NodeKindIRITypeId(FAKE_ID_PROVIDER))
-            .exposedThrough(new NodeKindIRITypeId(FAKE_ID_OFFERING)).offerId(FAKE_ID_OFFERING).name(NAME)
-            .description(DESCRIPTION).dataAccountExport(List.of(dataAccountExport)).build();
-
-        Map<String, String> context = Map.of("edc", "https://w3id.org/edc/v0.0.1/ns/", "odrl",
-            "http://www.w3.org/ns/odrl/2/", "@vocab", "https://w3id.org/edc/v0.0.1/ns/");
-
-        IonosS3DataSource dataAddress = IonosS3DataSource.builder().bucketName("bucket").blobName(NAME).keyName(NAME)
-            .region("storage").build();
-
-        return PossibleAsset.builder().id(assetId).type("Asset").properties(properties).context(context)
-            .dataAddress(dataAddress).build();
     }
 
     @Override
