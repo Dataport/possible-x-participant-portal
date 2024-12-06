@@ -34,7 +34,7 @@ public class FhCatalogClientFake implements FhCatalogClient {
 
         return Map.of(FAKE_DID,
             ParticipantDetailsSparqlQueryResult.builder().name(OmejdnConnectorApiClientFake.PARTICIPANT_NAME)
-                .uri("https://piveau.io/set/resource/legal-participant/" + FAKE_DID).build());
+                .uri("https://piveau.io/set/resource/legal-participant/" + FAKE_DID).mailAddress(FAKE_EMAIL_ADDRESS).build());
     }
 
     @Override

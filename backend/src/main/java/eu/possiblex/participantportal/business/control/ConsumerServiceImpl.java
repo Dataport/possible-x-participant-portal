@@ -89,7 +89,7 @@ public class ConsumerServiceImpl implements ConsumerService {
             request.getFhCatalogOfferId());
         boolean isDataOffering = !(fhCatalogOffer.getAggregationOf() == null || fhCatalogOffer.getAggregationOf()
             .isEmpty());
-        log.info("got fh catalog offer " + fhCatalogOffer);
+        log.info("got fh catalog offer {}", fhCatalogOffer);
 
         // get offer from EDC Catalog
         DcatCatalog edcCatalog = queryEdcCatalog(
@@ -106,7 +106,7 @@ public class ConsumerServiceImpl implements ConsumerService {
         Map<String, ParticipantNameBE> participantNamesMap = new HashMap<>();
 
         participantDetailsMap.forEach((k, v) -> participantNamesMap.put(k, consumerServiceMapper
-            .mapToParticipantName(v)));
+            .mapToParticipantNameBE(v)));
 
         SelectOfferResponseBE response = new SelectOfferResponseBE();
         response.setEdcOffer(edcCatalogOffer);

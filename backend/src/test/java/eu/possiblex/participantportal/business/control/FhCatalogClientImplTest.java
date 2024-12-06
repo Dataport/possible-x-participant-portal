@@ -6,6 +6,7 @@ import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedS
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.ParticipantNotFoundException;
 import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsSparqlQueryResult;
+import eu.possiblex.participantportal.business.entity.fh.ParticipantDetailsSparqlQueryResult;
 import eu.possiblex.participantportal.utils.TestUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -120,7 +121,7 @@ class FhCatalogClientImplTest {
     @Test
     void parseSparqlDataOfferCorrectly() {
 
-        String sparqlResponse = TestUtils.loadTextFile("unit_tests/FHCatalogClientImplTest/validSparqlResult.json");
+        String sparqlResponse = TestUtils.loadTextFile("unit_tests/FHCatalogClientImplTest/validSparqlResultOffer.json");
 
         reset(technicalFhCatalogClient);
         reset(sparqlFhCatalogClient);
@@ -133,11 +134,35 @@ class FhCatalogClientImplTest {
 
         verify(sparqlFhCatalogClient).queryCatalog(Mockito.anyString(), Mockito.isNull());
         Assertions.assertNotNull(queryResult);
-        Assertions.assertTrue(!queryResultMap.isEmpty());
+        Assertions.assertFalse(queryResultMap.isEmpty());
         Assertions.assertEquals("EXPECTED_ASSET_ID_VALUE", queryResult.getAssetId());
         Assertions.assertEquals("EXPECTED_PROVIDER_URL_VALUE", queryResult.getProviderUrl());
         Assertions.assertEquals("EXPECTED_NAME_VALUE", queryResult.getName());
         Assertions.assertEquals("EXPECTED_DESCRIPTION_VALUE", queryResult.getDescription());
+    }
+
+    @Test
+    void parseSparqlParticipantCorrectly() {
+
+        String sparqlResponse = TestUtils.loadTextFile("unit_tests/FHCatalogClientImplTest/validSparqlResultParticipant.json");
+
+        reset(technicalFhCatalogClient);
+        reset(sparqlFhCatalogClient);
+        Mockito.when(sparqlFhCatalogClient.queryCatalog(Mockito.anyString(), Mockito.isNull()))
+            .thenReturn(sparqlResponse);
+
+        String participantId = "did:web:portal.dev.possible-x.de:participant:df15587a-0760-32b5-9c42-bb7be66e8076";
+
+        Map<String, ParticipantDetailsSparqlQueryResult> queryResultMap = fhCatalogClient.getParticipantDetails(
+            List.of(participantId));
+        ParticipantDetailsSparqlQueryResult queryResult = queryResultMap.get(participantId);
+
+        verify(sparqlFhCatalogClient).queryCatalog(Mockito.anyString(), Mockito.isNull());
+        Assertions.assertNotNull(queryResult);
+        Assertions.assertFalse(queryResultMap.isEmpty());
+        Assertions.assertEquals(participantId, queryResult.getUri());
+        Assertions.assertEquals("EXPECTED_NAME_VALUE", queryResult.getName());
+        Assertions.assertEquals("EXPECTED_MAIL_ADDRESS_VALUE", queryResult.getMailAddress());
     }
 
     @TestConfiguration

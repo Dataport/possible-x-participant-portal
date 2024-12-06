@@ -58,7 +58,9 @@ class ConsumerRestApiTest {
                     SelectOfferRequestTO.builder().fhCatalogOfferId(ConsumerServiceFake.VALID_FH_OFFER_ID).build()))
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk()).andExpect(
                 jsonPath("$.catalogOffering['px:providerUrl']").value(ConsumerServiceFake.VALID_COUNTER_PARTY_ADDRESS))
-            .andExpect(jsonPath("$.edcOfferId").value(ConsumerServiceFake.VALID_ASSET_ID));
+            .andExpect(jsonPath("$.edcOfferId").value(ConsumerServiceFake.VALID_ASSET_ID))
+            .andExpect(jsonPath("$.providerDetails.participantId").value(ConsumerServiceFake.FAKE_DID))
+            .andExpect(jsonPath("$.providerDetails.participantEmail").value(ConsumerServiceFake.FAKE_EMAIL_ADDRESS));
 
         ArgumentCaptor<SelectOfferRequestBE> requestCaptor = ArgumentCaptor.forClass(SelectOfferRequestBE.class);
 

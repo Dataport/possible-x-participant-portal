@@ -59,7 +59,7 @@ public class ContractServiceImpl implements ContractService {
         Map<String, String> participantDidMap = getParticipantDids(refrencedDapsIds);
 
         // build a map of participant dids to participant names
-        Map<String, ParticipantDetailsSparqlQueryResult> participantNames = fhCatalogClient.getParticipantNames(
+        Map<String, ParticipantDetailsSparqlQueryResult> participantNames = fhCatalogClient.getParticipantDetails(
             participantDidMap.values());
 
         // build a map of assetIds to offering details

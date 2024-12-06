@@ -13,6 +13,7 @@ import eu.possiblex.participantportal.business.entity.exception.TransferFailedEx
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class ConsumerServiceFake implements ConsumerService {
 
@@ -29,6 +30,10 @@ public class ConsumerServiceFake implements ConsumerService {
     public static final String BAD_TRANSFER_OFFER_ID = "badTransfer";
 
     public static final String VALID_COUNTER_PARTY_ADDRESS = "some provider EDC URL";
+
+    public static final String FAKE_DID = "did:web:123";
+
+    public static final String FAKE_EMAIL_ADDRESS = "example@mail.com";
 
     @Override
     public SelectOfferResponseBE selectContractOffer(SelectOfferRequestBE request) throws OfferNotFoundException {
@@ -47,6 +52,8 @@ public class ConsumerServiceFake implements ConsumerService {
         PxExtendedServiceOfferingCredentialSubject cs = new PxExtendedServiceOfferingCredentialSubject();
         cs.setProviderUrl(VALID_COUNTER_PARTY_ADDRESS);
         response.setCatalogOffering(cs);
+        response.setProviderDetails(ParticipantWithMailBE.builder().did(FAKE_DID).mailAddress(FAKE_EMAIL_ADDRESS).build());
+        response.setParticipantNames(Map.of(FAKE_DID, ParticipantNameBE.builder().did(FAKE_DID).build()));
 
         return response;
     }
