@@ -28,7 +28,7 @@
           </div>
           <br/><br/>
           <div>3. Copyright Owner:<br/>
-            <!-- TODO: retrieve name -->
+            {{ getParticipentName(offer.catalogOffering["gx:aggregationOf"][0]["gx:copyrightOwnedBy"].id) }}
             {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:copyrightOwnedBy"].id }}
           </div>
           <br/><br/>
@@ -39,7 +39,7 @@
           </div>
           <br/><br/>
           <div>5. Producer:<br/>
-            <!-- TODO: retrieve name -->
+            {{ getParticipentName(offer.catalogOffering["gx:aggregationOf"][0]["gx:producedBy"].id) }}
             {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:producedBy"].id }}
           </div>
           <br/><br/>
@@ -73,7 +73,7 @@
         </div>
         <br/><br/>
         <div>{{ offer.dataOffering ? "10. " : "3. " }}Service Provider:<br/>
-          {{ providerDetails?.participantName || "Could not be retrieved" }}<br/>
+          {{ getParticipentName(offer.catalogOffering["gx:providedBy"].id) }}<br/>
           {{ offer.catalogOffering["gx:providedBy"].id }}
         </div>
         <br/><br/>
@@ -121,7 +121,7 @@
               Contracting is restricted to the following organizations:
               <ul *ngFor="let org of asParticipantRestrictionPolicy(ep).allowedParticipants">
                 <li>
-                  <!-- TODO: retrieve name -->
+                  {{ getParticipentName(org) }}
                   {{ org }}
                 </li>
               </ul>

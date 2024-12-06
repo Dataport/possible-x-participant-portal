@@ -17,11 +17,6 @@ import {
   IParticipantDetailsTO,
   IPxExtendedServiceOfferingCredentialSubject
 } from '../../../services/mgmt/api/backend';
-import {
-  isEverythingAllowedPolicy,
-  isParticipantRestrictionPolicy,
-  asParticipantRestrictionPolicy
-} from '../../../utils/policy-utils';
 
 @Component({
   selector: 'app-accept-offer',
@@ -32,10 +27,7 @@ export class AcceptComponent implements OnChanges {
   @Input() offer?: IOfferDetailsTO = undefined;
   @Output() dismiss: EventEmitter<any> = new EventEmitter();
   @Output() negotiatedContract: EventEmitter<IAcceptOfferResponseTO> = new EventEmitter();
-  @Output() retrievedProviderDetails: EventEmitter<IParticipantDetailsTO> = new EventEmitter();
   @ViewChild('acceptOfferStatusMessage') acceptOfferStatusMessage!: StatusMessageComponent;
-  @ViewChild('retrieveConsumerDetailsMessage') retrieveConsumerDetailsMessage!: StatusMessageComponent;
-  @ViewChild('retrieveProviderDetailsMessage') retrieveProviderDetailsMessage!: StatusMessageComponent;
 
   @ViewChild('viewContainerRef', {read: ViewContainerRef, static: true}) viewContainerRef: ViewContainerRef;
   @ViewChild('accordion', {read: TemplateRef, static: true}) accordion: TemplateRef<any>;
@@ -46,19 +38,12 @@ export class AcceptComponent implements OnChanges {
   providerDetails?: IParticipantDetailsTO = undefined;
   printTimestamp?: Date;
 
-  protected isEverythingAllowedPolicy = isEverythingAllowedPolicy;
-
-  protected isParticipantRestrictionPolicy = isParticipantRestrictionPolicy;
-
-  protected asParticipantRestrictionPolicy = asParticipantRestrictionPolicy;
-
   constructor(private apiService: ApiService) {
   }
 
   ngOnChanges(): void {
     if (this.offer) {
       this.viewContainerRef.createEmbeddedView(this.accordion);
-      this.getParticipantDetails();
     } else {
       this.viewContainerRef.clear();
     }
@@ -83,22 +68,6 @@ export class AcceptComponent implements OnChanges {
       this.acceptOfferStatusMessage.showErrorMessage(e.error.detail || e.error || e.message);
       this.isConsumed = false;
     });
-  };
-
-  async getParticipantDetails() {
-    console.log("Retrieve Provider details.");
-    this.retrieveProviderDetailsMessage.hideAllMessages();
-
-    this.apiService.getParticipantDetails$GET$participant_details_participantId(this.offer.catalogOffering["gx:providedBy"].id)
-      .then(response => {
-        console.log(response);
-        this.retrievedProviderDetails.emit(response);
-        this.providerDetails = response;
-      }).catch((e: HttpErrorResponse) => {
-      this.retrieveProviderDetailsMessage.showErrorMessage(e.error.detail || e.error || e.message);
-    });
-
-    //TODO: Retrieve name of participants in enforced policy
   };
 
   cancel(): void {

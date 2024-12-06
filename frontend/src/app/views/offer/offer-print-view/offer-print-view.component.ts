@@ -19,7 +19,6 @@ import {
 })
 export class OfferPrintViewComponent {
   @Input() offer?: IOfferDetailsTO = undefined;
-  @Input() providerDetails?: IParticipantDetailsTO = undefined;
   @Input() printTimestamp?: Date = undefined;
   @ViewChild('modalContent') modalContent: ElementRef;
 
@@ -51,5 +50,9 @@ export class OfferPrintViewComponent {
 
   getFormattedTimestamp(date: Date): string {
     return this.datePipe.transform(date, 'yyyyMMdd_HHmmss_z') || '';
+  }
+
+  getParticipentName(id: string) {
+    return this.offer?.participantNames[id].participantName || '';
   }
 }

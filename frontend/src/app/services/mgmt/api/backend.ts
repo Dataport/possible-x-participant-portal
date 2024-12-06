@@ -12,17 +12,12 @@ export interface IContractRestApi {
     contractAgreements: IContractAgreementTO[];
 }
 
-export interface IParticipantRestApi {
-    participantDetails: IParticipantDetailsTO;
-    participantId: IParticipantIdTO;
-}
-
 export interface IProviderRestApi {
 }
 
 export interface IResourceShapeRestApi {
-    gxDataResourceShape: string;
     gxInstantiatedVirtualResourceShape: string;
+    gxDataResourceShape: string;
     gxPhysicalResourceShape: string;
     gxSoftwareResourceShape: string;
     gxVirtualResourceShape: string;
@@ -121,25 +116,32 @@ export interface IOfferDetailsTO {
     catalogOffering: IPxExtendedServiceOfferingCredentialSubject;
     dataOffering: boolean;
     enforcementPolicies: IEnforcementPolicyUnion[];
+    providerDetails: IParticipantDetailsTO;
+    participantNames: { [index: string]: IParticipantNameTO };
 }
 
 export interface IOfferDetailsTOBuilder {
 }
 
-export interface IParticipantDetailsTO {
-    participantId: string;
-    participantName: string;
+export interface IParticipantDetailsTO extends IParticipantNameTO {
     participantEmail: string;
 }
 
-export interface IParticipantDetailsTOBuilder {
+export interface IParticipantDetailsTOBuilder<C, B> extends IParticipantNameTOBuilder<C, B> {
 }
 
-export interface IParticipantIdTO {
+export interface IParticipantDetailsTOBuilderImpl extends IParticipantDetailsTOBuilder<IParticipantDetailsTO, IParticipantDetailsTOBuilderImpl> {
+}
+
+export interface IParticipantNameTO {
     participantId: string;
+    participantName: string;
 }
 
-export interface IParticipantIdTOBuilder {
+export interface IParticipantNameTOBuilder<C, B> {
+}
+
+export interface IParticipantNameTOBuilderImpl extends IParticipantNameTOBuilder<IParticipantNameTO, IParticipantNameTOBuilderImpl> {
 }
 
 export interface ISelectOfferRequestTO {
@@ -457,30 +459,6 @@ export class RestApplicationClient {
      */
     transferDataOfferAgain(request: ITransferOfferRequestTO): RestResponse<ITransferOfferResponseTO> {
         return this.httpClient.request({ method: "POST", url: uriEncoding`contract/transfer`, data: request });
-    }
-
-    /**
-     * HTTP GET /participant/details/me
-     * Java method: eu.possiblex.participantportal.application.boundary.ParticipantRestApiImpl.getParticipantDetails
-     */
-    getParticipantDetails$GET$participant_details_me(): RestResponse<IParticipantDetailsTO> {
-        return this.httpClient.request({ method: "GET", url: uriEncoding`participant/details/me` });
-    }
-
-    /**
-     * HTTP GET /participant/details/{participantId}
-     * Java method: eu.possiblex.participantportal.application.boundary.ParticipantRestApiImpl.getParticipantDetails
-     */
-    getParticipantDetails$GET$participant_details_participantId(participantId: string): RestResponse<IParticipantDetailsTO> {
-        return this.httpClient.request({ method: "GET", url: uriEncoding`participant/details/${participantId}` });
-    }
-
-    /**
-     * HTTP GET /participant/id/me
-     * Java method: eu.possiblex.participantportal.application.boundary.ParticipantRestApiImpl.getParticipantId
-     */
-    getParticipantId(): RestResponse<IParticipantIdTO> {
-        return this.httpClient.request({ method: "GET", url: uriEncoding`participant/id/me` });
     }
 
     /**
