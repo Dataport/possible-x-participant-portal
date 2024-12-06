@@ -5,6 +5,7 @@ import eu.possiblex.participantportal.business.entity.*;
 import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import eu.possiblex.participantportal.business.entity.exception.NegotiationFailedException;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
+import eu.possiblex.participantportal.business.entity.exception.ParticipantNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
 
 import java.util.List;
@@ -17,7 +18,8 @@ public interface ConsumerService {
      * @return details of the offer
      * @throws OfferNotFoundException could not find the offer from the request
      */
-    SelectOfferResponseBE selectContractOffer(SelectOfferRequestBE request) throws OfferNotFoundException;
+    SelectOfferResponseBE selectContractOffer(SelectOfferRequestBE request) throws OfferNotFoundException,
+        ParticipantNotFoundException;
 
     /**
      * Given a request for an offer, accept the offer on the data transfer component and perform the transfer.

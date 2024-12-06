@@ -52,7 +52,7 @@ class ConsumerServiceTest {
     ArgumentCaptor<Collection<String>> idCaptor;
 
     @Test
-    void selectContractOfferSucceedsDataOffering() throws OfferNotFoundException {
+    void selectContractOfferSucceedsDataOffering() throws OfferNotFoundException, ParticipantNotFoundException {
 
         // GIVEN
 
@@ -101,7 +101,7 @@ class ConsumerServiceTest {
     }
 
     @Test
-    void selectContractOfferSucceedsServiceOffering() throws OfferNotFoundException {
+    void selectContractOfferSucceedsServiceOffering() throws OfferNotFoundException, ParticipantNotFoundException {
 
         // GIVEN
 

@@ -35,7 +35,6 @@ export class AcceptComponent implements OnChanges {
   isConsumed = false;
   isPoliciesAccepted = false;
   isTnCAccepted = false;
-  providerDetails?: IParticipantDetailsTO = undefined;
   printTimestamp?: Date;
 
   constructor(private apiService: ApiService) {
@@ -87,6 +86,6 @@ export class AcceptComponent implements OnChanges {
   }
 
   isButtonDisabled(): boolean {
-    return !this.isPoliciesAccepted || !this.isTnCAccepted || this.isConsumed || !this.providerDetails;
+    return !this.isPoliciesAccepted || !this.isTnCAccepted || this.isConsumed;
   }
 }

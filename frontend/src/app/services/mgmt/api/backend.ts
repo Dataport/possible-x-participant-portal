@@ -17,12 +17,12 @@ export interface IProviderRestApi {
 }
 
 export interface IResourceShapeRestApi {
-    gxInstantiatedVirtualResourceShape: string;
-    gxDataResourceShape: string;
-    gxPhysicalResourceShape: string;
     gxSoftwareResourceShape: string;
-    gxVirtualResourceShape: string;
+    gxDataResourceShape: string;
+    gxInstantiatedVirtualResourceShape: string;
     gxLegitimateInterestShape: string;
+    gxPhysicalResourceShape: string;
+    gxVirtualResourceShape: string;
 }
 
 export interface IServiceOfferingShapeRestApi {

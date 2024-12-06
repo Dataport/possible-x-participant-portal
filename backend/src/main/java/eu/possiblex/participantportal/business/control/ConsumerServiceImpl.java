@@ -25,6 +25,7 @@ import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProce
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferRequest;
 import eu.possiblex.participantportal.business.entity.exception.NegotiationFailedException;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
+import eu.possiblex.participantportal.business.entity.exception.ParticipantNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
 import eu.possiblex.participantportal.business.entity.fh.ParticipantDetailsSparqlQueryResult;
 import lombok.extern.slf4j.Slf4j;
@@ -82,7 +83,8 @@ public class ConsumerServiceImpl implements ConsumerService {
     }
 
     @Override
-    public SelectOfferResponseBE selectContractOffer(SelectOfferRequestBE request) throws OfferNotFoundException {
+    public SelectOfferResponseBE selectContractOffer(SelectOfferRequestBE request) throws OfferNotFoundException,
+        ParticipantNotFoundException {
         // get offer from FH Catalog and parse the attributes needed to get the offer from EDC Catalog
         PxExtendedServiceOfferingCredentialSubject fhCatalogOffer = fhCatalogClient.getFhCatalogOffer(
             request.getFhCatalogOfferId());
@@ -110,6 +112,12 @@ public class ConsumerServiceImpl implements ConsumerService {
         Map<String, ParticipantDetailsSparqlQueryResult> participantDetailsMap = getParticipantDetailsInOffer(
             fhCatalogOffer, isDataOffering, enforcementPolicies);
 
+        ParticipantDetailsSparqlQueryResult providerDetails = participantDetailsMap.get(fhCatalogOffer.getProvidedBy().getId());
+
+        if (providerDetails == null) {
+            throw new ParticipantNotFoundException("Provider of offer with ID " + fhCatalogOffer.getId() + " not found in catalog.");
+        }
+
         Map<String, ParticipantNameBE> participantNamesMap = new HashMap<>();
 
         participantDetailsMap.forEach((k, v) -> participantNamesMap.put(k, consumerServiceMapper
@@ -120,7 +128,7 @@ public class ConsumerServiceImpl implements ConsumerService {
         response.setCatalogOffering(fhCatalogOffer);
         response.setDataOffering(isDataOffering);
         response.setEnforcementPolicies(enforcementPolicies);
-        response.setProviderDetails(consumerServiceMapper.mapToParticipantWithMailBE(participantDetailsMap.get(fhCatalogOffer.getProvidedBy().getId())));
+        response.setProviderDetails(consumerServiceMapper.mapToParticipantWithMailBE(providerDetails));
         response.setParticipantNames(participantNamesMap);
 
         return response;
