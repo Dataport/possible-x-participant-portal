@@ -13,20 +13,20 @@ export interface IContractRestApi {
 }
 
 export interface IParticipantRestApi {
-    participantDetails: IParticipantDetailsTO;
     participantId: IParticipantIdTO;
+    participantDetails: IParticipantDetailsTO;
 }
 
 export interface IProviderRestApi {
 }
 
 export interface IResourceShapeRestApi {
-    gxInstantiatedVirtualResourceShape: string;
     gxDataResourceShape: string;
     gxPhysicalResourceShape: string;
     gxSoftwareResourceShape: string;
     gxVirtualResourceShape: string;
     gxLegitimateInterestShape: string;
+    gxInstantiatedVirtualResourceShape: string;
 }
 
 export interface IServiceOfferingShapeRestApi {
@@ -154,6 +154,7 @@ export interface ITransferOfferResponseTOBuilder {
 
 export interface IVersionTO {
     version: string;
+    date: string;
 }
 
 export interface IVersionTOBuilder {

@@ -7,7 +7,8 @@ import {ApiService} from "../../services/mgmt/api/api.service";
   styleUrls: ['./default-layout.component.scss']
 })
 export class DefaultLayoutComponent implements OnInit {
-  versionNumber: string;
+  versionNumber: string = '';
+  versionDate: string = '';
 
   constructor(private apiService: ApiService) {
   }
@@ -15,6 +16,7 @@ export class DefaultLayoutComponent implements OnInit {
   ngOnInit() {
     this.apiService.getVersion().then(response => {
       this.versionNumber = response.version;
+      this.versionDate = response.date;
     });
   }
 }
