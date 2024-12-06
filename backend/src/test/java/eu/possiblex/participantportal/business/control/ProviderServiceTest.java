@@ -262,7 +262,7 @@ class ProviderServiceTest {
     }
 
     @Test
-    void testGetParticipantId() {
+    void testGetPrefillFields() {
         //when
         PrefillFieldsBE prefillFields = providerService.getPrefillFields();
 
