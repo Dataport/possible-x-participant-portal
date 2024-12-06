@@ -1,6 +1,5 @@
 package eu.possiblex.participantportal.application.configuration;
 
-import eu.possiblex.participantportal.business.control.*;
 import eu.possiblex.participantportal.business.control.EdcClient;
 import eu.possiblex.participantportal.business.control.SdCreationWizardApiClient;
 import eu.possiblex.participantportal.business.control.SparqlFhCatalogClient;
@@ -14,8 +13,6 @@ import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.support.WebClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
-
-import java.util.Map;
 
 @Configuration
 @EnableScheduling
@@ -32,8 +29,11 @@ public class AppConfigurer {
     @Value("${edc.mgmt-base-url}")
     private String edcMgmtUrl;
 
-    @Value("${fh.catalog.url}")
-    private String fhCatalogUrl;
+    @Value("${fh.catalog.repo.url}")
+    private String fhCatalogRepoUrl;
+
+    @Value("${fh.catalog.sparql.url}")
+    private String fhCatalogSparqlUrl;
 
     @Value("${sd-creation-wizard-api.base-url}")
     private String sdCreationWizardApiBaseUri;
@@ -57,8 +57,8 @@ public class AppConfigurer {
     @Bean
     public TechnicalFhCatalogClient technicalFhCatalogClient() {
 
-        WebClient webClient = WebClient.builder().baseUrl(fhCatalogUrl + "/api/hub/repo")
-            .clientConnector(LogUtils.createHttpClient()).defaultHeaders(httpHeaders -> {
+        WebClient webClient = WebClient.builder().baseUrl(fhCatalogRepoUrl).clientConnector(LogUtils.createHttpClient())
+            .defaultHeaders(httpHeaders -> {
                 httpHeaders.set("Content-Type", "application/json");
                 httpHeaders.set("Authorization", "Bearer " + fhCatalogSecretKey);
             }).build();
@@ -70,7 +70,7 @@ public class AppConfigurer {
     @Bean
     public SparqlFhCatalogClient sparqlFhCatalogClient() {
 
-        WebClient webClient = WebClient.builder().baseUrl(fhCatalogUrl + "/ld/sparql/")
+        WebClient webClient = WebClient.builder().baseUrl(fhCatalogSparqlUrl)
             .clientConnector(LogUtils.createHttpClient()).defaultHeaders(httpHeaders -> {
                 httpHeaders.set("Content-Type", "application/json");
                 httpHeaders.set("Authorization", "Bearer " + fhCatalogSecretKey);

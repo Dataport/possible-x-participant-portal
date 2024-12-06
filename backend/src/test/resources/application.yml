@@ -2,11 +2,14 @@ edc:
   x-api-key: test
   mgmt-base-url: test
   protocol-base-url: test
+
 fh:
   catalog:
-    url: test
-    secret-key: test
-    catalog-name: test-provider
+    repo:
+      url: url
+    sparql:
+      url: url
+    secret-key: secret
 
 sd-creation-wizard-api:
   base-url: test
