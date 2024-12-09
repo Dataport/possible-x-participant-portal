@@ -41,7 +41,8 @@ public class PossibleAssetProperties extends AssetProperties {
     private List<String> license;
 
     @JsonProperty("https://w3id.org/gaia-x/development#copyrightOwnedBy")
-    private NodeKindIRITypeId copyrightOwnedBy;
+    @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+    private List<NodeKindIRITypeId> copyrightOwnedBy;
 
     @JsonProperty("https://w3id.org/gaia-x/development#producedBy")
     private NodeKindIRITypeId producedBy;

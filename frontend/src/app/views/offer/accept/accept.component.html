@@ -78,7 +78,10 @@
           <ul *ngFor="let l of offer.catalogOffering['gx:aggregationOf'][0]['gx:license']">
             <li>{{ l }}</li>
           </ul>
-          <b>Copyright owned by:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:copyrightOwnedBy"].id }}
+          <b>Copyright owned by:</b>
+          <ul *ngFor="let owner of offer.catalogOffering['gx:aggregationOf'][0]['gx:copyrightOwnedBy']">
+            <li>{{ owner }}</li>
+          </ul>
           <br/>
           <b>Produced by:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:producedBy"].id }} <br/>
           <b>Exposed through:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:exposedThrough"].id }} <br/>

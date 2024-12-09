@@ -205,7 +205,7 @@ class ProviderServiceTest {
             properties.getDataProtectionRegime());
         assertThat(offeringCs.getDataAccountExport()).usingRecursiveComparison()
             .isEqualTo(properties.getDataAccountExport());
-        assertEquals(resourceCs.getCopyrightOwnedBy().getId(), properties.getCopyrightOwnedBy().getId());
+        assertEquals(resourceCs.getCopyrightOwnedBy().get(0).getId(), properties.getCopyrightOwnedBy().get(0).getId());
         assertEquals(resourceCs.getProducedBy().getId(), properties.getProducedBy().getId());
         assertEquals(resourceCs.getExposedThrough().getId(), properties.getExposedThrough().getId());
         assertThat(resourceCs.getLicense()).containsExactlyInAnyOrderElementsOf(properties.getLicense());
@@ -291,7 +291,7 @@ class ProviderServiceTest {
 
         return GxDataResourceCredentialSubject.builder().policy(List.of("dummyDataResourcePolicy")).name("Test Dataset")
             .description("This is the data resource description.").license(List.of("AGPL-1.0-only")).containsPII(true)
-            .copyrightOwnedBy(new NodeKindIRITypeId("did:web:example-organization.eu"))
+            .copyrightOwnedBy(List.of(new NodeKindIRITypeId("did:web:example-organization.eu")))
             .producedBy(new NodeKindIRITypeId("did:web:example-organization.eu"))
             .exposedThrough(new NodeKindIRITypeId("urn:uuid:GENERATED_SERVICE_OFFERING_ID"))
             .id("urn:uuid:GENERATED_DATA_RESOURCE_ID").build();
