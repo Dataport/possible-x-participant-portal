@@ -102,6 +102,7 @@ public class FhCatalogClientImpl implements FhCatalogClient {
         String query = """
             PREFIX gx: <https://w3id.org/gaia-x/development#>
             PREFIX schema: <https://schema.org/>
+            PREFIX px: <http://w3id.org/gaia-x/possible-x#>
             
             SELECT ?uri ?name ?mailAddress WHERE {
               ?uri a gx:LegalParticipant;
