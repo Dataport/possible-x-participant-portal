@@ -2,10 +2,12 @@ package eu.possiblex.participantportal.application.control;
 
 import eu.possiblex.participantportal.application.entity.CreateDataOfferingRequestTO;
 import eu.possiblex.participantportal.application.entity.CreateServiceOfferingRequestTO;
+import eu.possiblex.participantportal.application.entity.PrefillFieldsTO;
 import eu.possiblex.participantportal.application.entity.policies.EnforcementPolicy;
 import eu.possiblex.participantportal.application.entity.policies.EverythingAllowedPolicy;
 import eu.possiblex.participantportal.business.entity.CreateDataOfferingRequestBE;
 import eu.possiblex.participantportal.business.entity.CreateServiceOfferingRequestBE;
+import eu.possiblex.participantportal.business.entity.PrefillFieldsBE;
 import org.mapstruct.InheritConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -41,5 +43,7 @@ public interface ProviderApiMapper {
             return enforcementPolicies;
         }
     }
+
+    PrefillFieldsTO getPrefillFieldsTO(PrefillFieldsBE prefillFieldsBE);
 
 }

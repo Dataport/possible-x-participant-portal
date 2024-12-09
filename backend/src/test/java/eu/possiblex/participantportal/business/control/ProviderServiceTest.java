@@ -10,6 +10,7 @@ import eu.possiblex.participantportal.application.entity.credentials.gx.serviceo
 import eu.possiblex.participantportal.application.entity.policies.EverythingAllowedPolicy;
 import eu.possiblex.participantportal.business.entity.CreateDataOfferingRequestBE;
 import eu.possiblex.participantportal.business.entity.CreateServiceOfferingRequestBE;
+import eu.possiblex.participantportal.business.entity.PrefillFieldsBE;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedDataResourceCredentialSubject;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.edc.asset.AssetCreateRequest;
@@ -18,8 +19,7 @@ import eu.possiblex.participantportal.business.entity.edc.asset.possible.Possibl
 import eu.possiblex.participantportal.business.entity.edc.contractdefinition.ContractDefinitionCreateRequest;
 import eu.possiblex.participantportal.business.entity.edc.policy.OdrlPermission;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyCreateRequest;
-import eu.possiblex.participantportal.business.entity.exception.EdcOfferCreationException;
-import eu.possiblex.participantportal.business.entity.exception.FhOfferCreationException;
+
 import eu.possiblex.participantportal.utilities.PossibleXException;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
@@ -29,9 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.List;
 
@@ -261,6 +259,20 @@ class ProviderServiceTest {
         //when
         assertThrows(PossibleXException.class, () -> providerService.createOffering(be));
         verify(fhCatalogClient).deleteServiceOfferingFromFhCatalog(any(), Mockito.anyBoolean());
+    }
+
+    @Test
+    void testGetPrefillFields() {
+        //when
+        PrefillFieldsBE prefillFields = providerService.getPrefillFields();
+
+        //then
+        String expectedId = "did:web:test.eu";
+        String expectedServiceOfferingName = "Data Product Service for Data Resource <Data resource name>";
+        String expectedServiceOfferingDescription = "Data Product Service provides data (<Data resource name>).";
+        assertEquals(expectedId, prefillFields.getParticipantId());
+        assertEquals(expectedServiceOfferingName, prefillFields.getDataProductPrefillFields().getServiceOfferingName());
+        assertEquals(expectedServiceOfferingDescription, prefillFields.getDataProductPrefillFields().getServiceOfferingDescription());
     }
 
     GxServiceOfferingCredentialSubject getGxServiceOfferingCredentialSubject() {

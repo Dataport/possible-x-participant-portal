@@ -3,7 +3,15 @@ import {ProvideComponent} from './provide.component';
 import {
   OfferingWizardExtensionComponent
 } from "../../../wizard-extension/offering-wizard-extension/offering-wizard-extension.component";
+import {GridModule} from "@coreui/angular";
+import {HttpClientTestingModule} from "@angular/common/http/testing";
+import {Component} from "@angular/core";
 
+@Component({
+  selector: 'app-offering-wizard-extension',
+  template: ''
+})
+class MockWizardExtension implements Partial<OfferingWizardExtensionComponent>{}
 
 describe('ProvideComponent', () => {
   let component: ProvideComponent;
@@ -12,8 +20,8 @@ describe('ProvideComponent', () => {
   beforeEach(async () => {
 
     await TestBed.configureTestingModule({
-      declarations: [ProvideComponent],
-      imports: [OfferingWizardExtensionComponent],
+      declarations: [ProvideComponent, MockWizardExtension],
+      imports: [GridModule, HttpClientTestingModule]
     })
       .compileComponents();
 

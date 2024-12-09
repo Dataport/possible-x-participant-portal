@@ -13,16 +13,17 @@ export interface IContractRestApi {
 }
 
 export interface IParticipantRestApi {
-    participantDetails: IParticipantDetailsTO;
     participantId: IParticipantIdTO;
+    participantDetails: IParticipantDetailsTO;
 }
 
 export interface IProviderRestApi {
+    prefillFields: IPrefillFieldsTO;
 }
 
 export interface IResourceShapeRestApi {
-    gxInstantiatedVirtualResourceShape: string;
     gxDataResourceShape: string;
+    gxInstantiatedVirtualResourceShape: string;
     gxPhysicalResourceShape: string;
     gxSoftwareResourceShape: string;
     gxVirtualResourceShape: string;
@@ -45,6 +46,8 @@ export interface IAcceptOfferResponseTOBuilder {
 export interface IAssetDetailsTO {
     name: string;
     description: string;
+    assetId: string;
+    offeringId: string;
 }
 
 export interface IAssetDetailsTOBuilder {
@@ -64,12 +67,23 @@ export interface IContractAgreementTO {
     assetId: string;
     assetDetails: IAssetDetailsTO;
     policy: IPolicy;
+    enforcementPolicies: IEnforcementPolicyUnion[];
     contractSigningDate: Date;
-    consumerId: string;
-    providerId: string;
+    consumerDetails: IContractParticipantDetailsTO;
+    providerDetails: IContractParticipantDetailsTO;
+    dataOffering: boolean;
 }
 
 export interface IContractAgreementTOBuilder {
+}
+
+export interface IContractParticipantDetailsTO {
+    name: string;
+    did: string;
+    dapsId: string;
+}
+
+export interface IContractParticipantDetailsTOBuilder {
 }
 
 export interface ICreateDataOfferingRequestTO extends ICreateServiceOfferingRequestTO {
@@ -103,6 +117,14 @@ export interface ICreateServiceOfferingRequestTOBuilder<C, B> {
 export interface ICreateServiceOfferingRequestTOBuilderImpl extends ICreateServiceOfferingRequestTOBuilder<ICreateServiceOfferingRequestTO, ICreateServiceOfferingRequestTOBuilderImpl> {
 }
 
+export interface IDataProductPrefillFieldsTO {
+    serviceOfferingName: string;
+    serviceOfferingDescription: string;
+}
+
+export interface IDataProductPrefillFieldsTOBuilder {
+}
+
 export interface IOfferDetailsTO {
     edcOfferId: string;
     catalogOffering: IPxExtendedServiceOfferingCredentialSubject;
@@ -127,6 +149,14 @@ export interface IParticipantIdTO {
 }
 
 export interface IParticipantIdTOBuilder {
+}
+
+export interface IPrefillFieldsTO {
+    participantId: string;
+    dataProductPrefillFields: IDataProductPrefillFieldsTO;
+}
+
+export interface IPrefillFieldsTOBuilder {
 }
 
 export interface ISelectOfferRequestTO {
@@ -154,6 +184,7 @@ export interface ITransferOfferResponseTOBuilder {
 
 export interface IVersionTO {
     version: string;
+    date: string;
 }
 
 export interface IVersionTOBuilder {
@@ -484,6 +515,14 @@ export class RestApplicationClient {
      */
     createServiceOffering(createServiceOfferingRequestTO: ICreateServiceOfferingRequestTO): RestResponse<ICreateOfferResponseTO> {
         return this.httpClient.request({ method: "POST", url: uriEncoding`provider/offer/service`, data: createServiceOfferingRequestTO });
+    }
+
+    /**
+     * HTTP GET /provider/prefillFields
+     * Java method: eu.possiblex.participantportal.application.boundary.ProviderRestApiImpl.getPrefillFields
+     */
+    getPrefillFields(): RestResponse<IPrefillFieldsTO> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`provider/prefillFields` });
     }
 
     /**

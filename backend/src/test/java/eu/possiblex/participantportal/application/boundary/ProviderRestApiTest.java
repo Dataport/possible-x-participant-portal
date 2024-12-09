@@ -142,6 +142,15 @@ class ProviderRestApiTest extends ProviderTestParent {
             .isEqualTo(createDataOfferingRequestBE.getDataResource());
     }
 
+    @Test
+    void shouldReturnMessageOnGetPrefillFields() throws Exception {
+        // WHEN/THEN
+        this.mockMvc.perform(get("/provider/prefillFields")).andDo(print()).andExpect(status().isOk())
+            .andExpect(jsonPath("$.participantId").value(ProviderServiceFake.PARTICIPANT_ID))
+            .andExpect(jsonPath("$.dataProductPrefillFields.serviceOfferingName").value(ProviderServiceFake.SERVICE_OFFERING_NAME))
+            .andExpect(jsonPath("$.dataProductPrefillFields.serviceOfferingDescription").value(ProviderServiceFake.SERVICE_OFFERING_DESCRIPTION));
+    }
+
     GxServiceOfferingCredentialSubject getGxServiceOfferingCredentialSubject() {
 
         return GxServiceOfferingCredentialSubject.builder()

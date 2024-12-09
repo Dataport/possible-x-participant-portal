@@ -1,14 +1,16 @@
 package eu.possiblex.participantportal.business.control;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.possiblex.participantportal.application.entity.CreateOfferResponseTO;
-import eu.possiblex.participantportal.application.entity.ParticipantIdTO;
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
 import eu.possiblex.participantportal.application.entity.exception.OfferingComplianceException;
 import eu.possiblex.participantportal.application.entity.policies.EnforcementPolicy;
 import eu.possiblex.participantportal.application.entity.policies.ParticipantRestrictionPolicy;
 import eu.possiblex.participantportal.business.entity.CreateDataOfferingRequestBE;
 import eu.possiblex.participantportal.business.entity.CreateServiceOfferingRequestBE;
+import eu.possiblex.participantportal.business.entity.DataProductPrefillFieldsBE;
+import eu.possiblex.participantportal.business.entity.PrefillFieldsBE;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.edc.CreateEdcOfferBE;
 import eu.possiblex.participantportal.business.entity.edc.asset.AssetCreateRequest;
@@ -17,15 +19,21 @@ import eu.possiblex.participantportal.business.entity.edc.contractdefinition.Con
 import eu.possiblex.participantportal.business.entity.edc.policy.*;
 import eu.possiblex.participantportal.business.entity.exception.EdcOfferCreationException;
 import eu.possiblex.participantportal.business.entity.exception.FhOfferCreationException;
+import eu.possiblex.participantportal.business.entity.exception.PrefillFieldsProcessingException;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
 import eu.possiblex.participantportal.utilities.PossibleXException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -49,6 +57,10 @@ public class ProviderServiceImpl implements ProviderService {
 
     private final String edcProtocolUrl;
 
+    private final ObjectMapper objectMapper;
+
+    private final PrefillFieldsBE prefillFields;
+
     /**
      * Constructor for ProviderServiceImpl.
      *
@@ -59,8 +71,11 @@ public class ProviderServiceImpl implements ProviderService {
     public ProviderServiceImpl(@Autowired EdcClient edcClient, @Autowired FhCatalogClient fhCatalogClient,
         @Autowired ProviderServiceMapper providerServiceMapper,
         @Value("${edc.protocol-base-url}") String edcProtocolUrl,
+        @Value("${participant-id}") String participantId,
         @Value("${s3.bucket-storage-region}") String bucketStorageRegion,
-        @Value("${s3.bucket-name}") String bucketName) {
+        @Value("${s3.bucket-name}") String bucketName,
+        @Value("${prefill-fields.data-product.json-file-path}") String prefillFieldsDataProductJsonFilePath,
+        @Autowired ObjectMapper objectMapper) {
 
         this.edcClient = edcClient;
         this.fhCatalogClient = fhCatalogClient;
@@ -68,6 +83,8 @@ public class ProviderServiceImpl implements ProviderService {
         this.edcProtocolUrl = edcProtocolUrl;
         this.bucketStorageRegion = bucketStorageRegion;
         this.bucketName = bucketName;
+        this.objectMapper = objectMapper;
+        this.prefillFields = getPrefillFields(participantId, prefillFieldsDataProductJsonFilePath);
     }
 
     /**
@@ -107,6 +124,58 @@ public class ProviderServiceImpl implements ProviderService {
                 HttpStatus.BAD_REQUEST);
         }
         return new CreateOfferResponseTO(edcResponseId.getId(), fhResponseId.getId());
+    }
+
+    /**
+     * Return the prefill fields.
+     *
+     * @return prefill fields
+     */
+    @Override
+    public PrefillFieldsBE getPrefillFields() {
+
+        return this.prefillFields;
+
+    }
+
+    private PrefillFieldsBE getPrefillFields(String participantId, String filePath) {
+        return new PrefillFieldsBE(participantId, readDataProductPrefillFieldsFromFile(filePath));
+    }
+
+    private DataProductPrefillFieldsBE readDataProductPrefillFieldsFromFile(String filePath) {
+
+        Resource resource = getDataResourcePrefillFieldsResource(filePath);
+
+        DataProductPrefillFieldsBE dataProductPrefillFields;
+
+        try {
+            dataProductPrefillFields = objectMapper.readValue(resource.getInputStream(), DataProductPrefillFieldsBE.class);
+        } catch (IOException e) {
+            throw new PrefillFieldsProcessingException("Failed to process data product prefill fields from file: " + e.getMessage());
+        }
+
+        return dataProductPrefillFields;
+    }
+
+    /**
+     * Get the resource for data product prefill fields from given path.
+     *
+     * @return the resource
+     */
+    private Resource getDataResourcePrefillFieldsResource(String filePath) {
+
+        Resource resource;
+        if (filePath == null || filePath.isEmpty()) {
+            resource = new ClassPathResource("prefillFieldsDataProduct.json");
+        } else {
+            File file = new File(filePath);
+            if (file.exists()) {
+                resource = new FileSystemResource(file);
+            } else {
+                resource = new ClassPathResource("prefillFieldsDataProduct.json");
+            }
+        }
+        return resource;
     }
 
     /**

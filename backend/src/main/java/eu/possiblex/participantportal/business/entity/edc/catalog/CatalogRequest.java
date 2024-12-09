@@ -48,4 +48,7 @@ public class CatalogRequest {
 
         return PROTOCOL;
     }
+
+    @JsonProperty("querySpec")
+    public QuerySpec querySpec;
 }
