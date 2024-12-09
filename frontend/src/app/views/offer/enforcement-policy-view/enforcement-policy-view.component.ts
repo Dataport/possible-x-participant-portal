@@ -1,6 +1,12 @@
 import {Component, Input} from '@angular/core';
 import {IEnforcementPolicy, IParticipantRestrictionPolicy} from "../../../services/mgmt/api/backend";
 
+import {
+  isEverythingAllowedPolicy,
+  isParticipantRestrictionPolicy,
+  asParticipantRestrictionPolicy
+} from '../../../utils/policy-utils';
+
 @Component({
   selector: 'app-enforcement-policy-view',
   templateUrl: './enforcement-policy-view.component.html',
@@ -10,13 +16,10 @@ export class EnforcementPolicyViewComponent {
 
   @Input() enforcementPolicies: IEnforcementPolicy[] = [];
 
-  protected isEverythingAllowedPolicy: (policy: IEnforcementPolicy) => boolean
-    = policy => (policy['@type'] === 'EverythingAllowedPolicy');
+  protected isEverythingAllowedPolicy = isEverythingAllowedPolicy;
 
-  protected isParticipantRestrictionPolicy: (policy: IEnforcementPolicy) => boolean
-    = policy => (policy['@type'] === 'ParticipantRestrictionPolicy');
+  protected isParticipantRestrictionPolicy = isParticipantRestrictionPolicy;
 
-  protected asParticipantRestrictionPolicy: (policy: IEnforcementPolicy) => IParticipantRestrictionPolicy
-    = policy => (policy as IParticipantRestrictionPolicy);
+  protected asParticipantRestrictionPolicy = asParticipantRestrictionPolicy;
 
 }

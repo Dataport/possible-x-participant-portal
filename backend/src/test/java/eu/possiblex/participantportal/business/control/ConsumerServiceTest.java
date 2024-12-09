@@ -28,6 +28,7 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.test.context.ContextConfiguration;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
