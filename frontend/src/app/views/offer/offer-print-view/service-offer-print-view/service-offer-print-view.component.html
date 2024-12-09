@@ -1,0 +1,76 @@
+<div>This document contains an export of a Service Offering from the POSSIBLE-X Catalog from:<br/>
+  {{ printTimestamp }}
+</div>
+<br/><br/>
+<div>Please note that this is for information and does not ensure a period of validity. Only offers within the
+  catalog are currently valid offers.
+</div>
+<br/><br/>
+<div>Offer ID:<br/>
+  {{ offer.catalogOffering.id }}
+</div>
+<br/><br/>
+<div>1. Service:<br/>
+  {{ offer.catalogOffering["schema:name"] }}
+</div>
+<br/><br/>
+<div>2. Description:<br/>
+  {{ offer.catalogOffering["schema:description"] || "-" }}
+</div>
+<br/><br/>
+<div>3. Service Provider:<br/>
+  {{ getParticipantName(offer.catalogOffering["gx:providedBy"].id) }}<br/>
+  {{ offer.catalogOffering["gx:providedBy"].id }}
+</div>
+<br/><br/>
+<div>4. Data Protection Regime:<br/>
+  <ng-container *ngIf="isDprUndefinedOrEmpty(offer.catalogOffering); else dprList">
+    -
+  </ng-container>
+  <ng-template #dprList>
+    <ul *ngFor="let r of offer.catalogOffering['gx:dataProtectionRegime']">
+      <li>{{ r }}</li>
+    </ul>
+  </ng-template>
+</div>
+<br/><br/>
+<div>5. Data Account Export:<br/>
+  <ul *ngFor="let e of offer.catalogOffering['gx:dataAccountExport']">
+    <li>
+      Format Type: {{ e["gx:formatType"] }}<br/>
+      Access Type: {{ e["gx:accessType"] }}<br/>
+      Request Type: {{ e["gx:requestType"] }}
+    </li>
+  </ul>
+</div>
+<br/><br/>
+<div>6. Terms & Conditions:<br/>
+  <ul *ngFor="let tnc of offer.catalogOffering['gx:termsAndConditions']">
+    <li>
+      <span>URL: {{ tnc['gx:URL'] }} (Hash: {{ tnc["gx:hash"] }})</span>
+    </li>
+  </ul>
+</div>
+<br/><br/>
+<div>7. Service Policy:<br/>
+  <ul *ngFor="let p of offer.catalogOffering['gx:policy']">
+    <li>{{ p }}</li>
+  </ul>
+</div>
+<br/><br/>
+<div>8. POSSIBLE-X enforced policy:<br/>
+  <div *ngFor="let ep of offer.enforcementPolicies">
+    <div *ngIf="isEverythingAllowedPolicy(ep)">
+      Everything is allowed.
+    </div>
+    <div *ngIf="isParticipantRestrictionPolicy(ep)">
+      Contracting is restricted to the following organizations:
+      <ul *ngFor="let org of asParticipantRestrictionPolicy(ep).allowedParticipants">
+        <li>
+          {{ getParticipantName(org) }}<br/>
+          {{ org }}
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

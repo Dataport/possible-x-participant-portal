@@ -5,129 +5,13 @@
   <c-modal-body>
     <ng-container *ngIf="offer">
       <div id="print-section">
-        <div>This document contains an export of a {{ offer.dataOffering ? "Data Product" : "Service Offering" }} from
-          the POSSIBLE-X Catalog from:<br/>
-          {{ printTimestamp }}
-        </div>
-        <br/><br/>
-        <div>Please note that this is for information and does not ensure a period of validity. Only offers within the
-          catalog are currently valid offers.
-        </div>
-        <br/><br/>
-        <div>Offer ID:<br/>
-          {{ offer.catalogOffering.id }}
-        </div>
-        <br/><br/>
-        <ng-container *ngIf="offer.dataOffering">
-          <div>1. Data Product:<br/>
-            {{ offer.catalogOffering["gx:aggregationOf"][0]["schema:name"] }}
-          </div>
-          <br/><br/>
-          <div>2. Description:<br/>
-            {{ offer.catalogOffering["gx:aggregationOf"][0]["schema:description"] || "-" }}
-          </div>
-          <br/><br/>
-          <div>3. Copyright Owner:<br/>
-            {{ getParticipentName(offer.catalogOffering["gx:aggregationOf"][0]["gx:copyrightOwnedBy"].id) }}<br/>
-            {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:copyrightOwnedBy"].id }}
-          </div>
-          <br/><br/>
-          <div>4. License:<br/>
-            <ul *ngFor="let l of offer.catalogOffering['gx:aggregationOf'][0]['gx:license']">
-              <li>{{ l }}</li>
-            </ul>
-          </div>
-          <br/><br/>
-          <div>5. Producer:<br/>
-            {{ getParticipentName(offer.catalogOffering["gx:aggregationOf"][0]["gx:producedBy"].id) }}<br/>
-            {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:producedBy"].id }}
-          </div>
-          <br/><br/>
-          <div>6. Contains PII:<br/>
-            {{ containsPII(offer.catalogOffering) }}
-          </div>
-          <ng-container *ngIf="containsPII(offer.catalogOffering)">
-            <br/>
-            <div>Legitimate Interest:<br/>
-              Legal Basis:<br/>
-              {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:legitimateInterest"]["gx:legalBasis"] }}
-              <br/><br/>
-              Data Protection Contact:<br/>
-              {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:legitimateInterest"]["gx:dataProtectionContact"] }}
-            </div>
-            <br/><br/>
-          </ng-container>
-          <div>7. Data Product Policy:<br/>
-            <ul *ngFor="let p of offer.catalogOffering['gx:aggregationOf'][0]['gx:policy']">
-              <li>{{ p }}</li>
-            </ul>
-          </div>
-          <br/><br/>
+        <ng-container *ngIf="offer.dataOffering; else serviceOffering">
+          <app-data-offer-print-view [printTimestamp]="printTimestamp" [offer]="offer"></app-data-offer-print-view>
         </ng-container>
-        <div>{{ offer.dataOffering ? "8. Corresponding " : "1. " }}Service:<br/>
-          {{ offer.catalogOffering["schema:name"] }}
-        </div>
-        <br/><br/>
-        <div>{{ offer.dataOffering ? "9. " : "2. " }}Description:<br/>
-          {{ offer.catalogOffering["schema:description"] || "-" }}
-        </div>
-        <br/><br/>
-        <div>{{ offer.dataOffering ? "10. " : "3. " }}Service Provider:<br/>
-          {{ getParticipentName(offer.catalogOffering["gx:providedBy"].id) }}<br/>
-          {{ offer.catalogOffering["gx:providedBy"].id }}
-        </div>
-        <br/><br/>
-        <div>{{ offer.dataOffering ? "11. " : "4. " }}Data Protection Regime:<br/>
-          <ng-container *ngIf="isDprUndefinedOrEmpty(offer.catalogOffering) else dprList">
-            -
-          </ng-container>
-          <ng-template #dprList>
-            <ul *ngFor="let r of offer.catalogOffering['gx:dataProtectionRegime']">
-              <li>{{ r }}</li>
-            </ul>
-          </ng-template>
-        </div>
-        <br/><br/>
-        <div>{{ offer.dataOffering ? "12. " : "5. " }}Data Account Export:<br/>
-          <ul *ngFor="let e of offer.catalogOffering['gx:dataAccountExport']">
-            <li>
-              Format Type: {{ e["gx:formatType"] }}<br/>
-              Access Type: {{ e["gx:accessType"] }}<br/>
-              Request Type: {{ e["gx:requestType"] }}
-            </li>
-          </ul>
-        </div>
-        <br/><br/>
-        <div>{{ offer.dataOffering ? "13. " : "6. " }}Terms & Conditions:<br/>
-          <ul *ngFor="let tnc of offer.catalogOffering['gx:termsAndConditions']">
-            <li>
-              <span>URL: {{ tnc['gx:URL'] }} (Hash: {{ tnc["gx:hash"] }})</span>
-            </li>
-          </ul>
-        </div>
-        <br/><br/>
-        <div>{{ offer.dataOffering ? "14. " : "7. " }}Service Policy:<br/>
-          <ul *ngFor="let p of offer.catalogOffering['gx:policy']">
-            <li>{{ p }}</li>
-          </ul>
-        </div>
-        <br/><br/>
-        <div>{{ offer.dataOffering ? "15. " : "8. " }}POSSIBLE-X enforced policy:<br/>
-          <div *ngFor="let ep of offer.enforcementPolicies">
-            <div *ngIf="isEverythingAllowedPolicy(ep)">
-              Everything is allowed.
-            </div>
-            <div *ngIf="isParticipantRestrictionPolicy(ep)">
-              Contracting is restricted to the following organizations:
-              <ul *ngFor="let org of asParticipantRestrictionPolicy(ep).allowedParticipants">
-                <li>
-                  {{ getParticipentName(org) }}
-                  {{ org }}
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
+        <ng-template #serviceOffering>
+          <app-service-offer-print-view [printTimestamp]="printTimestamp"
+                                        [offer]="offer"></app-service-offer-print-view>
+        </ng-template>
       </div>
     </ng-container>
   </c-modal-body>
@@ -136,7 +20,7 @@
       <div class="flex justify-end p-3 gap-2">
         <button [useExistingCss]="true" cButton color="primary" shape="rounded-0" printSectionId="print-section"
                 ngxPrint
-                styleSheetFile="./offer-print-view.component.scss"
+                styleSheetFile="./offer-print-view.component.scss,./service-offer-print-view/service-offer-print-view.component.scss,./data-offer-print-view/data-offer-print-view.component.scss"
                 printTitle="offerPrintView_{{ getFormattedTimestamp(printTimestamp) }}_{{ getUrnUuid(offer.catalogOffering.id)}}">
           Print
         </button>

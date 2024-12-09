@@ -1,0 +1,11 @@
+ul {
+  list-style-type: square;
+  list-style-position: inside;
+  margin-left: -0.75em;
+}
+
+div {
+  @apply text-center;
+  @apply text-black;
+}
+
