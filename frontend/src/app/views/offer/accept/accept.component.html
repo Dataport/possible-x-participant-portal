@@ -105,7 +105,7 @@
         </div>
         <app-enforcement-policy-view [enforcementPolicies]="offer.enforcementPolicies"/>
         <div class="flex justify-end p-3">
-          <button (click)="setTimestamp()" [cModalToggle]="'modalOfferPrintView'" cButton color="primary"
+          <button [cModalToggle]="'modalOfferPrintView'" cButton color="primary"
                   shape="rounded-0">Print View
           </button>
         </div>
@@ -170,4 +170,4 @@
   </div>
 </div>
 
-<app-offer-print-view [offer]="offer" [printTimestamp]="printTimestamp"></app-offer-print-view>
+<app-offer-print-view [offer]="offer"></app-offer-print-view>

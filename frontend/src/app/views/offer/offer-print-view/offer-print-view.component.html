@@ -6,11 +6,10 @@
     <ng-container *ngIf="offer">
       <div id="print-section">
         <ng-container *ngIf="offer.dataOffering; else serviceOffering">
-          <app-data-offer-print-view [printTimestamp]="printTimestamp" [offer]="offer"></app-data-offer-print-view>
+          <app-data-offer-print-view [offer]="offer"></app-data-offer-print-view>
         </ng-container>
         <ng-template #serviceOffering>
-          <app-service-offer-print-view [printTimestamp]="printTimestamp"
-                                        [offer]="offer"></app-service-offer-print-view>
+          <app-service-offer-print-view [offer]="offer"></app-service-offer-print-view>
         </ng-template>
       </div>
     </ng-container>
@@ -21,7 +20,7 @@
         <button [useExistingCss]="true" cButton color="primary" shape="rounded-0" printSectionId="print-section"
                 ngxPrint
                 styleSheetFile="./offer-print-view.component.scss,./service-offer-print-view/service-offer-print-view.component.scss,./data-offer-print-view/data-offer-print-view.component.scss"
-                printTitle="offerPrintView_{{ getFormattedTimestamp(printTimestamp) }}_{{ getUrnUuid(offer.catalogOffering.id)}}">
+                printTitle="offerPrintView_{{ getFormattedOfferRetrievalTimestamp() }}_{{ getUrnUuid(offer.catalogOffering.id)}}">
           Print
         </button>
       </div>

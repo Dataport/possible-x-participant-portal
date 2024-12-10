@@ -13,7 +13,6 @@ import {
 })
 export class DataOfferPrintViewComponent {
   @Input() offer?: IOfferDetailsTO = undefined;
-  @Input() printTimestamp?: Date = undefined;
 
   protected isEverythingAllowedPolicy = isEverythingAllowedPolicy;
 

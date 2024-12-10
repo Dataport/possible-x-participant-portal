@@ -14,7 +14,6 @@ import {DatePipe} from "@angular/common";
 })
 export class OfferPrintViewComponent {
   @Input() offer?: IOfferDetailsTO = undefined;
-  @Input() printTimestamp?: Date = undefined;
   @ViewChild('modalContent') modalContent: ElementRef;
 
   constructor(private datePipe: DatePipe) {}
@@ -29,7 +28,7 @@ export class OfferPrintViewComponent {
     }
   }
 
-  getFormattedTimestamp(date: Date): string {
-    return this.datePipe.transform(date, 'yyyyMMdd_HHmmss_z') || '';
+  getFormattedOfferRetrievalTimestamp(): string {
+    return this.datePipe.transform(this.offer?.offerRetrievalDate, 'yyyyMMdd_HHmmss_z') || '';
   }
 }

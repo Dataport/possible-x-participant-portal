@@ -35,7 +35,6 @@ export class AcceptComponent implements OnChanges {
   isConsumed = false;
   isPoliciesAccepted = false;
   isTnCAccepted = false;
-  printTimestamp?: Date;
 
   constructor(private apiService: ApiService) {
   }
@@ -75,10 +74,6 @@ export class AcceptComponent implements OnChanges {
 
   containsPII(catalogOffering: IPxExtendedServiceOfferingCredentialSubject): boolean {
     return catalogOffering["gx:aggregationOf"][0]["gx:containsPII"];
-  }
-
-  setTimestamp() {
-    this.printTimestamp = new Date();
   }
 
   isHttpOrHttps(url: string): boolean {
