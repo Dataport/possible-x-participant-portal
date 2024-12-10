@@ -1,5 +1,6 @@
 package eu.possiblex.participantportal.business.control;
 
+import eu.possiblex.participantportal.business.entity.OfferRetrievalResponseBE;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedLegalParticipantCredentialSubjectSubset;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
@@ -24,9 +25,9 @@ public interface FhCatalogClient {
     FhCatalogIdResponse addServiceOfferingToFhCatalog(
         PxExtendedServiceOfferingCredentialSubject serviceOfferingCredentialSubject, boolean doesContainData);
 
-    PxExtendedServiceOfferingCredentialSubject getFhCatalogOffer(String offeringId) throws OfferNotFoundException;
+    OfferRetrievalResponseBE getFhCatalogOffer(String offeringId) throws OfferNotFoundException;
 
-    PxExtendedLegalParticipantCredentialSubjectSubset getFhCatalogParticipant(String participant_id)
+    PxExtendedLegalParticipantCredentialSubjectSubset getFhCatalogParticipant(String participantId)
         throws ParticipantNotFoundException;
 
     /**

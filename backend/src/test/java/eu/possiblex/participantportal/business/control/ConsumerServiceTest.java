@@ -27,6 +27,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.test.context.ContextConfiguration;
 
+import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -60,7 +61,9 @@ class ConsumerServiceTest {
         reset(edcClient);
         reset(fhCatalogClient);
         PxExtendedServiceOfferingCredentialSubject fhCatalogOffer = getPxExtendedServiceOfferingCredentialSubject(true);
-        Mockito.when(fhCatalogClient.getFhCatalogOffer(EdcClientFake.FAKE_ID)).thenReturn(fhCatalogOffer);
+        OffsetDateTime offerRetrievalDate = OffsetDateTime.now();
+        Mockito.when(fhCatalogClient.getFhCatalogOffer(EdcClientFake.FAKE_ID)).thenReturn(new OfferRetrievalResponseBE(fhCatalogOffer,
+            offerRetrievalDate));
         DcatCatalog catalog = new DcatCatalog();
         DcatDataset dataset = new DcatDataset();
         dataset.setId(EdcClientFake.FAKE_ID);
@@ -99,6 +102,7 @@ class ConsumerServiceTest {
         assertEquals(FhCatalogClientFake.FAKE_DID, response.getProviderDetails().getDid());
         assertEquals(FhCatalogClientFake.FAKE_EMAIL_ADDRESS, response.getProviderDetails().getMailAddress());
         assertEquals(2, response.getParticipantNames().size());
+        assertEquals(offerRetrievalDate, response.getOfferRetrievalDate());
     }
 
     @Test
@@ -110,7 +114,9 @@ class ConsumerServiceTest {
         reset(fhCatalogClient);
         PxExtendedServiceOfferingCredentialSubject fhCatalogOffer = getPxExtendedServiceOfferingCredentialSubject(
             false);
-        Mockito.when(fhCatalogClient.getFhCatalogOffer(EdcClientFake.FAKE_ID)).thenReturn(fhCatalogOffer);
+        OffsetDateTime offerRetrievalDate = OffsetDateTime.now();
+        Mockito.when(fhCatalogClient.getFhCatalogOffer(EdcClientFake.FAKE_ID)).thenReturn(new OfferRetrievalResponseBE(fhCatalogOffer,
+            offerRetrievalDate));
         DcatCatalog catalog = new DcatCatalog();
         DcatDataset dataset = new DcatDataset();
         dataset.setId(EdcClientFake.FAKE_ID);
@@ -146,6 +152,7 @@ class ConsumerServiceTest {
         assertEquals(FhCatalogClientFake.FAKE_DID, response.getProviderDetails().getDid());
         assertEquals(FhCatalogClientFake.FAKE_EMAIL_ADDRESS, response.getProviderDetails().getMailAddress());
         assertEquals(1, response.getParticipantNames().size());
+        assertEquals(offerRetrievalDate, response.getOfferRetrievalDate());
     }
 
     private PxExtendedServiceOfferingCredentialSubject getPxExtendedServiceOfferingCredentialSubject(

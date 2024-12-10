@@ -11,6 +11,7 @@ import eu.possiblex.participantportal.business.entity.exception.NegotiationFaile
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
 
+import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +55,7 @@ public class ConsumerServiceFake implements ConsumerService {
         response.setCatalogOffering(cs);
         response.setProviderDetails(ParticipantWithMailBE.builder().did(FAKE_DID).mailAddress(FAKE_EMAIL_ADDRESS).build());
         response.setParticipantNames(Map.of(FAKE_DID, ParticipantNameBE.builder().did(FAKE_DID).build()));
+        response.setOfferRetrievalDate(OffsetDateTime.now());
 
         return response;
     }

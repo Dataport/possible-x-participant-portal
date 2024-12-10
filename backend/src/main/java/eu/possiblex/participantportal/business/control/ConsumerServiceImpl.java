@@ -86,8 +86,9 @@ public class ConsumerServiceImpl implements ConsumerService {
     public SelectOfferResponseBE selectContractOffer(SelectOfferRequestBE request) throws OfferNotFoundException,
         ParticipantNotFoundException {
         // get offer from FH Catalog and parse the attributes needed to get the offer from EDC Catalog
-        PxExtendedServiceOfferingCredentialSubject fhCatalogOffer = fhCatalogClient.getFhCatalogOffer(
+        OfferRetrievalResponseBE offerRetrievalResponseBE = fhCatalogClient.getFhCatalogOffer(
             request.getFhCatalogOfferId());
+        PxExtendedServiceOfferingCredentialSubject fhCatalogOffer = offerRetrievalResponseBE.getCatalogOffering();
         boolean isDataOffering = !(fhCatalogOffer.getAggregationOf() == null || fhCatalogOffer.getAggregationOf()
             .isEmpty());
         log.info("got fh catalog offer {}", fhCatalogOffer);
@@ -130,6 +131,7 @@ public class ConsumerServiceImpl implements ConsumerService {
         response.setEnforcementPolicies(enforcementPolicies);
         response.setProviderDetails(consumerServiceMapper.mapToParticipantWithMailBE(providerDetails));
         response.setParticipantNames(participantNamesMap);
+        response.setOfferRetrievalDate(offerRetrievalResponseBE.getOfferRetrievalDate());
 
         return response;
     }

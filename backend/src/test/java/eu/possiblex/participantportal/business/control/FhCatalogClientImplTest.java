@@ -1,6 +1,7 @@
 package eu.possiblex.participantportal.business.control;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.possiblex.participantportal.business.entity.OfferRetrievalResponseBE;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedLegalParticipantCredentialSubjectSubset;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
@@ -19,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -55,7 +57,8 @@ class FhCatalogClientImplTest {
 
         // WHEN a dataset is retrieved
 
-        PxExtendedServiceOfferingCredentialSubject offer = fhCatalogClient.getFhCatalogOffer("some ID");
+        OfferRetrievalResponseBE offerRetrievalResponseBE = fhCatalogClient.getFhCatalogOffer("some ID");
+        PxExtendedServiceOfferingCredentialSubject offer = offerRetrievalResponseBE.getCatalogOffering();
 
         // THEN the offer should contain the data parsed from the test FH Catalog offer
 
@@ -63,6 +66,7 @@ class FhCatalogClientImplTest {
         Assertions.assertFalse(offer.getAggregationOf().isEmpty());
         Assertions.assertEquals("EXPECTED_ASSET_ID_VALUE", offer.getAssetId());
         Assertions.assertEquals("EXPECTED_PROVIDER_URL_VALUE", offer.getProviderUrl());
+        Assertions.assertTrue(offerRetrievalResponseBE.getOfferRetrievalDate().isBefore(OffsetDateTime.now()));
     }
 
     @Test
@@ -83,7 +87,8 @@ class FhCatalogClientImplTest {
 
         // WHEN a dataset is retrieved
 
-        PxExtendedServiceOfferingCredentialSubject offer = fhCatalogClient.getFhCatalogOffer("some ID");
+        OfferRetrievalResponseBE offerRetrievalResponseBE = fhCatalogClient.getFhCatalogOffer("some ID");
+        PxExtendedServiceOfferingCredentialSubject offer = offerRetrievalResponseBE.getCatalogOffering();
 
         // THEN the offer should contain the data parsed from the test FH Catalog offer
 
@@ -91,6 +96,7 @@ class FhCatalogClientImplTest {
         Assertions.assertNull(offer.getAggregationOf());
         Assertions.assertEquals("EXPECTED_ASSET_ID_VALUE", offer.getAssetId());
         Assertions.assertEquals("EXPECTED_PROVIDER_URL_VALUE", offer.getProviderUrl());
+        Assertions.assertTrue(offerRetrievalResponseBE.getOfferRetrievalDate().isBefore(OffsetDateTime.now()));
     }
 
     @Test

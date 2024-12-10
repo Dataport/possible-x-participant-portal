@@ -25,6 +25,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ContextConfiguration;
 
 import java.math.BigInteger;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -62,7 +63,7 @@ class ContractServiceTest {
             ParticipantDetailsSparqlQueryResult.builder().name(OmejdnConnectorApiClientFake.PARTICIPANT_NAME).build()));
         Mockito.when(fhCatalogClient.getOfferingDetails(any())).thenReturn(Map.of(EdcClientFake.FAKE_ID,
             OfferingDetailsSparqlQueryResult.builder().assetId(EdcClientFake.FAKE_ID).build()));
-        Mockito.when(fhCatalogClient.getFhCatalogOffer(any())).thenReturn(pxExtendedServiceOfferingCredentialSubject);
+        Mockito.when(fhCatalogClient.getFhCatalogOffer(any())).thenReturn(new OfferRetrievalResponseBE(pxExtendedServiceOfferingCredentialSubject, OffsetDateTime.now()));
 
         List<ContractAgreementBE> expected = getContractAgreementBEs();
         List<ContractAgreementBE> actual = contractService.getContractAgreements();

@@ -22,6 +22,7 @@ public interface ConsumerApiMapper {
     @Mapping(target = "enforcementPolicies", source = "enforcementPolicies")
     @Mapping(target = "providerDetails", source = "providerDetails")
     @Mapping(target = "participantNames", source = "participantNames")
+    @Mapping(target = "offerRetrievalDate", source = "offerRetrievalDate")
     OfferDetailsTO selectOfferResponseBEToOfferDetailsTO(SelectOfferResponseBE selectOfferResponseBE);
 
     AcceptOfferResponseTO acceptOfferResponseBEToAcceptOfferResponseTO(AcceptOfferResponseBE acceptOfferResponseBE);
