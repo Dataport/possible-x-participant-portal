@@ -1,6 +1,7 @@
 import cz.habarta.typescript.generator.JsonLibrary
 import cz.habarta.typescript.generator.TypeScriptFileType
 import cz.habarta.typescript.generator.TypeScriptOutputKind
+import org.yaml.snakeyaml.Yaml
 
 plugins {
   java
@@ -63,20 +64,55 @@ tasks.getByName<Jar>("jar") {
   enabled = false
 }
 
-tasks.register<Copy>("copyWebApp") {
-  outputs.upToDateWhen { false }
-  description = "Copies the GUI into the resources of the Spring project."
-  group = "Application"
-  from("$rootDir/frontend/build/resources")
-  into(layout.buildDirectory.dir("resources/main/static/."))
+tasks.register<Exec>("buildFrontend") {
+  description = "Builds the frontend application."
+  group = "build"
+  workingDir = file("$rootDir/frontend")
+  commandLine("npm", "run", "build")
 }
 
-tasks.named("compileJava") {
-  dependsOn(":frontend:npmBuild")
+tasks.register<Exec>("startFrontend") {
+  dependsOn("buildFrontend")
+  val activeProfile = project.findProperty("activeProfile")?.toString()
+  val port = project.findProperty("port")?.toString()
+  description = "Starts the frontend application."
+  group = "build"
+  workingDir = file("$rootDir/frontend")
+  if (activeProfile != null) {
+    commandLine("npm", "start", "--", "--port", port,"--configuration=$activeProfile")
+  } else {
+    commandLine("npm", "start", "--", "--port", port)
+  }
 }
 
-tasks.named("processResources") {
-  dependsOn("copyWebApp")
+tasks.register<Exec>("startBackend") {
+  description = "Builds the backend application."
+  group = "build"
+  workingDir = file("$rootDir")
+  commandLine("./gradlew", "bootJar")
+}
+
+tasks.named<JavaExec>("bootRun") {
+  val activeProfile = project.findProperty("args")?.toString()
+  if (activeProfile != null) {
+      systemProperty("spring.profiles.active", activeProfile)
+  }
+  val yaml = Yaml()
+  val yamlFileName = if (activeProfile != null) "application-$activeProfile.yml" else "application.yml"
+  val applicationYaml = file("$rootDir/backend/src/main/resources/$yamlFileName")
+  val config = yaml.load<Map<String, Any>>(applicationYaml.inputStream())
+
+  val serverPort = (config["server"] as? Map<String, Any>)?.get("port") ?: "8080"
+  val incrementedPort = serverPort.toString().toInt().plus(1).toString()
+  dependsOn("startBackend")
+  doFirst {
+    Thread {
+      exec {
+        workingDir = file("$rootDir")
+        commandLine("./gradlew", "startFrontend", "-PactiveProfile=$activeProfile", "-Pport=$incrementedPort")
+      }
+    }.start()
+  }
 }
 
 tasks {
