@@ -31,6 +31,7 @@ export FH_CATALOG_URL="Fraunhofer catalogue URL"
 export FH_CATALOG_SECRETKEY="secret key"
 export SDCREATIONWIZARDAPI_BASEURL="SD Creation Wizard API base URL"
 export PARTICIPANTID="participant ID"
+export PREFILLFIELDS_DATAPRODUCT_JSONFILEPATH="File Path"
 ```
 
 Through gradle:
@@ -46,3 +47,20 @@ java -jar backend/build/libs/backend-x.y.z.jar
 ```
 
 Once the service is running, you can access it at http://localhost:8080/ .
+
+## Environment Variables
+### PREFILLFIELDS_DATAPRODUCT_JSONFILEPATH
+This environment variable should be set to the path of a JSON file containing text for prefilling fields for a 
+data product. The intention is to have an easy way to configure prefill texts for different use cases.
+
+Currently, the JSON file should contain the following fields:
+```
+{
+  "serviceOfferingName": "Title",
+  "serviceOfferingDescription": "Description"
+}
+```
+It is possible to add a placeholder `<Data resource name>` in the `serviceOfferingName` and `serviceOfferingDescription` 
+fields that would be replaced with the data resource name in the frontend.
+
+If no file path is provided or the file cannot be found, a default JSON file with default values is used.

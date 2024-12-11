@@ -1,15 +1,18 @@
 package eu.possiblex.participantportal.business.control;
 
+import eu.possiblex.participantportal.business.entity.OfferRetrievalResponseBE;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedLegalParticipantCredentialSubjectSubset;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.ParticipantNotFoundException;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
-import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsSparqlQueryResult;
-import eu.possiblex.participantportal.business.entity.fh.ParticipantNameSparqlQueryResult;
+import eu.possiblex.participantportal.business.entity.fh.ParticipantDetailsSparqlQueryResult;
+
+import java.util.Map;
 
 import java.util.Collection;
-import java.util.Map;
+import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsSparqlQueryResult;
+
 
 public interface FhCatalogClient {
     /**
@@ -22,10 +25,10 @@ public interface FhCatalogClient {
     FhCatalogIdResponse addServiceOfferingToFhCatalog(
         PxExtendedServiceOfferingCredentialSubject serviceOfferingCredentialSubject, boolean doesContainData);
 
-    PxExtendedServiceOfferingCredentialSubject getFhCatalogOffer(String offeringId) throws OfferNotFoundException;
+    OfferRetrievalResponseBE getFhCatalogOffer(String offeringId) throws OfferNotFoundException;
 
-    PxExtendedLegalParticipantCredentialSubjectSubset getFhCatalogParticipant(String participant_id) throws
-        ParticipantNotFoundException;
+    PxExtendedLegalParticipantCredentialSubjectSubset getFhCatalogParticipant(String participantId)
+        throws ParticipantNotFoundException;
 
     /**
      * Delete an offer form the FH catalog.
@@ -38,24 +41,16 @@ public interface FhCatalogClient {
     /**
      * Get the names of the legal participants.
      *
-     * @param dapsIds the IDs of the participants
+     * @param participantDids the IDs of the participants
      * @return the names of the participants
      */
-    Map<String, ParticipantNameSparqlQueryResult> getParticipantNames(Collection<String> dapsIds);
+    Map<String, ParticipantDetailsSparqlQueryResult> getParticipantDetails(Collection<String> participantDids);
 
     /**
-     * Get the details of the offerings with the type "gx:ServiceOffering".
+     * Get the details of the offerings with the type "px:PossibleXServiceOfferingExtension".
      *
-     * @param assetIds the IDs of the service offerings
+     * @param assetIds referenced in the offerings
      * @return the details of the service offerings
      */
-    Map<String, OfferingDetailsSparqlQueryResult> getServiceOfferingDetails(Collection<String> assetIds);
-
-    /**
-     * Get the details of the offerings with the type "px:DataProduct".
-     *
-     * @param assetIds the IDs of the data offerings
-     * @return the details of the data offerings
-     */
-    Map<String, OfferingDetailsSparqlQueryResult> getDataOfferingDetails(Collection<String> assetIds);
+    Map<String, OfferingDetailsSparqlQueryResult> getOfferingDetails(Collection<String> assetIds);
 }

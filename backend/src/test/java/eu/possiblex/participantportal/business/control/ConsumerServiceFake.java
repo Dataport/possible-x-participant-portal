@@ -1,5 +1,6 @@
 package eu.possiblex.participantportal.business.control;
 
+import eu.possiblex.participantportal.application.entity.policies.EnforcementPolicy;
 import eu.possiblex.participantportal.business.entity.*;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.edc.catalog.DcatDataset;
@@ -10,8 +11,10 @@ import eu.possiblex.participantportal.business.entity.exception.NegotiationFaile
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
 
+import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class ConsumerServiceFake implements ConsumerService {
 
@@ -28,6 +31,10 @@ public class ConsumerServiceFake implements ConsumerService {
     public static final String BAD_TRANSFER_OFFER_ID = "badTransfer";
 
     public static final String VALID_COUNTER_PARTY_ADDRESS = "some provider EDC URL";
+
+    public static final String FAKE_DID = "did:web:123";
+
+    public static final String FAKE_EMAIL_ADDRESS = "example@mail.com";
 
     @Override
     public SelectOfferResponseBE selectContractOffer(SelectOfferRequestBE request) throws OfferNotFoundException {
@@ -46,6 +53,9 @@ public class ConsumerServiceFake implements ConsumerService {
         PxExtendedServiceOfferingCredentialSubject cs = new PxExtendedServiceOfferingCredentialSubject();
         cs.setProviderUrl(VALID_COUNTER_PARTY_ADDRESS);
         response.setCatalogOffering(cs);
+        response.setProviderDetails(ParticipantWithMailBE.builder().did(FAKE_DID).mailAddress(FAKE_EMAIL_ADDRESS).build());
+        response.setParticipantNames(Map.of(FAKE_DID, ParticipantNameBE.builder().did(FAKE_DID).build()));
+        response.setOfferRetrievalDate(OffsetDateTime.now());
 
         return response;
     }
@@ -72,5 +82,11 @@ public class ConsumerServiceFake implements ConsumerService {
             case BAD_TRANSFER_OFFER_ID -> throw new TransferFailedException("transfer failed");
             default -> TransferOfferResponseBE.builder().transferProcessState(TransferProcessState.COMPLETED).build();
         };
+    }
+
+    @Override
+    public List<EnforcementPolicy> getEnforcementPoliciesFromEdcPolicies(List<Policy> policies) {
+
+        return List.of();
     }
 }

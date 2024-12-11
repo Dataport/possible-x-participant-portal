@@ -64,7 +64,7 @@ describe('OfferingWizardExtensionComponent', () => {
 
   beforeEach(async () => {
     const apiServiceSpy = jasmine.createSpyObj('ApiService',
-      ['createServiceOffering', 'getGxServiceOfferingShape', 'getGxDataResourceShape', 'createDataOffering', 'getParticipantId']);
+      ['createServiceOffering', 'getGxServiceOfferingShape', 'getGxDataResourceShape', 'createDataOffering', 'getPrefillFields']);
 
     await TestBed.configureTestingModule({
       declarations: [OfferingWizardExtensionComponent, MockWizardExtension, MockStatusMessageComponent],
@@ -133,13 +133,13 @@ describe('OfferingWizardExtensionComponent', () => {
 
   });
 
-  it('should call getParticipantId on apiService when retrieveAndSetParticipantId is called', async () => {
-    const mockResponse = Promise.resolve({participantId: "dummy"});
-    apiService.getParticipantId.and.returnValue(mockResponse);
+  it('should call getPrefillFields on apiService when retrieveAndSetPrefillFields is called', async () => {
+    const mockResponse = Promise.resolve({participantId: "dummy", dataProductPrefillFields: { serviceOfferingName: "dummy", serviceOfferingDescription: "dummy" }});
+    apiService.getPrefillFields.and.returnValue(mockResponse);
 
 
-    component.retrieveAndSetParticipantId().then(() => {
-      expect(apiService.getParticipantId).toHaveBeenCalled();
+    component.retrieveAndSetPrefillFields().then(() => {
+      expect(apiService.getPrefillFields).toHaveBeenCalled();
     });
 
   });

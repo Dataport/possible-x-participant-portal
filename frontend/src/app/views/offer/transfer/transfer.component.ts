@@ -10,8 +10,7 @@ import {
 } from '@angular/core';
 import {
   IAcceptOfferResponseTO,
-  IOfferDetailsTO,
-  IParticipantDetailsTO
+  IOfferDetailsTO
 } from "../../../services/mgmt/api/backend";
 import {StatusMessageComponent} from "../../common-views/status-message/status-message.component";
 import {ApiService} from "../../../services/mgmt/api/api.service";
@@ -25,7 +24,6 @@ import {HttpErrorResponse} from "@angular/common/http";
 export class TransferComponent implements OnChanges {
   @Input() contract?: IAcceptOfferResponseTO = undefined;
   @Input() offer?: IOfferDetailsTO = undefined;
-  @Input() providerDetails?: IParticipantDetailsTO = undefined;
   @Output() dismiss: EventEmitter<any> = new EventEmitter();
   @ViewChild('dataTransferStatusMessage') dataTransferStatusMessage!: StatusMessageComponent;
   dismissButtonLabel: string;

@@ -7,7 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @NoArgsConstructor
@@ -28,5 +30,23 @@ public class SelectOfferResponseBE {
      */
     private boolean dataOffering;
 
+    /**
+     * The enforcement policies for this offer.
+     */
     private List<EnforcementPolicy> enforcementPolicies;
+
+    /**
+     * The provider details.
+     */
+    private ParticipantWithMailBE providerDetails;
+
+    /**
+     * The names of the participants referenced in the catalog offering.
+     */
+    private Map<String, ParticipantNameBE> participantNames;
+
+    /**
+     * The timestamp when the offer was retrieved from the catalog.
+     */
+    private OffsetDateTime offerRetrievalDate;
 }

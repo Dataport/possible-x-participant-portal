@@ -11,7 +11,7 @@
                class="form-control" placeholder="{{input.example}}">
         <textarea *ngIf="input.name == 'Description'" [formControlName]="input.id" class="form-control"
                   placeholder="{{input.example}}"
-                  rows="3"></textarea>
+                  rows="4"></textarea>
         <div cFormText>
           {{ input.description[this.translate.currentLang] }}
         </div>

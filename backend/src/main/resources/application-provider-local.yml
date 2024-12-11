@@ -6,11 +6,6 @@ edc:
   mgmt-base-url: http://localhost:19193/management
   protocol-base-url: http://localhost:19194/protocol
 
-fh:
-  catalog:
-    url: url
-    secret-key: secret
-
 participant-id: "did:web:example-organization.eu"
 
 s3:

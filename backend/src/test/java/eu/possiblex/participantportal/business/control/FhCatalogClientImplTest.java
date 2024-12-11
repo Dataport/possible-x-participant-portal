@@ -1,11 +1,13 @@
 package eu.possiblex.participantportal.business.control;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.possiblex.participantportal.business.entity.OfferRetrievalResponseBE;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedLegalParticipantCredentialSubjectSubset;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.ParticipantNotFoundException;
 import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsSparqlQueryResult;
+import eu.possiblex.participantportal.business.entity.fh.ParticipantDetailsSparqlQueryResult;
 import eu.possiblex.participantportal.utils.TestUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -18,10 +20,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 
@@ -53,11 +55,10 @@ class FhCatalogClientImplTest {
         Mockito.when(technicalFhCatalogClient.getFhCatalogOfferWithData(Mockito.anyString()))
             .thenReturn(fhCatalogOfferContent);
 
-
         // WHEN a dataset is retrieved
 
-        PxExtendedServiceOfferingCredentialSubject offer = fhCatalogClient.getFhCatalogOffer("some ID");
-
+        OfferRetrievalResponseBE offerRetrievalResponseBE = fhCatalogClient.getFhCatalogOffer("some ID");
+        PxExtendedServiceOfferingCredentialSubject offer = offerRetrievalResponseBE.getCatalogOffering();
 
         // THEN the offer should contain the data parsed from the test FH Catalog offer
 
@@ -65,6 +66,7 @@ class FhCatalogClientImplTest {
         Assertions.assertFalse(offer.getAggregationOf().isEmpty());
         Assertions.assertEquals("EXPECTED_ASSET_ID_VALUE", offer.getAssetId());
         Assertions.assertEquals("EXPECTED_PROVIDER_URL_VALUE", offer.getProviderUrl());
+        Assertions.assertTrue(offerRetrievalResponseBE.getOfferRetrievalDate().isBefore(OffsetDateTime.now()));
     }
 
     @Test
@@ -80,13 +82,13 @@ class FhCatalogClientImplTest {
         WebClientResponseException expectedException = Mockito.mock(WebClientResponseException.class);
         Mockito.when(expectedException.getStatusCode()).thenReturn(HttpStatus.NOT_FOUND);
         Mockito.when(technicalFhCatalogClient.getFhCatalogOfferWithData(Mockito.anyString()))
-                .thenThrow(expectedException);
-        Mockito.when(technicalFhCatalogClient.getFhCatalogOffer(Mockito.anyString()))
-            .thenReturn(fhCatalogOfferContent);
+            .thenThrow(expectedException);
+        Mockito.when(technicalFhCatalogClient.getFhCatalogOffer(Mockito.anyString())).thenReturn(fhCatalogOfferContent);
 
         // WHEN a dataset is retrieved
 
-        PxExtendedServiceOfferingCredentialSubject offer = fhCatalogClient.getFhCatalogOffer("some ID");
+        OfferRetrievalResponseBE offerRetrievalResponseBE = fhCatalogClient.getFhCatalogOffer("some ID");
+        PxExtendedServiceOfferingCredentialSubject offer = offerRetrievalResponseBE.getCatalogOffering();
 
         // THEN the offer should contain the data parsed from the test FH Catalog offer
 
@@ -94,6 +96,7 @@ class FhCatalogClientImplTest {
         Assertions.assertNull(offer.getAggregationOf());
         Assertions.assertEquals("EXPECTED_ASSET_ID_VALUE", offer.getAssetId());
         Assertions.assertEquals("EXPECTED_PROVIDER_URL_VALUE", offer.getProviderUrl());
+        Assertions.assertTrue(offerRetrievalResponseBE.getOfferRetrievalDate().isBefore(OffsetDateTime.now()));
     }
 
     @Test
@@ -106,7 +109,8 @@ class FhCatalogClientImplTest {
         TechnicalFhCatalogClient technicalFhCatalogClientMock = Mockito.mock(TechnicalFhCatalogClient.class);
         Mockito.when(technicalFhCatalogClientMock.getFhCatalogParticipant(Mockito.anyString()))
             .thenReturn(participantContent);
-        FhCatalogClientImpl sut = new FhCatalogClientImpl(technicalFhCatalogClientMock, new ObjectMapper(), sparqlFhCatalogClient);
+        FhCatalogClientImpl sut = new FhCatalogClientImpl(technicalFhCatalogClientMock, sparqlFhCatalogClient,
+            new ObjectMapper());
 
         // WHEN a participant is retrieved
 
@@ -122,22 +126,49 @@ class FhCatalogClientImplTest {
 
     @Test
     void parseSparqlDataOfferCorrectly() {
-        String sparqlResponse = TestUtils.loadTextFile("unit_tests/FHCatalogClientImplTest/validSparqlResult.json");
+
+        String sparqlResponse = TestUtils.loadTextFile("unit_tests/FHCatalogClientImplTest/validSparqlResultOffer.json");
 
         reset(technicalFhCatalogClient);
         reset(sparqlFhCatalogClient);
-        Mockito.when(sparqlFhCatalogClient.queryCatalog(Mockito.anyString(), Mockito.isNull())).thenReturn(sparqlResponse);
+        Mockito.when(sparqlFhCatalogClient.queryCatalog(Mockito.anyString(), Mockito.isNull()))
+            .thenReturn(sparqlResponse);
 
-        Map<String, OfferingDetailsSparqlQueryResult> queryResultMap = fhCatalogClient.getServiceOfferingDetails(List.of("EXPECTED_ASSET_ID_VALUE"));
+        Map<String, OfferingDetailsSparqlQueryResult> queryResultMap = fhCatalogClient.getOfferingDetails(
+            List.of("EXPECTED_ASSET_ID_VALUE"));
         OfferingDetailsSparqlQueryResult queryResult = queryResultMap.get("EXPECTED_ASSET_ID_VALUE");
 
         verify(sparqlFhCatalogClient).queryCatalog(Mockito.anyString(), Mockito.isNull());
         Assertions.assertNotNull(queryResult);
-        Assertions.assertTrue(!queryResultMap.isEmpty());
+        Assertions.assertFalse(queryResultMap.isEmpty());
         Assertions.assertEquals("EXPECTED_ASSET_ID_VALUE", queryResult.getAssetId());
         Assertions.assertEquals("EXPECTED_PROVIDER_URL_VALUE", queryResult.getProviderUrl());
         Assertions.assertEquals("EXPECTED_NAME_VALUE", queryResult.getName());
         Assertions.assertEquals("EXPECTED_DESCRIPTION_VALUE", queryResult.getDescription());
+    }
+
+    @Test
+    void parseSparqlParticipantCorrectly() {
+
+        String sparqlResponse = TestUtils.loadTextFile("unit_tests/FHCatalogClientImplTest/validSparqlResultParticipant.json");
+
+        reset(technicalFhCatalogClient);
+        reset(sparqlFhCatalogClient);
+        Mockito.when(sparqlFhCatalogClient.queryCatalog(Mockito.anyString(), Mockito.isNull()))
+            .thenReturn(sparqlResponse);
+
+        String participantId = "did:web:portal.dev.possible-x.de:participant:df15587a-0760-32b5-9c42-bb7be66e8076";
+
+        Map<String, ParticipantDetailsSparqlQueryResult> queryResultMap = fhCatalogClient.getParticipantDetails(
+            List.of(participantId));
+        ParticipantDetailsSparqlQueryResult queryResult = queryResultMap.get(participantId);
+
+        verify(sparqlFhCatalogClient).queryCatalog(Mockito.anyString(), Mockito.isNull());
+        Assertions.assertNotNull(queryResult);
+        Assertions.assertFalse(queryResultMap.isEmpty());
+        Assertions.assertEquals(participantId, queryResult.getUri());
+        Assertions.assertEquals("EXPECTED_NAME_VALUE", queryResult.getName());
+        Assertions.assertEquals("EXPECTED_MAIL_ADDRESS_VALUE", queryResult.getMailAddress());
     }
 
     @TestConfiguration
@@ -145,16 +176,19 @@ class FhCatalogClientImplTest {
 
         @Bean
         public SparqlFhCatalogClient sparqlFhCatalogClient() {
+
             return Mockito.mock(SparqlFhCatalogClient.class);
         }
 
         @Bean
         public TechnicalFhCatalogClient technicalFhCatalogClient() {
+
             return Mockito.mock(TechnicalFhCatalogClient.class);
         }
 
         @Bean
         public ObjectMapper objectMapper() {
+
             return new ObjectMapper();
         }
     }

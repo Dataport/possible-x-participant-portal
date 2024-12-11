@@ -1,4 +1,4 @@
-package eu.possiblex.participantportal.application.entity;
+package eu.possiblex.participantportal.business.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ParticipantIdTO {
-    private String participantId;
+public class PrefillFieldsBE {
+    String participantId;
+
+    DataProductPrefillFieldsBE dataProductPrefillFields;
 }

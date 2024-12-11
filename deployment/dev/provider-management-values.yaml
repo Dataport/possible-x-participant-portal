@@ -28,12 +28,13 @@ application:
     - name: provider-management-variables
       data:
         SPRING_PROFILES_ACTIVE: dev
-        FH_CATALOG_URL: https://possible.fokus.fraunhofer.de/api/hub/repo
+        FH_CATALOG_URL: https://catalog.dev.possible-x.de/
         EDC_MGMTBASEURL: https://provider.edc.dev.possible-x.de/management
         EDC_PROTOCOLBASEURL: https://provider.edc.dev.possible-x.de/protocol
         SDCREATIONWIZARDAPI_BASEURL: https://sd-creation-wizard.dev.possible-x.de
         S3_BUCKETSTORAGEREGION: eu-central-3 
         S3_BUCKETNAME: dev-provider-edc-bucket-possible-31952746
         PARTICIPANTID: did:web:didwebservice.dev.possible-x.de:participant:901e847f-bded-32d5-8301-c0e2dfa8439f
+        DAPSSERVER_BASEURL: https://daps.dev.possible-x.de
   secrets:
     - provider-management-secrets

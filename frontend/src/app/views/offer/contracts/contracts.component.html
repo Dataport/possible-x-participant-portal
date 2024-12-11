@@ -6,45 +6,60 @@
       </div>
       <br/>
       <div class="text-xl font-bold text-brand-400">
-        Contract Agreements ({{ contractAgreements.length }})
+        Contract Agreements ({{ sortedAgreements.length }})
       </div>
-      <table class="table table-fixed">
+      <table (matSortChange)="sortData($event)" class="table table-fixed" matSort>
         <thead>
         <tr>
           <th class="w-10">Nr.</th>
-          <th class="w-40">Contract signed</th>
-          <th class="w-1/6">Asset ID</th>
-          <th class="w-1/6">Provider</th>
-          <th class="w-1/6">Consumer</th>
-          <th class="w-1/6">Contract Agreement ID</th>
+          <th class="w-40" mat-sort-header="contractsigned">Contract signed</th>
+          <th class="w-1/6" mat-sort-header="offer">Offer</th>
+          <th class="w-1/6" mat-sort-header="provider">Provider</th>
+          <th class="w-1/6" mat-sort-header="consumer">Consumer</th>
+          <th class="w-1/6" mat-sort-header="contractagreementid">Contract Agreement ID</th>
           <th class="w-1/16"></th>
           <th class="w-1/16"></th>
         </tr>
         </thead>
         <tbody>
-        <ng-container *ngFor="let item of contractAgreements; let i = index">
+        <ng-container *ngFor="let item of sortedAgreements; let i = index">
           <tr>
             <td class="overflow-clip text-nowrap text-ellipsis">{{ i + 1 }}</td>
             <td class="overflow-clip text-nowrap text-ellipsis">{{ item.contractSigningDate | date:'medium' }}</td>
-            <td [cTooltip]="item.assetId" class="overflow-clip text-nowrap text-ellipsis">{{ item.assetId }}</td>
-            <td [cTooltip]="item.providerId"
-                class="overflow-clip text-nowrap text-ellipsis">{{ item.providerId }}
+            <td [cTooltip]="item.assetDetails.name"
+                class="overflow-clip text-nowrap text-ellipsis">{{ item.assetDetails.name }}
             </td>
-            <td [cTooltip]="item.consumerId" class="overflow-clip text-nowrap text-ellipsis">{{ item.consumerId }}</td>
+            <td [cTooltip]="item.providerDetails.name"
+                class="overflow-clip text-nowrap text-ellipsis">{{ item.providerDetails.name }}
+            </td>
+            <td [cTooltip]="item.consumerDetails.name"
+                class="overflow-clip text-nowrap text-ellipsis">{{ item.consumerDetails.name }}
+            </td>
             <td [cTooltip]="item.id" class="overflow-clip text-nowrap text-ellipsis">{{ item.id }}</td>
             <td>
               <button (click)="toggleAccordion(item.id)" cButton class="rounded-none">Details</button>
             </td>
             <td>
-              <button (click)="transferAgain(item)" [disabled]=isTransferButtonDisabled cButton class="rounded-none">Transfer</button>
+              <button *ngIf="isDataOffering(item)" (click)="transferAgain(item)" [disabled]=isTransferButtonDisabled cButton class="rounded-none">
+                Transfer
+              </button>
             </td>
           </tr>
           <tr *ngIf="item.id === expandedItemId">
-            <td (click)="toggleAccordion(item.id)" colspan="8">
-              <span *ngIf="item.assetDetails">Asset Name: {{ item.assetDetails.name }}<br><br></span>
-              <span *ngIf="item.assetDetails">Asset Description: {{ item.assetDetails.description }}<br><br></span>
-              <span>Policy:</span><br>
-              <pre class="custom-pre">{{ getPolicyAsString(item.policy) }}</pre>
+            <td colspan="8">
+              <span *ngIf="item.consumerDetails"><b>Consumer Name:</b> {{ item.consumerDetails.name }}<br></span>
+              <span *ngIf="item.consumerDetails"><b>Consumer DID:</b> {{ item.consumerDetails.did }}<br></span>
+              <span *ngIf="item.consumerDetails"><b>Consumer DAPS ID:</b> {{ item.consumerDetails.dapsId }}<br><br></span>
+              <span *ngIf="item.providerDetails"><b>Provider Name:</b> {{ item.providerDetails.name }}<br></span>
+              <span *ngIf="item.providerDetails"><b>Provider DID:</b> {{ item.providerDetails.did }}<br></span>
+              <span *ngIf="item.providerDetails"><b>Provider DAPS ID:</b> {{ item.providerDetails.dapsId }}<br><br></span>
+              <span *ngIf="item.assetDetails"><b>Offering Name:</b> {{ item.assetDetails.name }}<br></span>
+              <span *ngIf="item.assetDetails"><b>Offering Description:</b> {{ item.assetDetails.description }}
+                <br></span>
+              <span *ngIf="item.assetDetails"><b>Offering Asset ID:</b> {{ item.assetDetails.assetId }}<br></span>
+              <span *ngIf="item.assetDetails"><b>Offering Catalog ID:</b> {{ item.assetDetails.offeringId }}
+                <br><br></span>
+              <app-enforcement-policy-view [enforcementPolicies]="item.enforcementPolicies"/>
             </td>
           </tr>
         </ng-container>

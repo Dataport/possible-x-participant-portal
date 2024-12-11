@@ -1,9 +1,6 @@
 package eu.possiblex.participantportal.application.boundary;
 
-import eu.possiblex.participantportal.application.entity.CreateDataOfferingRequestTO;
-import eu.possiblex.participantportal.application.entity.CreateOfferResponseTO;
-import eu.possiblex.participantportal.application.entity.CreateServiceOfferingRequestTO;
-import eu.possiblex.participantportal.application.entity.ParticipantIdTO;
+import eu.possiblex.participantportal.application.entity.*;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,4 +26,11 @@ public interface ProviderRestApi {
     @PostMapping(value = "/offer/data", produces = MediaType.APPLICATION_JSON_VALUE)
     CreateOfferResponseTO createDataOffering(@RequestBody CreateDataOfferingRequestTO createDataOfferingRequestTO);
 
+    /**
+     * GET endpoint to retrieve the prefill fields for providing offers.
+     *
+     * @return prefill fields
+     */
+    @GetMapping(value = "/prefillFields", produces = MediaType.APPLICATION_JSON_VALUE)
+    PrefillFieldsTO getPrefillFields();
 }

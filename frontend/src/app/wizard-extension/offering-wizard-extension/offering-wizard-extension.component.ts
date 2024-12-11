@@ -25,7 +25,7 @@ import {
   IGxServiceOfferingCredentialSubject,
   INodeKindIRITypeId,
   IParticipantRestrictionPolicy,
-  IPojoCredentialSubject
+  IPojoCredentialSubject, IPrefillFieldsTO
 } from '../../services/mgmt/api/backend';
 import {TBR_DATA_RESOURCE_ID, TBR_LEGITIMATE_INTEREST_ID, TBR_SERVICE_OFFERING_ID} from "../../views/offer/offer-data";
 import {MatStepper} from "@angular/material/stepper";
@@ -44,7 +44,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
   dapsIDs: string[] = [''];
   waitingForResponse = true;
   offerType: string = "data";
-  participantId = "";
+  prefillFields: IPrefillFieldsTO | undefined = undefined;
   serviceOfferingShapeSource = "";
   dataResourceShapeSource = "";
   legitimateInterestShapeSource = "";
@@ -72,7 +72,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
       this.retrieveAndAdaptServiceOfferingShape();
       this.retrieveAndAdaptDataResourceShape();
       this.retrieveLegitimateInterestShape();
-      this.retrieveAndSetParticipantId();
+      this.retrieveAndSetPrefillFields();
       this.resetPossibleSpecificFormValues();
       this.resetAccordionItem();
       this.containsPII = false;
@@ -233,9 +233,9 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
 
     let gxDataResourceCs = {
       "gx:producedBy": {
-        "@id": this.participantId
+        "@id": this.prefillFields.participantId
       },
-      "gx:copyrightOwnedBy": [this.participantId],
+      "gx:copyrightOwnedBy": [this.prefillFields.participantId],
       "gx:containsPII": false,
       "@type": "gx:DataResource"
     } as any;
@@ -257,15 +257,16 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
 
     let gxServiceOfferingCs = {
       "gx:providedBy": {
-        "@id": this.participantId
+        "@id": this.prefillFields?.participantId
       },
       "@type": "gx:ServiceOffering",
     } as any;
 
     if (this.isOfferingDataOffering()) {
       let gxDataResourceJsonSd: IGxDataResourceCredentialSubject = this.trimStringsInDataStructure(this.gxDataResourceWizard.generateJsonCs());
-      gxServiceOfferingCs["schema:name"] = "Data Offering Service - " + (gxDataResourceJsonSd["schema:name"] ? gxDataResourceJsonSd["schema:name"]["@value"] : "data resource name not available");
-      //gxServiceOfferingCs["schema:description"] = " ";//"Data Offering Service provides data (" + (gxDataResourceJsonSd["schema:name"] ? gxDataResourceJsonSd["schema:name"]["@value"] : "data resource name not available") + ") securely through the Possible Dataspace software solution. The Data Offering Service enables secure and sovereign data exchange between different organizations using the Eclipse Dataspace Connector (EDC). The service seamlessly integrates with IONOS S3 buckets to ensure reliable and scalable data storage and transfer.";
+      let dataResourceName = gxDataResourceJsonSd["schema:name"] ? gxDataResourceJsonSd["schema:name"]["@value"] : "data resource name not available";
+      gxServiceOfferingCs["schema:name"] = this.prefillFields.dataProductPrefillFields.serviceOfferingName.replace("<Data resource name>", dataResourceName);
+      gxServiceOfferingCs["schema:description"] = this.prefillFields.dataProductPrefillFields.serviceOfferingDescription.replace("<Data resource name>", dataResourceName);
     }
 
     this.loadShape(this.gxServiceOfferingWizard, this.serviceOfferingShapeSource, TBR_SERVICE_OFFERING_ID).then(_ => {
@@ -274,12 +275,12 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
 
   }
 
-  async retrieveAndSetParticipantId() {
+  async retrieveAndSetPrefillFields() {
     try {
-      console.log("Retrieving participant id");
-      const response = await this.apiService.getParticipantId();
+      console.log("Retrieving prefill fields");
+      const response = await this.apiService.getPrefillFields();
       console.log(response);
-      this.participantId = response.participantId;
+      this.prefillFields = response;
     } catch (e) {
       console.error(e);
     }

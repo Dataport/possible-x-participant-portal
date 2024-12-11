@@ -1,10 +1,29 @@
 import { AcceptComponent } from './accept.component';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ApiService } from '../../../services/mgmt/api/api.service';
-import {IAcceptOfferResponseTO, INegotiationState} from '../../../services/mgmt/api/backend';
+import {
+  IAcceptOfferResponseTO,
+  INegotiationState,
+  IOfferDetailsTO,
+  IParticipantDetailsTO
+} from '../../../services/mgmt/api/backend';
 import { BadgeComponent , AccordionComponent, AccordionItemComponent } from '@coreui/angular';
 import { CommonViewsModule } from '../../common-views/common-views.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {Component, Input} from "@angular/core";
+import {StatusMessageComponent} from "../../common-views/status-message/status-message.component";
+import {OfferPrintViewComponent} from "../offer-print-view/offer-print-view.component";
+
+@Component({
+  selector: 'app-offer-print-view',
+  template: ''
+})
+class MockPrintView implements Partial<OfferPrintViewComponent>{
+  @Input() offer?: IOfferDetailsTO;
+  @Input() providerDetails?: IParticipantDetailsTO;
+  @Input() consumerDetails?: IParticipantDetailsTO;
+  @Input() printTimestamp?: Date;
+}
 
 describe('AcceptOfferComponent', () => {
   let component: AcceptComponent;
@@ -15,7 +34,7 @@ describe('AcceptOfferComponent', () => {
     const apiServiceSpy = jasmine.createSpyObj('ApiService', ['acceptContractOffer']);
 
     await TestBed.configureTestingModule({
-      declarations: [AcceptComponent],
+      declarations: [AcceptComponent, MockPrintView],
       providers: [
         { provide: ApiService, useValue: apiServiceSpy }
       ],
