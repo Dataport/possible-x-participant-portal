@@ -3,9 +3,11 @@ package eu.possiblex.participantportal.application.control;
 import eu.possiblex.participantportal.application.entity.AssetDetailsTO;
 import eu.possiblex.participantportal.application.entity.ContractAgreementTO;
 import eu.possiblex.participantportal.application.entity.ContractParticipantDetailsTO;
+import eu.possiblex.participantportal.application.entity.TermsAndConditionsTO;
 import eu.possiblex.participantportal.business.entity.ContractAgreementBE;
 import eu.possiblex.participantportal.business.entity.OfferingDetailsBE;
 import eu.possiblex.participantportal.business.entity.ParticipantWithDapsBE;
+import eu.possiblex.participantportal.business.entity.fh.TermsAndConditions;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -40,4 +42,6 @@ public interface ContractApiMapper {
     AssetDetailsTO offeringDetailsBeToTO(OfferingDetailsBE offeringDetailsBE);
 
     ContractParticipantDetailsTO participantDetailsBEToTO(ParticipantWithDapsBE possibleParticipant);
+
+    TermsAndConditionsTO termsAndConditionsToTO(TermsAndConditions termsAndConditions);
 }

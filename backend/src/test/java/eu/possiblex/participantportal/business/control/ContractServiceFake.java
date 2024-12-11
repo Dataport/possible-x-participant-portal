@@ -4,6 +4,7 @@ import eu.possiblex.participantportal.business.entity.*;
 import eu.possiblex.participantportal.business.entity.edc.contractagreement.ContractAgreement;
 import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyTarget;
+import eu.possiblex.participantportal.business.entity.fh.TermsAndConditions;
 
 import java.math.BigInteger;
 import java.time.Instant;
@@ -29,6 +30,10 @@ public class ContractServiceFake implements ContractService {
     public static final String NAME = "NAME";
 
     public static final String DESCRIPTION = "DESCRIPTION";
+
+    public static final String URL = "URL";
+
+    public static final String HASH = "HASH";
 
     public static OffsetDateTime getDateAsOffsetDateTime() {
 
@@ -56,16 +61,16 @@ public class ContractServiceFake implements ContractService {
             .policy(Policy.builder().target(PolicyTarget.builder().id(FAKE_ID_ASSET).build()).build()).build();
 
         ContractAgreementBE contractAgreementBE = ContractAgreementBE.builder().contractAgreement(contractAgreement)
-            .offeringDetails(new OfferingDetailsBE(NAME, DESCRIPTION, FAKE_ID_ASSET, FAKE_ID_OFFERING))
-            .providerDetails(new ParticipantWithDapsBE())
-            .consumerDetails(new ParticipantWithDapsBE())
-            .build();
+            .offeringDetails(new OfferingDetailsBE(NAME, DESCRIPTION, FAKE_ID_ASSET, FAKE_ID_OFFERING,
+                List.of(new TermsAndConditions(URL, HASH)))).providerDetails(new ParticipantWithDapsBE())
+            .consumerDetails(new ParticipantWithDapsBE()).build();
 
         return List.of(contractAgreementBE);
     }
 
     @Override
     public TransferOfferResponseBE transferDataOfferAgain(TransferOfferRequestBE request) {
+
         return null;
     }
 }

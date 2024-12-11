@@ -7,6 +7,7 @@ import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundExc
 import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
 import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsSparqlQueryResult;
 import eu.possiblex.participantportal.business.entity.fh.ParticipantDetailsSparqlQueryResult;
+import eu.possiblex.participantportal.business.entity.fh.TermsAndConditions;
 import eu.possiblex.participantportal.utilities.PossibleXException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,10 +67,12 @@ public class ContractServiceImpl implements ContractService {
         Map<String, OfferingDetailsSparqlQueryResult> offeringDetails = fhCatalogClient.getOfferingDetails(
             referencedAssetIds);
         // prepare for if the did or asset ID is not found
-        ParticipantDetailsSparqlQueryResult unknownParticipant = ParticipantDetailsSparqlQueryResult.builder().name("Unknown")
-            .build();
-        OfferingDetailsSparqlQueryResult unknownOffering = OfferingDetailsSparqlQueryResult.builder().name("Unknown")
-            .description("Unknown").uri("Unknown").build();
+        String unknown = "Unknown";
+        ParticipantDetailsSparqlQueryResult unknownParticipant = ParticipantDetailsSparqlQueryResult.builder()
+            .name(unknown).build();
+        OfferingDetailsSparqlQueryResult unknownOffering = OfferingDetailsSparqlQueryResult.builder().name(unknown)
+            .description(unknown).uri(unknown)
+            .tncList(List.of(TermsAndConditions.builder().url(unknown).hash(unknown).build())).build();
 
         // convert contract agreements to contract agreement BEs
         contractAgreements.forEach(c -> contractAgreementBEs.add(ContractAgreementBE.builder().contractAgreement(c)
@@ -78,7 +81,9 @@ public class ContractServiceImpl implements ContractService {
             .offeringDetails(OfferingDetailsBE.builder().assetId(c.getAssetId())
                 .offeringId(offeringDetails.getOrDefault(c.getAssetId(), unknownOffering).getUri())
                 .name(offeringDetails.getOrDefault(c.getAssetId(), unknownOffering).getName())
-                .description(offeringDetails.getOrDefault(c.getAssetId(), unknownOffering).getDescription()).build())
+                .description(offeringDetails.getOrDefault(c.getAssetId(), unknownOffering).getDescription())
+                .termsAndConditions(
+                    offeringDetails.getOrDefault(c.getAssetId(), unknownOffering).getTncList()).build())
             .consumerDetails(
                 ParticipantWithDapsBE.builder().dapsId(c.getConsumerId()).did(participantDidMap.get(c.getConsumerId()))
                     .name(participantNames.getOrDefault(participantDidMap.getOrDefault(c.getConsumerId(), ""),
@@ -86,7 +91,7 @@ public class ContractServiceImpl implements ContractService {
                 ParticipantWithDapsBE.builder().dapsId(c.getProviderId()).did(participantDidMap.get(c.getProviderId()))
                     .name(participantNames.getOrDefault(participantDidMap.getOrDefault(c.getProviderId(), ""),
                         unknownParticipant).getName()).build()).build()));
-        
+
         return contractAgreementBEs;
     }
 
