@@ -18,11 +18,11 @@ export interface IProviderRestApi {
 
 export interface IResourceShapeRestApi {
     gxInstantiatedVirtualResourceShape: string;
-    gxLegitimateInterestShape: string;
     gxDataResourceShape: string;
     gxPhysicalResourceShape: string;
     gxSoftwareResourceShape: string;
     gxVirtualResourceShape: string;
+    gxLegitimateInterestShape: string;
 }
 
 export interface IServiceOfferingShapeRestApi {
@@ -43,6 +43,7 @@ export interface IAssetDetailsTO {
     description: string;
     assetId: string;
     offeringId: string;
+    termsAndConditions: ITermsAndConditionsTO[];
 }
 
 export interface IAssetDetailsTOBuilder {
@@ -167,6 +168,14 @@ export interface ISelectOfferRequestTO {
 }
 
 export interface ISelectOfferRequestTOBuilder {
+}
+
+export interface ITermsAndConditionsTO {
+    url: string;
+    hash: string;
+}
+
+export interface ITermsAndConditionsTOBuilder {
 }
 
 export interface ITransferOfferRequestTO {
@@ -470,6 +479,14 @@ export class RestApplicationClient {
      */
     getContractAgreements(): RestResponse<IContractAgreementTO[]> {
         return this.httpClient.request({ method: "GET", url: uriEncoding`contract/agreement` });
+    }
+
+    /**
+     * HTTP GET /contract/agreement/{agreementId}
+     * Java method: eu.possiblex.participantportal.application.boundary.ContractRestApiImpl.getContractAgreementById
+     */
+    getContractAgreementById(agreementId: string): RestResponse<IContractAgreementTO> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`contract/agreement/${agreementId}` });
     }
 
     /**
