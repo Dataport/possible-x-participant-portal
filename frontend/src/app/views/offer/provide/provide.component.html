@@ -1,5 +1,5 @@
-<div class="flex items-center justify-center min-h-screen"> <!-- Full-page flex container -->
-  <div class="p-6 w-full max-w-3xl"> <!-- Centered form container with fixed max width -->
+<div class="flex pt-16 justify-center min-h-content"> <!-- Full-page flex container -->
+  <div class="p-6 w-full xl:max-w-screen-lg"> <!-- Centered form container with fixed max width -->
     <div class="flex flex-col items-center pb-14 text-brand-800">
       <div class="text-3xl font-bold">
         Publish new Offering
@@ -8,8 +8,6 @@
         Define the data offering or service offering and the policies.
       </div>
     </div>
-    <c-container class="flex justify-center" fluid>
-      <app-offering-wizard-extension #wizardExtension></app-offering-wizard-extension>
-    </c-container>
+    <app-offering-wizard-extension #wizardExtension></app-offering-wizard-extension>
   </div>
 </div>

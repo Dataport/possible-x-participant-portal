@@ -1,10 +1,10 @@
-<div class="flex justify-between w-full max-w-3xl mb-6 bg-white">
+<div class="mb-6 bg-white">
   <div class="font-bold text-lg text-brand-800 p-3">
     {{ offer?.catalogOffering["schema:name"] }}
   </div>
 </div>
 
-<div class="w-full max-w-3xl pb-6">
+<div class="pb-6">
   <div #viewContainerRef></div>
   <ng-template #accordion>
     <mat-accordion multi togglePosition="before">
@@ -149,7 +149,7 @@
   </ng-template>
 </div>
 
-<div class="w-full max-w-3xl">
+<div>
   <div class="flex justify-between">
     <button (click)="cancel()" cButton color="secondary" shape="rounded-0">
       Cancel
