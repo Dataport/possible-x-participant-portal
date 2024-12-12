@@ -64,25 +64,11 @@ tasks.getByName<Jar>("jar") {
   enabled = false
 }
 
-tasks.register<Exec>("buildFrontend") {
-  description = "Builds the frontend application."
-  group = "build"
-  workingDir = file("$rootDir/frontend")
-  commandLine("npm", "run", "build")
-}
-
 tasks.register<Exec>("startFrontend") {
-  dependsOn("buildFrontend")
-  val activeProfile = project.findProperty("activeProfile")?.toString()
-  val port = project.findProperty("port")?.toString()
   description = "Starts the frontend application."
   group = "build"
   workingDir = file("$rootDir/frontend")
-  if (activeProfile != null) {
-    commandLine("npm", "start", "--", "--port", port,"--configuration=$activeProfile")
-  } else {
-    commandLine("npm", "start", "--", "--port", port)
-  }
+  dependsOn(":frontend:npmStart")
 }
 
 tasks.register<Exec>("startBackend") {
@@ -93,7 +79,7 @@ tasks.register<Exec>("startBackend") {
 }
 
 tasks.named<JavaExec>("bootRun") {
-  val activeProfile = project.findProperty("args")?.toString()
+  val activeProfile = project.findProperty("activeProfile")?.toString()
   if (activeProfile != null) {
       systemProperty("spring.profiles.active", activeProfile)
   }

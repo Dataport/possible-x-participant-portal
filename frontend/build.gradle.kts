@@ -12,13 +12,19 @@ node {
 
 tasks {
   val npmInstalll by registering(NpmTask::class) {
-    outputs.upToDateWhen { false }
-    args.set(listOf("clean-install"))
+    args.set(listOf("install"))
   }
 
   val npmBuild by registering(NpmTask::class) {
-    outputs.upToDateWhen { false }
     dependsOn(npmInstalll)
-    args.set(listOf("run", "build", "--", "--configuration", project.findProperty("npmEnv") as String? ?: "consumer-dev"))
+    val activeProfile = project.findProperty("activeProfile")?.toString()
+    args.set(listOf("run", "build", "--", "--configuration", activeProfile ?: "consumer-dev"))
+  }
+
+  val npmStart by registering(NpmTask::class) {
+    dependsOn(npmBuild)
+    val activeProfile = project.findProperty("activeProfile")?.toString()
+    val port = project.findProperty("port")?.toString()
+    args.set(listOf("start", "--", "--port", port ?: "8081", "--configuration", activeProfile ?: "consumer-dev"))
   }
 }
