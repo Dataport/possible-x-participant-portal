@@ -1,11 +1,15 @@
 package eu.possiblex.participantportal.business.entity.fh;
 
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,11 +37,11 @@ public class CatalogLiteralTnCListDeserializer extends StdDeserializer<List<Term
         return getTermsAndConditionsList(node.textValue());
     }
 
-    private List<TermsAndConditions> getTermsAndConditionsList(String literalTnCList) {
+    private List<TermsAndConditions> getTermsAndConditionsList(String literalTnCList) throws JsonProcessingException {
+        // Add enclosing brackets to the JSON string
+        String jsonArrayString = "[" + literalTnCList + "]";
 
-        return Arrays.stream(literalTnCList.split(", ")).map(literalTnC -> {
-            String[] tnc = literalTnC.split("___");
-            return TermsAndConditions.builder().url(tnc[0]).hash(tnc[1]).build();
-        }).toList();
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.readValue(jsonArrayString, new TypeReference<List<TermsAndConditions>>() {});
     }
 }

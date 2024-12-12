@@ -33,7 +33,7 @@
         },
         "tncList": {
           "type": "literal",
-          "value": "EXPECTED_URL_1___1234, EXPECTED_URL_2___5678"
+          "value": "{\"hash\":\"1234\",\"url\":\"EXPECTED_URL_1\"},{\"hash\":\"5678\",\"url\":\"EXPECTED_URL_2\"}"
         },
         "providerUrl": {
           "type": "literal",
