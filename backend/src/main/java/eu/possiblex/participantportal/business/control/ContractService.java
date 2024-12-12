@@ -17,6 +17,14 @@ public interface ContractService {
      */
     List<ContractAgreementBE> getContractAgreements() throws OfferNotFoundException;
 
+    /**
+     * Get contract agreement by id.
+     *
+     * @param contractAgreementId Contract agreement id.
+     * @return Contract agreement.
+     */
+    ContractAgreementBE getContractAgreementById(String contractAgreementId) throws OfferNotFoundException;
+
     TransferOfferResponseBE transferDataOfferAgain(TransferOfferRequestBE request) throws OfferNotFoundException,
         TransferFailedException;
 }

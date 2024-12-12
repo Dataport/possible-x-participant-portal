@@ -44,8 +44,21 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public List<ContractAgreementBE> getContractAgreements() throws OfferNotFoundException {
 
-        List<ContractAgreementBE> contractAgreementBEs = new ArrayList<>();
         List<ContractAgreement> contractAgreements = edcClient.queryContractAgreements();
+
+        return getContractAgreementBES(contractAgreements);
+    }
+
+    @Override
+    public ContractAgreementBE getContractAgreementById(String contractAgreementId) throws OfferNotFoundException {
+
+        ContractAgreement contractAgreement = edcClient.getContractAgreementById(contractAgreementId);
+
+        return getContractAgreementBES(List.of(contractAgreement)).get(0);
+    }
+
+    private List<ContractAgreementBE> getContractAgreementBES(List<ContractAgreement> contractAgreements) {
+        List<ContractAgreementBE> contractAgreementBEs = new ArrayList<>();
 
         // Get all referenced assetIds from the contracts
         Set<String> referencedAssetIds = contractAgreements.stream().map(ContractAgreement::getAssetId)

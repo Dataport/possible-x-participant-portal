@@ -4,6 +4,7 @@ import eu.possiblex.participantportal.business.entity.*;
 import eu.possiblex.participantportal.business.entity.edc.contractagreement.ContractAgreement;
 import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyTarget;
+import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.fh.TermsAndConditions;
 
 import java.math.BigInteger;
@@ -51,6 +52,12 @@ public class ContractServiceFake implements ContractService {
     public List<ContractAgreementBE> getContractAgreements() {
 
         return getContractAgreementBEs();
+    }
+
+    @Override
+    public ContractAgreementBE getContractAgreementById(String contractAgreementId) throws OfferNotFoundException {
+
+        return getContractAgreementBEs().get(0);
     }
 
     private List<ContractAgreementBE> getContractAgreementBEs() {

@@ -184,6 +184,12 @@ public class EdcClientFake implements EdcClient {
     }
 
     @Override
+    public ContractAgreement getContractAgreementById(String contractAgreementId) {
+
+        return queryContractAgreements().get(0);
+    }
+
+    @Override
     public List<PossibleAsset> queryPossibleAssets() {
 
         PossibleAssetTnC assetTnC = PossibleAssetTnC.builder().url("https://example.com").hash("hash1234").build();

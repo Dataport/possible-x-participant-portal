@@ -4,10 +4,7 @@ import eu.possiblex.participantportal.application.entity.ContractAgreementTO;
 import eu.possiblex.participantportal.application.entity.TransferOfferRequestTO;
 import eu.possiblex.participantportal.application.entity.TransferOfferResponseTO;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,6 +17,14 @@ public interface ContractRestApi {
      */
     @GetMapping(value = "/agreement", produces = MediaType.APPLICATION_JSON_VALUE)
     List<ContractAgreementTO> getContractAgreements();
+
+    /**
+     * GET request for retrieving a contract agreement by id.
+     *
+     * @return contract agreement
+     */
+    @GetMapping(value = "/agreement/{agreementId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    ContractAgreementTO getContractAgreementById(@PathVariable String agreementId);
 
     /**
      * POST request for transferring a data product again from the contracts tab.

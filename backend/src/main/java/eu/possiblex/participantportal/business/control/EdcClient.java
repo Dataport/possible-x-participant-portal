@@ -73,6 +73,9 @@ public interface EdcClient {
     @PostExchange("/v2/contractagreements/request")
     List<ContractAgreement> queryContractAgreements();
 
+    @GetExchange("/v2/contractagreements/{contractAgreementId}")
+    ContractAgreement getContractAgreementById(@PathVariable String contractAgreementId);
+
     @PostExchange("/v3/assets/request")
     List<PossibleAsset> queryPossibleAssets();
 }
