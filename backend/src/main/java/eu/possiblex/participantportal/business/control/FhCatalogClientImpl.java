@@ -141,9 +141,7 @@ public class FhCatalogClientImpl implements FhCatalogClient {
             PREFIX schema: <https://schema.org/>
             PREFIX px: <http://w3id.org/gaia-x/possible-x#>
             
-            SELECT ?uri ?assetId ?name ?providerUrl ?description ?aggregationOf
-             (GROUP_CONCAT(CONCAT("{\\"hash\\":\\"", REPLACE(?hash, '\\"', '\\\\\\"'), "\\",\\"url\\":\\"", REPLACE(?url, '\\"', '\\\\\\"'), "\\"}"); separator=",") AS ?tncList)
-              WHERE {
+            SELECT ?uri ?assetId ?name ?providerUrl ?description ?aggregationOf (GROUP_CONCAT(CONCAT(?url, "|", ?hash); separator=", ") AS ?tncList) WHERE {
               ?uri a px:PossibleXServiceOfferingExtension;
               schema:name ?name;
               px:providerUrl ?providerUrl;
