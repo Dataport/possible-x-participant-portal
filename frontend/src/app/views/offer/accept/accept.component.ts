@@ -12,9 +12,8 @@ import {ApiService} from '../../../services/mgmt/api/api.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {StatusMessageComponent} from '../../common-views/status-message/status-message.component';
 import {
-  IAcceptOfferResponseTO,
+  IAcceptOfferResponseTO, IContractDetailsTO,
   IOfferDetailsTO,
-  IParticipantDetailsTO,
   IPxExtendedServiceOfferingCredentialSubject
 } from '../../../services/mgmt/api/backend';
 
@@ -27,6 +26,7 @@ export class AcceptComponent implements OnChanges {
   @Input() offer?: IOfferDetailsTO = undefined;
   @Output() dismiss: EventEmitter<any> = new EventEmitter();
   @Output() negotiatedContract: EventEmitter<IAcceptOfferResponseTO> = new EventEmitter();
+  @Output() retrievedContractDetails: EventEmitter<IContractDetailsTO> = new EventEmitter();
   @ViewChild('acceptOfferStatusMessage') acceptOfferStatusMessage!: StatusMessageComponent;
 
   @ViewChild('viewContainerRef', {read: ViewContainerRef, static: true}) viewContainerRef: ViewContainerRef;
@@ -62,6 +62,13 @@ export class AcceptComponent implements OnChanges {
       console.log(response);
       this.negotiatedContract.emit(response);
       this.acceptOfferStatusMessage.showSuccessMessage("Contract Agreement ID: " + response.contractAgreementId);
+
+      this.apiService.getContractDetailsByContractAgreementId(response.contractAgreementId).then(contractDetails => {
+        console.log(contractDetails);
+        this.retrievedContractDetails.emit(contractDetails);
+      }).catch((e: HttpErrorResponse) => {
+        console.log(e);
+      });
     }).catch((e: HttpErrorResponse) => {
       this.acceptOfferStatusMessage.showErrorMessage(e.error.detail || e.error || e.message);
       this.isConsumed = false;

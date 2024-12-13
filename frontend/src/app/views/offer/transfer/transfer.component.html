@@ -10,6 +10,7 @@
       </div>
       <div class="flex justify-center text-lg text-center">
         Provider Email Address:<br>{{ offer?.providerDetails.participantEmail || ""}}
+        {{ retrievedContractDetails?.contractSigningDate | date: 'dd.MM.yyyy' }}
       </div>
     </div>
   </div>
@@ -17,9 +18,14 @@
     <button (click)="cancel()" cButton color="secondary" shape="rounded-0">
       {{dismissButtonLabel}}
     </button>
-    <button *ngIf="contract.dataOffering" [disabled]="isTransferButtonDisabled" (click)="transfer()" cButton color="primary" shape="rounded-0">
-      Transfer Data Resource
-    </button>
+    <div>
+      <button [cModalToggle]="'modalOfferPrintView'" cButton color="primary"
+              shape="rounded-0" [ngStyle]="{'padding-right': contract.dataOffering ? '20px' : '10px'}" >Export related Information
+      </button>
+      <button *ngIf="contract.dataOffering" [disabled]="isTransferButtonDisabled" (click)="transfer()" cButton color="primary" shape="rounded-0">
+        Transfer Data Resource
+      </button>
+    </div>
   </div>
 </ng-template>
 

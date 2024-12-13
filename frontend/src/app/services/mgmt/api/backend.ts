@@ -18,11 +18,11 @@ export interface IProviderRestApi {
 
 export interface IResourceShapeRestApi {
     gxInstantiatedVirtualResourceShape: string;
+    gxVirtualResourceShape: string;
+    gxLegitimateInterestShape: string;
     gxDataResourceShape: string;
     gxPhysicalResourceShape: string;
     gxSoftwareResourceShape: string;
-    gxVirtualResourceShape: string;
-    gxLegitimateInterestShape: string;
 }
 
 export interface IServiceOfferingShapeRestApi {
@@ -43,7 +43,6 @@ export interface IAssetDetailsTO {
     description: string;
     assetId: string;
     offeringId: string;
-    termsAndConditions: ITermsAndConditionsTO[];
 }
 
 export interface IAssetDetailsTOBuilder {
@@ -71,6 +70,22 @@ export interface IContractAgreementTO {
 }
 
 export interface IContractAgreementTOBuilder {
+}
+
+export interface IContractDetailsTO {
+    id: string;
+    assetId: string;
+    catalogOffering: IPxExtendedServiceOfferingCredentialSubject;
+    offerRetrievalDate: Date;
+    policy: IPolicy;
+    enforcementPolicies: IEnforcementPolicyUnion[];
+    contractSigningDate: Date;
+    consumerDetails: IContractParticipantDetailsTO;
+    providerDetails: IContractParticipantDetailsTO;
+    dataOffering: boolean;
+}
+
+export interface IContractDetailsTOBuilder {
 }
 
 export interface IContractParticipantDetailsTO {
@@ -168,14 +183,6 @@ export interface ISelectOfferRequestTO {
 }
 
 export interface ISelectOfferRequestTOBuilder {
-}
-
-export interface ITermsAndConditionsTO {
-    url: string;
-    hash: string;
-}
-
-export interface ITermsAndConditionsTOBuilder {
 }
 
 export interface ITransferOfferRequestTO {
@@ -482,11 +489,11 @@ export class RestApplicationClient {
     }
 
     /**
-     * HTTP GET /contract/agreement/{agreementId}
-     * Java method: eu.possiblex.participantportal.application.boundary.ContractRestApiImpl.getContractAgreementById
+     * HTTP GET /contract/details/{contractAgreementId}
+     * Java method: eu.possiblex.participantportal.application.boundary.ContractRestApiImpl.getContractDetailsByContractAgreementId
      */
-    getContractAgreementById(agreementId: string): RestResponse<IContractAgreementTO> {
-        return this.httpClient.request({ method: "GET", url: uriEncoding`contract/agreement/${agreementId}` });
+    getContractDetailsByContractAgreementId(contractAgreementId: string): RestResponse<IContractDetailsTO> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`contract/details/${contractAgreementId}` });
     }
 
     /**
