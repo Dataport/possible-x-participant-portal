@@ -1,7 +1,6 @@
 import cz.habarta.typescript.generator.JsonLibrary
 import cz.habarta.typescript.generator.TypeScriptFileType
 import cz.habarta.typescript.generator.TypeScriptOutputKind
-import org.gradle.internal.classpath.Instrumented.systemProperty
 import org.yaml.snakeyaml.Yaml
 
 plugins {
@@ -96,7 +95,6 @@ tasks.named<JavaExec>("bootRun") {
 
   val serverPort = (config["server"] as? Map<String, Any>)?.get("port") ?: "8080"
   val incrementedPort = serverPort.toString().toInt().plus(1).toString()
-  dependsOn("startBackend")
   doFirst {
     Thread {
       exec {
