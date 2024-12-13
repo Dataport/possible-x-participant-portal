@@ -1,6 +1,7 @@
 import cz.habarta.typescript.generator.JsonLibrary
 import cz.habarta.typescript.generator.TypeScriptFileType
 import cz.habarta.typescript.generator.TypeScriptOutputKind
+import org.gradle.internal.classpath.Instrumented.systemProperty
 import org.yaml.snakeyaml.Yaml
 
 plugins {
@@ -71,11 +72,16 @@ tasks.register<Exec>("startFrontend") {
   dependsOn(":frontend:npmStart")
 }
 
-tasks.register<Exec>("startBackend") {
-  description = "Builds the backend application."
-  group = "build"
-  workingDir = file("$rootDir")
-  commandLine("./gradlew", "bootJar")
+tasks.register<JavaExec>("startBackend") {
+  dependsOn("bootJar")
+  description = "Runs the backend application."
+  group = "application"
+  mainClass.set("eu.possiblex.participantportal.ParticipantPortalApplication")
+  classpath = sourceSets["main"].runtimeClasspath
+  val activeProfile = project.findProperty("activeProfile")?.toString()
+  if (activeProfile != null) {
+    systemProperty("spring.profiles.active", activeProfile)
+  }
 }
 
 tasks.named<JavaExec>("bootRun") {
