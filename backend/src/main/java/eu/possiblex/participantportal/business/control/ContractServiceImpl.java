@@ -1,18 +1,19 @@
 package eu.possiblex.participantportal.business.control;
 
 import eu.possiblex.participantportal.business.entity.*;
+import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.daps.OmejdnConnectorDetailsBE;
 import eu.possiblex.participantportal.business.entity.edc.contractagreement.ContractAgreement;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
 import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsSparqlQueryResult;
 import eu.possiblex.participantportal.business.entity.fh.ParticipantDetailsSparqlQueryResult;
-import eu.possiblex.participantportal.business.entity.fh.TermsAndConditions;
 import eu.possiblex.participantportal.utilities.PossibleXException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -42,23 +43,10 @@ public class ContractServiceImpl implements ContractService {
      * @return List of contract agreements.
      */
     @Override
-    public List<ContractAgreementBE> getContractAgreements() throws OfferNotFoundException {
+    public List<ContractAgreementBE> getContractAgreements() {
 
-        List<ContractAgreement> contractAgreements = edcClient.queryContractAgreements();
-
-        return getContractAgreementBES(contractAgreements);
-    }
-
-    @Override
-    public ContractAgreementBE getContractAgreementById(String contractAgreementId) throws OfferNotFoundException {
-
-        ContractAgreement contractAgreement = edcClient.getContractAgreementById(contractAgreementId);
-
-        return getContractAgreementBES(List.of(contractAgreement)).get(0);
-    }
-
-    private List<ContractAgreementBE> getContractAgreementBES(List<ContractAgreement> contractAgreements) {
         List<ContractAgreementBE> contractAgreementBEs = new ArrayList<>();
+        List<ContractAgreement> contractAgreements = edcClient.queryContractAgreements();
 
         // Get all referenced assetIds from the contracts
         Set<String> referencedAssetIds = contractAgreements.stream().map(ContractAgreement::getAssetId)
@@ -84,8 +72,7 @@ public class ContractServiceImpl implements ContractService {
         ParticipantDetailsSparqlQueryResult unknownParticipant = ParticipantDetailsSparqlQueryResult.builder()
             .name(unknown).build();
         OfferingDetailsSparqlQueryResult unknownOffering = OfferingDetailsSparqlQueryResult.builder().name(unknown)
-            .description(unknown).uri(unknown)
-            .tncList(List.of(TermsAndConditions.builder().url(unknown).hash(unknown).build())).build();
+            .description(unknown).uri(unknown).build();
 
         // convert contract agreements to contract agreement BEs
         contractAgreements.forEach(c -> contractAgreementBEs.add(ContractAgreementBE.builder().contractAgreement(c)
@@ -94,18 +81,71 @@ public class ContractServiceImpl implements ContractService {
             .offeringDetails(OfferingDetailsBE.builder().assetId(c.getAssetId())
                 .offeringId(offeringDetails.getOrDefault(c.getAssetId(), unknownOffering).getUri())
                 .name(offeringDetails.getOrDefault(c.getAssetId(), unknownOffering).getName())
-                .description(offeringDetails.getOrDefault(c.getAssetId(), unknownOffering).getDescription())
-                .termsAndConditions(
-                    offeringDetails.getOrDefault(c.getAssetId(), unknownOffering).getTncList()).build())
+                .description(offeringDetails.getOrDefault(c.getAssetId(), unknownOffering).getDescription()).build())
             .consumerDetails(
-                ParticipantWithDapsBE.builder().dapsId(c.getConsumerId()).did(participantDidMap.get(c.getConsumerId()))
+                ParticipantWithDapsBE.builder().dapsId(c.getConsumerId()).did(participantDidMap.getOrDefault(c.getConsumerId(), ""))
                     .name(participantNames.getOrDefault(participantDidMap.getOrDefault(c.getConsumerId(), ""),
                         unknownParticipant).getName()).build()).providerDetails(
-                ParticipantWithDapsBE.builder().dapsId(c.getProviderId()).did(participantDidMap.get(c.getProviderId()))
+                ParticipantWithDapsBE.builder().dapsId(c.getProviderId()).did(participantDidMap.getOrDefault(c.getProviderId(), ""))
                     .name(participantNames.getOrDefault(participantDidMap.getOrDefault(c.getProviderId(), ""),
                         unknownParticipant).getName()).build()).build()));
 
         return contractAgreementBEs;
+    }
+
+    @Override
+    public ContractDetailsBE getContractDetailsByContractAgreementId(String contractAgreementId) {
+        ContractAgreement contractAgreement = edcClient.getContractAgreementById(contractAgreementId);
+
+        // build a map of consumer and provider daps ids to dids
+        Map<String, String> participantDidMap = getParticipantDids(List.of(contractAgreement.getConsumerId(),
+            contractAgreement.getProviderId()));
+
+        // build a map of consumer and provider dids to participant names
+        Map<String, ParticipantDetailsSparqlQueryResult> participantNames = fhCatalogClient.getParticipantDetails(
+            participantDidMap.values());
+
+        // get the offering details for the asset ID
+        Map<String, OfferingDetailsSparqlQueryResult> offeringDetails = fhCatalogClient.getOfferingDetails(
+            List.of(contractAgreement.getAssetId()));
+
+        OfferRetrievalResponseBE offerRetrievalResponseBE;
+        if(!offeringDetails.containsKey(contractAgreement.getAssetId())) {
+            offerRetrievalResponseBE = OfferRetrievalResponseBE.builder().offerRetrievalDate(OffsetDateTime.now())
+                .catalogOffering(new PxExtendedServiceOfferingCredentialSubject()).build();
+        } else {
+            String serviceOfferingUriPrefix = "https://piveau.io/set/resource/service-offering/";
+            String dataProductUriPrefix = "https://piveau.io/set/resource/data-product/";
+
+            String offeringIdWithoutPrefix = offeringDetails.get(contractAgreement.getAssetId()).getUri()
+                .replace(serviceOfferingUriPrefix, "").replace(dataProductUriPrefix, "");
+
+            try {
+                offerRetrievalResponseBE = fhCatalogClient.getFhCatalogOffer(offeringIdWithoutPrefix);
+            } catch (OfferNotFoundException e) {
+                offerRetrievalResponseBE = OfferRetrievalResponseBE.builder().offerRetrievalDate(OffsetDateTime.now())
+                    .catalogOffering(new PxExtendedServiceOfferingCredentialSubject()).build();
+            }
+        }
+
+        // prepare for if the did is not found in the map
+        String unknown = "Unknown";
+        ParticipantDetailsSparqlQueryResult unknownParticipant = ParticipantDetailsSparqlQueryResult.builder()
+            .name(unknown).build();
+
+        return ContractDetailsBE.builder().contractAgreement(contractAgreement)
+            .isDataOffering(offerRetrievalResponseBE.getCatalogOffering().getAggregationOf() != null)
+            .enforcementPolicies(consumerService.getEnforcementPoliciesFromEdcPolicies(List.of(contractAgreement.getPolicy())))
+            .offeringDetails(offerRetrievalResponseBE)
+            .consumerDetails(
+                ParticipantWithDapsBE.builder().dapsId(contractAgreement.getConsumerId()).did(participantDidMap.getOrDefault(contractAgreement.getConsumerId(), ""))
+                    .name(participantNames.getOrDefault(participantDidMap.getOrDefault(contractAgreement.getConsumerId(), ""),
+                        unknownParticipant).getName()).build())
+            .providerDetails(
+                ParticipantWithDapsBE.builder().dapsId(contractAgreement.getProviderId()).did(participantDidMap.getOrDefault(contractAgreement.getProviderId(), ""))
+                    .name(participantNames.getOrDefault(participantDidMap.getOrDefault(contractAgreement.getProviderId(), ""),
+                        unknownParticipant).getName()).build()).build();
+
     }
 
     private Map<String, String> getParticipantDids(Collection<String> participantDapsIds) {

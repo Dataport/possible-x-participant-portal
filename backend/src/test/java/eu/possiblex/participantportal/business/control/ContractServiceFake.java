@@ -1,11 +1,11 @@
 package eu.possiblex.participantportal.business.control;
 
 import eu.possiblex.participantportal.business.entity.*;
+import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.edc.contractagreement.ContractAgreement;
 import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyTarget;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
-import eu.possiblex.participantportal.business.entity.fh.TermsAndConditions;
 
 import java.math.BigInteger;
 import java.time.Instant;
@@ -32,10 +32,6 @@ public class ContractServiceFake implements ContractService {
 
     public static final String DESCRIPTION = "DESCRIPTION";
 
-    public static final String URL = "URL";
-
-    public static final String HASH = "HASH";
-
     public static OffsetDateTime getDateAsOffsetDateTime() {
 
         Instant instant = Instant.ofEpochSecond(DATE_IN_SECONDS.longValueExact());
@@ -55,9 +51,10 @@ public class ContractServiceFake implements ContractService {
     }
 
     @Override
-    public ContractAgreementBE getContractAgreementById(String contractAgreementId) throws OfferNotFoundException {
+    public ContractDetailsBE getContractDetailsByContractAgreementId(String contractAgreementId)
+        throws OfferNotFoundException {
 
-        return getContractAgreementBEs().get(0);
+        return getContractDetailsBE();
     }
 
     private List<ContractAgreementBE> getContractAgreementBEs() {
@@ -68,11 +65,25 @@ public class ContractServiceFake implements ContractService {
             .policy(Policy.builder().target(PolicyTarget.builder().id(FAKE_ID_ASSET).build()).build()).build();
 
         ContractAgreementBE contractAgreementBE = ContractAgreementBE.builder().contractAgreement(contractAgreement)
-            .offeringDetails(new OfferingDetailsBE(NAME, DESCRIPTION, FAKE_ID_ASSET, FAKE_ID_OFFERING,
-                List.of(new TermsAndConditions(URL, HASH)))).providerDetails(new ParticipantWithDapsBE())
+            .offeringDetails(new OfferingDetailsBE(NAME, DESCRIPTION, FAKE_ID_ASSET, FAKE_ID_OFFERING))
+            .providerDetails(new ParticipantWithDapsBE())
             .consumerDetails(new ParticipantWithDapsBE()).build();
 
         return List.of(contractAgreementBE);
+    }
+
+    private ContractDetailsBE getContractDetailsBE() {
+
+        ContractAgreement contractAgreement = ContractAgreement.builder().contractSigningDate(DATE_IN_SECONDS)
+            .id(FAKE_ID_CONTRACT_AGREEMENT).assetId(FAKE_ID_ASSET).consumerId(FAKE_ID_CONSUMER)
+            .providerId(FAKE_ID_PROVIDER)
+            .policy(Policy.builder().target(PolicyTarget.builder().id(FAKE_ID_ASSET).build()).build()).build();
+
+        return ContractDetailsBE.builder().contractAgreement(contractAgreement)
+            .offeringDetails(new OfferRetrievalResponseBE(PxExtendedServiceOfferingCredentialSubject.builder().name(NAME)
+                .description(DESCRIPTION).id(FAKE_ID_OFFERING).assetId(FAKE_ID_ASSET).build(), getDateAsOffsetDateTime()))
+            .providerDetails(new ParticipantWithDapsBE())
+            .consumerDetails(new ParticipantWithDapsBE()).build();
     }
 
     @Override

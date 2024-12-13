@@ -8,7 +8,6 @@ import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundExc
 import eu.possiblex.participantportal.business.entity.exception.ParticipantNotFoundException;
 import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsSparqlQueryResult;
 import eu.possiblex.participantportal.business.entity.fh.ParticipantDetailsSparqlQueryResult;
-import eu.possiblex.participantportal.business.entity.fh.TermsAndConditions;
 import eu.possiblex.participantportal.utils.TestUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -146,9 +145,6 @@ class FhCatalogClientImplTest {
         Assertions.assertEquals("EXPECTED_PROVIDER_URL_VALUE", queryResult.getProviderUrl());
         Assertions.assertEquals("EXPECTED_NAME_VALUE", queryResult.getName());
         Assertions.assertEquals("EXPECTED_DESCRIPTION_VALUE", queryResult.getDescription());
-        Assertions.assertEquals(2, queryResult.getTncList().size());
-        Assertions.assertTrue(queryResult.getTncList().contains(new TermsAndConditions("EXPECTED_URL_1", "1234")));
-        Assertions.assertTrue(queryResult.getTncList().contains(new TermsAndConditions("EXPECTED_URL_2", "5678")));
     }
 
     @Test

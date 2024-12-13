@@ -47,9 +47,6 @@ class ContractRestApiTest {
             .andExpect(jsonPath("$[0].assetId").value(ContractServiceFake.FAKE_ID_ASSET))
             .andExpect(jsonPath("$[0].assetDetails.name").value(ContractServiceFake.NAME))
             .andExpect(jsonPath("$[0].assetDetails.description").value(ContractServiceFake.DESCRIPTION))
-            .andExpect(jsonPath("$[0].assetDetails.termsAndConditions.length()").value(1))
-            .andExpect(jsonPath("$[0].assetDetails.termsAndConditions[0].url").value(ContractServiceFake.URL))
-            .andExpect(jsonPath("$[0].assetDetails.termsAndConditions[0].hash").value(ContractServiceFake.HASH))
             .andExpect(jsonPath("$[0].policy['odrl:target']['@id']").value(ContractServiceFake.FAKE_ID_ASSET))
             .andExpect(jsonPath("$[0].policy['odrl:prohibition']").isEmpty())
             .andExpect(jsonPath("$[0].policy['odrl:obligation']").isEmpty())
@@ -57,21 +54,19 @@ class ContractRestApiTest {
     }
 
     @Test
-    void shouldReturnMessageOnGetContractAgreementById() throws Exception {
+    void shouldReturnMessageOnGetContractDetailsByContractAgreementId() throws Exception {
         //when
         //then
 
-        this.mockMvc.perform(get("/contract/agreement/anyId")).andDo(print()).andExpect(status().isOk())
+        this.mockMvc.perform(get("/contract/details/anyId")).andDo(print()).andExpect(status().isOk())
             .andExpect(jsonPath("$.id").value(ContractServiceFake.FAKE_ID_CONTRACT_AGREEMENT))
             .andExpect(jsonPath("$.contractSigningDate").value(ContractServiceFake.getDateAsOffsetDateTime().toString()))
             .andExpect(jsonPath("$.providerDetails").exists())
             .andExpect(jsonPath("$.consumerDetails").exists())
             .andExpect(jsonPath("$.assetId").value(ContractServiceFake.FAKE_ID_ASSET))
-            .andExpect(jsonPath("$.assetDetails.name").value(ContractServiceFake.NAME))
-            .andExpect(jsonPath("$.assetDetails.description").value(ContractServiceFake.DESCRIPTION))
-            .andExpect(jsonPath("$.assetDetails.termsAndConditions.length()").value(1))
-            .andExpect(jsonPath("$.assetDetails.termsAndConditions[0].url").value(ContractServiceFake.URL))
-            .andExpect(jsonPath("$.assetDetails.termsAndConditions[0].hash").value(ContractServiceFake.HASH))
+            .andExpect(jsonPath("$.catalogOffering['schema:name']").value(ContractServiceFake.NAME))
+            .andExpect(jsonPath("$.catalogOffering['schema:description']").value(ContractServiceFake.DESCRIPTION))
+            .andExpect(jsonPath("$.offerRetrievalDate").exists())
             .andExpect(jsonPath("$.policy['odrl:target']['@id']").value(ContractServiceFake.FAKE_ID_ASSET))
             .andExpect(jsonPath("$.policy['odrl:prohibition']").isEmpty())
             .andExpect(jsonPath("$.policy['odrl:obligation']").isEmpty())

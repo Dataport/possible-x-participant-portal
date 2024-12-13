@@ -7,8 +7,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @Builder
 @NoArgsConstructor
@@ -32,7 +30,4 @@ public class OfferingDetailsSparqlQueryResult {
 
     @JsonDeserialize(using = CatalogLiteralDeserializer.class)
     private String aggregationOf;
-
-    @JsonDeserialize(using = CatalogLiteralTnCListDeserializer.class)
-    private List<TermsAndConditions> tncList;
 }

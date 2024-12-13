@@ -6,7 +6,6 @@
       "assetId",
       "name",
       "description",
-      "tncList",
       "providerUrl"
     ]
   },
@@ -30,10 +29,6 @@
         "description": {
           "type": "literal",
           "value": "EXPECTED_DESCRIPTION_VALUE"
-        },
-        "tncList": {
-          "type": "literal",
-          "value": "EXPECTED_URL_1|1234, EXPECTED_URL_2|5678"
         },
         "providerUrl": {
           "type": "literal",

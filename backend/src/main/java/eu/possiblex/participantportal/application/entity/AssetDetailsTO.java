@@ -19,6 +19,4 @@ public class AssetDetailsTO {
     private String assetId;
 
     private String offeringId;
-
-    private List<TermsAndConditionsTO> termsAndConditions;
 }

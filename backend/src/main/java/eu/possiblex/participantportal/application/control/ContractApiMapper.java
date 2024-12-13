@@ -2,12 +2,12 @@ package eu.possiblex.participantportal.application.control;
 
 import eu.possiblex.participantportal.application.entity.AssetDetailsTO;
 import eu.possiblex.participantportal.application.entity.ContractAgreementTO;
+import eu.possiblex.participantportal.application.entity.ContractDetailsTO;
 import eu.possiblex.participantportal.application.entity.ContractParticipantDetailsTO;
-import eu.possiblex.participantportal.application.entity.TermsAndConditionsTO;
 import eu.possiblex.participantportal.business.entity.ContractAgreementBE;
+import eu.possiblex.participantportal.business.entity.ContractDetailsBE;
 import eu.possiblex.participantportal.business.entity.OfferingDetailsBE;
 import eu.possiblex.participantportal.business.entity.ParticipantWithDapsBE;
-import eu.possiblex.participantportal.business.entity.fh.TermsAndConditions;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -43,5 +43,15 @@ public interface ContractApiMapper {
 
     ContractParticipantDetailsTO participantDetailsBEToTO(ParticipantWithDapsBE possibleParticipant);
 
-    TermsAndConditionsTO termsAndConditionsToTO(TermsAndConditions termsAndConditions);
+    @Mapping(target = "id", source = "be.contractAgreement.id")
+    @Mapping(target = "assetId", source = "be.contractAgreement.assetId")
+    @Mapping(target = "catalogOffering", source = "be.offeringDetails.catalogOffering")
+    @Mapping(target = "offerRetrievalDate", source = "be.offeringDetails.offerRetrievalDate")
+    @Mapping(target = "policy", source = "be.contractAgreement.policy")
+    @Mapping(target = "contractSigningDate", source = "be.contractAgreement.contractSigningDate", qualifiedByName = "secondsToOffsetDateTime")
+    @Mapping(target = "consumerDetails", source = "be.consumerDetails")
+    @Mapping(target = "providerDetails", source = "be.providerDetails")
+    @Mapping(target = "isDataOffering", source = "be.dataOffering")
+    @Mapping(target = "enforcementPolicies", source = "be.enforcementPolicies")
+    ContractDetailsTO contractDetailsBEToTO(ContractDetailsBE be);
 }
