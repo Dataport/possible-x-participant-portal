@@ -1,7 +1,7 @@
 FROM gradle:8.9.0-jdk17 AS build
 COPY --chown=gradle:gradle . /home/gradle/src
 WORKDIR /home/gradle/src
-RUN gradle bootJar --no-daemon
+RUN gradle build --no-daemon
 
 FROM openjdk:17-jdk-slim
 
