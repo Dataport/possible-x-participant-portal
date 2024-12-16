@@ -20,9 +20,6 @@ import {OfferPrintViewComponent} from "../offer-print-view/offer-print-view.comp
 })
 class MockPrintView implements Partial<OfferPrintViewComponent>{
   @Input() offer?: IOfferDetailsTO;
-  @Input() providerDetails?: IParticipantDetailsTO;
-  @Input() consumerDetails?: IParticipantDetailsTO;
-  @Input() printTimestamp?: Date;
 }
 
 describe('AcceptOfferComponent', () => {

@@ -70,7 +70,7 @@ export class AcceptComponent implements OnChanges {
         console.log(e);
       });
     }).catch((e: HttpErrorResponse) => {
-      this.acceptOfferStatusMessage.showErrorMessage(e.error.detail || e.error || e.message);
+      this.acceptOfferStatusMessage.showErrorMessage(e?.error?.detail || e?.error || e?.message);
       this.isConsumed = false;
     });
   };

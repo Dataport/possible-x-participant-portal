@@ -13,7 +13,7 @@ describe('ServiceOfferPrintViewComponent', () => {
     });
     fixture = TestBed.createComponent(ServiceOfferPrintViewComponent);
     component = fixture.componentInstance;
-    component.offer = component.offer = {
+    component.offer = {
       catalogOffering: {
         "gx:providedBy": {id: "participantId"},
         "gx:dataProtectionRegime": [],
