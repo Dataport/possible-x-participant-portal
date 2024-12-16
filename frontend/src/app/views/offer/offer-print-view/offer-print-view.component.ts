@@ -1,4 +1,4 @@
-import {Component, ViewChild, ElementRef, Input} from '@angular/core';
+import {Component, Input} from '@angular/core';
 
 import {
   IOfferDetailsTO
@@ -14,12 +14,11 @@ import {DatePipe} from "@angular/common";
 })
 export class OfferPrintViewComponent {
   @Input() offer?: IOfferDetailsTO = undefined;
-  @ViewChild('modalContent') modalContent: ElementRef;
 
   constructor(private datePipe: DatePipe) {}
 
   getUrnUuid(id: string): string {
-    const match = id.match(/(urn:uuid:.*)/);
+    const match = RegExp(/(urn:uuid:.*)/).exec(id);
 
     if (match) {
       return match[1];

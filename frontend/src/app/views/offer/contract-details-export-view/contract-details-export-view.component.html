@@ -1,0 +1,61 @@
+<c-modal #modalInfoExportView id="modalInfoExportView" size="xl" alignment="center">
+  <c-modal-header>
+    <h5 *ngIf="contractDetails" cModalTitle>Export Related Information</h5>
+  </c-modal-header>
+  <c-modal-body>
+    <ng-container *ngIf="contractDetails">
+      <div id="export-section">
+        <div>This document contains an export of a contract proof with the related referenced {{contractDetails.dataOffering ? "Data " : ""}}Service Offering from the POSSIBLE-X Catalogue from:<br/>
+          {{ contractDetails.offerRetrievalDate | date: 'full' }}
+        </div>
+        <br/><br/>
+        <div>Please note that this is for information and does not ensure a period of validity. Only offers within the
+          catalogue are currently valid offers.
+        </div>
+        <br/><br/>
+        <h3><b>Contract Proof</b></h3>
+        <br/><br/>
+        <div>Contract Agreement ID:<br/>
+          {{ contractDetails.id }}
+        </div>
+        <br/><br/>
+        <div>Contract concluded:<br/>
+          {{ contractDetails.contractSigningDate | date: 'full' }}
+        </div>
+        <br/><br/>
+        <div>Contracting Parties:</div>
+        <br/><br/>
+        <div>Provider:<br/>
+          DAPS ID: <span class="break-after-colon">{{ contractDetails.providerDetails.dapsId }}</span><br/>
+          Derived DID: {{ contractDetails.providerDetails.did }}<br/>
+          Derived Name: {{ contractDetails.providerDetails.name }}
+        </div>
+        <br/><br/>
+        <div>Consumer:<br/>
+          DAPS ID: <span class="break-after-colon">{{ contractDetails.consumerDetails.dapsId }}</span><br/>
+          Derived DID: {{ contractDetails.consumerDetails.did }}<br/>
+          Derived Name: {{ contractDetails.consumerDetails.name }}
+        </div>
+        <br/><br/>
+        <h3><b>Offer Export</b></h3>
+        <br/><br/>
+        <app-offer-details-view [isDataOffering]="contractDetails.dataOffering"
+                                [catalogOffering]="contractDetails.catalogOffering"
+                                [enforcementPolicies]="contractDetails.enforcementPolicies"></app-offer-details-view>
+      </div>
+    </ng-container>
+  </c-modal-body>
+  <c-modal-footer>
+    <ng-container *ngIf="contractDetails">
+      <div class="flex justify-end p-3 gap-2">
+        <button [useExistingCss]="true" cButton color="primary" shape="rounded-0" printSectionId="export-section"
+                ngxPrint
+                styleSheetFile="./contract-details-export-view.component.scss,./service-contract-details-export-view/service-contract-details-export-view.component.scss,./data-contract-details-export-view/data-contract-details-export-view.component.scss"
+                printTitle="exportContractInformation_{{ getFormattedContractSigningTimestamp() }}_{{ contractDetails.id}}">
+          Print
+        </button>
+      </div>
+    </ng-container>
+    <button cButton color="primary" shape="rounded-0" [cModalToggle]="modalInfoExportView.id">Close</button>
+  </c-modal-footer>
+</c-modal>

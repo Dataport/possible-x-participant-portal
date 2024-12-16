@@ -1,0 +1,81 @@
+<div>Offer ID:<br/>
+  {{ catalogOffering.id || "Could not be retrieved" }}
+</div>
+<br/><br/>
+<div>1. Service:<br/>
+  {{ catalogOffering["schema:name"] || "-" }}
+</div>
+<br/><br/>
+<div>2. Description:<br/>
+  {{ catalogOffering["schema:description"] || "-" }}
+</div>
+<br/><br/>
+<div>3. Service Provider:<br/>
+  {{ catalogOffering["gx:providedBy"]?.id || "-" }}
+</div>
+<br/><br/>
+<div>4. Data Protection Regime:<br/>
+  <ng-container *ngIf="!catalogOffering['gx:dataProtectionRegime'] || catalogOffering['gx:dataProtectionRegime'].length === 0; else dprList">
+    -
+  </ng-container>
+  <ng-template #dprList>
+    <ul *ngFor="let r of catalogOffering['gx:dataProtectionRegime']">
+      <li>{{ r }}</li>
+    </ul>
+  </ng-template>
+</div>
+<br/><br/>
+<div>5. Data Account Export:<br/>
+  <ng-container *ngIf="!catalogOffering['gx:dataAccountExport']; else daeList">
+    -
+  </ng-container>
+  <ng-template #daeList>
+    <ul *ngFor="let e of catalogOffering['gx:dataAccountExport']">
+      <li>
+        Format Type: {{ e["gx:formatType"] }}<br/>
+        Access Type: {{ e["gx:accessType"] }}<br/>
+        Request Type: {{ e["gx:requestType"] }}
+      </li>
+    </ul>
+  </ng-template>
+</div>
+<br/><br/>
+<div>6. Terms & Conditions:<br/>
+  <ng-container *ngIf="!catalogOffering['gx:termsAndConditions']; else tncList">
+    -
+  </ng-container>
+  <ng-template #tncList>
+    <ul *ngFor="let tnc of catalogOffering['gx:termsAndConditions']">
+      <li>
+        <span>URL: {{ tnc['gx:URL'] }} (Hash: {{ tnc["gx:hash"] }})</span>
+      </li>
+    </ul>
+  </ng-template>
+</div>
+<br/><br/>
+<div>7. Service Policy:<br/>
+  <ng-container *ngIf="!catalogOffering['gx:policy']; else soPolicyList">
+    -
+  </ng-container>
+  <ng-template #soPolicyList>
+    <ul *ngFor="let p of catalogOffering['gx:policy']">
+      <li>{{ p }}</li>
+    </ul>
+  </ng-template>
+</div>
+<br/><br/>
+<div>8. POSSIBLE-X enforced policy:<br/>
+  <div *ngFor="let ep of enforcementPolicies">
+    <div *ngIf="isEverythingAllowedPolicy(ep)">
+      Everything is allowed.
+    </div>
+    <div *ngIf="isParticipantRestrictionPolicy(ep)">
+      Contracting is restricted to the following organizations:
+      <ul *ngFor="let org of asParticipantRestrictionPolicy(ep).allowedParticipants">
+        <li>
+          {{ org }}
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

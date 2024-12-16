@@ -1,0 +1,133 @@
+<div>Offer ID:<br/>
+  {{ catalogOffering.id || "Could not be retrieved" }}
+</div>
+<br/><br/>
+<div>1. Data Service Offering:<br/>
+  {{ catalogOffering["gx:aggregationOf"]?.[0]["schema:name"] || "-" }}
+</div>
+<br/><br/>
+<div>2. Description:<br/>
+  {{ catalogOffering["gx:aggregationOf"]?.[0]["schema:description"] || "-" }}
+</div>
+<br/><br/>
+<div>3. Copyright Owner:<br/>
+  {{ catalogOffering["gx:aggregationOf"]?.[0]["gx:copyrightOwnedBy"].id || "-" }}
+</div>
+<br/><br/>
+<div>4. License:<br/>
+  <ng-container *ngIf="!catalogOffering['gx:aggregationOf']?.[0]['gx:license']; else licenseList">
+    -
+  </ng-container>
+  <ng-template #licenseList>
+    <ul *ngFor="let l of catalogOffering['gx:aggregationOf'][0]['gx:license']">
+      <li>{{ l }}</li>
+    </ul>
+  </ng-template>
+</div>
+<br/><br/>
+<div>5. Producer:<br/>
+  {{ catalogOffering["gx:aggregationOf"]?.[0]["gx:producedBy"].id || "-" }}
+</div>
+<br/><br/>
+<div>6. Contains PII:<br/>
+  {{ catalogOffering["gx:aggregationOf"]?.[0]["gx:containsPII"] || "-" }}
+</div>
+<ng-container *ngIf="catalogOffering['gx:aggregationOf']?.[0]['gx:containsPII']">
+  <br/>
+  <div>Legitimate Interest:<br/>
+    Legal Basis:<br/>
+    {{ catalogOffering["gx:aggregationOf"][0]["gx:legitimateInterest"]?.["gx:legalBasis"] || "-" }}
+    <br/><br/>
+    Data Protection Contact:<br/>
+    {{ catalogOffering["gx:aggregationOf"][0]["gx:legitimateInterest"]?.["gx:dataProtectionContact"] || "-" }}
+  </div>
+  <br/><br/>
+</ng-container>
+<div>7. Data Resource Policy:<br/>
+  <ng-container *ngIf="!catalogOffering['gx:aggregationOf']?.[0]['gx:policy']; else drPolicyList">
+    -
+  </ng-container>
+  <ng-template #drPolicyList>
+    <ul *ngFor="let p of catalogOffering['gx:aggregationOf'][0]['gx:policy']">
+      <li>{{ p }}</li>
+    </ul>
+  </ng-template>
+</div>
+<br/><br/>
+<div>8. Corresponding Service:<br/>
+  {{ catalogOffering["schema:name"] || "-" }}
+</div>
+<br/><br/>
+<div>9. Description:<br/>
+  {{ catalogOffering["schema:description"] || "-" }}
+</div>
+<br/><br/>
+<div>10. Service Provider:<br/>
+  {{ catalogOffering["gx:providedBy"]?.id || "-" }}
+</div>
+<br/><br/>
+<div>11. Data Protection Regime:<br/>
+  <ng-container *ngIf="!catalogOffering['gx:dataProtectionRegime'] || catalogOffering['gx:dataProtectionRegime'].length === 0; else dprList">
+    -
+  </ng-container>
+  <ng-template #dprList>
+    <ul *ngFor="let r of catalogOffering['gx:dataProtectionRegime']">
+      <li>{{ r }}</li>
+    </ul>
+  </ng-template>
+</div>
+<br/><br/>
+<div>12. Data Account Export:<br/>
+  <ng-container *ngIf="!catalogOffering['gx:dataAccountExport']; else daeList">
+    -
+  </ng-container>
+  <ng-template #daeList>
+    <ul *ngFor="let e of catalogOffering['gx:dataAccountExport']">
+      <li>
+        Format Type: {{ e["gx:formatType"] }}<br/>
+        Access Type: {{ e["gx:accessType"] }}<br/>
+        Request Type: {{ e["gx:requestType"] }}
+      </li>
+    </ul>
+  </ng-template>
+</div>
+<br/><br/>
+<div>13. Terms & Conditions:<br/>
+  <ng-container *ngIf="!catalogOffering['gx:termsAndConditions']; else tncList">
+    -
+  </ng-container>
+  <ng-template #tncList>
+    <ul *ngFor="let tnc of catalogOffering['gx:termsAndConditions']">
+      <li>
+        <span>URL: {{ tnc['gx:URL'] }} (Hash: {{ tnc["gx:hash"] }})</span>
+      </li>
+    </ul>
+  </ng-template>
+</div>
+<br/><br/>
+<div>14. Service Policy:<br/>
+  <ng-container *ngIf="!catalogOffering['gx:policy']; else soPolicyList">
+    -
+  </ng-container>
+  <ng-template #soPolicyList>
+    <ul *ngFor="let p of catalogOffering['gx:policy']">
+      <li>{{ p }}</li>
+    </ul>
+  </ng-template>
+</div>
+<br/><br/>
+<div>15. POSSIBLE-X enforced policy:<br/>
+  <div *ngFor="let ep of enforcementPolicies">
+    <div *ngIf="isEverythingAllowedPolicy(ep)">
+      Everything is allowed.
+    </div>
+    <div *ngIf="isParticipantRestrictionPolicy(ep)">
+      Contracting is restricted to the following organizations:
+      <ul *ngFor="let org of asParticipantRestrictionPolicy(ep).allowedParticipants">
+        <li>
+          {{ org }}
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
