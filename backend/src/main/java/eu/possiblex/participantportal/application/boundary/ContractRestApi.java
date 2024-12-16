@@ -20,9 +20,9 @@ public interface ContractRestApi {
     List<ContractAgreementTO> getContractAgreements();
 
     /**
-     * GET request for retrieving a contract agreement by id.
+     * GET request for retrieving contract details by id.
      *
-     * @return contract agreement
+     * @return contract details
      */
     @GetMapping(value = "/details/{contractAgreementId}", produces = MediaType.APPLICATION_JSON_VALUE)
     ContractDetailsTO getContractDetailsByContractAgreementId(@PathVariable String contractAgreementId);
