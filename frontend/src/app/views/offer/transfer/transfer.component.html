@@ -18,10 +18,11 @@
       {{dismissButtonLabel}}
     </button>
     <div>
-      <button [cModalToggle]="'modalInfoExportView'" cButton color="primary"
-              shape="rounded-0" [ngStyle]="{'margin-right': contract.dataOffering ? '20px' : '0px'}">Export Related Information
+      <button [cModalToggle]="'modalInfoExportView'" cButton color="primary" shape="rounded-0">
+        Export Related Information
       </button>
-      <button *ngIf="contract.dataOffering" [disabled]="isTransferButtonDisabled" (click)="transfer()" cButton color="primary" shape="rounded-0">
+      <button *ngIf="contract.dataOffering" [disabled]="isTransferButtonDisabled" (click)="transfer()" cButton
+              color="primary" shape="rounded-0" class="ml-4">
         Transfer Data Resource
       </button>
     </div>
