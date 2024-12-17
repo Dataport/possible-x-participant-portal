@@ -1,13 +1,7 @@
 package eu.possiblex.participantportal.application.control;
 
-import eu.possiblex.participantportal.application.entity.AssetDetailsTO;
-import eu.possiblex.participantportal.application.entity.ContractAgreementTO;
-import eu.possiblex.participantportal.application.entity.ContractDetailsTO;
-import eu.possiblex.participantportal.application.entity.ContractParticipantDetailsTO;
-import eu.possiblex.participantportal.business.entity.ContractAgreementBE;
-import eu.possiblex.participantportal.business.entity.ContractDetailsBE;
-import eu.possiblex.participantportal.business.entity.OfferingDetailsBE;
-import eu.possiblex.participantportal.business.entity.ParticipantWithDapsBE;
+import eu.possiblex.participantportal.application.entity.*;
+import eu.possiblex.participantportal.business.entity.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -54,4 +48,6 @@ public interface ContractApiMapper {
     @Mapping(target = "isDataOffering", source = "be.dataOffering")
     @Mapping(target = "enforcementPolicies", source = "be.enforcementPolicies")
     ContractDetailsTO contractDetailsBEToTO(ContractDetailsBE be);
+
+    OfferWithTimestampTO offerRetrievalResponseBEToOfferWithTimestampTO(OfferRetrievalResponseBE offerRetrievalResponseBE);
 }

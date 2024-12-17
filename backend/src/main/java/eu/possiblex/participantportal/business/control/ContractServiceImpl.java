@@ -106,27 +106,7 @@ public class ContractServiceImpl implements ContractService {
             participantDidMap.values());
 
         // get the offering details for the asset ID
-        Map<String, OfferingDetailsSparqlQueryResult> offeringDetails = fhCatalogClient.getOfferingDetails(
-            List.of(contractAgreement.getAssetId()));
-
-        OfferRetrievalResponseBE offerRetrievalResponseBE;
-        if(!offeringDetails.containsKey(contractAgreement.getAssetId())) {
-            offerRetrievalResponseBE = OfferRetrievalResponseBE.builder().offerRetrievalDate(OffsetDateTime.now())
-                .catalogOffering(new PxExtendedServiceOfferingCredentialSubject()).build();
-        } else {
-            String serviceOfferingUriPrefix = "https://piveau.io/set/resource/service-offering/";
-            String dataProductUriPrefix = "https://piveau.io/set/resource/data-product/";
-
-            String offeringIdWithoutPrefix = offeringDetails.get(contractAgreement.getAssetId()).getUri()
-                .replace(serviceOfferingUriPrefix, "").replace(dataProductUriPrefix, "");
-
-            try {
-                offerRetrievalResponseBE = fhCatalogClient.getFhCatalogOffer(offeringIdWithoutPrefix);
-            } catch (OfferNotFoundException e) {
-                offerRetrievalResponseBE = OfferRetrievalResponseBE.builder().offerRetrievalDate(OffsetDateTime.now())
-                    .catalogOffering(new PxExtendedServiceOfferingCredentialSubject()).build();
-            }
-        }
+        OfferRetrievalResponseBE offerRetrievalResponseBE = getOfferRetrievalResponseBE(contractAgreement);
 
         // prepare for if the did is not found in the map
         String unknown = "Unknown";
@@ -146,6 +126,43 @@ public class ContractServiceImpl implements ContractService {
                     .name(participantNames.getOrDefault(participantDidMap.getOrDefault(contractAgreement.getProviderId(), ""),
                         unknownParticipant).getName()).build()).build();
 
+    }
+
+    @Override
+    public OfferRetrievalResponseBE getOfferDetailsByContractAgreementId(String contractAgreementId) {
+        ContractAgreement contractAgreement = edcClient.getContractAgreementById(contractAgreementId);
+        return getOfferRetrievalResponseBE(contractAgreement);
+    }
+
+    private OfferRetrievalResponseBE getOfferRetrievalResponseBE(ContractAgreement contractAgreement) {
+        // get the offering details for the asset ID
+        Map<String, OfferingDetailsSparqlQueryResult> offeringDetails = fhCatalogClient.getOfferingDetails(
+            List.of(contractAgreement.getAssetId()));
+
+        OfferRetrievalResponseBE offerRetrievalResponseBE;
+        PxExtendedServiceOfferingCredentialSubject unknownCatalogOffering = PxExtendedServiceOfferingCredentialSubject
+            .builder().id("Unknown").name("Unknown").description("Unknown").build();
+
+        if(!offeringDetails.containsKey(contractAgreement.getAssetId())) {
+            log.warn("No offer found in catalog with referenced assetId: {}", contractAgreement.getAssetId());
+            offerRetrievalResponseBE = OfferRetrievalResponseBE.builder().offerRetrievalDate(OffsetDateTime.now())
+                .catalogOffering(unknownCatalogOffering).build();
+        } else {
+            String serviceOfferingUriPrefix = "https://piveau.io/set/resource/service-offering/";
+            String dataProductUriPrefix = "https://piveau.io/set/resource/data-product/";
+
+            String offeringIdWithoutPrefix = offeringDetails.get(contractAgreement.getAssetId()).getUri()
+                .replace(serviceOfferingUriPrefix, "").replace(dataProductUriPrefix, "");
+
+            try {
+                offerRetrievalResponseBE = fhCatalogClient.getFhCatalogOffer(offeringIdWithoutPrefix);
+            } catch (OfferNotFoundException e) {
+                log.warn("No offer found in catalog with id: {}", offeringIdWithoutPrefix);
+                offerRetrievalResponseBE = OfferRetrievalResponseBE.builder().offerRetrievalDate(OffsetDateTime.now())
+                    .catalogOffering(unknownCatalogOffering).build();
+            }
+        }
+        return offerRetrievalResponseBE;
     }
 
     private Map<String, String> getParticipantDids(Collection<String> participantDapsIds) {

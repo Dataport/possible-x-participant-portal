@@ -57,6 +57,14 @@ public class ContractServiceFake implements ContractService {
         return getContractDetailsBE();
     }
 
+    @Override
+    public OfferRetrievalResponseBE getOfferDetailsByContractAgreementId(String contractAgreementId)
+        throws OfferNotFoundException {
+
+        return new OfferRetrievalResponseBE(PxExtendedServiceOfferingCredentialSubject.builder().name(NAME)
+            .description(DESCRIPTION).id(FAKE_ID_OFFERING).assetId(FAKE_ID_ASSET).build(), getDateAsOffsetDateTime());
+    }
+
     private List<ContractAgreementBE> getContractAgreementBEs() {
 
         ContractAgreement contractAgreement = ContractAgreement.builder().contractSigningDate(DATE_IN_SECONDS)

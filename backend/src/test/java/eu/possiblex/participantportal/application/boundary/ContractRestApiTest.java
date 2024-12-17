@@ -73,6 +73,17 @@ class ContractRestApiTest {
             .andExpect(jsonPath("$.policy['odrl:permission']").isEmpty());
     }
 
+    @Test
+    void shouldReturnMessageOnGetOfferWithTimestampByContractAgreementId() throws Exception {
+        //when
+        //then
+
+        this.mockMvc.perform(get("/contract/details/anyId/offer")).andDo(print()).andExpect(status().isOk())
+            .andExpect(jsonPath("$.catalogOffering['schema:name']").value(ContractServiceFake.NAME))
+            .andExpect(jsonPath("$.catalogOffering['schema:description']").value(ContractServiceFake.DESCRIPTION))
+            .andExpect(jsonPath("$.offerRetrievalDate").exists());
+    }
+
     @TestConfiguration
     static class TestConfig {
         @Bean

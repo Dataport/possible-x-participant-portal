@@ -1,9 +1,6 @@
 package eu.possiblex.participantportal.application.boundary;
 
-import eu.possiblex.participantportal.application.entity.ContractAgreementTO;
-import eu.possiblex.participantportal.application.entity.ContractDetailsTO;
-import eu.possiblex.participantportal.application.entity.TransferOfferRequestTO;
-import eu.possiblex.participantportal.application.entity.TransferOfferResponseTO;
+import eu.possiblex.participantportal.application.entity.*;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,12 +17,20 @@ public interface ContractRestApi {
     List<ContractAgreementTO> getContractAgreements();
 
     /**
-     * GET request for retrieving contract details by id.
+     * GET request for retrieving contract details by contract agreement id.
      *
      * @return contract details
      */
     @GetMapping(value = "/details/{contractAgreementId}", produces = MediaType.APPLICATION_JSON_VALUE)
     ContractDetailsTO getContractDetailsByContractAgreementId(@PathVariable String contractAgreementId);
+
+    /**
+     * GET request for retrieving the referenced offer with timestamp by contract agreement id.
+     *
+     * @return Referenced offer with timestamp
+     */
+    @GetMapping(value = "/details/{contractAgreementId}/offer", produces = MediaType.APPLICATION_JSON_VALUE)
+    OfferWithTimestampTO getOfferWithTimestampByContractAgreementId(@PathVariable String contractAgreementId);
 
     /**
      * POST request for transferring a data product again from the contracts tab.
