@@ -18,7 +18,7 @@
       {{dismissButtonLabel}}
     </button>
     <div>
-      <button [cModalToggle]="'modalInfoExportView'" cButton color="primary" shape="rounded-0">
+      <button [cModalToggle]="'modalInfoExportView'" (click)="retrieveAndSetContractDetails()" cButton color="primary" shape="rounded-0">
         Export Related Information
       </button>
       <button *ngIf="contract.dataOffering" [disabled]="isTransferButtonDisabled" (click)="transfer()" cButton
@@ -38,4 +38,4 @@
   </app-status-message>
 </div>
 
-<app-contract-details-export-view [contractDetails]="retrievedContractDetails"></app-contract-details-export-view>
+<app-contract-details-export-view #contractDetailsExportView [contractDetails]="contractDetailsToExport"></app-contract-details-export-view>

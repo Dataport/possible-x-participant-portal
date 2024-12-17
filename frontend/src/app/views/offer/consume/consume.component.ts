@@ -21,7 +21,6 @@ export class ConsumeComponent {
   @ViewChild("transfer") transfer: TransferComponent;
   selectedOffer?: IOfferDetailsTO = undefined;
   negotiatedContract?: IAcceptOfferResponseTO = undefined;
-  retrievedContractDetails?: IContractDetailsTO = undefined;
 
   setSelectedOffer(offer: IOfferDetailsTO): void {
     this.selectedOffer = offer;
@@ -33,14 +32,9 @@ export class ConsumeComponent {
     this.stepper.next();
   }
 
-  setRetrievedContractDetails(contractDetails: IContractDetailsTO): void {
-    this.retrievedContractDetails = contractDetails;
-  }
-
   resetSelection() {
     this.selectedOffer = undefined;
     this.negotiatedContract = undefined;
-    this.retrievedContractDetails = undefined;
     this.select.queryCatalogStatusMessage.hideAllMessages();
     this.select.selectionForm.reset();
     this.accept.acceptOfferStatusMessage.hideAllMessages();
