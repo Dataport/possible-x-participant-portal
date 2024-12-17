@@ -18,9 +18,9 @@ export interface IProviderRestApi {
 
 export interface IResourceShapeRestApi {
     gxInstantiatedVirtualResourceShape: string;
+    gxDataResourceShape: string;
     gxVirtualResourceShape: string;
     gxLegitimateInterestShape: string;
-    gxDataResourceShape: string;
     gxPhysicalResourceShape: string;
     gxSoftwareResourceShape: string;
 }
@@ -147,6 +147,14 @@ export interface IOfferDetailsTO {
 }
 
 export interface IOfferDetailsTOBuilder {
+}
+
+export interface IOfferWithTimestampTO {
+    catalogOffering: IPxExtendedServiceOfferingCredentialSubject;
+    offerRetrievalDate: Date;
+}
+
+export interface IOfferWithTimestampTOBuilder {
 }
 
 export interface IParticipantDetailsTO extends IParticipantNameTO {
@@ -494,6 +502,14 @@ export class RestApplicationClient {
      */
     getContractDetailsByContractAgreementId(contractAgreementId: string): RestResponse<IContractDetailsTO> {
         return this.httpClient.request({ method: "GET", url: uriEncoding`contract/details/${contractAgreementId}` });
+    }
+
+    /**
+     * HTTP GET /contract/details/{contractAgreementId}/offer
+     * Java method: eu.possiblex.participantportal.application.boundary.ContractRestApiImpl.getOfferWithTimestampByContractAgreementId
+     */
+    getOfferWithTimestampByContractAgreementId(contractAgreementId: string): RestResponse<IOfferWithTimestampTO> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`contract/details/${contractAgreementId}/offer` });
     }
 
     /**

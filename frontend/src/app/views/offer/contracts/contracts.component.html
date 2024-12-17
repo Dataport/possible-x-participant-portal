@@ -25,7 +25,8 @@
         <ng-container *ngFor="let item of sortedAgreements; let i = index">
           <tr>
             <td class="overflow-clip text-nowrap text-ellipsis">{{ i + 1 }}</td>
-            <td class="overflow-clip text-nowrap text-ellipsis">{{ item.contractSigningDate | date:'medium' }}</td>
+            <td [cTooltip]="item.contractSigningDate | date:'medium'"
+                class="overflow-clip text-nowrap text-ellipsis">{{ item.contractSigningDate | date:'medium' }}</td>
             <td [cTooltip]="item.assetDetails.name"
                 class="overflow-clip text-nowrap text-ellipsis">{{ item.assetDetails.name }}
             </td>
@@ -47,6 +48,9 @@
           </tr>
           <tr *ngIf="item.id === expandedItemId">
             <td colspan="8">
+              <div class="mb-4">
+                <button [cModalToggle]="'modalInfoExportView'" (click)="retrieveAndSetOfferDetails(item.id)" cButton class="rounded-none">Export Related Information</button>
+              </div>
               <span *ngIf="item.consumerDetails"><b>Consumer Name:</b> {{ item.consumerDetails.name }}<br></span>
               <span *ngIf="item.consumerDetails"><b>Consumer DID:</b> {{ item.consumerDetails.did }}<br></span>
               <span *ngIf="item.consumerDetails"><b>Consumer DAPS ID:</b> {{ item.consumerDetails.dapsId }}<br><br></span>
@@ -68,3 +72,5 @@
     </div>
   </div>
 </div>
+
+<app-contract-details-export-view [contractDetails]="contractDetailsToExport"></app-contract-details-export-view>
