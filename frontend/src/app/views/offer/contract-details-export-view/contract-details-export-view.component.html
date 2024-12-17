@@ -1,8 +1,14 @@
 <c-modal #modalInfoExportView id="modalInfoExportView" size="xl" alignment="center">
   <c-modal-header>
-    <h5 *ngIf="contractDetails" cModalTitle>Export Related Information</h5>
+    <h5 cModalTitle>Export Related Information</h5>
   </c-modal-header>
   <c-modal-body>
+    <app-status-message
+      #informationRetrievalStatusMessage
+      [errorMessage]="'Retrieving contract export information failed.'"
+      [infoMessage]="'Retrieving contract export information ongoing.'"
+      [successMessage]="'Retrieving contract export information successful.'"
+    ></app-status-message>
     <ng-container *ngIf="contractDetails">
       <div id="export-section">
         <div>This document contains an export of a contract proof with the related referenced {{contractDetails.dataOffering ? "Data " : ""}}Service Offering from the POSSIBLE-X Catalogue from:<br/>

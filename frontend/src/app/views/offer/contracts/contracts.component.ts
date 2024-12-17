@@ -1,15 +1,17 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {
   IContractAgreementTO,
-  IContractDetailsTO, IContractParticipantDetailsTO, IEnforcementPolicyUnion,
-  IOfferDetailsTOBuilder,
-  IPolicy, IPxExtendedServiceOfferingCredentialSubject
+  IContractDetailsTO,
+  IPolicy,
 } from '../../../services/mgmt/api/backend';
 import {HttpErrorResponse} from "@angular/common/http";
 import {StatusMessageComponent} from "../../common-views/status-message/status-message.component";
 import {ApiService} from '../../../services/mgmt/api/api.service';
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {Sort} from "@angular/material/sort";
+import {
+  ContractDetailsExportViewComponent
+} from "../contract-details-export-view/contract-details-export-view.component";
 
 @Component({
   selector: 'app-contracts',
@@ -18,6 +20,7 @@ import {Sort} from "@angular/material/sort";
 })
 export class ContractsComponent implements OnInit {
   @ViewChild("requestContractAgreementsStatusMessage") public requestContractAgreementsStatusMessage!: StatusMessageComponent;
+  @ViewChild(("contractDetailsExportView")) public contractDetailsExportView!: ContractDetailsExportViewComponent;
   contractAgreements: IContractAgreementTO[] = [];
   sortedAgreements: IContractAgreementTO[] = [];
   expandedItemId: string | null = null;
@@ -112,9 +115,11 @@ export class ContractsComponent implements OnInit {
 
   async retrieveAndSetOfferDetails(id: string) {
     this.contractDetailsToExport = undefined;
+    this.contractDetailsExportView.informationRetrievalStatusMessage.showInfoMessage()
     let contractAgreement = this.contractAgreements.find(agreement => agreement.id === id);
     this.apiService.getOfferWithTimestampByContractAgreementId(id).then(response => {
       console.log(response);
+      this.contractDetailsExportView.informationRetrievalStatusMessage.hideAllMessages();
       this.contractDetailsToExport = {
         id : contractAgreement.id,
         assetId : contractAgreement.assetId,
@@ -128,7 +133,8 @@ export class ContractsComponent implements OnInit {
         dataOffering : contractAgreement.dataOffering,
       } as IContractDetailsTO;
     }).catch((e: HttpErrorResponse) => {
-      console.log(e.error.detail || e.error || e.message);
+      console.log(e?.error?.detail || e?.error || e?.message);
+      this.contractDetailsExportView.informationRetrievalStatusMessage.showErrorMessage(e?.error?.detail || e?.error || e?.message);
     });
   }
 }

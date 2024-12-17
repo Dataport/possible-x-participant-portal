@@ -1,6 +1,7 @@
-import {Component, Input} from '@angular/core';
+import {Component, Input, ViewChild} from '@angular/core';
 import {DatePipe} from "@angular/common";
 import {IContractDetailsTO} from "../../../services/mgmt/api/backend";
+import {StatusMessageComponent} from "../../common-views/status-message/status-message.component";
 
 @Component({
   selector: 'app-contract-details-export-view',
@@ -11,6 +12,7 @@ import {IContractDetailsTO} from "../../../services/mgmt/api/backend";
 export class ContractDetailsExportViewComponent {
 
   @Input() contractDetails?: IContractDetailsTO = undefined;
+  @ViewChild('informationRetrievalStatusMessage') public informationRetrievalStatusMessage!: StatusMessageComponent;
 
   constructor(private datePipe: DatePipe) {}
 
