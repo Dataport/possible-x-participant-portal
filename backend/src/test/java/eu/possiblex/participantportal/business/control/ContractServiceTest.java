@@ -85,8 +85,10 @@ class ContractServiceTest {
         reset(fhCatalogClient);
         reset(edcClient);
 
+        String serviceName = "test name";
+        String serviceDescription = "test description";
         PxExtendedServiceOfferingCredentialSubject pxExtendedServiceOfferingCredentialSubject = PxExtendedServiceOfferingCredentialSubject.builder()
-            .aggregationOf(List.of()).name("test name").description("test description").assetId(EdcClientFake.FAKE_ID).build();
+            .aggregationOf(List.of()).name(serviceName).description(serviceDescription).assetId(EdcClientFake.FAKE_ID).build();
         OffsetDateTime offerRetrievalDate = OffsetDateTime.now();
         Mockito.when(fhCatalogClient.getFhCatalogOffer(any()))
             .thenReturn(new OfferRetrievalResponseBE(pxExtendedServiceOfferingCredentialSubject, offerRetrievalDate));
@@ -105,8 +107,8 @@ class ContractServiceTest {
 
         assertThat(actual).isNotNull();
         assertThat(actual.getOfferingDetails().getOfferRetrievalDate()).isEqualTo(offerRetrievalDate);
-        assertThat(actual.getOfferingDetails().getCatalogOffering().getName()).isEqualTo("test name");
-        assertThat(actual.getOfferingDetails().getCatalogOffering().getDescription()).isEqualTo("test description");
+        assertThat(actual.getOfferingDetails().getCatalogOffering().getName()).isEqualTo(serviceName);
+        assertThat(actual.getOfferingDetails().getCatalogOffering().getDescription()).isEqualTo(serviceDescription);
         assertThat(actual.getProviderDetails().getName()).isEqualTo("Unknown");
         assertThat(actual.getConsumerDetails().getName()).isEqualTo("Unknown");
 
