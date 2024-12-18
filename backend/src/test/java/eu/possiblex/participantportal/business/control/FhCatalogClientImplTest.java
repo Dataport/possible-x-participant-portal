@@ -134,7 +134,7 @@ class FhCatalogClientImplTest {
         Mockito.when(sparqlFhCatalogClient.queryCatalog(Mockito.anyString(), Mockito.isNull()))
             .thenReturn(sparqlResponse);
 
-        Map<String, OfferingDetailsSparqlQueryResult> queryResultMap = fhCatalogClient.getOfferingDetails(
+        Map<String, OfferingDetailsSparqlQueryResult> queryResultMap = fhCatalogClient.getOfferingDetailsByAssetIds(
             List.of("EXPECTED_ASSET_ID_VALUE"));
         OfferingDetailsSparqlQueryResult queryResult = queryResultMap.get("EXPECTED_ASSET_ID_VALUE");
 
@@ -159,7 +159,7 @@ class FhCatalogClientImplTest {
 
         String participantId = "did:web:portal.dev.possible-x.de:participant:df15587a-0760-32b5-9c42-bb7be66e8076";
 
-        Map<String, ParticipantDetailsSparqlQueryResult> queryResultMap = fhCatalogClient.getParticipantDetails(
+        Map<String, ParticipantDetailsSparqlQueryResult> queryResultMap = fhCatalogClient.getParticipantDetailsByIds(
             List.of(participantId));
         ParticipantDetailsSparqlQueryResult queryResult = queryResultMap.get(participantId);
 

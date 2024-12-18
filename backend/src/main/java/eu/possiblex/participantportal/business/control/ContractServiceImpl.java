@@ -61,11 +61,11 @@ public class ContractServiceImpl implements ContractService {
         Map<String, String> participantDidMap = getParticipantDids(refrencedDapsIds);
 
         // build a map of participant dids to participant names
-        Map<String, ParticipantDetailsSparqlQueryResult> participantNames = fhCatalogClient.getParticipantDetails(
+        Map<String, ParticipantDetailsSparqlQueryResult> participantNames = fhCatalogClient.getParticipantDetailsByIds(
             participantDidMap.values());
 
         // build a map of assetIds to offering details
-        Map<String, OfferingDetailsSparqlQueryResult> offeringDetails = fhCatalogClient.getOfferingDetails(
+        Map<String, OfferingDetailsSparqlQueryResult> offeringDetails = fhCatalogClient.getOfferingDetailsByAssetIds(
             referencedAssetIds);
         // prepare for if the did or asset ID is not found
         String unknown = "Unknown";
@@ -102,7 +102,7 @@ public class ContractServiceImpl implements ContractService {
             contractAgreement.getProviderId()));
 
         // build a map of consumer and provider dids to participant names
-        Map<String, ParticipantDetailsSparqlQueryResult> participantNames = fhCatalogClient.getParticipantDetails(
+        Map<String, ParticipantDetailsSparqlQueryResult> participantNames = fhCatalogClient.getParticipantDetailsByIds(
             participantDidMap.values());
 
         // get the offering details for the asset ID
@@ -136,7 +136,7 @@ public class ContractServiceImpl implements ContractService {
 
     private OfferRetrievalResponseBE getOfferRetrievalResponseBE(ContractAgreement contractAgreement) {
         // get the offering details for the asset ID
-        Map<String, OfferingDetailsSparqlQueryResult> offeringDetails = fhCatalogClient.getOfferingDetails(
+        Map<String, OfferingDetailsSparqlQueryResult> offeringDetails = fhCatalogClient.getOfferingDetailsByAssetIds(
             List.of(contractAgreement.getAssetId()));
 
         OfferRetrievalResponseBE offerRetrievalResponseBE;
@@ -186,7 +186,7 @@ public class ContractServiceImpl implements ContractService {
     public TransferOfferResponseBE transferDataOfferAgain(TransferOfferRequestBE be)
         throws OfferNotFoundException, TransferFailedException {
 
-        Map<String, OfferingDetailsSparqlQueryResult> offeringDetailsMap = fhCatalogClient.getOfferingDetails(
+        Map<String, OfferingDetailsSparqlQueryResult> offeringDetailsMap = fhCatalogClient.getOfferingDetailsByAssetIds(
             List.of(be.getEdcOfferId()));
         if (offeringDetailsMap.size() > 1) {
             throw new OfferNotFoundException(

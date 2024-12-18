@@ -31,7 +31,7 @@ public class FhCatalogClientFake implements FhCatalogClient {
     }
 
     @Override
-    public Map<String, ParticipantDetailsSparqlQueryResult> getParticipantDetails(Collection<String> dids) {
+    public Map<String, ParticipantDetailsSparqlQueryResult> getParticipantDetailsByIds(Collection<String> dids) {
 
         return Map.of(FAKE_DID,
             ParticipantDetailsSparqlQueryResult.builder().name(OmejdnConnectorApiClientFake.PARTICIPANT_NAME)
@@ -39,7 +39,13 @@ public class FhCatalogClientFake implements FhCatalogClient {
     }
 
     @Override
-    public Map<String, OfferingDetailsSparqlQueryResult> getOfferingDetails(Collection<String> assetIds) {
+    public Map<String, ParticipantDetailsSparqlQueryResult> getParticipantDetails() {
+
+        return getParticipantDetailsByIds(null);
+    }
+
+    @Override
+    public Map<String, OfferingDetailsSparqlQueryResult> getOfferingDetailsByAssetIds(Collection<String> assetIds) {
 
         return Map.of(EdcClientFake.FAKE_ID,
             OfferingDetailsSparqlQueryResult.builder().name("name").description("description")

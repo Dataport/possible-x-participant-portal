@@ -104,7 +104,8 @@ public class FhCatalogClientImpl implements FhCatalogClient {
         }
     }
 
-    public Map<String, ParticipantDetailsSparqlQueryResult> getParticipantDetails(Collection<String> participantDids) {
+    @Override
+    public Map<String, ParticipantDetailsSparqlQueryResult> getParticipantDetailsByIds(Collection<String> participantDids) {
 
         String query = """
             PREFIX gx: <https://w3id.org/gaia-x/development#>
@@ -119,6 +120,7 @@ public class FhCatalogClientImpl implements FhCatalogClient {
                 participantDids.stream().map(id -> "<" + PARTICIPANT_URI_PREFIX + id + ">").toList()) + "))" + """
             }
             """;
+
         String stringResult = sparqlFhCatalogClient.queryCatalog(query, null);
 
         SparqlQueryResponse<ParticipantDetailsSparqlQueryResult> result;
@@ -134,7 +136,38 @@ public class FhCatalogClientImpl implements FhCatalogClient {
                         HashMap::putAll);
     }
 
-    public Map<String, OfferingDetailsSparqlQueryResult> getOfferingDetails(Collection<String> assetIds) {
+    @Override
+    public Map<String, ParticipantDetailsSparqlQueryResult> getParticipantDetails() {
+
+        String query = """
+            PREFIX gx: <https://w3id.org/gaia-x/development#>
+            PREFIX schema: <https://schema.org/>
+            PREFIX px: <http://w3id.org/gaia-x/possible-x#>
+            
+            SELECT ?uri ?name ?mailAddress WHERE {
+              ?uri a gx:LegalParticipant;
+              schema:name ?name;
+              px:mailAddress ?mailAddress .
+            }
+            """;
+
+        String stringResult = sparqlFhCatalogClient.queryCatalog(query, null);
+
+        SparqlQueryResponse<ParticipantDetailsSparqlQueryResult> result;
+        try {
+            result = objectMapper.readValue(stringResult, new TypeReference<>() {
+            });
+        } catch (JsonProcessingException e) {
+            throw new SparqlQueryException("Error during query deserialization", e);
+        }
+
+        return result.getResults().getBindings().stream()
+            .collect(HashMap::new, (map, p) -> map.put(p.getUri().replace(PARTICIPANT_URI_PREFIX, ""), p),
+                HashMap::putAll);
+    }
+
+    @Override
+    public Map<String, OfferingDetailsSparqlQueryResult> getOfferingDetailsByAssetIds(Collection<String> assetIds) {
 
         String query = """
             PREFIX gx: <https://w3id.org/gaia-x/development#>

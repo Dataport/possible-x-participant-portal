@@ -39,18 +39,25 @@ public interface FhCatalogClient {
     void deleteServiceOfferingFromFhCatalog(String offeringId, boolean doesContainData);
 
     /**
-     * Get the names of the legal participants.
+     * Given the IDs, get selected details of the legal participants.
      *
      * @param participantDids the IDs of the participants
-     * @return the names of the participants
+     * @return the details of the participants
      */
-    Map<String, ParticipantDetailsSparqlQueryResult> getParticipantDetails(Collection<String> participantDids);
+    Map<String, ParticipantDetailsSparqlQueryResult> getParticipantDetailsByIds(Collection<String> participantDids);
 
     /**
-     * Get the details of the offerings with the type "px:PossibleXServiceOfferingExtension".
+     * Get selected details of all legal participants.
      *
-     * @param assetIds referenced in the offerings
+     * @return the details of all legal participants
+     */
+    Map<String, ParticipantDetailsSparqlQueryResult> getParticipantDetails();
+
+    /**
+     * Given the referenced asset IDs, get selected details of the offerings with the type "px:PossibleXServiceOfferingExtension".
+     *
+     * @param assetIds the asset IDs referenced in the offerings
      * @return the details of the service offerings
      */
-    Map<String, OfferingDetailsSparqlQueryResult> getOfferingDetails(Collection<String> assetIds);
+    Map<String, OfferingDetailsSparqlQueryResult> getOfferingDetailsByAssetIds(Collection<String> assetIds);
 }

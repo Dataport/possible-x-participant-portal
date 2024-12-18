@@ -154,7 +154,7 @@ public class ConsumerServiceImpl implements ConsumerService {
             }
         }
 
-        return fhCatalogClient.getParticipantDetails(participantIds);
+        return fhCatalogClient.getParticipantDetailsByIds(participantIds);
     }
 
     @Override

@@ -57,18 +57,18 @@ class ContractServiceTest {
         reset(fhCatalogClient);
         reset(edcClient);
 
-        Mockito.when(fhCatalogClient.getParticipantDetails(any())).thenReturn(
+        Mockito.when(fhCatalogClient.getParticipantDetailsByIds(any())).thenReturn(
             Map.of(OmejdnConnectorApiClientFake.PARTICIPANT_ID,
                 ParticipantDetailsSparqlQueryResult.builder().name(OmejdnConnectorApiClientFake.PARTICIPANT_NAME)
                     .build()));
-        Mockito.when(fhCatalogClient.getOfferingDetails(any())).thenReturn(Map.of(EdcClientFake.FAKE_ID,
+        Mockito.when(fhCatalogClient.getOfferingDetailsByAssetIds(any())).thenReturn(Map.of(EdcClientFake.FAKE_ID,
             OfferingDetailsSparqlQueryResult.builder().assetId(EdcClientFake.FAKE_ID).build()));
 
         List<ContractAgreementBE> expected = getContractAgreementBEs();
         List<ContractAgreementBE> actual = contractService.getContractAgreements();
 
-        verify(fhCatalogClient).getParticipantDetails(any());
-        verify(fhCatalogClient).getOfferingDetails(any());
+        verify(fhCatalogClient).getParticipantDetailsByIds(any());
+        verify(fhCatalogClient).getOfferingDetailsByAssetIds(any());
         verify(edcClient).queryContractAgreements();
 
         assertThat(actual).isNotEmpty();
@@ -93,16 +93,16 @@ class ContractServiceTest {
         Mockito.when(fhCatalogClient.getFhCatalogOffer(any()))
             .thenReturn(new OfferRetrievalResponseBE(pxExtendedServiceOfferingCredentialSubject, offerRetrievalDate));
 
-        Mockito.when(fhCatalogClient.getParticipantDetails(any())).thenReturn(Map.of(OmejdnConnectorApiClientFake.PARTICIPANT_ID,
+        Mockito.when(fhCatalogClient.getParticipantDetailsByIds(any())).thenReturn(Map.of(OmejdnConnectorApiClientFake.PARTICIPANT_ID,
             ParticipantDetailsSparqlQueryResult.builder().name(OmejdnConnectorApiClientFake.PARTICIPANT_NAME).build()));
-        Mockito.when(fhCatalogClient.getOfferingDetails(any())).thenReturn(Map.of(EdcClientFake.FAKE_ID,
+        Mockito.when(fhCatalogClient.getOfferingDetailsByAssetIds(any())).thenReturn(Map.of(EdcClientFake.FAKE_ID,
             OfferingDetailsSparqlQueryResult.builder().assetId(EdcClientFake.FAKE_ID).uri("some uri").build()));
 
         ContractDetailsBE actual = contractService.getContractDetailsByContractAgreementId("some id");
 
         verify(fhCatalogClient).getFhCatalogOffer(any());
-        verify(fhCatalogClient).getParticipantDetails(any());
-        verify(fhCatalogClient).getOfferingDetails(any());
+        verify(fhCatalogClient).getParticipantDetailsByIds(any());
+        verify(fhCatalogClient).getOfferingDetailsByAssetIds(any());
         verify(edcClient).getContractAgreementById(any());
 
         assertThat(actual).isNotNull();
@@ -126,13 +126,13 @@ class ContractServiceTest {
         Mockito.when(fhCatalogClient.getFhCatalogOffer(any()))
             .thenReturn(new OfferRetrievalResponseBE(pxExtendedServiceOfferingCredentialSubject, offerRetrievalDate));
 
-        Mockito.when(fhCatalogClient.getOfferingDetails(any())).thenReturn(Map.of(EdcClientFake.FAKE_ID,
+        Mockito.when(fhCatalogClient.getOfferingDetailsByAssetIds(any())).thenReturn(Map.of(EdcClientFake.FAKE_ID,
             OfferingDetailsSparqlQueryResult.builder().assetId(EdcClientFake.FAKE_ID).uri("some uri").build()));
 
         OfferRetrievalResponseBE actual = contractService.getOfferDetailsByContractAgreementId("some id");
 
         verify(fhCatalogClient).getFhCatalogOffer(any());
-        verify(fhCatalogClient).getOfferingDetails(any());
+        verify(fhCatalogClient).getOfferingDetailsByAssetIds(any());
         verify(edcClient).getContractAgreementById(any());
 
         assertThat(actual).isNotNull();
@@ -156,7 +156,7 @@ class ContractServiceTest {
         OfferingDetailsSparqlQueryResult queryResult = new OfferingDetailsSparqlQueryResult();
         queryResult.setAssetId(EdcClientFake.FAKE_ID);
         queryResult.setProviderUrl(EdcClientFake.VALID_COUNTER_PARTY_ADDRESS);
-        Mockito.when(fhCatalogClient.getOfferingDetails(any())).thenReturn(Map.of(EdcClientFake.FAKE_ID, queryResult));
+        Mockito.when(fhCatalogClient.getOfferingDetailsByAssetIds(any())).thenReturn(Map.of(EdcClientFake.FAKE_ID, queryResult));
 
         //WHEN
         TransferOfferResponseBE actual = contractService.transferDataOfferAgain(request);
@@ -164,7 +164,7 @@ class ContractServiceTest {
         //THEN
         assertThat(actual.getTransferProcessState()).isEqualTo(response.getTransferProcessState());
         verify(consumerService).transferDataOffer(any());
-        verify(fhCatalogClient).getOfferingDetails(List.of(EdcClientFake.FAKE_ID));
+        verify(fhCatalogClient).getOfferingDetailsByAssetIds(List.of(EdcClientFake.FAKE_ID));
     }
 
     private List<ContractAgreementBE> getContractAgreementBEs() {

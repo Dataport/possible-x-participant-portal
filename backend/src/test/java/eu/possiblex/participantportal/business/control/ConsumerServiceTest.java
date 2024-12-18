@@ -79,7 +79,7 @@ class ConsumerServiceTest {
                 .mailAddress(FhCatalogClientFake.FAKE_EMAIL_ADDRESS).build(), FhCatalogClientFake.FAKE_PROVIDER_ID,
             ParticipantDetailsSparqlQueryResult.builder().uri(FhCatalogClientFake.FAKE_PROVIDER_ID)
                 .mailAddress(FhCatalogClientFake.FAKE_EMAIL_ADDRESS).build());
-        Mockito.when(fhCatalogClient.getParticipantDetails(any())).thenReturn(participantDetails);
+        Mockito.when(fhCatalogClient.getParticipantDetailsByIds(any())).thenReturn(participantDetails);
 
         // WHEN
 
@@ -90,7 +90,7 @@ class ConsumerServiceTest {
 
         verify(edcClient).queryCatalog(any());
         verify(edcClient, times(0)).initiateTransfer(any());
-        verify(fhCatalogClient, times(1)).getParticipantDetails(idCaptor.capture());
+        verify(fhCatalogClient, times(1)).getParticipantDetailsByIds(idCaptor.capture());
 
         Collection<String> ids = idCaptor.getValue();
         assertNotNull(ids);
@@ -130,7 +130,7 @@ class ConsumerServiceTest {
         Map<String, ParticipantDetailsSparqlQueryResult> participantDetails = Map.of(FhCatalogClientFake.FAKE_DID,
             ParticipantDetailsSparqlQueryResult.builder().uri(FhCatalogClientFake.FAKE_DID)
                 .mailAddress(FhCatalogClientFake.FAKE_EMAIL_ADDRESS).build());
-        Mockito.when(fhCatalogClient.getParticipantDetails(any())).thenReturn(participantDetails);
+        Mockito.when(fhCatalogClient.getParticipantDetailsByIds(any())).thenReturn(participantDetails);
 
         // WHEN
 
@@ -141,7 +141,7 @@ class ConsumerServiceTest {
 
         verify(edcClient).queryCatalog(any());
         verify(edcClient, times(0)).initiateTransfer(any());
-        verify(fhCatalogClient, times(1)).getParticipantDetails(idCaptor.capture());
+        verify(fhCatalogClient, times(1)).getParticipantDetailsByIds(idCaptor.capture());
 
         Collection<String> ids = idCaptor.getValue();
         assertNotNull(ids);
