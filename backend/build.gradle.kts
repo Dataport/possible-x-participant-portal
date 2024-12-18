@@ -1,7 +1,6 @@
 import cz.habarta.typescript.generator.JsonLibrary
 import cz.habarta.typescript.generator.TypeScriptFileType
 import cz.habarta.typescript.generator.TypeScriptOutputKind
-import org.yaml.snakeyaml.Yaml
 
 plugins {
   java
@@ -66,8 +65,7 @@ tasks.getByName<Jar>("jar") {
 
 tasks.register<Exec>("startFrontend") {
   description = "Starts the frontend application."
-  group = "build"
-  workingDir = file("$rootDir/frontend")
+  group = "application"
   dependsOn(":frontend:npmStart")
 }
 
@@ -83,26 +81,9 @@ tasks.register<JavaExec>("startBackend") {
   }
 }
 
-tasks.named<JavaExec>("bootRun") {
-  val activeProfile = project.findProperty("activeProfile")?.toString()
-  if (activeProfile != null) {
-      systemProperty("spring.profiles.active", activeProfile)
-  }
-  val yaml = Yaml()
-  val yamlFileName = if (activeProfile != null) "application-$activeProfile.yml" else "application.yml"
-  val applicationYaml = file("$rootDir/backend/src/main/resources/$yamlFileName")
-  val config = yaml.load<Map<String, Any>>(applicationYaml.inputStream())
-
-  val serverPort = (config["server"] as? Map<String, Any>)?.get("port") ?: "8080"
-  val incrementedPort = serverPort.toString().toInt().plus(1).toString()
-  doFirst {
-    Thread {
-      exec {
-        workingDir = file("$rootDir")
-        commandLine("./gradlew", "startFrontend", "-PactiveProfile=$activeProfile", "-Pport=$incrementedPort")
-      }
-    }.start()
-  }
+tasks.register<JavaExec>("startFull") {
+  dependsOn("startFrontend")
+  dependsOn("startBackend")
 }
 
 tasks {

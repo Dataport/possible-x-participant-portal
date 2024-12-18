@@ -1,7 +1,7 @@
 import com.github.gradle.node.npm.task.NpmTask
 
 plugins {
-  id("com.github.node-gradle.node") version "7.0.2"
+  id("com.github.node-gradle.node") version "7.1.0"
 }
 
 node {
@@ -11,20 +11,15 @@ node {
 }
 
 tasks {
-  val npmInstalll by registering(NpmTask::class) {
-    args.set(listOf("install"))
-  }
-
-  val npmBuild by registering(NpmTask::class) {
-    dependsOn(npmInstalll)
-    val activeProfile = project.findProperty("activeProfile")?.toString()
-    args.set(listOf("run", "build", "--", "--configuration", activeProfile ?: "consumer-dev"))
+  val setNpmShell by registering(NpmTask::class) {
+    args.set(listOf("config", "set", "script-shell", "/bin/bash"))
   }
 
   val npmStart by registering(NpmTask::class) {
-    dependsOn(npmBuild)
+    dependsOn(setNpmShell)
+    dependsOn(npmInstall)
     val activeProfile = project.findProperty("activeProfile")?.toString()
     val port = project.findProperty("port")?.toString()
-    args.set(listOf("start", "--", "--port", port ?: "8081", "--configuration", activeProfile ?: "consumer-dev"))
+    args.set(listOf("start", "--", "--port", port ?: "8081", "--configuration", activeProfile ?: "consumer-local"))
   }
 }
