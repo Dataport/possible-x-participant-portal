@@ -63,6 +63,12 @@ tasks.getByName<Jar>("jar") {
   enabled = false
 }
 
+tasks.register("buildBackend") {
+  dependsOn(":backend:build")
+  description = "Builds the backend application."
+  group = "build"
+}
+
 
 tasks.register<JavaExec>("startBackend") {
   dependsOn("bootJar")

@@ -18,6 +18,13 @@ node {
 }
 
 tasks {
+
+  val buildFrontend by registering(NpmTask::class) {
+    dependsOn(npmInstall)
+    val activeProfile = project.findProperty("activeProfile")?.toString()
+    args.set(listOf("run", "build", "--", "--configuration", activeProfile ?: "consumer-local"))
+  }
+
   val setNpmShell by registering(NpmTask::class) {
     args.set(listOf("config", "set", "script-shell", "/bin/bash"))
   }
