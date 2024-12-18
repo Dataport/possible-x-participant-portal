@@ -1,7 +1,14 @@
 import com.github.gradle.node.npm.task.NpmTask
+import org.yaml.snakeyaml.Yaml
 
 plugins {
   id("com.github.node-gradle.node") version "7.1.0"
+}
+
+buildscript {
+  dependencies {
+    classpath("org.yaml:snakeyaml:1.29")
+  }
 }
 
 node {
@@ -15,11 +22,25 @@ tasks {
     args.set(listOf("config", "set", "script-shell", "/bin/bash"))
   }
 
-  val npmStart by registering(NpmTask::class) {
+  val startFrontend by registering(NpmTask::class) {
     dependsOn(setNpmShell)
     dependsOn(npmInstall)
+
     val activeProfile = project.findProperty("activeProfile")?.toString()
-    val port = project.findProperty("port")?.toString()
-    args.set(listOf("start", "--", "--port", port ?: "8081", "--configuration", activeProfile ?: "consumer-local"))
+
+
+    var port = project.findProperty("frontendPort")?.toString()
+    if (port == null) {
+
+      val yaml = Yaml()
+      val yamlFileName = if (activeProfile != null) "application-$activeProfile.yml" else "application.yml"
+      val applicationYaml = file("$rootDir/backend/src/main/resources/$yamlFileName")
+      val config = yaml.load<Map<String, Any>>(applicationYaml.inputStream())
+
+      val backendPort = (config["server"] as? Map<*, *>)?.get("port") ?: "8080"
+      port = "420" + backendPort.toString().last()
+    }
+
+    args.set(listOf("start", "--", "--port", port, "--configuration", activeProfile ?: "consumer-local"))
   }
 }

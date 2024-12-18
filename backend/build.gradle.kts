@@ -63,11 +63,6 @@ tasks.getByName<Jar>("jar") {
   enabled = false
 }
 
-tasks.register<Exec>("startFrontend") {
-  description = "Starts the frontend application."
-  group = "application"
-  dependsOn(":frontend:npmStart")
-}
 
 tasks.register<JavaExec>("startBackend") {
   dependsOn("bootJar")
@@ -79,11 +74,7 @@ tasks.register<JavaExec>("startBackend") {
   if (activeProfile != null) {
     systemProperty("spring.profiles.active", activeProfile)
   }
-}
 
-tasks.register<JavaExec>("startFull") {
-  dependsOn("startFrontend")
-  dependsOn("startBackend")
 }
 
 tasks {
