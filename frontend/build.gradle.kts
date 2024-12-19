@@ -19,8 +19,13 @@ node {
 
 tasks {
 
+  val testFrontend by registering(NpmTask::class) {
+    args.set(listOf("run", "test", "--", "--no-watch", "--no-progress", "--browsers=ChromeHeadlessNoSandbox"))
+  }
+
   val buildFrontend by registering(NpmTask::class) {
     dependsOn(npmInstall)
+    dependsOn(testFrontend)
     val activeProfile = project.findProperty("activeProfile")?.toString()
     args.set(listOf("run", "build", "--", "--configuration", activeProfile ?: "consumer-local"))
   }
