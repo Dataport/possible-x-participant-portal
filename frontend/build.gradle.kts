@@ -27,7 +27,7 @@ tasks {
     dependsOn(npmInstall)
     dependsOn(testFrontend)
     val activeProfile = project.findProperty("activeProfile")?.toString()
-    args.set(listOf("run", "build", "--", "--configuration", activeProfile ?: "consumer-local"))
+    args.set(listOf("run", "build", "--", "--configuration", activeProfile ?: "remote"))
   }
 
   val setNpmShell by registering(NpmTask::class) {
@@ -53,6 +53,6 @@ tasks {
       port = "420" + backendPort.toString().last()
     }
 
-    args.set(listOf("start", "--", "--port", port, "--configuration", activeProfile ?: "consumer-local"))
+    args.set(listOf("start", "--", "--port", port, "--configuration", activeProfile ?: "remote"))
   }
 }

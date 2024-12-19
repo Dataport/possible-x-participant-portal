@@ -47,7 +47,7 @@
             "scripts": []
           },
           "configurations": {
-            "consumer-dev": {
+            "remote": {
               "budgets": [
                 {
                   "type": "initial",
@@ -63,28 +63,7 @@
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.consumer-dev.ts"
-                }
-              ],
-              "outputHashing": "all"
-            },
-            "provider-dev": {
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "4MB",
-                  "maximumError": "5MB"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "2kB",
-                  "maximumError": "4kB"
-                }
-              ],
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.provider-dev.ts"
+                  "with": "src/environments/environment.remote.ts"
                 }
               ],
               "outputHashing": "all"
@@ -122,11 +101,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
-            "consumer-dev": {
-              "browserTarget": "participant-portal:build:consumer-dev"
-            },
-            "provider-dev": {
-              "browserTarget": "participant-portal:build:provider-dev"
+            "remote": {
+              "browserTarget": "participant-portal:build:remote"
             },
             "local": {
               "browserTarget": "participant-portal:build:local"
