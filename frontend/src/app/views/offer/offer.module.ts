@@ -47,6 +47,10 @@ import {DataOfferPrintViewComponent} from "./offer-print-view/data-offer-print-v
 import {
   ServiceOfferPrintViewComponent
 } from "./offer-print-view/service-offer-print-view/service-offer-print-view.component";
+import { ContractDetailsExportViewComponent } from './contract-details-export-view/contract-details-export-view.component';
+import { OfferDetailsViewComponent } from './offer-details-view/offer-details-view.component';
+import { ServiceOfferDetailsViewComponent } from './offer-details-view/service-offer-details-view/service-offer-details-view.component';
+import { DataOfferDetailsViewComponent } from './offer-details-view/data-offer-details-view/data-offer-details-view.component';
 
 @NgModule({
   imports: [
@@ -84,7 +88,7 @@ import {
     NgxPrintModule,
     MatSortModule
   ],
-  declarations: [ProvideComponent, ConsumeComponent, AcceptComponent, SelectComponent, ContractsComponent, TransferComponent, OfferPrintViewComponent, EnforcementPolicyViewComponent, DataOfferPrintViewComponent, ServiceOfferPrintViewComponent],
+  declarations: [ProvideComponent, ConsumeComponent, AcceptComponent, SelectComponent, ContractsComponent, TransferComponent, OfferPrintViewComponent, EnforcementPolicyViewComponent, DataOfferPrintViewComponent, ServiceOfferPrintViewComponent, ContractDetailsExportViewComponent, OfferDetailsViewComponent, ServiceOfferDetailsViewComponent, DataOfferDetailsViewComponent],
   exports: [
     TransferComponent
   ]

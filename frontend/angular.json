@@ -143,7 +143,8 @@
               "src/styles/custom-theme.scss",
               "src/styles/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "karmaConfig": "karma.conf.js"
           }
         }
       }

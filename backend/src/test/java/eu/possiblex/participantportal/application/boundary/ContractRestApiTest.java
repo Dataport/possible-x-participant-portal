@@ -53,6 +53,37 @@ class ContractRestApiTest {
             .andExpect(jsonPath("$[0].policy['odrl:permission']").isEmpty());
     }
 
+    @Test
+    void shouldReturnMessageOnGetContractDetailsByContractAgreementId() throws Exception {
+        //when
+        //then
+
+        this.mockMvc.perform(get("/contract/details/anyId")).andDo(print()).andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(ContractServiceFake.FAKE_ID_CONTRACT_AGREEMENT))
+            .andExpect(jsonPath("$.contractSigningDate").value(ContractServiceFake.getDateAsOffsetDateTime().toString()))
+            .andExpect(jsonPath("$.providerDetails").exists())
+            .andExpect(jsonPath("$.consumerDetails").exists())
+            .andExpect(jsonPath("$.assetId").value(ContractServiceFake.FAKE_ID_ASSET))
+            .andExpect(jsonPath("$.catalogOffering['schema:name']").value(ContractServiceFake.NAME))
+            .andExpect(jsonPath("$.catalogOffering['schema:description']").value(ContractServiceFake.DESCRIPTION))
+            .andExpect(jsonPath("$.offerRetrievalDate").exists())
+            .andExpect(jsonPath("$.policy['odrl:target']['@id']").value(ContractServiceFake.FAKE_ID_ASSET))
+            .andExpect(jsonPath("$.policy['odrl:prohibition']").isEmpty())
+            .andExpect(jsonPath("$.policy['odrl:obligation']").isEmpty())
+            .andExpect(jsonPath("$.policy['odrl:permission']").isEmpty());
+    }
+
+    @Test
+    void shouldReturnMessageOnGetOfferWithTimestampByContractAgreementId() throws Exception {
+        //when
+        //then
+
+        this.mockMvc.perform(get("/contract/details/anyId/offer")).andDo(print()).andExpect(status().isOk())
+            .andExpect(jsonPath("$.catalogOffering['schema:name']").value(ContractServiceFake.NAME))
+            .andExpect(jsonPath("$.catalogOffering['schema:description']").value(ContractServiceFake.DESCRIPTION))
+            .andExpect(jsonPath("$.offerRetrievalDate").exists());
+    }
+
     @TestConfiguration
     static class TestConfig {
         @Bean

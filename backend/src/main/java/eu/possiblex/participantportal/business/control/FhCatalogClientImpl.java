@@ -6,6 +6,7 @@ import com.apicatalog.jsonld.document.JsonDocument;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.possiblex.participantportal.business.entity.OfferRetrievalResponseBE;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedLegalParticipantCredentialSubjectSubset;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.io.StringReader;
+import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -180,27 +182,39 @@ public class FhCatalogClientImpl implements FhCatalogClient {
     }
 
     @Override
-    public PxExtendedServiceOfferingCredentialSubject getFhCatalogOffer(String offeringId)
+    public OfferRetrievalResponseBE getFhCatalogOffer(String offeringId)
             throws OfferNotFoundException {
 
         try {
             String jsonContent;
+            OffsetDateTime currentDateTime;
             try {
+                // capture the timestamp of retrieval
+                currentDateTime = OffsetDateTime.now();
                 jsonContent = getFhCatalogContent(offeringId, technicalFhCatalogClient::getFhCatalogOfferWithData);
             } catch (RuntimeException e) {
+                // capture the timestamp of retrieval
+                currentDateTime = OffsetDateTime.now();
                 jsonContent = getFhCatalogContent(offeringId, technicalFhCatalogClient::getFhCatalogOffer);
             }
-            try {
-                JsonObject parsedCatalogOffer = parseCatalogContent(jsonContent,
-                        PxExtendedServiceOfferingCredentialSubject.TYPE,
-                        PxExtendedServiceOfferingCredentialSubject.CONTEXT);
-                return objectMapper.readValue(parsedCatalogOffer.toString(),
-                        PxExtendedServiceOfferingCredentialSubject.class);
-            } catch (JsonProcessingException e) {
-                throw new JsonException("failed to parse fh catalog offer json: " + jsonContent, e);
-            }
+            PxExtendedServiceOfferingCredentialSubject offer = getOfferingCredentialSubjectFromJsonString(jsonContent);
+            return new OfferRetrievalResponseBE(offer, currentDateTime);
         } catch (RuntimeException e) {
             throw new OfferNotFoundException("Offer not found: " + e.getMessage());
+        }
+    }
+
+    private PxExtendedServiceOfferingCredentialSubject getOfferingCredentialSubjectFromJsonString(
+        String jsonContent) {
+
+        try {
+            JsonObject parsedCatalogOffer = parseCatalogContent(jsonContent,
+                    PxExtendedServiceOfferingCredentialSubject.TYPE,
+                    PxExtendedServiceOfferingCredentialSubject.CONTEXT);
+            return objectMapper.readValue(parsedCatalogOffer.toString(),
+                    PxExtendedServiceOfferingCredentialSubject.class);
+        } catch (JsonProcessingException e) {
+            throw new JsonException("failed to parse fh catalog offer json: " + jsonContent, e);
         }
     }
 

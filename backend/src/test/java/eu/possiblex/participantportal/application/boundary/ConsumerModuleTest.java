@@ -223,7 +223,8 @@ class ConsumerModuleTest {
             .andExpect(jsonPath("$.providerDetails.participantId").value(expectedProviderId))
             .andExpect(jsonPath("$.providerDetails.participantName").value("EXPECTED_NAME_VALUE"))
             .andExpect(jsonPath("$.providerDetails.participantEmail").value("EXPECTED_MAIL_ADDRESS_VALUE"))
-            .andExpect(jsonPath("$.participantNames.size()").value(1));
+            .andExpect(jsonPath("$.participantNames.size()").value(1))
+            .andExpect(jsonPath("$.offerRetrievalDate").exists());
 
         // THEN
 
@@ -283,7 +284,8 @@ class ConsumerModuleTest {
             .andExpect(jsonPath("$.providerDetails.participantId").value(expectedProviderId))
             .andExpect(jsonPath("$.providerDetails.participantName").value("EXPECTED_NAME_VALUE"))
             .andExpect(jsonPath("$.providerDetails.participantEmail").value("EXPECTED_MAIL_ADDRESS_VALUE"))
-            .andExpect(jsonPath("$.participantNames.size()").value(1));
+            .andExpect(jsonPath("$.participantNames.size()").value(1))
+            .andExpect(jsonPath("$.offerRetrievalDate").exists());
 
         // THEN
 

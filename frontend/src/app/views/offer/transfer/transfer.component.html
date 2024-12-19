@@ -17,9 +17,15 @@
     <button (click)="cancel()" cButton color="secondary" shape="rounded-0">
       {{dismissButtonLabel}}
     </button>
-    <button *ngIf="contract.dataOffering" [disabled]="isTransferButtonDisabled" (click)="transfer()" cButton color="primary" shape="rounded-0">
-      Transfer Data Resource
-    </button>
+    <div>
+      <button [cModalToggle]="'modalInfoExportView'" (click)="retrieveAndSetContractDetails()" cButton color="primary" shape="rounded-0">
+        Export Related Information
+      </button>
+      <button *ngIf="contract.dataOffering" [disabled]="isTransferButtonDisabled" (click)="transfer()" cButton
+              color="primary" shape="rounded-0" class="ml-4">
+        Transfer Data Resource
+      </button>
+    </div>
   </div>
 </ng-template>
 
@@ -31,3 +37,5 @@
     [successMessage]="'Data Transfer successful.'">
   </app-status-message>
 </div>
+
+<app-contract-details-export-view #contractDetailsExportView [contractDetails]="contractDetailsToExport"></app-contract-details-export-view>

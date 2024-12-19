@@ -1,31 +1,31 @@
-<div class="headerWrapper">
-  <c-navbar class="header border-0" expand="lg">
-    <c-container fluid>
-      <a [routerLink]="['/']" cNavbarBrand class="logo">
-        <img alt="POSSIBLE-X Logo" width="142" src="assets/images/brand/possible_blue.svg"/>
-      </a>
-      <c-navbar-nav class="navbar-nav">
-        <c-nav-item>
-          <a [routerLink]="['/offer/provide']" routerLinkActive="active-tab" data-text="Provide Offer" cNavLink>Provide Offer</a>
-        </c-nav-item>
-        <c-nav-item>
-          <a [routerLink]="['/offer/consume']" routerLinkActive="active-tab" data-text="Consume Offer" cNavLink>Consume Offer</a>
-        </c-nav-item>
-        <c-nav-item>
-          <a [routerLink]="['offer/contracts']" routerLinkActive="active-tab" data-text="Contracts" cNavLink>Contracts</a>
-        </c-nav-item>
-      </c-navbar-nav>
+<div class="h-screen">
+  <div class="headerWrapper">
+    <c-navbar class="header border-0" expand="lg">
+      <c-container fluid>
+        <a [routerLink]="['/']" cNavbarBrand class="logo">
+          <img alt="POSSIBLE-X Logo" width="142" src="assets/images/brand/possible_blue.svg"/>
+        </a>
+        <c-navbar-nav class="navbar-nav">
+          <c-nav-item>
+            <a [routerLink]="['/offer/provide']" routerLinkActive="active-tab" data-text="Provide Offer" cNavLink>Provide Offer</a>
+          </c-nav-item>
+          <c-nav-item>
+            <a [routerLink]="['/offer/consume']" routerLinkActive="active-tab" data-text="Consume Offer" cNavLink>Consume Offer</a>
+          </c-nav-item>
+          <c-nav-item>
+            <a [routerLink]="['offer/contracts']" routerLinkActive="active-tab" data-text="Contracts" cNavLink>Contracts</a>
+          </c-nav-item>
+        </c-navbar-nav>
+      </c-container>
+    </c-navbar>
+  </div>
+  <div class="page-container">
+    <c-container class="content">
+      <router-outlet></router-outlet>
     </c-container>
-  </c-navbar>
-</div>
-<div class="page-container">
-  <c-container class="content">
-    <router-outlet></router-outlet>
-  </c-container>
-</div>
-<div>
-  <img alt="" src="assets/images/brand/bottom-blue.svg" style="margin-left: auto;" width="500"/>
-  <div class="footerWrapper ">
+    <img alt="" src="assets/images/brand/bottom-blue.svg" style="margin-left: auto;" width="500"/>
+  </div>
+  <div class="footerWrapper">
     <c-footer class="footer border-0">
       <div class="logo">
         <div class="circleVisual"></div>

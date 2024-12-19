@@ -17,12 +17,12 @@ export interface IProviderRestApi {
 }
 
 export interface IResourceShapeRestApi {
-    gxSoftwareResourceShape: string;
-    gxDataResourceShape: string;
     gxInstantiatedVirtualResourceShape: string;
+    gxDataResourceShape: string;
+    gxVirtualResourceShape: string;
     gxLegitimateInterestShape: string;
     gxPhysicalResourceShape: string;
-    gxVirtualResourceShape: string;
+    gxSoftwareResourceShape: string;
 }
 
 export interface IServiceOfferingShapeRestApi {
@@ -70,6 +70,22 @@ export interface IContractAgreementTO {
 }
 
 export interface IContractAgreementTOBuilder {
+}
+
+export interface IContractDetailsTO {
+    id: string;
+    assetId: string;
+    catalogOffering: IPxExtendedServiceOfferingCredentialSubject;
+    offerRetrievalDate: Date;
+    policy: IPolicy;
+    enforcementPolicies: IEnforcementPolicyUnion[];
+    contractSigningDate: Date;
+    consumerDetails: IContractParticipantDetailsTO;
+    providerDetails: IContractParticipantDetailsTO;
+    dataOffering: boolean;
+}
+
+export interface IContractDetailsTOBuilder {
 }
 
 export interface IContractParticipantDetailsTO {
@@ -127,9 +143,18 @@ export interface IOfferDetailsTO {
     enforcementPolicies: IEnforcementPolicyUnion[];
     providerDetails: IParticipantDetailsTO;
     participantNames: { [index: string]: IParticipantNameTO };
+    offerRetrievalDate: Date;
 }
 
 export interface IOfferDetailsTOBuilder {
+}
+
+export interface IOfferWithTimestampTO {
+    catalogOffering: IPxExtendedServiceOfferingCredentialSubject;
+    offerRetrievalDate: Date;
+}
+
+export interface IOfferWithTimestampTOBuilder {
 }
 
 export interface IParticipantDetailsTO extends IParticipantNameTO {
@@ -469,6 +494,22 @@ export class RestApplicationClient {
      */
     getContractAgreements(): RestResponse<IContractAgreementTO[]> {
         return this.httpClient.request({ method: "GET", url: uriEncoding`contract/agreement` });
+    }
+
+    /**
+     * HTTP GET /contract/details/{contractAgreementId}
+     * Java method: eu.possiblex.participantportal.application.boundary.ContractRestApiImpl.getContractDetailsByContractAgreementId
+     */
+    getContractDetailsByContractAgreementId(contractAgreementId: string): RestResponse<IContractDetailsTO> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`contract/details/${contractAgreementId}` });
+    }
+
+    /**
+     * HTTP GET /contract/details/{contractAgreementId}/offer
+     * Java method: eu.possiblex.participantportal.application.boundary.ContractRestApiImpl.getOfferWithTimestampByContractAgreementId
+     */
+    getOfferWithTimestampByContractAgreementId(contractAgreementId: string): RestResponse<IOfferWithTimestampTO> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`contract/details/${contractAgreementId}/offer` });
     }
 
     /**

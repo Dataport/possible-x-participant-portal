@@ -1,10 +1,17 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {IContractAgreementTO, IPolicy} from '../../../services/mgmt/api/backend';
+import {
+  IContractAgreementTO,
+  IContractDetailsTO,
+  IPolicy,
+} from '../../../services/mgmt/api/backend';
 import {HttpErrorResponse} from "@angular/common/http";
 import {StatusMessageComponent} from "../../common-views/status-message/status-message.component";
 import {ApiService} from '../../../services/mgmt/api/api.service';
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {Sort} from "@angular/material/sort";
+import {
+  ContractDetailsExportViewComponent
+} from "../contract-details-export-view/contract-details-export-view.component";
 
 @Component({
   selector: 'app-contracts',
@@ -13,11 +20,12 @@ import {Sort} from "@angular/material/sort";
 })
 export class ContractsComponent implements OnInit {
   @ViewChild("requestContractAgreementsStatusMessage") public requestContractAgreementsStatusMessage!: StatusMessageComponent;
+  @ViewChild(("contractDetailsExportView")) public contractDetailsExportView!: ContractDetailsExportViewComponent;
   contractAgreements: IContractAgreementTO[] = [];
   sortedAgreements: IContractAgreementTO[] = [];
   expandedItemId: string | null = null;
   isTransferButtonDisabled = false;
-
+  contractDetailsToExport?: IContractDetailsTO = undefined;
 
   constructor(private apiService: ApiService, private popUpMessage: MatSnackBar) {
   }
@@ -102,10 +110,31 @@ export class ContractsComponent implements OnInit {
   }
 
   isDataOffering(item: IContractAgreementTO) {
-    if (item.dataOffering === true) {
-      return true;
-    } else {
-      return false;
-    }
+    return item.dataOffering === true;
+  }
+
+  async retrieveAndSetOfferDetails(id: string) {
+    this.contractDetailsToExport = undefined;
+    this.contractDetailsExportView.informationRetrievalStatusMessage.showInfoMessage()
+    let contractAgreement = this.contractAgreements.find(agreement => agreement.id === id);
+    this.apiService.getOfferWithTimestampByContractAgreementId(id).then(response => {
+      console.log(response);
+      this.contractDetailsExportView.informationRetrievalStatusMessage.hideAllMessages();
+      this.contractDetailsToExport = {
+        id : contractAgreement.id,
+        assetId : contractAgreement.assetId,
+        catalogOffering : response.catalogOffering,
+        offerRetrievalDate : response.offerRetrievalDate,
+        policy : contractAgreement.policy,
+        enforcementPolicies : contractAgreement.enforcementPolicies,
+        contractSigningDate : contractAgreement.contractSigningDate,
+        consumerDetails : contractAgreement.consumerDetails,
+        providerDetails : contractAgreement.providerDetails,
+        dataOffering : contractAgreement.dataOffering,
+      } as IContractDetailsTO;
+    }).catch((e: HttpErrorResponse) => {
+      console.log(e?.error?.detail || e?.error || e?.message);
+      this.contractDetailsExportView.informationRetrievalStatusMessage.showErrorMessage(e?.error?.detail || e?.error || e?.message);
+    });
   }
 }

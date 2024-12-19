@@ -2,9 +2,7 @@ package eu.possiblex.participantportal.application.boundary;
 
 import eu.possiblex.participantportal.application.control.ConsumerApiMapper;
 import eu.possiblex.participantportal.application.control.ContractApiMapper;
-import eu.possiblex.participantportal.application.entity.ContractAgreementTO;
-import eu.possiblex.participantportal.application.entity.TransferOfferRequestTO;
-import eu.possiblex.participantportal.application.entity.TransferOfferResponseTO;
+import eu.possiblex.participantportal.application.entity.*;
 import eu.possiblex.participantportal.business.control.ContractService;
 import eu.possiblex.participantportal.business.entity.TransferOfferRequestBE;
 import eu.possiblex.participantportal.business.entity.TransferOfferResponseBE;
@@ -56,6 +54,29 @@ public class ContractRestApiImpl implements ContractRestApi {
                 HttpStatus.NOT_FOUND);
         }
 
+    }
+
+    @Override
+    public ContractDetailsTO getContractDetailsByContractAgreementId(String contractAgreementId) {
+        try {
+            return contractApiMapper.contractDetailsBEToTO(contractService.getContractDetailsByContractAgreementId(
+                contractAgreementId));
+        } catch (OfferNotFoundException e) {
+            throw new PossibleXException("" + e,
+                HttpStatus.NOT_FOUND);
+        }
+
+    }
+
+    @Override
+    public OfferWithTimestampTO getOfferWithTimestampByContractAgreementId(String contractAgreementId) {
+       try {
+           return contractApiMapper.offerRetrievalResponseBEToOfferWithTimestampTO(
+               contractService.getOfferDetailsByContractAgreementId(contractAgreementId));
+       } catch (OfferNotFoundException e) {
+           throw new PossibleXException("" + e,
+               HttpStatus.NOT_FOUND);
+       }
     }
 
     @Override

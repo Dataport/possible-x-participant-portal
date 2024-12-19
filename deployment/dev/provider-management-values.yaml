@@ -35,6 +35,6 @@ application:
         S3_BUCKETSTORAGEREGION: eu-central-3 
         S3_BUCKETNAME: dev-provider-edc-bucket-possible-31952746
         PARTICIPANTID: did:web:didwebservice.dev.possible-x.de:participant:901e847f-bded-32d5-8301-c0e2dfa8439f
-        DAPSSERVER_BASEURL: https://daps.dev.possible-x.de
+        DAPSSERVER_BASEURL: https://daps.dev.possible-x.de/auth
   secrets:
     - provider-management-secrets

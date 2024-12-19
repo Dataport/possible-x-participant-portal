@@ -1,7 +1,6 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {DataOfferPrintViewComponent} from './data-offer-print-view.component';
-import {IOfferDetailsTO} from "../../../../services/mgmt/api/backend";
 
 describe('DataOfferPrintViewComponent', () => {
   let component: DataOfferPrintViewComponent;
@@ -13,7 +12,7 @@ describe('DataOfferPrintViewComponent', () => {
     });
     fixture = TestBed.createComponent(DataOfferPrintViewComponent);
     component = fixture.componentInstance;
-    component.offer = component.offer = component.offer = {
+    component.offer = {
       catalogOffering: {
         "gx:providedBy": {id: "participantId"},
         "gx:dataProtectionRegime": [],
