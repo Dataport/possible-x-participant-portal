@@ -107,6 +107,11 @@ public class FhCatalogClientImpl implements FhCatalogClient {
     @Override
     public Map<String, ParticipantDetailsSparqlQueryResult> getParticipantDetailsByIds(Collection<String> participantDids) {
 
+        boolean participantIdsAvailable = participantDids != null && !participantDids.isEmpty();
+
+        String conditionalFilterClause = participantIdsAvailable ? "FILTER(?uri IN (" + String.join(",",
+            participantDids.stream().map(id -> "<" + PARTICIPANT_URI_PREFIX + id + ">").toList()) + "))" : "";
+
         String query = """
             PREFIX gx: <https://w3id.org/gaia-x/development#>
             PREFIX schema: <https://schema.org/>
@@ -116,8 +121,7 @@ public class FhCatalogClientImpl implements FhCatalogClient {
               ?uri a gx:LegalParticipant;
               schema:name ?name;
               px:mailAddress ?mailAddress .
-              FILTER(?uri IN (""" + String.join(",",
-                participantDids.stream().map(id -> "<" + PARTICIPANT_URI_PREFIX + id + ">").toList()) + "))" + """
+            """ + conditionalFilterClause + """
             }
             """;
 
@@ -138,32 +142,7 @@ public class FhCatalogClientImpl implements FhCatalogClient {
 
     @Override
     public Map<String, ParticipantDetailsSparqlQueryResult> getParticipantDetails() {
-
-        String query = """
-            PREFIX gx: <https://w3id.org/gaia-x/development#>
-            PREFIX schema: <https://schema.org/>
-            PREFIX px: <http://w3id.org/gaia-x/possible-x#>
-            
-            SELECT ?uri ?name ?mailAddress WHERE {
-              ?uri a gx:LegalParticipant;
-              schema:name ?name;
-              px:mailAddress ?mailAddress .
-            }
-            """;
-
-        String stringResult = sparqlFhCatalogClient.queryCatalog(query, null);
-
-        SparqlQueryResponse<ParticipantDetailsSparqlQueryResult> result;
-        try {
-            result = objectMapper.readValue(stringResult, new TypeReference<>() {
-            });
-        } catch (JsonProcessingException e) {
-            throw new SparqlQueryException("Error during query deserialization", e);
-        }
-
-        return result.getResults().getBindings().stream()
-            .collect(HashMap::new, (map, p) -> map.put(p.getUri().replace(PARTICIPANT_URI_PREFIX, ""), p),
-                HashMap::putAll);
+        return getParticipantDetailsByIds(null);
     }
 
     @Override
