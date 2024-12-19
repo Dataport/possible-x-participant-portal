@@ -2,6 +2,7 @@
 /* eslint-disable */
 
 export interface ICommonPortalRestApi {
+    nameMapping: { [index: string]: string };
     version: IVersionTO;
 }
 
@@ -19,10 +20,10 @@ export interface IProviderRestApi {
 export interface IResourceShapeRestApi {
     gxInstantiatedVirtualResourceShape: string;
     gxDataResourceShape: string;
-    gxVirtualResourceShape: string;
-    gxLegitimateInterestShape: string;
     gxPhysicalResourceShape: string;
     gxSoftwareResourceShape: string;
+    gxVirtualResourceShape: string;
+    gxLegitimateInterestShape: string;
 }
 
 export interface IServiceOfferingShapeRestApi {
@@ -454,6 +455,14 @@ export interface HttpClient {
 export class RestApplicationClient {
 
     constructor(protected httpClient: HttpClient) {
+    }
+
+    /**
+     * HTTP GET /common/participant/name-mapping
+     * Java method: eu.possiblex.participantportal.application.boundary.CommonPortalRestApiImpl.getNameMapping
+     */
+    getNameMapping(): RestResponse<{ [index: string]: string }> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`common/participant/name-mapping` });
     }
 
     /**
