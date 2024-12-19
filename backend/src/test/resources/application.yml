@@ -33,3 +33,5 @@ prefill-fields:
     json-file-path: "src/test/resources/prefillFieldsDataProduct.json"
 
 version.no: "1.0.0"
+
+version.date: "2024-12-31"
