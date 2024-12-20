@@ -20,9 +20,10 @@
       <label class="form-label">Offering Type Selection</label>
       <select [(ngModel)]="offerType" class="form-select rounded-none w-full">
         <option value="service">Service Offering</option>
-        <option selected value="data">Data Offering</option>
+        <option selected value="data">Data Service Offering</option>
       </select>
-      <div class="flex justify-end pt-4">
+      <div class="py-4 text-sm">The "Data Service Offering" consists of both a "Service Offering" and a "Data Resource".</div>
+      <div class="flex justify-end">
         <button (click)="prefillWizardNewOffering()" cButton color="primary" matStepperNext shape="rounded-0"
                 type="submit">Next
         </button>
@@ -53,16 +54,16 @@
           </ng-template>
           <ng-template cTemplateId="accordionBodyTemplate">
             <div class="bg-brand-50 accordion-body">
-              You must define machine readable policies for the data resource as expected by Gaia-x and POSSIBLE-X.
+              You must define machine readable policies for the Data Resource as expected by Gaia-X and POSSIBLE-X.
               <ul>
                 <li>
-                  Use under service offering “POSSIBLE-X enforced policy” to restrict booking of this data product by a consumer organisation in the POSSIBLE-X Dataspace.
+                  Use under Service Offering “POSSIBLE-X enforced policy” to restrict booking of this Data Service Offering by a consumer organisation in the POSSIBLE-X Dataspace.
                 </li>
                 <li>
-                  The policies for data resources are not technically enforced in the POSSIBLE-X Dataspace.
+                  The policies for Data Resources are not technically enforced in the POSSIBLE-X Dataspace.
                 </li>
                 <li>
-                  A consumer organisation booking the data product shall comply to those policies.
+                  A consumer organisation booking the Data Service Offering shall comply to those policies.
                 </li>
                 <li>
                   Tip : Add those policies in human readable form under the T&Cs.
@@ -72,17 +73,17 @@
                 </li>
               </ul>
               <br>
-              You may define 3 types of policies: prohibitions, permissions, obligations for the data resource.
+              You may define 3 types of policies: prohibitions, permissions, obligations for the Data Resource.
               <br><br>
-              The policies related to the service providing the data resource (e.g. the use of an Eclipse Dataspace Connector) shall be defined in the next section.
+              The policies related to the Service providing the Data Resource (e.g. the use of an Eclipse Dataspace Connector) shall be defined in the next section.
               <br><br>
               For each policy type, you may take the following dimensions into account:
               <ul>
                 <li>
-                  <b>Access control</b>: Who is allowed to access this data resource? (e.g. only certain departments or roles)
+                  <b>Access control</b>: Who is allowed to access this Data Resource? (e.g. only certain departments or roles)
                 </li>
                 <li>
-                  <b>Usage control</b>: How may the data resource be used? (e.g. only for internal analyses, not to be passed on to third parties, pre-requisites to be fullfilled to use the data)
+                  <b>Usage control</b>: How may the Data Resource be used? (e.g. only for internal analyses, not to be passed on to third parties, pre-requisites to be fullfilled to use the data)
                 </li>
               </ul>
               See as well IDS standard:
@@ -144,34 +145,34 @@
           </ng-template>
           <ng-template cTemplateId="accordionBodyTemplate">
             <div class="bg-brand-50 accordion-body">
-              You must define machine readable policies for the service offering as expected by Gaia-x and POSSIBLE-X.
+              You must define machine readable policies for the Service Offering as expected by Gaia-X and POSSIBLE-X.
               <ul>
                 <li>
-                  Use under service offering “POSSIBLE-X enforced policy” to restrict booking of this data product by a consumer organisation in the POSSIBLE-X Dataspace.
+                  Use under Service Offering “POSSIBLE-X enforced policy” to restrict booking of this Data Service Offering by a consumer organisation in the POSSIBLE-X Dataspace.
                 </li>
                 <li>
-                  Other policies for service offerings are not technically enforced in the POSSIBLE-X Dataspace
+                  Other policies for Service Offerings are not technically enforced in the POSSIBLE-X Dataspace
                 </li>
                 <li>
-                  A consumer organisation booking the data product or service shall comply to those policies.
+                  A consumer organisation booking the (Data) Service Offering shall comply to those policies.
                 </li>
                 <li>
-                  Tip : Add all service offering policies in human readable form under the T&Cs.
+                  Tip : Add all Service Offering policies in human readable form under the T&Cs.
                 </li>
                 <li>
                   Compatible IT systems could automatically technically enforce them.
                 </li>
               </ul>
               <br>
-              You may define 3 types of policies: prohibitions, permissions, obligations for the service offering.
+              You may define 3 types of policies: prohibitions, permissions, obligations for the Service Offering.
               <br><br>
               For each of them, you may take the following dimensions into account:
               <ul>
                 <li>
-                  <b>Access control</b>: Who is allowed to interact with the service or a specific functions? (e.g. only certain organisation, departments or roles to use a function, book the service, etc..)
+                  <b>Access control</b>: Who is allowed to interact with the service or specific functions? (e.g. only certain organisation, departments or roles to use a function, book the service, etc..)
                   <ul>
                     <li>
-                      Please note that the policy list in the Data product / Service offer description will automatically includes the “POSSIBLE-X enforced policy”  if you select and configure it in the next section.
+                      Please note that the policy list in the Data Product / Service Offering description will automatically include the “POSSIBLE-X enforced policy”  if you select and configure it in the next section.
                     </li>
                   </ul>
                 </li>
@@ -199,34 +200,34 @@
           </ng-template>
           <ng-template cTemplateId="accordionBodyTemplate">
             <div class="bg-brand-50 accordion-body">
-              You must define machine readable policies for the service offering as expected by Gaia-x and POSSIBLE-X.
+              You must define machine readable policies for the Service Offering as expected by Gaia-X and POSSIBLE-X.
               <ul>
                 <li>
-                  Use under service offering “POSSIBLE-X enforced policy” to restrict booking of this service by a consumer organisation in the POSSIBLE-X Dataspace.
+                  Use under Service Offering “POSSIBLE-X enforced policy” to restrict booking of this service by a consumer organisation in the POSSIBLE-X Dataspace.
                 </li>
                 <li>
-                  Other policies for service offerings are not technically enforced in the POSSIBLE-X Dataspace
+                  Other policies for Service Offerings are not technically enforced in the POSSIBLE-X Dataspace
                 </li>
                 <li>
-                  A consumer organisation booking the data product or service shall comply to those policies.
+                  A consumer organisation booking the Service Offering shall comply to those policies.
                 </li>
                 <li>
-                  Tip : Add all service offering policies in human readable form under the T&Cs.
+                  Tip : Add all Service Offering policies in human readable form under the T&Cs.
                 </li>
                 <li>
                   Compatible IT systems could automatically technically enforce them.
                 </li>
               </ul>
               <br>
-              You may define 3 types of policies: prohibitions, permissions, obligations for the service offering.
+              You may define 3 types of policies: prohibitions, permissions, obligations for the Service Offering.
               <br><br>
               For each of them, you may take the following dimensions into account:
               <ul>
                 <li>
-                  <b>Access control</b>: Who is allowed to interact with the service or a specific functions? (e.g. only certain organisation, departments or roles to use a function, book the service, etc..)
+                  <b>Access control</b>: Who is allowed to interact with the service or specific functions? (e.g. only certain organisation, departments or roles to use a function, book the service, etc..)
                   <ul>
                     <li>
-                      Please note that the policy list in the Service offer description will automatically includes the “POSSIBLE-X enforced policy”  if you select and configure it in the next section.
+                      Please note that the policy list in the Service Offering description will automatically include the “POSSIBLE-X enforced policy”  if you select and configure it in the next section.
                     </li>
                   </ul>
                 </li>
@@ -250,7 +251,8 @@
       <br/>
       <label class="form-label">POSSIBLE-X enforced policy</label>
       <div cFormText>
-        Please define POSSIBLE-X enforced policies based on POSSIBLE predefined policy classes for the provided service offer. <span *ngIf="!isPolicyChecked" class="font-bold">Currently, everything is allowed.</span>
+        Please define POSSIBLE-X enforced policies based on POSSIBLE predefined policy classes for the provided Service Offering.<br>
+        <span *ngIf="!isPolicyChecked" class="font-bold">Currently, everything is allowed.</span>
       </div>
       <c-accordion [flush]="true">
           <c-accordion-item #accordionItem="cAccordionItem" [visible]="false">
@@ -296,11 +298,11 @@
           </ng-template>
           <ng-template cTemplateId="accordionBodyTemplate">
             <div class="bg-brand-50 accordion-body">
-              You may define "POSSIBLE-X enforced policy" by configuring a predefined policy class for the use and management of this service/data product.
+              You may define "POSSIBLE-X enforced policy" by configuring a predefined policy class for the use and management of this (Data) Service Offering.
               <br><br>
-              “Restrict the contractual booking to organization(s)” allows to restrict which organization(s) of your choice will be able to proceed with a contractual booking based on their legal participant did:web declared in the POSSIBLE-X Catalog credentials.
+              “Restrict the contractual booking to organization(s)” allows to restrict which organization(s) of your choice will be able to proceed with a contractual booking based on their legal participant did:web declared in the POSSIBLE-X Catalogue credentials.
               <br><br>
-              Please define "POSSIBLE-X enforced policy" based on POSSIBLE predefined ODRL policy classes for the provided service / data product.
+              Please define "POSSIBLE-X enforced policy" based on POSSIBLE predefined ODRL policy classes for the provided Data Product / Service Offering.
               <br><br>
               Note:
               <ul>
@@ -308,7 +310,7 @@
                   The policy will be technically enforced in the POSSIBLE-X Dataspace.
                 </li>
                 <li>
-                  The Service Offering policy list entered above will be extended automatically with the generated “POSSIBLE-X enforced policy” upon submission if you have selected and configured it below
+                  The Service Offering policy list entered above will be extended automatically with the generated “POSSIBLE-X enforced policy” upon submission if you have selected and configured it below.
                 </li>
               </ul>
             </div>
@@ -322,11 +324,11 @@
           </ng-template>
           <ng-template cTemplateId="accordionBodyTemplate">
             <div class="bg-brand-50 accordion-body">
-              You may defined POSSIBLE-X enforced policy by configuring a predefined policy class for the use and management of this service.
+              You may define "POSSIBLE-X enforced policy" by configuring a predefined policy class for the use and management of this Service Offering.
               <br><br>
-              “Restrict the contractual booking to organization(s)” allows to restrict which organization(s) of your choice will be able to proceed with a contractual booking based on their legal participant did:web declared in the POSSIBLE-X Catalog credentials.
+              “Restrict the contractual booking to organization(s)” allows to restrict which organization(s) of your choice will be able to proceed with a contractual booking based on their legal participant did:web declared in the POSSIBLE-X Catalogue credentials.
               <br><br>
-              Please define POSSIBLE-X enforced policy based on POSSIBLE predefined ODRL policy classes for the provided service.
+              Please define POSSIBLE-X enforced policy based on POSSIBLE predefined ODRL policy classes for the provided Service Offering.
               <br><br>
               Note:
               <ul>
@@ -334,7 +336,7 @@
                   The policy will be technically enforced in the POSSIBLE-X Dataspace.
                 </li>
                 <li>
-                  The Service Offering policy list entered above will be extended automatically with the generated “POSSIBLE-X enforced policy” upon submission if you have selected and configured it below
+                  The Service Offering policy list entered above will be extended automatically with the generated “POSSIBLE-X enforced policy” upon submission if you have selected and configured it below.
                 </li>
               </ul>
             </div>
@@ -345,7 +347,7 @@
         <button cButton color="secondary" matStepperPrevious shape="rounded-0">Back</button>
         <button (click)="createOffer()" [disabled]="!isServiceOfferingValid()" cButton color="primary" matStepperNext
                 shape="rounded-0" type="submit">
-          Create Offer
+          Create Offering
         </button>
       </div>
     </mat-step>
@@ -355,9 +357,9 @@
       <div class="min-h-16">
         <app-status-message
           #offerCreationStatusMessage
-          [errorMessage]="'Offer creation failed.'"
-          [infoMessage]="'Offer creation ongoing.'"
-          [successMessage]="'Offer creation completed. Your offer was successfully verified by a Gaia-X clearing house and published in the catalogue.'">
+          [errorMessage]="'Offering creation failed.'"
+          [infoMessage]="'Offering creation ongoing.'"
+          [successMessage]="'Offering creation completed. Your (Data) Service Offering was successfully verified by a Gaia-X clearing house and published in the catalogue.'">
         </app-status-message>
       </div>
       <div class="flex justify-end pt-4">

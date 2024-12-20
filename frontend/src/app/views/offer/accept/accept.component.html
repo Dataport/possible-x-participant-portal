@@ -13,8 +13,8 @@
           <mat-panel-title class="font-bold">View contract details</mat-panel-title>
         </mat-expansion-panel-header>
         <div *ngIf="!offer.dataOffering" class="accordion-body">
-          <b>Offer ID:</b> {{ offer.catalogOffering.id }} <br/>
-          <b>Offer name:</b> {{ offer.catalogOffering["schema:name"] }} <br/>
+          <b>Offering ID:</b> {{ offer.catalogOffering.id }} <br/>
+          <b>Offering name:</b> {{ offer.catalogOffering["schema:name"] }} <br/>
           <b>Provided by:</b> {{ offer.catalogOffering["gx:providedBy"].id }} <br/>
           <b>Publisher:</b> Not implemented yet <br/>
           <b>Description:</b> {{ offer.catalogOffering["schema:description"] }} <br/>
@@ -46,7 +46,7 @@
           </ul>
         </div>
         <div *ngIf="offer.dataOffering" class="accordion-body">
-          <b>Offer ID:</b> {{ offer.catalogOffering.id }} <br/>
+          <b>Offering ID:</b> {{ offer.catalogOffering.id }} <br/>
           <b>Data Resource Name:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["schema:name"] }} <br/>
           <b>Provided by:</b> {{ offer.catalogOffering["gx:providedBy"].id }} <br/>
           <b>Publisher:</b> Not implemented yet <br/>
@@ -74,7 +74,7 @@
             {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:legitimateInterest"]["gx:legalBasis"] }} <br/>
           </div>
           <br/><br/>
-          <b>Offer name:</b> {{ offer.catalogOffering["schema:name"] }} <br/>
+          <b>Offering name:</b> {{ offer.catalogOffering["schema:name"] }} <br/>
           <b>Description:</b> {{ offer.catalogOffering["schema:description"] }} <br/>
           <b>Terms & Conditions:</b> <br/>
           <ul *ngFor="let tnc of offer.catalogOffering['gx:termsAndConditions']">
@@ -117,7 +117,7 @@
           <mat-checkbox [(ngModel)]="isPoliciesAccepted" required></mat-checkbox>
         </mat-expansion-panel-header>
         <div>
-          Please accept the policies for the provided offer.
+          Please accept the policies for the provided offering.
         </div>
         <br/>
         <app-enforcement-policy-view [enforcementPolicies]="offer.enforcementPolicies"/>
@@ -129,7 +129,7 @@
           <mat-checkbox [(ngModel)]="isTnCAccepted" required></mat-checkbox>
         </mat-expansion-panel-header>
         <div>
-          Please accept the Terms and Conditions for the provided offer.
+          Please accept the Terms and Conditions for the provided offering.
         </div>
         <br/>
         <b>Terms & Conditions:</b>

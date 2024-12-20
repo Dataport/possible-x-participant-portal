@@ -1,23 +1,26 @@
 <div class="flex pt-16 justify-center min-h-content">
   <div class="p-6 w-full xl:max-w-screen-lg">
-    <div class="flex flex-col items-center pb-20 text-brand-800">
+    <div class="flex flex-col items-center pb-14 text-brand-800">
       <div class="text-3xl font-bold">
-        Consume Offer
+        Consume Offering
+      </div>
+      <div>
+        Consume a Data Service Offering or Service Offering from the POSSIBLE-X Catalogue.
       </div>
     </div>
     <mat-stepper orientation="vertical" linear #stepper>
       <mat-step>
-        <ng-template matStepLabel>Select Offer</ng-template>
+        <ng-template matStepLabel>Select Offering</ng-template>
         <app-select-offer #select (selectedOffer)="setSelectedOffer($event)"></app-select-offer>
       </mat-step>
 
       <mat-step>
-        <ng-template matStepLabel>Accept Offer</ng-template>
+        <ng-template matStepLabel>Accept Offering</ng-template>
         <div class="flex justify-center pb-3 text-xl text-brand-800">
           Contract and Transfer
         </div>
         <div class="flex justify-center pb-4 text-lg">
-          To transfer the Data Resource you have to accept the contract offer.
+          To transfer the Data Resource you have to accept the Offering contract.
         </div>
         <app-accept-offer #accept [offer]="selectedOffer" (negotiatedContract)="setNegotiatedContract($event)"
                           (dismiss)="resetSelection()"></app-accept-offer>

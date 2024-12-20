@@ -1,4 +1,4 @@
-<div>This document contains an export of a Data Product from the POSSIBLE-X Catalogue from:<br/>
+<div>This document contains an export of a Data Service Offering from the POSSIBLE-X Catalogue from:<br/>
   {{ offer.offerRetrievalDate | date: 'full' }}
 </div>
 <br/><br/>
@@ -6,11 +6,11 @@
   catalogue are currently valid offers.
 </div>
 <br/><br/>
-<div>Offer ID:<br/>
+<div>Offering ID:<br/>
   {{ offer.catalogOffering.id }}
 </div>
 <br/><br/>
-<div>1. Data Product:<br/>
+<div>1. Data Resource:<br/>
   {{ offer.catalogOffering["gx:aggregationOf"][0]["schema:name"] }}
 </div>
 <br/><br/>
@@ -48,7 +48,7 @@
   </div>
   <br/><br/>
 </ng-container>
-<div>7. Data Product Policy:<br/>
+<div>7. Data Resource Policy:<br/>
   <ul *ngFor="let p of offer.catalogOffering['gx:aggregationOf'][0]['gx:policy']">
     <li>{{ p }}</li>
   </ul>
