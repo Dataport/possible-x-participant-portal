@@ -5,12 +5,17 @@
   <c-modal-body>
     <ng-container *ngIf="offer">
       <div id="print-section">
-        <ng-container *ngIf="offer.dataOffering; else serviceOffering">
-          <app-data-offer-print-view [offer]="offer"></app-data-offer-print-view>
-        </ng-container>
-        <ng-template #serviceOffering>
-          <app-service-offer-print-view [offer]="offer"></app-service-offer-print-view>
-        </ng-template>
+        <div>This document contains an export of a {{offer.dataOffering ? "Data " : ""}}Service Offering from the POSSIBLE-X Catalogue from:<br/>
+          {{ offer.offerRetrievalDate | date:'full' }}
+        </div>
+        <br/><br/>
+        <div>Please note that this is for information and does not ensure a period of validity. Only offers within the
+          catalogue are currently valid offers.
+        </div>
+        <br/><br/>
+        <app-offer-details-view [isDataOffering]="offer.dataOffering"
+                                [catalogOffering]="offer.catalogOffering"
+                                [enforcementPolicies]="offer.enforcementPolicies"></app-offer-details-view>
       </div>
     </ng-container>
   </c-modal-body>

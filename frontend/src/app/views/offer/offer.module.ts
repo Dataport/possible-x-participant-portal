@@ -43,10 +43,6 @@ import {MatSnackBarModule} from "@angular/material/snack-bar";
 import {OfferPrintViewComponent} from './offer-print-view/offer-print-view.component';
 import {EnforcementPolicyViewComponent} from './enforcement-policy-view/enforcement-policy-view.component';
 import {MatSortModule} from "@angular/material/sort";
-import {DataOfferPrintViewComponent} from "./offer-print-view/data-offer-print-view/data-offer-print-view.component";
-import {
-  ServiceOfferPrintViewComponent
-} from "./offer-print-view/service-offer-print-view/service-offer-print-view.component";
 import { ContractDetailsExportViewComponent } from './contract-details-export-view/contract-details-export-view.component';
 import { OfferDetailsViewComponent } from './offer-details-view/offer-details-view.component';
 import { ServiceOfferDetailsViewComponent } from './offer-details-view/service-offer-details-view/service-offer-details-view.component';
@@ -88,7 +84,7 @@ import { DataOfferDetailsViewComponent } from './offer-details-view/data-offer-d
     NgxPrintModule,
     MatSortModule
   ],
-  declarations: [ProvideComponent, ConsumeComponent, AcceptComponent, SelectComponent, ContractsComponent, TransferComponent, OfferPrintViewComponent, EnforcementPolicyViewComponent, DataOfferPrintViewComponent, ServiceOfferPrintViewComponent, ContractDetailsExportViewComponent, OfferDetailsViewComponent, ServiceOfferDetailsViewComponent, DataOfferDetailsViewComponent],
+  declarations: [ProvideComponent, ConsumeComponent, AcceptComponent, SelectComponent, ContractsComponent, TransferComponent, OfferPrintViewComponent, EnforcementPolicyViewComponent, ContractDetailsExportViewComponent, OfferDetailsViewComponent, ServiceOfferDetailsViewComponent, DataOfferDetailsViewComponent],
   exports: [
     TransferComponent
   ]

@@ -1,1 +1,15 @@
+ul {
+  list-style-type: square;
+  list-style-position: inside;
+  margin-left: -0.75em;
+}
 
+div, h3 {
+  @apply text-center;
+  @apply text-black;
+}
+
+.break-after-colon {
+  white-space: pre-wrap;
+  word-break: break-all;
+}

@@ -8,6 +8,7 @@ import {
   IEnforcementPolicyUnion,
   IPxExtendedServiceOfferingCredentialSubject
 } from "../../../../services/mgmt/api/backend";
+import {NameMappingService} from "../../../../services/mgmt/name-mapping.service";
 
 @Component({
   selector: 'app-service-offer-details-view',
@@ -23,4 +24,11 @@ export class ServiceOfferDetailsViewComponent {
   protected isParticipantRestrictionPolicy = isParticipantRestrictionPolicy;
 
   protected asParticipantRestrictionPolicy = asParticipantRestrictionPolicy;
+
+  constructor(private readonly nameMappingService: NameMappingService) {
+  }
+
+  getNameById(id: string): string {
+    return this.nameMappingService.getNameById(id);
+  }
 }

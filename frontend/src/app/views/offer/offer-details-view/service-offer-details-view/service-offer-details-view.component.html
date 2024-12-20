@@ -1,4 +1,4 @@
-<div>Offer ID:<br/>
+<div>Offering ID:<br/>
   {{ catalogOffering.id || "Could not be retrieved" }}
 </div>
 <br/><br/>
@@ -11,6 +11,7 @@
 </div>
 <br/><br/>
 <div>3. Service Provider:<br/>
+  {{ catalogOffering["gx:providedBy"]?.id && getNameById(catalogOffering["gx:providedBy"]?.id) || "Unknown" }}<br/>
   {{ catalogOffering["gx:providedBy"]?.id || "-" }}
 </div>
 <br/><br/>
@@ -73,6 +74,7 @@
       Contracting is restricted to the following organizations:
       <ul *ngFor="let org of asParticipantRestrictionPolicy(ep).allowedParticipants">
         <li>
+          {{ getNameById(org) || "Unknown" }}<br/>
           {{ org }}
         </li>
       </ul>
