@@ -7,7 +7,6 @@ import {ApiService} from "./api/api.service";
 })
 export class NameMappingService {
   private idNameMap: { [key: string]: string } = {};
-  private sortedIdNameMap: { [key: string]: string } = {};
 
   constructor(private apiService: ApiService) {
   }
@@ -17,7 +16,6 @@ export class NameMappingService {
     this.apiService.getNameMapping().then(response => {
       console.log(response);
       this.idNameMap = response;
-      this.sortedIdNameMap = this.getAlphabeticallySortedNameMapping(this.idNameMap);
     }).catch((e: HttpErrorResponse) => {
       console.log(e?.error?.detail || e?.error || e?.message);
     });
@@ -29,10 +27,6 @@ export class NameMappingService {
 
   getNameMapping(): { [key: string]: string } {
     return this.idNameMap;
-  }
-
-  getSortedNameMapping(): { [key: string]: string } {
-    return this.sortedIdNameMap;
   }
 
   private getAlphabeticallySortedNameMapping(map: { [key: string]: string }): { [key: string]: string } {

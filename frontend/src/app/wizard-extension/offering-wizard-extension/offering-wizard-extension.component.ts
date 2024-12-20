@@ -31,6 +31,7 @@ import {TBR_DATA_RESOURCE_ID, TBR_LEGITIMATE_INTEREST_ID, TBR_SERVICE_OFFERING_I
 import {MatStepper} from "@angular/material/stepper";
 import {AccordionItemComponent} from "@coreui/angular";
 import {HttpErrorResponse} from "@angular/common/http";
+import {NameMappingService} from "../../services/mgmt/name-mapping.service";
 
 @Component({
   selector: 'app-offering-wizard-extension',
@@ -41,7 +42,8 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
   @ViewChild("offerCreationStatusMessage") public offerCreationStatusMessage!: StatusMessageComponent;
   selectedFileName: string = "";
   isPolicyChecked: boolean = false;
-  dapsIDs: string[] = [''];
+  ids: string[] = [''];
+  nameMapping: { [key: string]: string } = {};
   waitingForResponse = true;
   offerType: string = "data";
   prefillFields: IPrefillFieldsTO | undefined = undefined;
@@ -56,7 +58,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
   @ViewChild("gxLegitimateInterestWizard") private gxLegitimateInterestWizard: BaseWizardExtensionComponent;
 
   constructor(
-    private apiService: ApiService
+    private apiService: ApiService, private nameMappingService: NameMappingService
   ) {
   }
 
@@ -65,7 +67,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
   }
 
   get isInvalidPolicy(): boolean {
-    return this.isPolicyChecked && this.dapsIDs.some(id => !this.isFieldFilled(id));
+    return this.isPolicyChecked && this.ids.some(id => !this.isFieldFilled(id));
   }
 
   ngAfterViewInit(): void {
@@ -75,7 +77,12 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
       this.retrieveAndSetPrefillFields();
       this.resetPossibleSpecificFormValues();
       this.resetAccordionItem();
+      this.setSortedNameMapping();
       this.containsPII = false;
+  }
+
+  setSortedNameMapping() {
+    this.nameMapping = this.nameMappingService.getNameMapping();
   }
 
   async retrieveAndAdaptServiceOfferingShape() {
@@ -127,7 +134,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
     if (this.isPolicyChecked) {
       policy = {
         "@type": "ParticipantRestrictionPolicy",
-        allowedParticipants: this.dapsIDs
+        allowedParticipants: Array.from(new Set(this.ids))
       } as IParticipantRestrictionPolicy;
     } else {
       policy = {
@@ -198,7 +205,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
   public resetPossibleSpecificFormValues() {
     this.selectedFileName = "";
     this.isPolicyChecked = false;
-    this.dapsIDs = [''];
+    this.ids = [''];
     this.containsPII = false;
   }
 
@@ -207,12 +214,12 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
   }
 
   addInput(): void {
-    this.dapsIDs.push('');
+    this.ids.push('');
   }
 
   removeInput(index: number): void {
-    if (this.dapsIDs.length > 1) {
-      this.dapsIDs.splice(index, 1);
+    if (this.ids.length > 1) {
+      this.ids.splice(index, 1);
     }
   }
 
@@ -222,6 +229,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
 
   async prefillWizardNewOffering() {
     this.resetPossibleSpecificFormValues();
+    this.resetAccordionItem();
     if (this.isOfferingDataOffering()) {
       this.prefillDataResourceWizard();
     } else {
@@ -373,6 +381,12 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
 
   prepareStepBeforeDataResource() {
     this.containsPII = false;
+  }
+
+  getIdsSortedByNames(): string[] {
+    return Object.keys(this.nameMapping).sort((a, b) => {
+      return this.nameMapping[a].localeCompare(this.nameMapping[b]);
+    });
   }
 
 }
