@@ -11,9 +11,9 @@ export class NameMappingService {
   constructor(private apiService: ApiService) {
   }
 
-  async retrieveNameMapping() {
+  retrieveNameMapping(): Promise<void> {
     console.log("Retrieving name mapping");
-    this.apiService.getNameMapping().then(response => {
+    return this.apiService.getNameMapping().then(response => {
       console.log(response);
       this.idNameMap = response;
     }).catch((e: HttpErrorResponse) => {

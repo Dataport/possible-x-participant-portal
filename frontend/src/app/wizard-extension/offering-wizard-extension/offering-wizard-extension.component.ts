@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-import {AfterViewInit, Component, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ViewChild, ChangeDetectorRef} from '@angular/core';
 import {StatusMessageComponent} from '../../views/common-views/status-message/status-message.component';
 import {BaseWizardExtensionComponent} from '../base-wizard-extension/base-wizard-extension.component';
 import {isDataResourceCs, isGxServiceOfferingCs} from '../../utils/credential-utils';
@@ -58,7 +58,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
   @ViewChild("gxLegitimateInterestWizard") private gxLegitimateInterestWizard: BaseWizardExtensionComponent;
 
   constructor(
-    private apiService: ApiService, private nameMappingService: NameMappingService
+    private apiService: ApiService, private nameMappingService: NameMappingService, private cdr: ChangeDetectorRef
   ) {
   }
 
@@ -77,12 +77,13 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
       this.retrieveAndSetPrefillFields();
       this.resetPossibleSpecificFormValues();
       this.resetAccordionItem();
-      this.setSortedNameMapping();
+      this.setNameMapping();
       this.containsPII = false;
   }
 
-  setSortedNameMapping() {
+  setNameMapping() {
     this.nameMapping = this.nameMappingService.getNameMapping();
+    this.cdr.detectChanges();
   }
 
   async retrieveAndAdaptServiceOfferingShape() {
