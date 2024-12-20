@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ServiceOfferDetailsViewComponent } from './service-offer-details-view.component';
+import { NameMappingService } from "../../../../services/mgmt/name-mapping.service";
 
 describe('ServiceOfferDetailsViewComponent', () => {
   let component: ServiceOfferDetailsViewComponent;
@@ -8,7 +9,9 @@ describe('ServiceOfferDetailsViewComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [ServiceOfferDetailsViewComponent]
+      imports: [HttpClientTestingModule],
+      declarations: [ServiceOfferDetailsViewComponent],
+      providers: [NameMappingService]
     });
     fixture = TestBed.createComponent(ServiceOfferDetailsViewComponent);
     component = fixture.componentInstance;

@@ -18,12 +18,12 @@ export interface IProviderRestApi {
 }
 
 export interface IResourceShapeRestApi {
-    gxInstantiatedVirtualResourceShape: string;
     gxDataResourceShape: string;
     gxPhysicalResourceShape: string;
     gxSoftwareResourceShape: string;
     gxVirtualResourceShape: string;
     gxLegitimateInterestShape: string;
+    gxInstantiatedVirtualResourceShape: string;
 }
 
 export interface IServiceOfferingShapeRestApi {
@@ -143,7 +143,6 @@ export interface IOfferDetailsTO {
     dataOffering: boolean;
     enforcementPolicies: IEnforcementPolicyUnion[];
     providerDetails: IParticipantDetailsTO;
-    participantNames: { [index: string]: IParticipantNameTO };
     offerRetrievalDate: Date;
 }
 
