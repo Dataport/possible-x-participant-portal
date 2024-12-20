@@ -28,14 +28,4 @@ export class NameMappingService {
   getNameMapping(): { [key: string]: string } {
     return this.idNameMap;
   }
-
-  private getAlphabeticallySortedNameMapping(map: { [key: string]: string }): { [key: string]: string } {
-    const sortedMap: { [key: string]: string } = {};
-    Object.entries(map)
-      .sort(([, a], [, b]) => a.localeCompare(b))
-      .forEach(([key, value]) => {
-        sortedMap[key] = value;
-      });
-    return sortedMap;
-  }
 }
