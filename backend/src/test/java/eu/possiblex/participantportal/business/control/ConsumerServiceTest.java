@@ -94,14 +94,12 @@ class ConsumerServiceTest {
 
         Collection<String> ids = idCaptor.getValue();
         assertNotNull(ids);
-        assertEquals(2, ids.size());
+        assertEquals(1, ids.size());
         assertTrue(ids.contains(FhCatalogClientFake.FAKE_DID));
-        assertTrue(ids.contains(FhCatalogClientFake.FAKE_PROVIDER_ID));
 
         assertNotNull(response);
         assertEquals(FhCatalogClientFake.FAKE_DID, response.getProviderDetails().getDid());
         assertEquals(FhCatalogClientFake.FAKE_EMAIL_ADDRESS, response.getProviderDetails().getMailAddress());
-        assertEquals(2, response.getParticipantNames().size());
         assertEquals(offerRetrievalDate, response.getOfferRetrievalDate());
     }
 
@@ -151,7 +149,6 @@ class ConsumerServiceTest {
         assertNotNull(response);
         assertEquals(FhCatalogClientFake.FAKE_DID, response.getProviderDetails().getDid());
         assertEquals(FhCatalogClientFake.FAKE_EMAIL_ADDRESS, response.getProviderDetails().getMailAddress());
-        assertEquals(1, response.getParticipantNames().size());
         assertEquals(offerRetrievalDate, response.getOfferRetrievalDate());
     }
 

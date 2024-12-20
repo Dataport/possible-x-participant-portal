@@ -62,7 +62,6 @@ class ConsumerRestApiTest {
             .andExpect(jsonPath("$.providerDetails").exists())
             .andExpect(jsonPath("$.providerDetails.participantId").value(ConsumerServiceFake.FAKE_DID))
             .andExpect(jsonPath("$.providerDetails.participantEmail").value(ConsumerServiceFake.FAKE_EMAIL_ADDRESS))
-            .andExpect(jsonPath("$.participantNames.size()").value(1))
             .andExpect(jsonPath("$.offerRetrievalDate").exists());
 
         ArgumentCaptor<SelectOfferRequestBE> requestCaptor = ArgumentCaptor.forClass(SelectOfferRequestBE.class);

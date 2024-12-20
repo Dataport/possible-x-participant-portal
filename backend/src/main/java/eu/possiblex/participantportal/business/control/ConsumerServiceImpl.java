@@ -110,8 +110,8 @@ public class ConsumerServiceImpl implements ConsumerService {
         List<EnforcementPolicy> enforcementPolicies = getEnforcementPoliciesFromEdcPolicies(
             edcCatalogOffer.getHasPolicy());
 
-        Map<String, ParticipantDetailsSparqlQueryResult> participantDetailsMap = getParticipantDetailsInOffer(
-            fhCatalogOffer, isDataOffering, enforcementPolicies);
+        Map<String, ParticipantDetailsSparqlQueryResult> participantDetailsMap = fhCatalogClient.getParticipantDetailsByIds(
+            List.of(fhCatalogOffer.getProvidedBy().getId()));
 
         ParticipantDetailsSparqlQueryResult providerDetails = participantDetailsMap.get(fhCatalogOffer.getProvidedBy().getId());
 
@@ -119,42 +119,15 @@ public class ConsumerServiceImpl implements ConsumerService {
             throw new ParticipantNotFoundException("Provider of offer with ID " + fhCatalogOffer.getId() + " not found in catalog.");
         }
 
-        Map<String, ParticipantNameBE> participantNamesMap = new HashMap<>();
-
-        participantDetailsMap.forEach((k, v) -> participantNamesMap.put(k, consumerServiceMapper
-            .mapToParticipantNameBE(v)));
-
         SelectOfferResponseBE response = new SelectOfferResponseBE();
         response.setEdcOffer(edcCatalogOffer);
         response.setCatalogOffering(fhCatalogOffer);
         response.setDataOffering(isDataOffering);
         response.setEnforcementPolicies(enforcementPolicies);
         response.setProviderDetails(consumerServiceMapper.mapToParticipantWithMailBE(providerDetails));
-        response.setParticipantNames(participantNamesMap);
         response.setOfferRetrievalDate(offerRetrievalResponseBE.getOfferRetrievalDate());
 
         return response;
-    }
-
-    private Map<String, ParticipantDetailsSparqlQueryResult> getParticipantDetailsInOffer(
-        PxExtendedServiceOfferingCredentialSubject fhCatalogOffer, boolean isDataOffering,
-        List<EnforcementPolicy> enforcementPolicies) {
-
-        Set<String> participantIds = new HashSet<>();
-        participantIds.add(fhCatalogOffer.getProvidedBy().getId());
-
-        if (isDataOffering) {
-            participantIds.add(fhCatalogOffer.getAggregationOf().get(0).getCopyrightOwnedBy().getId());
-            participantIds.add(fhCatalogOffer.getAggregationOf().get(0).getProducedBy().getId());
-        }
-
-        for (EnforcementPolicy enforcementPolicy : enforcementPolicies) {
-            if (enforcementPolicy instanceof ParticipantRestrictionPolicy participantrestrictionpolicy) {
-                participantIds.addAll(participantrestrictionpolicy.getAllowedParticipants());
-            }
-        }
-
-        return fhCatalogClient.getParticipantDetailsByIds(participantIds);
     }
 
     @Override

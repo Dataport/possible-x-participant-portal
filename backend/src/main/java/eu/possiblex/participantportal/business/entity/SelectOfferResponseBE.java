@@ -41,11 +41,6 @@ public class SelectOfferResponseBE {
     private ParticipantWithMailBE providerDetails;
 
     /**
-     * The names of the participants referenced in the catalog offering.
-     */
-    private Map<String, ParticipantNameBE> participantNames;
-
-    /**
      * The timestamp when the offer was retrieved from the catalog.
      */
     private OffsetDateTime offerRetrievalDate;

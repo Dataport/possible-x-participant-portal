@@ -14,9 +14,4 @@ public interface ConsumerServiceMapper {
     @Mapping(target = "did", source = "uri")
     ParticipantWithMailBE mapToParticipantWithMailBE(
         ParticipantDetailsSparqlQueryResult participantDetailsSparqlQueryResult);
-
-    @Mapping(target = "name", source = "name")
-    @Mapping(target = "did", source = "uri")
-    ParticipantNameBE mapToParticipantNameBE(
-        ParticipantDetailsSparqlQueryResult participantDetailsSparqlQueryResult);
 }

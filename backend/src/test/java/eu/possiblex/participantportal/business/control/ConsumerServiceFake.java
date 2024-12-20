@@ -54,7 +54,6 @@ public class ConsumerServiceFake implements ConsumerService {
         cs.setProviderUrl(VALID_COUNTER_PARTY_ADDRESS);
         response.setCatalogOffering(cs);
         response.setProviderDetails(ParticipantWithMailBE.builder().did(FAKE_DID).mailAddress(FAKE_EMAIL_ADDRESS).build());
-        response.setParticipantNames(Map.of(FAKE_DID, ParticipantNameBE.builder().did(FAKE_DID).build()));
         response.setOfferRetrievalDate(OffsetDateTime.now());
 
         return response;
