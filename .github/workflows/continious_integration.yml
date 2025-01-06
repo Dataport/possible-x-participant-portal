@@ -73,19 +73,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: "Update Deployment Image Tag" # [3]
-        working-directory: "./deployment/kustomize/overlays/dev/"
-        run: |
-          kustomize edit set image "frontend-image=*:${{ github.sha }}" "frontend-image=*:${{ github.sha }}"
-
-      - name: "Push Updated Image Tag" # [4]
-        run: |
-          git config --global user.name "@possible-x-bot"
-          git config --global user.email "dev@possible-x.de"
-          git commit -am "Update deployment image tag to ${{ steps.frontend-meta.outputs.tags }} [skip ci]"
-          git push
-
-
 
       - name: Log in to the Container registry
         uses: docker/login-action@v2
@@ -120,6 +107,23 @@ jobs:
           labels: ${{ steps.frontend-meta.outputs.labels }}
           build-args: |
             ACTIVEPROFILE="remote"
+
+
+    deploy-consumer:
+      runs-on: 'ubuntu-latest'
+      needs: [build-and-push-backend,build-and-push-frontend]
+      steps:
+      - name: "Update Deployment Image Tag" # [3]
+        working-directory: "./deployment/kustomize/overlays/dev/"
+        run: |
+          kustomize edit set image "frontend-image=*:${{ github.sha }}" "frontend-image=*:${{ github.sha }}"
+
+      - name: "show output"
+        working-directory: "./deployment/kustomize/overlays/dev/"
+        run: |
+          kustomize build 
+
+
 
 
 
