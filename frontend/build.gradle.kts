@@ -58,7 +58,7 @@ tasks {
 
   val npmFeTest by registering(NpmTask::class) {
     outputs.upToDateWhen { false }
-    dependsOn(npmBuild)
+    dependsOn(npmInstall)
     args.set(listOf("run", "test", "--", "--no-watch", "--no-progress", "--browsers=ChromeHeadlessNoSandbox"))
   }
 }
