@@ -57,6 +57,8 @@ public class ProviderServiceImpl implements ProviderService {
 
     private final String edcProtocolUrl;
 
+    private final String participantId;
+
     private final ObjectMapper objectMapper;
 
     private final PrefillFieldsBE prefillFields;
@@ -83,6 +85,7 @@ public class ProviderServiceImpl implements ProviderService {
         this.edcProtocolUrl = edcProtocolUrl;
         this.bucketStorageRegion = bucketStorageRegion;
         this.bucketName = bucketName;
+        this.participantId = participantId;
         this.objectMapper = objectMapper;
         this.prefillFields = getPrefillFields(participantId, prefillFieldsDataProductJsonFilePath);
     }
@@ -271,6 +274,7 @@ public class ProviderServiceImpl implements ProviderService {
         String assetId = UUID.randomUUID().toString();
         String serviceOfferingId = "urn:uuid:" + UUID.randomUUID();
         String dataResourceId = "urn:uuid:" + UUID.randomUUID();
+        request.setProvidedBy(new NodeKindIRITypeId(participantId));
 
         if (request instanceof CreateDataOfferingRequestBE dataOfferingRequest) { // data offering
             dataOfferingRequest.getDataResource().setId(dataResourceId);

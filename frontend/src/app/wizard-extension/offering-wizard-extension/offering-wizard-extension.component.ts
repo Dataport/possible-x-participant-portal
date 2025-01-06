@@ -266,7 +266,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
 
     let gxServiceOfferingCs = {
       "gx:providedBy": {
-        "@id": this.prefillFields?.participantId
+        "@id": this.nameMappingService.getNameById(this.prefillFields?.participantId) || "Unknown" + " (" + this.prefillFields?.participantId + ")",
       },
       "@type": "gx:ServiceOffering",
     } as any;

@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {IEnforcementPolicy, IParticipantRestrictionPolicy} from "../../../services/mgmt/api/backend";
+import {IEnforcementPolicy} from "../../../services/mgmt/api/backend";
 
 import {
   isEverythingAllowedPolicy,

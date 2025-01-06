@@ -86,10 +86,12 @@ class ProviderServiceTest {
         verify(fhCatalogClient).addServiceOfferingToFhCatalog(serviceOfferingCaptor.capture(), Mockito.anyBoolean());
 
         PxExtendedServiceOfferingCredentialSubject pxExtSoCs = serviceOfferingCaptor.getValue();
+        assertNotNull(pxExtSoCs);
         assertTrue(pxExtSoCs.getId()
             .matches("urn:uuid:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"));
+        String expectedProvidedBy = "did:web:test.eu";
+        assertEquals(expectedProvidedBy, pxExtSoCs.getProvidedBy().getId());
         //check if assetId exists and provider url is set correctly
-        assertNotNull(pxExtSoCs);
         assertTrue(pxExtSoCs.getAssetId()
             .matches("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"));
         assertEquals("test", pxExtSoCs.getProviderUrl());
@@ -104,7 +106,7 @@ class ProviderServiceTest {
         PossibleAssetProperties properties = (PossibleAssetProperties) assetCreateRequest.getProperties();
         assertEquals(offeringCs.getName(), properties.getName());
         assertEquals(offeringCs.getDescription(), properties.getDescription());
-        assertEquals(offeringCs.getProvidedBy().getId(), properties.getProvidedBy().getId());
+        assertEquals(expectedProvidedBy, properties.getProvidedBy().getId());
         assertThat(offeringCs.getTermsAndConditions()).usingRecursiveComparison()
             .isEqualTo(properties.getTermsAndConditions());
         assertThat(offeringCs.getDataProtectionRegime()).containsExactlyInAnyOrderElementsOf(
@@ -181,6 +183,8 @@ class ProviderServiceTest {
         assertTrue(dataResource.getId()
             .matches("urn:uuid:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"));
         assertEquals(serviceOfferingId, dataResource.getExposedThrough().getId());
+        String expectedProvidedBy = "did:web:test.eu";
+        assertEquals(expectedProvidedBy, pxExtSoCs.getProvidedBy().getId());
         //check if assetId exists and provider url is set correctly
         assertTrue(pxExtSoCs.getAssetId()
             .matches("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"));
@@ -198,7 +202,7 @@ class ProviderServiceTest {
         PossibleAssetProperties properties = (PossibleAssetProperties) assetCreateRequest.getProperties();
         assertEquals(offeringCs.getName(), properties.getName());
         assertEquals(offeringCs.getDescription(), properties.getDescription());
-        assertEquals(offeringCs.getProvidedBy().getId(), properties.getProvidedBy().getId());
+        assertEquals(expectedProvidedBy, properties.getProvidedBy().getId());
         assertThat(offeringCs.getTermsAndConditions()).usingRecursiveComparison()
             .isEqualTo(properties.getTermsAndConditions());
         assertThat(offeringCs.getDataProtectionRegime()).containsExactlyInAnyOrderElementsOf(
