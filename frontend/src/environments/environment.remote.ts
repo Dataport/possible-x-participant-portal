@@ -1,3 +1,3 @@
 export const environment = {
-  api_url: window.location.protocol + "//api." + window.location.host + "/"
+  api_url: window.location.origin + "/api/"
 };
