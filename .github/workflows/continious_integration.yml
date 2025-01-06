@@ -76,6 +76,7 @@ jobs:
       - name: "Update Deployment Image Tag" # [3]
         working-directory: "./deployment/overlays/dev/"
         run: |
+          ls -all
           kustomize edit set image "frontend-image=*:${{ github.sha }}" "frontend-image=*:${{ github.sha }}"
 
       - name: "Push Updated Image Tag" # [4]
