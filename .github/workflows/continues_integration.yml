@@ -117,22 +117,16 @@ jobs:
         uses: actions/checkout@v3
 
       - name: "Update Deployment Image Tag" # [3]
-        #working-directory: "./deployment/kustomize/overlays/dev/"
-        run: |
-          cd ./deployment/kustomize/overlays/dev/
-          kustomize edit set image "frontend-image=*:${{ github.sha }}" "frontend-image=*:${{ github.sha }}"
-
-      - name: "show output"
         working-directory: "./deployment/kustomize/overlays/dev/"
         run: |
-          kustomize build 
+          kustomize edit set image "frontend-image=*:${{ github.sha }}" "backend-image=*:${{ github.sha }}"
 
       - name: 'Apply to DEV'
         uses: actions-hub/kubectl@v1.31.0
         env:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
         with:
-          args: "kustomize ./deployment/kustomize/overlays/dev/"
+          args: "apply -k ./deployment/kustomize/overlays/dev/"
 
 
 

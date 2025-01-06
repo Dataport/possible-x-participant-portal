@@ -10,4 +10,4 @@ images:
   newTag: e064cddf59d2a4b7a70f2dba8f599113bda1ac18
 - name: frontend-image
   newName: ghcr.io/possible-x/frontend
-  newTag: e064cddf59d2a4b7a70f2dba8f599113bda1ac18
+  newTag: xxx
