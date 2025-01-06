@@ -126,6 +126,12 @@ jobs:
         run: |
           kustomize build 
 
+      - name: 'Apply to DEV'
+        uses: actions-hub/kubectl@v1.31.0
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+        with:
+          args: "kustomize ./deployment/kustomize/overlays/dev/"
 
 
 
