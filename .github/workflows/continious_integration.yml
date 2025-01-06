@@ -107,6 +107,20 @@ jobs:
           build-args: |
             ACTIVEPROFILE="remote"
 
+
+      - name: "Update Deployment Image Tag" # [3]
+        working-directory: "deployment/overlays/dev"
+        run: |
+          kustomize edit set image "frontend-image=*:${{ steps.frontend-meta.outputs.tags }}" "frontend-image=*:${{ steps.frontend-meta.outputs.tags }}"
+
+      - name: "Push Updated Image Tag" # [4]
+        run: |
+          git config --global user.name "@possible-x-bot"
+          git config --global user.email "dev@possible-x.de"
+          git commit -am "Update deployment image tag to ${{ steps.frontend-meta.outputs.tags }} [skip ci]"
+          git push
+
+
 #  deploy-consumer:
 #    runs-on: 'ubuntu-latest'
 #    needs: build-and-push-image
