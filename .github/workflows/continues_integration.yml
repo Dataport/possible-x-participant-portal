@@ -109,10 +109,10 @@ jobs:
             ACTIVEPROFILE="remote"
 
 
-    deploy-consumer:
-      runs-on: 'ubuntu-latest'
-      needs: [build-and-push-backend,build-and-push-frontend]
-      steps:
+  deploy-consumer:
+    runs-on: 'ubuntu-latest'
+    needs: [build-and-push-backend,build-and-push-frontend]
+    steps:
       - name: "Update Deployment Image Tag" # [3]
         working-directory: "./deployment/kustomize/overlays/dev/"
         run: |
