@@ -5,9 +5,9 @@ on:
   #      - opened
   #      - reopened
   #      - review_requested
-  #push:
-  #  branches: [ "develop", "main" ]
-  #workflow_dispatch:
+  push:
+    branches: [ "develop", "main", "feature/PI-747_split_build_process" ]
+  workflow_dispatch:
 env:
   REGISTRY: ghcr.io
   REGISTRY_NAMESPACE: possible-x
