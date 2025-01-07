@@ -11,7 +11,7 @@
 </div>
 <br/><br/>
 <div>3. Copyright Owner:<br/>
-  {{ catalogOffering["gx:aggregationOf"]?.[0]["gx:copyrightOwnedBy"].id && (getNameById(catalogOffering["gx:aggregationOf"]?.[0]["gx:copyrightOwnedBy"].id) | async) || "Unknown" }}<br/>
+  {{ catalogOffering["gx:aggregationOf"]?.[0]["gx:copyrightOwnedBy"].id ? (getNameById(catalogOffering["gx:aggregationOf"]?.[0]["gx:copyrightOwnedBy"].id) | async) : "-" }}<br/>
   {{ catalogOffering["gx:aggregationOf"]?.[0]["gx:copyrightOwnedBy"].id || "-" }}
 </div>
 <br/><br/>
@@ -27,7 +27,7 @@
 </div>
 <br/><br/>
 <div>5. Producer:<br/>
-  {{ catalogOffering["gx:aggregationOf"]?.[0]["gx:producedBy"].id && (getNameById(catalogOffering["gx:aggregationOf"]?.[0]["gx:producedBy"].id) | async) || "Unknown" }}<br/>
+  {{ catalogOffering["gx:aggregationOf"]?.[0]["gx:producedBy"].id ? (getNameById(catalogOffering["gx:aggregationOf"]?.[0]["gx:producedBy"].id) | async) : "-" }}<br/>
   {{ catalogOffering["gx:aggregationOf"]?.[0]["gx:producedBy"].id || "-" }}
 </div>
 <br/><br/>
@@ -65,7 +65,7 @@
 </div>
 <br/><br/>
 <div>10. Service Provider:<br/>
-  {{ catalogOffering["gx:providedBy"]?.id && (getNameById(catalogOffering["gx:providedBy"]?.id) | async) || "Unknown" }}<br/>
+  {{ catalogOffering["gx:providedBy"]?.id ? (getNameById(catalogOffering["gx:providedBy"]?.id) | async) : "-" }}<br/>
   {{ catalogOffering["gx:providedBy"]?.id || "-" }}
 </div>
 <br/><br/>
@@ -128,7 +128,7 @@
       Contracting is restricted to the following organizations:
       <ul *ngFor="let org of asParticipantRestrictionPolicy(ep).allowedParticipants">
         <li>
-          {{ (getNameById(org) | async) || "Unknown" }} ({{ org }})
+          {{ getNameIdStringById(org) | async }}
         </li>
       </ul>
     </div>

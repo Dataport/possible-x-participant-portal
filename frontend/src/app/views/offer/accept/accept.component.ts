@@ -40,8 +40,9 @@ export class AcceptComponent implements OnChanges {
   constructor(private apiService: ApiService, private readonly nameMappingService: NameMappingService) {
   }
 
-  getNameById(id: string): Promise<string> {
-    return this.nameMappingService.getNameById(id);
+  async getNameIdStringById(id: string): Promise<string> {
+    const name = await this.nameMappingService.getNameById(id);
+    return `${name || "Unknown"} (${id})`;
   }
 
   ngOnChanges(): void {
