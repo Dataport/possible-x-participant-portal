@@ -26,7 +26,7 @@ export class EnforcementPolicyViewComponent {
   constructor(private readonly nameMappingService: NameMappingService) {
   }
 
-  getNameById(id: string): string {
+  getNameById(id: string): Promise<string> {
     return this.nameMappingService.getNameById(id);
   }
 

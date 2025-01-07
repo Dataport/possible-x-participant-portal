@@ -7,25 +7,36 @@ import {ApiService} from "./api/api.service";
 })
 export class NameMappingService {
   private idNameMap: { [key: string]: string } = {};
+  private isNameMappingLoaded = false;
 
   constructor(private apiService: ApiService) {
   }
 
-  retrieveNameMapping(): Promise<void> {
+  private async retrieveNameMapping(): Promise<void> {
     console.log("Retrieving name mapping");
     return this.apiService.getNameMapping().then(response => {
       console.log(response);
       this.idNameMap = response;
+      this.isNameMappingLoaded = true;
     }).catch((e: HttpErrorResponse) => {
       console.log(e?.error?.detail || e?.error || e?.message);
     });
-  };
+  }
 
-  getNameById(id: string): string {
+  private ensureNameMappingLoaded(): Promise<void> {
+    if (!this.isNameMappingLoaded) {
+      return this.retrieveNameMapping();
+    }
+    return Promise.resolve();
+  }
+
+  async getNameById(id: string): Promise<string> {
+    await this.ensureNameMappingLoaded();
     return this.idNameMap[id];
   }
 
-  getNameMapping(): { [key: string]: string } {
+  async getNameMapping(): Promise<{ [key: string]: string }> {
+    await this.ensureNameMappingLoaded();
     return this.idNameMap;
   }
 }

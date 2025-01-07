@@ -12,7 +12,7 @@
           <b>Contracting is restricted to the following organizations:</b>
           <ul *ngFor="let org of asParticipantRestrictionPolicy(ep).allowedParticipants">
             <li>
-              {{ getNameById(org) || "Unknown" }}<br/>
+              {{ (getNameById(org) | async) || "Unknown" }}<br/>
               {{ org }}
             </li>
           </ul>
