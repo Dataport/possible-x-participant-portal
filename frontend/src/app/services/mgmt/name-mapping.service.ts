@@ -31,8 +31,11 @@ export class NameMappingService {
   }
 
   async getNameById(id: string): Promise<string> {
+    if (!id) {
+      return '-';
+    }
     await this.ensureNameMappingLoaded();
-    return this.idNameMap[id];
+    return this.idNameMap[id] || "Unknown";
   }
 
   async getNameMapping(): Promise<{ [key: string]: string }> {

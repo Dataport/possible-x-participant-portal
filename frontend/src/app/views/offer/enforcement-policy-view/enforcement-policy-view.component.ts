@@ -28,7 +28,7 @@ export class EnforcementPolicyViewComponent {
 
   async getNameIdStringById(id: string): Promise<string> {
     const name = await this.nameMappingService.getNameById(id);
-    return `${name || "Unknown"} (${id})`;
+    return `${name} (${id})`;
   }
 
 }
