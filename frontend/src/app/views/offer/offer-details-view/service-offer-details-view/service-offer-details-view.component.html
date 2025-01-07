@@ -74,8 +74,7 @@
       Contracting is restricted to the following organizations:
       <ul *ngFor="let org of asParticipantRestrictionPolicy(ep).allowedParticipants">
         <li>
-          {{ (getNameById(org) | async) || "Unknown" }}<br/>
-          {{ org }}
+          {{ (getNameById(org) | async) || "Unknown" }} ({{ org }})
         </li>
       </ul>
     </div>
