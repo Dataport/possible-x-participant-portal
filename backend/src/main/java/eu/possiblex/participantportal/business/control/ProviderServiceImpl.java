@@ -33,6 +33,7 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 
 import java.io.File;
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -43,6 +44,8 @@ import java.util.UUID;
 @Service
 @Slf4j
 public class ProviderServiceImpl implements ProviderService {
+
+    private static final String EDC_DATE_POLICY_OPERAND = "https://w3id.org/edc/v0.0.1/ns/inForceDate";
 
     private final EdcClient edcClient;
 
@@ -333,19 +336,27 @@ public class ProviderServiceImpl implements ProviderService {
                     .operator(OdrlOperator.IN)
                     .rightOperand(String.join(",", participantRestrictionPolicy.getAllowedParticipants())).build();
                 constraints.add(participantConstraint);
-            } else if (enforcementPolicy instanceof EndDatePolicy endDatePolicy) { // restrict to fixed time
-
-                // create constraint
-                OdrlConstraint timeConstraint = OdrlConstraint.builder().leftOperand("https://w3id.org/edc/v0.0.1/ns/inForceDate")
-                    .operator(OdrlOperator.LEQ)
-                    .rightOperand(endDatePolicy.getDate().toString()).build(); // TODO build String like 2024-01-01T00:00:01Z that can be interpreted by Instant.parse(isoString)
-                constraints.add(timeConstraint);
-            } else if (enforcementPolicy instanceof EndAgreementOffsetPolicy endAgreementOffsetPolicy) { // restrict to time after agreement
+            } else if (enforcementPolicy instanceof TimeDatePolicy timeDatePolicy) { // restrict to fixed time
                 
+                boolean isEndDate = timeDatePolicy instanceof EndDatePolicy;
                 // create constraint
-                OdrlConstraint timeConstraint = OdrlConstraint.builder().leftOperand("https://w3id.org/edc/v0.0.1/ns/inForceDate")
-                    .operator(OdrlOperator.LEQ)
-                    .rightOperand("contractAgreement+" + endAgreementOffsetPolicy.getOffsetNumber() + endAgreementOffsetPolicy.getOffsetUnit().toValue()).build();
+                OdrlConstraint timeConstraint = OdrlConstraint.builder().leftOperand(EDC_DATE_POLICY_OPERAND)
+                    .operator(isEndDate ? OdrlOperator.LEQ : OdrlOperator.GEQ)
+                    .rightOperand(DateTimeFormatter.ISO_DATE_TIME.format(timeDatePolicy.getDate()))
+                .build(); // ISO 8601 date
+                constraints.add(timeConstraint);
+            } else if (enforcementPolicy instanceof TimeAgreementOffsetPolicy timeAgreementOffsetPolicy) { // restrict to time after agreement
+                
+                boolean isEndOffset = timeAgreementOffsetPolicy instanceof EndAgreementOffsetPolicy;
+                // create constraint
+                OdrlConstraint timeConstraint = OdrlConstraint.builder().leftOperand(EDC_DATE_POLICY_OPERAND)
+                    .operator(isEndOffset ? OdrlOperator.LEQ : OdrlOperator.GEQ)
+                    .rightOperand(
+                        "contractAgreement+" 
+                        + timeAgreementOffsetPolicy.getOffsetNumber() 
+                        + timeAgreementOffsetPolicy.getOffsetUnit().toValue()
+                    )
+                    .build(); // format "contractAgreement+<number><unit>"
                 constraints.add(timeConstraint);
             } // else unknown or everything allowed => no constraint
         }
