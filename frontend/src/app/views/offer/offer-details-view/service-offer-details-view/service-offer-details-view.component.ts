@@ -28,12 +28,12 @@ export class ServiceOfferDetailsViewComponent {
   constructor(private readonly nameMappingService: NameMappingService) {
   }
 
-  async getNameById(id: string): Promise<string> {
+  getNameById(id: string): string {
     return this.nameMappingService.getNameById(id);
   }
 
-  async getNameIdStringById(id: string): Promise<string> {
-    const name = await this.getNameById(id);
+  getNameIdStringById(id: string): string {
+    const name = this.getNameById(id);
     return `${name} (${id})`;
   }
 }

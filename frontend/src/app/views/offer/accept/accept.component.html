@@ -15,7 +15,7 @@
         <div *ngIf="!offer.dataOffering" class="accordion-body">
           <b>Offering ID:</b> {{ offer.catalogOffering.id }} <br/>
           <b>Offering name:</b> {{ offer.catalogOffering["schema:name"] }} <br/>
-          <b>Provided by:</b> {{ getNameIdStringById(offer.catalogOffering["gx:providedBy"].id) | async }} <br/>
+          <b>Provided by:</b> {{ getNameIdStringById(offer.catalogOffering["gx:providedBy"].id) }} <br/>
           <b>Description:</b> {{ offer.catalogOffering["schema:description"] }} <br/>
           <b>Terms & Conditions:</b> <br/>
           <ul *ngFor="let tnc of offer.catalogOffering['gx:termsAndConditions']">
@@ -47,7 +47,7 @@
         <div *ngIf="offer.dataOffering" class="accordion-body">
           <b>Offering ID:</b> {{ offer.catalogOffering.id }} <br/>
           <b>Data Resource Name:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["schema:name"] }} <br/>
-          <b>Provided by:</b> {{ getNameIdStringById(offer.catalogOffering["gx:providedBy"].id) | async }} <br/>
+          <b>Provided by:</b> {{ getNameIdStringById(offer.catalogOffering["gx:providedBy"].id) }} <br/>
           <b>Data Resource Description:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["schema:description"] }}
           <br/>
           <b>Data Resource Policy:</b><br/>
@@ -58,9 +58,9 @@
           <ul *ngFor="let l of offer.catalogOffering['gx:aggregationOf'][0]['gx:license']">
             <li>{{ l }}</li>
           </ul>
-          <b>Copyright owned by:</b> {{ getNameIdStringById(offer.catalogOffering["gx:aggregationOf"][0]["gx:copyrightOwnedBy"].id) | async }}
+          <b>Copyright owned by:</b> {{ getNameIdStringById(offer.catalogOffering["gx:aggregationOf"][0]["gx:copyrightOwnedBy"].id) }}
           <br/>
-          <b>Produced by:</b> {{ getNameIdStringById(offer.catalogOffering["gx:aggregationOf"][0]["gx:producedBy"].id) | async }} <br/>
+          <b>Produced by:</b> {{ getNameIdStringById(offer.catalogOffering["gx:aggregationOf"][0]["gx:producedBy"].id) }} <br/>
           <b>Exposed through:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:exposedThrough"].id }} <br/>
           <b>Contains personal identifiable Information
             (PII):</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:containsPII"] }} <br/>
