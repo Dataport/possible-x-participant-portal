@@ -18,12 +18,12 @@ export interface IProviderRestApi {
 }
 
 export interface IResourceShapeRestApi {
+    gxInstantiatedVirtualResourceShape: string;
     gxDataResourceShape: string;
     gxPhysicalResourceShape: string;
     gxSoftwareResourceShape: string;
     gxVirtualResourceShape: string;
     gxLegitimateInterestShape: string;
-    gxInstantiatedVirtualResourceShape: string;
 }
 
 export interface IServiceOfferingShapeRestApi {
@@ -336,7 +336,7 @@ export interface IOfferingComplianceException extends IException {
 }
 
 export interface IEnforcementPolicy {
-    "@type": "EverythingAllowedPolicy" | "ParticipantRestrictionPolicy";
+    "@type": "EverythingAllowedPolicy" | "FixedTimePolicy" | "ParticipantRestrictionPolicy" | "TimeAfterAgreementPolicy";
 }
 
 export interface IEnforcementPolicyBuilder<C, B> {
@@ -352,6 +352,17 @@ export interface IEverythingAllowedPolicyBuilder<C, B> extends IEnforcementPolic
 export interface IEverythingAllowedPolicyBuilderImpl extends IEverythingAllowedPolicyBuilder<IEverythingAllowedPolicy, IEverythingAllowedPolicyBuilderImpl> {
 }
 
+export interface IFixedTimePolicy extends IEnforcementPolicy {
+    "@type": "FixedTimePolicy";
+    endDate: Date;
+}
+
+export interface IFixedTimePolicyBuilder<C, B> extends IEnforcementPolicyBuilder<C, B> {
+}
+
+export interface IFixedTimePolicyBuilderImpl extends IFixedTimePolicyBuilder<IFixedTimePolicy, IFixedTimePolicyBuilderImpl> {
+}
+
 export interface IParticipantRestrictionPolicy extends IEnforcementPolicy {
     "@type": "ParticipantRestrictionPolicy";
     allowedParticipants: string[];
@@ -361,6 +372,17 @@ export interface IParticipantRestrictionPolicyBuilder<C, B> extends IEnforcement
 }
 
 export interface IParticipantRestrictionPolicyBuilderImpl extends IParticipantRestrictionPolicyBuilder<IParticipantRestrictionPolicy, IParticipantRestrictionPolicyBuilderImpl> {
+}
+
+export interface ITimeAfterAgreementPolicy extends IEnforcementPolicy {
+    "@type": "TimeAfterAgreementPolicy";
+    offsetTime: Date;
+}
+
+export interface ITimeAfterAgreementPolicyBuilder<C, B> extends IEnforcementPolicyBuilder<C, B> {
+}
+
+export interface ITimeAfterAgreementPolicyBuilderImpl extends ITimeAfterAgreementPolicyBuilder<ITimeAfterAgreementPolicy, ITimeAfterAgreementPolicyBuilderImpl> {
 }
 
 export interface IPolicy {
@@ -617,7 +639,7 @@ export type ITransferProcessState = "INITIAL" | "PROVISIONING" | "PROVISIONING_R
 
 export type IOdrlAction = "use" | "transfer";
 
-export type IOdrlOperator = "odrl:eq" | "odrl:neq" | "odrl:isPartOf" | "odrl:isAnyOf";
+export type IOdrlOperator = "odrl:eq" | "odrl:geq" | "odrl:neq" | "odrl:isPartOf" | "odrl:isAnyOf";
 
 export type IPojoCredentialSubjectUnion = IGxDataResourceCredentialSubject | IGxServiceOfferingCredentialSubject;
 

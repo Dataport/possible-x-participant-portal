@@ -5,8 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.possiblex.participantportal.application.entity.CreateOfferResponseTO;
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
 import eu.possiblex.participantportal.application.entity.exception.OfferingComplianceException;
-import eu.possiblex.participantportal.application.entity.policies.EnforcementPolicy;
-import eu.possiblex.participantportal.application.entity.policies.ParticipantRestrictionPolicy;
+import eu.possiblex.participantportal.application.entity.policies.*;
 import eu.possiblex.participantportal.business.entity.CreateDataOfferingRequestBE;
 import eu.possiblex.participantportal.business.entity.CreateServiceOfferingRequestBE;
 import eu.possiblex.participantportal.business.entity.DataProductPrefillFieldsBE;
@@ -334,6 +333,20 @@ public class ProviderServiceImpl implements ProviderService {
                     .operator(OdrlOperator.IN)
                     .rightOperand(String.join(",", participantRestrictionPolicy.getAllowedParticipants())).build();
                 constraints.add(participantConstraint);
+            } else if (enforcementPolicy instanceof FixedTimePolicy fixedTimePolicy) { // restrict to fixed time
+
+                // create constraint
+                OdrlConstraint timeConstraint = OdrlConstraint.builder().leftOperand("inForceDate")
+                    .operator(OdrlOperator.GEQ)
+                    .rightOperand(fixedTimePolicy.getEndDate().toString()).build(); // TODO build String like 2024-01-01T00:00:01Z that can be interpreted by Instant.parse(isoString)
+                constraints.add(timeConstraint);
+            } else if (enforcementPolicy instanceof TimeAfterAgreementPolicy timeAfterAgreementPolicy) { // restrict to time after agreement
+                
+                // create constraint
+                OdrlConstraint timeConstraint = OdrlConstraint.builder().leftOperand("inForceDate")
+                    .operator(OdrlOperator.GEQ)
+                    .rightOperand(timeAfterAgreementPolicy.getOffsetTime().toString()).build(); // TODO build String like contractAgreement+1h that matches "(contract[A,a]greement)\\+(-?[0-9]+)(s|m|h|d)"
+                constraints.add(timeConstraint);
             } // else unknown or everything allowed => no constraint
         }
 
