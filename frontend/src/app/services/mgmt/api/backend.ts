@@ -674,7 +674,7 @@ export type INegotiationState = "INITIAL" | "REQUESTING" | "REQUESTED" | "OFFERI
 
 export type ITransferProcessState = "INITIAL" | "PROVISIONING" | "PROVISIONING_REQUESTED" | "PROVISIONED" | "REQUESTING" | "REQUESTED" | "STARTING" | "STARTED" | "SUSPENDING" | "SUSPENDED" | "COMPLETING" | "COMPLETED" | "TERMINATING" | "TERMINATED" | "DEPROVISIONING" | "DEPROVISIONING_REQUESTED" | "DEPROVISIONED";
 
-export type IOdrlAction = "use" | "transfer";
+export type IOdrlAction = "odrl:use" | "odrl:transfer";
 
 export type IOdrlOperator = "odrl:eq" | "odrl:gteq" | "odrl:lteq" | "odrl:neq" | "odrl:isPartOf" | "odrl:isAnyOf";
 

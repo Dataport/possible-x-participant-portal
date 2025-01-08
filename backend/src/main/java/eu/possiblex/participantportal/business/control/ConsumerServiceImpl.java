@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.possiblex.participantportal.application.entity.policies.EnforcementPolicy;
 import eu.possiblex.participantportal.application.entity.policies.EverythingAllowedPolicy;
 import eu.possiblex.participantportal.application.entity.policies.ParticipantRestrictionPolicy;
+import eu.possiblex.participantportal.application.entity.policies.TimeAgreementOffsetPolicy;
+import eu.possiblex.participantportal.application.entity.policies.TimeDatePolicy;
 import eu.possiblex.participantportal.business.entity.*;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.edc.DataspaceErrorMessage;
@@ -315,6 +317,10 @@ public class ConsumerServiceImpl implements ConsumerService {
             if (constraint.getLeftOperand().equals("did")) {
                 enforcementPolicies.add(
                     new ParticipantRestrictionPolicy(List.of(constraint.getRightOperand().split(","))));
+            } else if (constraint.getLeftOperand().equals(TimeAgreementOffsetPolicy.EDC_OPERAND) 
+            || constraint.getLeftOperand().equals(TimeDatePolicy.EDC_OPERAND) ) { // currently they have the same name in the edc, hence we need to handle both here
+                // TODO add handler for timed policies
+                log.warn("Encountered unknown constraint: {}", constraint);
             } else {
                 log.warn("Encountered unknown constraint: {}", constraint);
             }

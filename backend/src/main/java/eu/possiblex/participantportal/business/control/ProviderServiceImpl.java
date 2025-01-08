@@ -45,8 +45,6 @@ import java.util.UUID;
 @Slf4j
 public class ProviderServiceImpl implements ProviderService {
 
-    private static final String EDC_DATE_POLICY_OPERAND = "https://w3id.org/edc/v0.0.1/ns/inForceDate";
-
     private final EdcClient edcClient;
 
     private final FhCatalogClient fhCatalogClient;
@@ -332,7 +330,7 @@ public class ProviderServiceImpl implements ProviderService {
             if (enforcementPolicy instanceof ParticipantRestrictionPolicy participantRestrictionPolicy) { // restrict to participants
 
                 // create constraint
-                OdrlConstraint participantConstraint = OdrlConstraint.builder().leftOperand("did")
+                OdrlConstraint participantConstraint = OdrlConstraint.builder().leftOperand(ParticipantRestrictionPolicy.EDC_OPERAND)
                     .operator(OdrlOperator.IN)
                     .rightOperand(String.join(",", participantRestrictionPolicy.getAllowedParticipants())).build();
                 constraints.add(participantConstraint);
@@ -340,7 +338,7 @@ public class ProviderServiceImpl implements ProviderService {
                 
                 boolean isEndDate = timeDatePolicy instanceof EndDatePolicy;
                 // create constraint
-                OdrlConstraint timeConstraint = OdrlConstraint.builder().leftOperand(EDC_DATE_POLICY_OPERAND)
+                OdrlConstraint timeConstraint = OdrlConstraint.builder().leftOperand(TimeDatePolicy.EDC_OPERAND)
                     .operator(isEndDate ? OdrlOperator.LEQ : OdrlOperator.GEQ)
                     .rightOperand(DateTimeFormatter.ISO_DATE_TIME.format(timeDatePolicy.getDate()))
                 .build(); // ISO 8601 date
@@ -349,7 +347,7 @@ public class ProviderServiceImpl implements ProviderService {
                 
                 boolean isEndOffset = timeAgreementOffsetPolicy instanceof EndAgreementOffsetPolicy;
                 // create constraint
-                OdrlConstraint timeConstraint = OdrlConstraint.builder().leftOperand(EDC_DATE_POLICY_OPERAND)
+                OdrlConstraint timeConstraint = OdrlConstraint.builder().leftOperand(TimeAgreementOffsetPolicy.EDC_OPERAND)
                     .operator(isEndOffset ? OdrlOperator.LEQ : OdrlOperator.GEQ)
                     .rightOperand(
                         "contractAgreement+" 
