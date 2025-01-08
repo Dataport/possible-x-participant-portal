@@ -1,0 +1,57 @@
+<c-accordion [flush]="true">
+    <c-accordion-item #accordionItemDataOfferPolicyHints="cAccordionItem" [visible]="false">
+      <ng-template cTemplateId="accordionHeaderTemplate">
+          <button (click)="accordionItemDataOfferPolicyHints.toggleItem()" [collapsed]="!accordionItemDataOfferPolicyHints.visible" cAccordionButton>
+            For further guidance related to “Data Resource Policy”, click here
+          </button>
+      </ng-template>
+      <ng-template cTemplateId="accordionBodyTemplate">
+        <div class="bg-brand-50 accordion-body">
+          You must define machine readable policies for the Data Resource as expected by Gaia-X and POSSIBLE-X.
+          <ul>
+            <li>
+              Use under Service Offering “POSSIBLE-X enforced policy” to restrict booking of this Data Service Offering by a consumer organisation in the POSSIBLE-X Dataspace.
+            </li>
+            <li>
+              The policies for Data Resources are not technically enforced in the POSSIBLE-X Dataspace.
+            </li>
+            <li>
+              A consumer organisation booking the Data Service Offering shall comply to those policies.
+            </li>
+            <li>
+              Tip : Add those policies in human readable form under the T&Cs.
+            </li>
+            <li>
+              Compatible IT systems could automatically technically enforce them.
+            </li>
+          </ul>
+          <br>
+          You may define 3 types of policies: prohibitions, permissions, obligations for the Data Resource.
+          <br><br>
+          The policies related to the Service providing the Data Resource (e.g. the use of an Eclipse Dataspace Connector) shall be defined in the next section.
+          <br><br>
+          For each policy type, you may take the following dimensions into account:
+          <ul>
+            <li>
+              <b>Access control</b>: Who is allowed to access this Data Resource? (e.g. only certain departments or roles)
+            </li>
+            <li>
+              <b>Usage control</b>: How may the Data Resource be used? (e.g. only for internal analyses, not to be passed on to third parties, pre-requisites to be fullfilled to use the data)
+            </li>
+          </ul>
+          See as well IDS standard:
+            <a href="https://docs.internationaldataspaces.org/ids-knowledgebase/open-dei-building-blocks-catalog/access_and_usage_control">
+              https://docs.internationaldataspaces.org/ids-knowledgebase/open-dei-building-blocks-catalog/access_and_usage_control
+            </a>
+          <ul>
+            <li>
+              <b>Security</b>: What security precautions need to be taken? (e.g. encryption, regular security checks)
+            </li>
+            <li>
+              <b>Data retention</b>: How long should the data be retained and when should it be deleted? (e.g. retention for 5 years, then secure deletion)
+            </li>
+          </ul>
+        </div>
+      </ng-template>
+      </c-accordion-item>
+  </c-accordion>

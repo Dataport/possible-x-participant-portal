@@ -26,6 +26,9 @@ import {MatStepperModule} from "@angular/material/stepper";
 import {AccordionModule} from "@coreui/angular";
 import {StatusMessageComponent} from "../../views/common-views/status-message/status-message.component";
 import {FormsModule} from "@angular/forms";
+import { ServiceOfferingPolicyHintsComponent } from './service-offering-policy-hints/service-offering-policy-hints.component';
+import { DataResourcePolicyHintsComponent } from './data-resource-policy-hints/data-resource-policy-hints.component';
+import { PossibleXEnforcedPolicyHintsComponent } from './possible-x-enforced-policy-hints/possible-x-enforced-policy-hints.component';
 
 @Component({
   selector: 'app-status-message',
@@ -67,7 +70,7 @@ describe('OfferingWizardExtensionComponent', () => {
       ['createServiceOffering', 'getGxServiceOfferingShape', 'getGxDataResourceShape', 'createDataOffering', 'getPrefillFields']);
 
     await TestBed.configureTestingModule({
-      declarations: [OfferingWizardExtensionComponent, MockWizardExtension, MockStatusMessageComponent],
+      declarations: [OfferingWizardExtensionComponent, MockWizardExtension, MockStatusMessageComponent, ServiceOfferingPolicyHintsComponent, DataResourcePolicyHintsComponent, PossibleXEnforcedPolicyHintsComponent],
       providers: [
         {provide: ApiService, useValue: apiServiceSpy},
         provideAnimations()

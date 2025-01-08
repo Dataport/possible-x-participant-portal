@@ -1,0 +1,21 @@
+.accordion-header {
+    display: flex;
+    grid-template-columns: 2fr 1fr 1fr auto;
+    margin-left: 10px;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .accordion-body {
+    display: grid;
+    font-size: 14px;
+    color:#7f7f7f;
+    grid-template-columns: 1fr;
+    gap: 5px;
+  }
+
+  
+ul {
+    list-style-type: square;
+    padding-left: 2em;
+  }
