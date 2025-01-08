@@ -25,13 +25,15 @@ import {
   IGxServiceOfferingCredentialSubject,
   INodeKindIRITypeId,
   IParticipantRestrictionPolicy,
-  IPojoCredentialSubject, IPrefillFieldsTO
+  IPojoCredentialSubject, IPrefillFieldsTO,
+  IStartDatePolicy, IEndDatePolicy, ITimeDatePolicy
 } from '../../services/mgmt/api/backend';
 import {TBR_DATA_RESOURCE_ID, TBR_LEGITIMATE_INTEREST_ID, TBR_SERVICE_OFFERING_ID} from "../../views/offer/offer-data";
 import {MatStepper} from "@angular/material/stepper";
 import {AccordionItemComponent} from "@coreui/angular";
 import {HttpErrorResponse} from "@angular/common/http";
 import {NameMappingService} from "../../services/mgmt/name-mapping.service";
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-offering-wizard-extension',
@@ -41,8 +43,12 @@ import {NameMappingService} from "../../services/mgmt/name-mapping.service";
 export class OfferingWizardExtensionComponent implements AfterViewInit {
   @ViewChild("offerCreationStatusMessage") public offerCreationStatusMessage!: StatusMessageComponent;
   selectedFileName: string = "";
-  isPolicyChecked: boolean = false;
-  ids: string[] = [''];
+  isContractBookingPolicyChecked: boolean = false;
+  contractBookingPolicyIds: string[] = [''];
+  isContractValidityStartPolicyChecked: boolean = false;
+  contractValidityStartDate: Date = undefined;
+  isContractValidityEndPolicyChecked: boolean = false;
+  contractValidityEndDate: Date = undefined;
   nameMapping: { [key: string]: string } = {};
   sortedIds: string[] = [];
   waitingForResponse = true;
@@ -57,6 +63,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
   @ViewChild("gxServiceOfferingWizard") private gxServiceOfferingWizard: BaseWizardExtensionComponent;
   @ViewChild("gxDataResourceWizard") private gxDataResourceWizard: BaseWizardExtensionComponent;
   @ViewChild("gxLegitimateInterestWizard") private gxLegitimateInterestWizard: BaseWizardExtensionComponent;
+  dateControl = new FormControl(new Date());
 
   constructor(
     private apiService: ApiService, private nameMappingService: NameMappingService, private cdr: ChangeDetectorRef
@@ -67,8 +74,24 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
     return !this.isFieldFilled(this.selectedFileName);
   }
 
-  get isInvalidPolicy(): boolean {
-    return this.isPolicyChecked && this.ids.some(id => !this.isFieldFilled(id));
+  get isInvalidContractBookingPolicy(): boolean {
+    return this.isContractBookingPolicyChecked && this.contractBookingPolicyIds.some(id => !this.isFieldFilled(id));
+  }
+
+  get isInvalidContractValidityStartPolicy(): boolean {
+    return this.isContractValidityStartPolicyChecked && !this.isValidDate(this.contractValidityStartDate);
+  }
+
+  get isInvalidContractValidityEndPolicy(): boolean {
+    return this.isContractValidityEndPolicyChecked && !this.isValidDate(this.contractValidityEndDate);
+  }
+
+  isValidDate(date: any): boolean {
+    return date instanceof Date && !isNaN(date.getTime());
+  }
+
+  get isAnyPolicyChecked(): boolean {
+    return this.isContractBookingPolicyChecked || this.isContractValidityStartPolicyChecked || this.isContractValidityEndPolicyChecked;
   }
 
   ngAfterViewInit(): void {
@@ -130,26 +153,40 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
 
     let gxOfferingJsonSd: IGxServiceOfferingCredentialSubject = this.gxServiceOfferingWizard.generateJsonCs();
 
-    let policy: IParticipantRestrictionPolicy | IEverythingAllowedPolicy;
+    let policyList: (ITimeDatePolicy | IParticipantRestrictionPolicy | IEverythingAllowedPolicy)[] = [];
 
     let gxLegitimateInterestJsonSd: IGxLegitimateInterest;
 
-    if (this.isPolicyChecked) {
-      policy = {
-        "@type": "ParticipantRestrictionPolicy",
-        allowedParticipants: Array.from(new Set(this.ids))
-      } as IParticipantRestrictionPolicy;
-    } else {
-      policy = {
+    if (!this.isAnyPolicyChecked) {
+      policyList.push({
         "@type": "EverythingAllowedPolicy"
-      } as IEverythingAllowedPolicy;
+      } as IEverythingAllowedPolicy);
+    } else {
+      if (this.isContractBookingPolicyChecked) {
+        policyList.push({
+          "@type": "ParticipantRestrictionPolicy",
+          allowedParticipants: Array.from(new Set(this.contractBookingPolicyIds))
+        } as IParticipantRestrictionPolicy);
+      }
+
+      if (this.isContractValidityStartPolicyChecked) {
+        policyList.push({
+          "@type": "StartDatePolicy",
+          date: this.contractValidityStartDate
+        } as IStartDatePolicy);
+      }
+
+      if (this.isContractValidityEndPolicyChecked) {
+        policyList.push({
+          "@type": "EndDatePolicy",
+          date: this.contractValidityEndDate
+        } as IEndDatePolicy);
+      }
     }
 
     let createOfferTo: any = {
       serviceOfferingCredentialSubject: gxOfferingJsonSd,
-      enforcementPolicies: [
-        policy
-      ],
+      enforcementPolicies: policyList,
       legitimateInterest: gxLegitimateInterestJsonSd,
     };
 
@@ -207,8 +244,12 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
 
   public resetPossibleSpecificFormValues() {
     this.selectedFileName = "";
-    this.isPolicyChecked = false;
-    this.ids = [''];
+    this.isContractBookingPolicyChecked = false;
+    this.contractBookingPolicyIds = [''];
+    this.isContractValidityStartPolicyChecked = false;
+    this.contractValidityStartDate = undefined;
+    this.isContractValidityEndPolicyChecked = false;
+    this.contractValidityEndDate = undefined;
     this.containsPII = false;
   }
 
@@ -217,12 +258,12 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
   }
 
   addInput(): void {
-    this.ids.push('');
+    this.contractBookingPolicyIds.push('');
   }
 
   removeInput(index: number): void {
-    if (this.ids.length > 1) {
-      this.ids.splice(index, 1);
+    if (this.contractBookingPolicyIds.length > 1) {
+      this.contractBookingPolicyIds.splice(index, 1);
     }
   }
 
@@ -323,7 +364,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
   }
 
   protected isServiceOfferingValid(): boolean {
-    return !this.gxServiceOfferingWizard?.isWizardFormInvalid() && !this.isInvalidPolicy;
+    return !this.gxServiceOfferingWizard?.isWizardFormInvalid() && !this.isInvalidContractBookingPolicy && !this.isInvalidContractValidityStartPolicy && !this.isInvalidContractValidityEndPolicy;
   }
 
   protected adaptGxShape(shapeSource: any, shapeName: string, excludedFields: string[]) {

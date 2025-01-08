@@ -41,6 +41,10 @@ import {MatButtonModule} from "@angular/material/button";
 import { DataResourcePolicyHintsComponent } from './offering-wizard-extension/data-resource-policy-hints/data-resource-policy-hints.component';
 import { ServiceOfferingPolicyHintsComponent } from './offering-wizard-extension/service-offering-policy-hints/service-offering-policy-hints.component';
 import { PossibleXEnforcedPolicyHintsComponent } from './offering-wizard-extension/possible-x-enforced-policy-hints/possible-x-enforced-policy-hints.component';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatInputModule} from '@angular/material/input';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatNativeDateModule} from '@angular/material/core';
 
 @NgModule({
   declarations: [BaseWizardExtensionComponent, OfferingWizardExtensionComponent, DataResourcePolicyHintsComponent, ServiceOfferingPolicyHintsComponent, PossibleXEnforcedPolicyHintsComponent],
@@ -67,6 +71,7 @@ import { PossibleXEnforcedPolicyHintsComponent } from './offering-wizard-extensi
     AccordionItemComponent,
     TemplateIdDirective,
     AccordionButtonDirective,
+    MatFormFieldModule, MatInputModule, MatDatepickerModule, MatNativeDateModule
   ]
 })
 export class WizardExtensionModule {
