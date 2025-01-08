@@ -270,7 +270,7 @@
               <div *ngFor="let id of ids; let i = index; trackBy:customTrackBy" class="flex flex-col space-y-2">
                 <div class="flex items-center space-x-2">
                   <select [(ngModel)]="ids[i]" required class="form-select">
-                    <option *ngFor="let id of sortedIds" [value]="id">{{ nameMapping[id] }} ({{ id }})</option>
+                    <option *ngFor="let id of sortedIds" [value]="id">{{ getNameIdStringById(id) }}</option>
                   </select>
                   <button (click)="addInput()" *ngIf="i === 0" cButton color="primary" size="sm" variant="ghost">
                     <svg cIcon class="" name="cib-addthis" size="xl"></svg>
