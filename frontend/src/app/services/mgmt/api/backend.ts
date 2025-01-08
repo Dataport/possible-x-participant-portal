@@ -335,8 +335,28 @@ export interface IGxServiceOfferingCredentialSubjectBuilderImpl extends IGxServi
 export interface IOfferingComplianceException extends IException {
 }
 
+export interface IEndAgreementOffsetPolicy extends ITimeAgreementOffsetPolicy {
+    "@type": "EndAgreementOffsetPolicy";
+}
+
+export interface IEndAgreementOffsetPolicyBuilder<C, B> extends ITimeAgreementOffsetPolicyBuilder<C, B> {
+}
+
+export interface IEndAgreementOffsetPolicyBuilderImpl extends IEndAgreementOffsetPolicyBuilder<IEndAgreementOffsetPolicy, IEndAgreementOffsetPolicyBuilderImpl> {
+}
+
+export interface IEndDatePolicy extends ITimeDatePolicy {
+    "@type": "EndDatePolicy";
+}
+
+export interface IEndDatePolicyBuilder<C, B> extends ITimeDatePolicyBuilder<C, B> {
+}
+
+export interface IEndDatePolicyBuilderImpl extends IEndDatePolicyBuilder<IEndDatePolicy, IEndDatePolicyBuilderImpl> {
+}
+
 export interface IEnforcementPolicy {
-    "@type": "EverythingAllowedPolicy" | "FixedTimePolicy" | "ParticipantRestrictionPolicy" | "TimeAfterAgreementPolicy";
+    "@type": "EverythingAllowedPolicy" | "ParticipantRestrictionPolicy" | "EndAgreementOffsetPolicy" | "StartAgreementOffsetPolicy" | "EndDatePolicy" | "StartDatePolicy";
 }
 
 export interface IEnforcementPolicyBuilder<C, B> {
@@ -352,17 +372,6 @@ export interface IEverythingAllowedPolicyBuilder<C, B> extends IEnforcementPolic
 export interface IEverythingAllowedPolicyBuilderImpl extends IEverythingAllowedPolicyBuilder<IEverythingAllowedPolicy, IEverythingAllowedPolicyBuilderImpl> {
 }
 
-export interface IFixedTimePolicy extends IEnforcementPolicy {
-    "@type": "FixedTimePolicy";
-    endDate: Date;
-}
-
-export interface IFixedTimePolicyBuilder<C, B> extends IEnforcementPolicyBuilder<C, B> {
-}
-
-export interface IFixedTimePolicyBuilderImpl extends IFixedTimePolicyBuilder<IFixedTimePolicy, IFixedTimePolicyBuilderImpl> {
-}
-
 export interface IParticipantRestrictionPolicy extends IEnforcementPolicy {
     "@type": "ParticipantRestrictionPolicy";
     allowedParticipants: string[];
@@ -374,15 +383,41 @@ export interface IParticipantRestrictionPolicyBuilder<C, B> extends IEnforcement
 export interface IParticipantRestrictionPolicyBuilderImpl extends IParticipantRestrictionPolicyBuilder<IParticipantRestrictionPolicy, IParticipantRestrictionPolicyBuilderImpl> {
 }
 
-export interface ITimeAfterAgreementPolicy extends IEnforcementPolicy {
-    "@type": "TimeAfterAgreementPolicy";
-    offsetTime: Date;
+export interface IStartAgreementOffsetPolicy extends ITimeAgreementOffsetPolicy {
+    "@type": "StartAgreementOffsetPolicy";
 }
 
-export interface ITimeAfterAgreementPolicyBuilder<C, B> extends IEnforcementPolicyBuilder<C, B> {
+export interface IStartAgreementOffsetPolicyBuilder<C, B> extends ITimeAgreementOffsetPolicyBuilder<C, B> {
 }
 
-export interface ITimeAfterAgreementPolicyBuilderImpl extends ITimeAfterAgreementPolicyBuilder<ITimeAfterAgreementPolicy, ITimeAfterAgreementPolicyBuilderImpl> {
+export interface IStartAgreementOffsetPolicyBuilderImpl extends IStartAgreementOffsetPolicyBuilder<IStartAgreementOffsetPolicy, IStartAgreementOffsetPolicyBuilderImpl> {
+}
+
+export interface IStartDatePolicy extends ITimeDatePolicy {
+    "@type": "StartDatePolicy";
+}
+
+export interface IStartDatePolicyBuilder<C, B> extends ITimeDatePolicyBuilder<C, B> {
+}
+
+export interface IStartDatePolicyBuilderImpl extends IStartDatePolicyBuilder<IStartDatePolicy, IStartDatePolicyBuilderImpl> {
+}
+
+export interface ITimeAgreementOffsetPolicy extends IEnforcementPolicy {
+    "@type": "EndAgreementOffsetPolicy" | "StartAgreementOffsetPolicy";
+    offsetNumber: number;
+    offsetUnit: IAgreementOffsetUnit;
+}
+
+export interface ITimeAgreementOffsetPolicyBuilder<C, B> extends IEnforcementPolicyBuilder<C, B> {
+}
+
+export interface ITimeDatePolicy extends IEnforcementPolicy {
+    "@type": "EndDatePolicy" | "StartDatePolicy";
+    date: Date;
+}
+
+export interface ITimeDatePolicyBuilder<C, B> extends IEnforcementPolicyBuilder<C, B> {
 }
 
 export interface IPolicy {
@@ -633,13 +668,15 @@ export class RestApplicationClient {
 
 export type RestResponse<R> = Promise<R>;
 
+export type IAgreementOffsetUnit = "s" | "m" | "h" | "d";
+
 export type INegotiationState = "INITIAL" | "REQUESTING" | "REQUESTED" | "OFFERING" | "OFFERED" | "ACCEPTING" | "ACCEPTED" | "AGREEING" | "AGREED" | "VERIFYING" | "VERIFIED" | "FINALIZING" | "FINALIZED" | "TERMINATING" | "TERMINATED";
 
 export type ITransferProcessState = "INITIAL" | "PROVISIONING" | "PROVISIONING_REQUESTED" | "PROVISIONED" | "REQUESTING" | "REQUESTED" | "STARTING" | "STARTED" | "SUSPENDING" | "SUSPENDED" | "COMPLETING" | "COMPLETED" | "TERMINATING" | "TERMINATED" | "DEPROVISIONING" | "DEPROVISIONING_REQUESTED" | "DEPROVISIONED";
 
 export type IOdrlAction = "use" | "transfer";
 
-export type IOdrlOperator = "odrl:eq" | "odrl:geq" | "odrl:neq" | "odrl:isPartOf" | "odrl:isAnyOf";
+export type IOdrlOperator = "odrl:eq" | "odrl:gteq" | "odrl:lteq" | "odrl:neq" | "odrl:isPartOf" | "odrl:isAnyOf";
 
 export type IPojoCredentialSubjectUnion = IGxDataResourceCredentialSubject | IGxServiceOfferingCredentialSubject;
 
