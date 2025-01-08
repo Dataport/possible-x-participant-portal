@@ -14,7 +14,7 @@ public enum OdrlOperator {
 
     static {
         operatorMap.put(JsonLdConstants.ODRL_PREFIX + "eq", EQ);
-        operatorMap.put(JsonLdConstants.ODRL_PREFIX + "geq", GEQ);
+        operatorMap.put(JsonLdConstants.ODRL_PREFIX + "gteq", GEQ);
         operatorMap.put(JsonLdConstants.ODRL_PREFIX + "neq", NEQ);
         operatorMap.put(JsonLdConstants.ODRL_PREFIX + "isPartOf", IN);
         operatorMap.put(JsonLdConstants.ODRL_PREFIX + "isAnyOf", IS_ANY_OF);
