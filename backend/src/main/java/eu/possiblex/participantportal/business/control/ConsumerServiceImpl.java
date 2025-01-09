@@ -323,8 +323,8 @@ public class ConsumerServiceImpl implements ConsumerService {
 
         Set<EnforcementPolicy> enforcementPolicies = new HashSet<>();
         for (OdrlConstraint constraint : constraints) {
-            EnforcementPolicy policy = switch (constraint.getRightOperand()) {
-                case "did" 
+            EnforcementPolicy policy = switch (constraint.getLeftOperand()) {
+                case ParticipantRestrictionPolicy.EDC_OPERAND 
                     -> parseParticipantRestrictionPolicy(constraint);
                 case TimeAgreementOffsetPolicy.EDC_OPERAND  // currently time agreement offset and time date have the same name in the edc, hence we need to handle both here
                     -> parseTimedEnforcementPolicy(constraint); 
@@ -373,7 +373,7 @@ public class ConsumerServiceImpl implements ConsumerService {
     }
 
     TimeAgreementOffsetPolicy parseTimeAgreementOffsetPolicy(OdrlConstraint constraint, boolean endDate) {
-        var matcher = Pattern.compile("(contract[A,a]greement)\\\\+(-?[0-9]+)(s|m|h|d)").matcher(constraint.getRightOperand());
+        var matcher = Pattern.compile("(contract[A,a]greement)\\+(-?[0-9]+)(s|m|h|d)").matcher(constraint.getRightOperand());
         if (matcher.matches()) {
             int number = Integer.parseInt(matcher.group(2));
             AgreementOffsetUnit unit = AgreementOffsetUnit.forValue(matcher.group(3));
