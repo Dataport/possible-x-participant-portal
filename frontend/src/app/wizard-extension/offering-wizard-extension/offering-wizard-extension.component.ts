@@ -58,7 +58,9 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
   dataResourceShapeSource = "";
   legitimateInterestShapeSource = "";
   @ViewChild("stepper") stepper: MatStepper;
-  @ViewChild('accordionItem') accordionItem!: AccordionItemComponent;
+  @ViewChild('accordionItem1') accordionItem1!: AccordionItemComponent;
+  @ViewChild('accordionItem2') accordionItem2!: AccordionItemComponent;
+  @ViewChild('accordionItem3') accordionItem3!: AccordionItemComponent;
   protected containsPII: boolean = false;
   @ViewChild("gxServiceOfferingWizard") private gxServiceOfferingWizard: BaseWizardExtensionComponent;
   @ViewChild("gxDataResourceWizard") private gxDataResourceWizard: BaseWizardExtensionComponent;
@@ -100,7 +102,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
       this.retrieveLegitimateInterestShape();
       this.retrieveAndSetPrefillFields();
       this.resetPossibleSpecificFormValues();
-      this.resetAccordionItem();
+      this.resetAccordion();
       this.setNameMapping();
       this.containsPII = false;
   }
@@ -229,7 +231,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
     this.gxDataResourceWizard?.ngOnDestroy();
     this.gxLegitimateInterestWizard?.ngOnDestroy();
     this.resetPossibleSpecificFormValues();
-    this.resetAccordionItem();
+    this.resetAccordion();
     this.offerCreationStatusMessage.hideAllMessages();
     this.containsPII = false;
   }
@@ -253,8 +255,10 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
     this.containsPII = false;
   }
 
-  public resetAccordionItem() {
-    this.accordionItem.visible = false;
+  public resetAccordion() {
+    this.accordionItem1.visible = false;
+    this.accordionItem2.visible = false;
+    this.accordionItem3.visible = false;
   }
 
   addInput(): void {
@@ -273,7 +277,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
 
   async prefillWizardNewOffering() {
     this.resetPossibleSpecificFormValues();
-    this.resetAccordionItem();
+    this.resetAccordion();
     if (this.isOfferingDataOffering()) {
       this.prefillDataResourceWizard();
     } else {
@@ -344,7 +348,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
   reset() {
     this.stepper.reset();
     this.resetPossibleSpecificFormValues();
-    this.resetAccordionItem();
+    this.resetAccordion();
   }
 
   protected isOfferingDataOffering() {
@@ -439,6 +443,20 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
   getNameIdStringById(id: string): string {
     const name = this.nameMappingService.getNameById(id);
     return `${name} (${id})`;
+  }
+
+  handleCheckboxClick(event: Event, policyChecked: string, accordionItem: any) {
+    event.stopPropagation();
+
+    if (this[policyChecked]) {
+      if (accordionItem.visible === false) {
+        accordionItem.toggleItem();
+      }
+    } else {
+      if (accordionItem.visible === true) {
+        accordionItem.toggleItem();
+      }
+    }
   }
 
 }
