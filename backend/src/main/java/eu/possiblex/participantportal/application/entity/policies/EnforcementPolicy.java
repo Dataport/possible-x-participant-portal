@@ -2,6 +2,7 @@ package eu.possiblex.participantportal.application.entity.policies;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,4 +18,5 @@ import lombok.experimental.SuperBuilder;
     @JsonSubTypes.Type(value = ParticipantRestrictionPolicy.class, name = "ParticipantRestrictionPolicy"), })
 @EqualsAndHashCode
 public abstract class EnforcementPolicy {
+    private boolean isValid;
 }
