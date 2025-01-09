@@ -174,15 +174,15 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
       if (this.isContractValidityStartPolicyChecked) {
         policyList.push({
           "@type": "StartDatePolicy",
-          date: this.contractValidityStartDate
-        } as IStartDatePolicy);
+          date: this.contractValidityStartDate.toISOString()
+        } as any);
       }
 
       if (this.isContractValidityEndPolicyChecked) {
         policyList.push({
           "@type": "EndDatePolicy",
-          date: this.contractValidityEndDate
-        } as IEndDatePolicy);
+          date: this.contractValidityEndDate.toISOString()
+        } as any);
       }
     }
 
