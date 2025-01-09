@@ -78,6 +78,15 @@ export class BaseWizardExtensionComponent {
     this.wizard.shape.downloadFormat = this.wizard.form.get('download_format').value;
     this.wizard.shape.fields = this.wizard.updateFormFieldsValues(this.wizard.formFields, this.wizard.form);
     this.wizard.shape.fields = this.wizard.emptyChildrenFields(this.wizard.shape.fields);
+
+    //remove spaces from the values of nodeKind IRI fields
+    this.wizard.shape.fields.forEach(field => {
+      if (field.datatype.prefix === "nodeKind" && field.datatype.value === "IRI") {
+        let values: string[] = field.values.map(value => value.replace(" ", ""));
+        field.values = values;
+      }
+    });
+
     let jsonCs = this.exportService.saveFile(this.wizard.file);
 
     jsonCs["id"] = jsonCs["@id"]
