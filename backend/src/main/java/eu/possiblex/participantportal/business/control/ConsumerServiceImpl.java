@@ -323,28 +323,19 @@ public class ConsumerServiceImpl implements ConsumerService {
 
         Set<EnforcementPolicy> enforcementPolicies = new HashSet<>();
         for (OdrlConstraint constraint : constraints) {
-            if (constraint.getLeftOperand().equals("did")) {
-                enforcementPolicies.add(
-                    new ParticipantRestrictionPolicy(List.of(constraint.getRightOperand().split(","))));
-            } else if (constraint.getLeftOperand().equals(TimeAgreementOffsetPolicy.EDC_OPERAND) 
-            || constraint.getLeftOperand().equals(TimeDatePolicy.EDC_OPERAND) ) { // currently they have the same name in the edc, hence we need to handle both here
-                EnforcementPolicy policy;
-                boolean endDate = constraint.getOperator().equals(OdrlOperator.LEQ);
+            EnforcementPolicy policy = switch (constraint.getRightOperand()) {
+                case "did" 
+                    -> parseParticipantRestrictionPolicy(constraint);
+                case TimeAgreementOffsetPolicy.EDC_OPERAND  // currently time agreement offset and time date have the same name in the edc, hence we need to handle both here
+                    -> parseTimedEnforcementPolicy(constraint); 
+                default 
+                    -> null;
+            };
 
-                var matcher = Pattern.compile("(contract[A,a]greement)\\\\+(-?[0-9]+)(s|m|h|d)").matcher(constraint.getRightOperand());
-                if (matcher.matches()) {
-                    int number = Integer.parseInt(matcher.group(2));
-                    AgreementOffsetUnit unit = AgreementOffsetUnit.forValue(matcher.group(3));
-                    policy = endDate ? EndAgreementOffsetPolicy.builder().offsetNumber(number).offsetUnit(unit).build()
-                        : StartAgreementOffsetPolicy.builder().offsetNumber(number).offsetUnit(unit).build();
-                } else {
-                    OffsetDateTime date = OffsetDateTime.parse(constraint.getRightOperand());
-                    policy = endDate ? EndDatePolicy.builder().date(date).build() 
-                        : StartDatePolicy.builder().date(date).build();
-                }
+            if (policy != null) {
                 enforcementPolicies.add(policy);
             } else {
-                log.warn("Encountered unknown constraint: {}", constraint);
+                log.warn("Unknown enforcement policy: {}", constraint);
             }
         }
 
@@ -353,5 +344,53 @@ public class ConsumerServiceImpl implements ConsumerService {
         }
 
         return enforcementPolicies.stream().toList();
+    }
+
+    ParticipantRestrictionPolicy parseParticipantRestrictionPolicy(OdrlConstraint constraint) {
+        return new ParticipantRestrictionPolicy(List.of(constraint.getRightOperand().split(",")));
+    }
+
+    EnforcementPolicy parseTimedEnforcementPolicy(OdrlConstraint constraint) {
+        // check whether we have a start or end date policy
+        boolean endDate;
+        if (constraint.getOperator().equals(OdrlOperator.LEQ)) {
+            endDate = true;
+        } else if (constraint.getOperator().equals(OdrlOperator.GEQ)) {
+            endDate = false;
+        } else {
+            log.error("Failed to parse operator in timed policy {}", constraint);
+            return null;  // unknown type of time policy
+        }
+
+        // try to parse as time agreement offset policy
+        TimeAgreementOffsetPolicy policy = parseTimeAgreementOffsetPolicy(constraint, endDate);
+        if (policy != null) {
+            return policy;
+        }
+
+        // try to parse as time date policy
+        return parseTimeDatePolicy(constraint, endDate);
+    }
+
+    TimeAgreementOffsetPolicy parseTimeAgreementOffsetPolicy(OdrlConstraint constraint, boolean endDate) {
+        var matcher = Pattern.compile("(contract[A,a]greement)\\\\+(-?[0-9]+)(s|m|h|d)").matcher(constraint.getRightOperand());
+        if (matcher.matches()) {
+            int number = Integer.parseInt(matcher.group(2));
+            AgreementOffsetUnit unit = AgreementOffsetUnit.forValue(matcher.group(3));
+            return endDate ? EndAgreementOffsetPolicy.builder().offsetNumber(number).offsetUnit(unit).build()
+                : StartAgreementOffsetPolicy.builder().offsetNumber(number).offsetUnit(unit).build();
+        } 
+        return null;
+    }
+
+    TimeDatePolicy parseTimeDatePolicy(OdrlConstraint constraint, boolean endDate) {
+        try {
+            OffsetDateTime date = OffsetDateTime.parse(constraint.getRightOperand());
+            return endDate ? EndDatePolicy.builder().date(date).build() 
+                : StartDatePolicy.builder().date(date).build();
+        } catch (Exception e) {
+            log.error("Failed to parse timestamp in policy {}", constraint, e);
+            return null;
+        }
     }
 }
