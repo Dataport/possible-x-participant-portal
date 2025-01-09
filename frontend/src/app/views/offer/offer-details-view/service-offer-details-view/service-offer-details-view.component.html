@@ -11,7 +11,7 @@
 </div>
 <br/><br/>
 <div>3. Service Provider:<br/>
-  {{ getNameById(catalogOffering["gx:providedBy"]?.id) | async }}<br/>
+  {{ getNameById(catalogOffering["gx:providedBy"]?.id) }}<br/>
   {{ catalogOffering["gx:providedBy"]?.id || "-" }}
 </div>
 <br/><br/>
@@ -74,7 +74,7 @@
       Contracting is restricted to the following organizations:
       <ul *ngFor="let org of asParticipantRestrictionPolicy(ep).allowedParticipants">
         <li>
-          {{ getNameIdStringById(org) | async }}
+          {{ getNameIdStringById(org) }}
         </li>
       </ul>
     </div>

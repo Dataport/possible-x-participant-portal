@@ -105,8 +105,8 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
       this.containsPII = false;
   }
 
-  async setNameMapping() {
-    this.nameMapping = await this.nameMappingService.getNameMapping();
+  setNameMapping() {
+    this.nameMapping = this.nameMappingService.getNameMapping();
     this.sortedIds = this.getIdsSortedByNames();
     this.cdr.detectChanges();
   }
@@ -308,7 +308,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
   async prefillServiceOfferingWizard() {
 
     const participantId = this.prefillFields?.participantId;
-    const participantNameIdString = await this.getNameIdStringById(participantId);
+    const participantNameIdString = this.getNameIdStringById(participantId);
 
     let gxServiceOfferingCs = {
       "gx:providedBy": {
@@ -436,8 +436,8 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
     });
   }
 
-  async getNameIdStringById(id: string): Promise<string> {
-    const name = await this.nameMappingService.getNameById(id);
+  getNameIdStringById(id: string): string {
+    const name = this.nameMappingService.getNameById(id);
     return `${name} (${id})`;
   }
 
