@@ -2,9 +2,15 @@ package eu.possiblex.participantportal.business.control;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import eu.possiblex.participantportal.application.entity.policies.AgreementOffsetUnit;
+import eu.possiblex.participantportal.application.entity.policies.EndAgreementOffsetPolicy;
+import eu.possiblex.participantportal.application.entity.policies.EndDatePolicy;
 import eu.possiblex.participantportal.application.entity.policies.EnforcementPolicy;
 import eu.possiblex.participantportal.application.entity.policies.EverythingAllowedPolicy;
 import eu.possiblex.participantportal.application.entity.policies.ParticipantRestrictionPolicy;
+import eu.possiblex.participantportal.application.entity.policies.StartAgreementOffsetPolicy;
+import eu.possiblex.participantportal.application.entity.policies.StartDatePolicy;
 import eu.possiblex.participantportal.application.entity.policies.TimeAgreementOffsetPolicy;
 import eu.possiblex.participantportal.application.entity.policies.TimeDatePolicy;
 import eu.possiblex.participantportal.business.entity.*;
@@ -19,6 +25,7 @@ import eu.possiblex.participantportal.business.entity.edc.negotiation.ContractOf
 import eu.possiblex.participantportal.business.entity.edc.negotiation.NegotiationInitiateRequest;
 import eu.possiblex.participantportal.business.entity.edc.negotiation.NegotiationState;
 import eu.possiblex.participantportal.business.entity.edc.policy.OdrlConstraint;
+import eu.possiblex.participantportal.business.entity.edc.policy.OdrlOperator;
 import eu.possiblex.participantportal.business.entity.edc.policy.OdrlPermission;
 import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import eu.possiblex.participantportal.business.entity.edc.transfer.IonosS3TransferProcess;
@@ -37,10 +44,12 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 @Service
 @Slf4j
@@ -319,8 +328,21 @@ public class ConsumerServiceImpl implements ConsumerService {
                     new ParticipantRestrictionPolicy(List.of(constraint.getRightOperand().split(","))));
             } else if (constraint.getLeftOperand().equals(TimeAgreementOffsetPolicy.EDC_OPERAND) 
             || constraint.getLeftOperand().equals(TimeDatePolicy.EDC_OPERAND) ) { // currently they have the same name in the edc, hence we need to handle both here
-                // TODO add handler for timed policies
-                log.warn("Encountered unknown constraint: {}", constraint);
+                EnforcementPolicy policy;
+                boolean endDate = constraint.getOperator().equals(OdrlOperator.LEQ);
+
+                var matcher = Pattern.compile("(contract[A,a]greement)\\\\+(-?[0-9]+)(s|m|h|d)").matcher(constraint.getRightOperand());
+                if (matcher.matches()) {
+                    int number = Integer.parseInt(matcher.group(2));
+                    AgreementOffsetUnit unit = AgreementOffsetUnit.forValue(matcher.group(3));
+                    policy = endDate ? EndAgreementOffsetPolicy.builder().offsetNumber(number).offsetUnit(unit).build()
+                        : StartAgreementOffsetPolicy.builder().offsetNumber(number).offsetUnit(unit).build();
+                } else {
+                    OffsetDateTime date = OffsetDateTime.parse(constraint.getRightOperand());
+                    policy = endDate ? EndDatePolicy.builder().date(date).build() 
+                        : StartDatePolicy.builder().date(date).build();
+                }
+                enforcementPolicies.add(policy);
             } else {
                 log.warn("Encountered unknown constraint: {}", constraint);
             }
