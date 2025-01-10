@@ -1,0 +1,63 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- ../../base
+
+namespace: edc-dev
+namePrefix: consumer-
+commonLabels:
+  frontend: consumer-portal
+
+
+configMapGenerator:
+  - name: participant-portal-config
+    literals:
+      - DAPSSERVER_URL_EXTERNAL=https://daps.int.possible-x.de/auth
+      - DAPSSERVER_URL_INTERNAL=http://daps-daps-server:4567
+      - DAPSSERVER_BASEURL=https://daps.dev.possible-x.de/auth
+      - DIDWEBSERVICE_BASEURL=http://did-web-service:8080
+      - DIDWEBSERVICE_IGNORESSL=false
+      - FH_CATALOG_SECRETKEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib3BlcmF0b3IiXX19.lMkYKTViVNVPFH49ntdkruLe5EaWRUYt1YL-1Y7b0gc
+      - FH_CATALOG_URL=https://hub.catalog.dev.possible-x.de/
+      - SDCREATIONWIZARDAPI_BASEURL=https://sd-creation-wizard.dev.possible-x.de
+      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://partipant-portal/portal
+      - SPRING_DATASOURCE_DATABASE=portal
+      - EDC_MGMTBASEURL=https://provider.edc.dev.possible-x.de/management
+      - EDC_PROTOCOLBASEURL=https://provider.edc.dev.possible-x.de/protocol
+      - EDC_XAPIKEY=password
+      - FH_CATALOG_SPARQL_URL=https://catalog.dev.possible-x.de/ld/sparql/
+      - FH_CATALOG_REPO_URL=https://hub.catalog.dev.possible-x.de
+
+images:
+- name: backend-image
+  newName: ghcr.io/possible-x/backend
+  newTag: a54b9ae9eb2dca28ba1c64d78587c4b728660100
+- name: frontend-image
+  newName: ghcr.io/possible-x/frontend
+  newTag: a54b9ae9eb2dca28ba1c64d78587c4b728660100
+
+patches:
+  - target:
+      kind: Ingress
+      name: participant-portal-ingress
+    patch: |
+      - op: replace
+        path: /spec/tls/0/hosts/0
+        value: consumer-portal-test.dev.possible-x.de
+      - op: replace
+        path: /spec/tls/0/secretName
+        value: consumer-portal-ssl-certificate
+      - op: replace
+        path: /spec/rules/0/host
+        value: consumer-portal-test.dev.possible-x.de
+  - target:
+      kind: Deployment
+      name: participant-portal-backend
+    patch: |
+      - op: replace
+        path: /spec/template/spec/containers/0/env/1/valueFrom/secretKeyRef/name
+        value: partipant-portal.consumer-partipant-portal-db.credentials.postgresql.acid.zalan.do
+      - op: replace
+        path: /spec/template/spec/containers/0/env/2/valueFrom/secretKeyRef/name
+        value: partipant-portal.consumer-partipant-portal-db.credentials.postgresql.acid.zalan.do        

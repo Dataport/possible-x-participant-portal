@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: backend-svc
+  name: participant-portal-backend-svc
 spec:
   ports:
     - port: 8080
@@ -14,7 +14,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: portal-backend
+  name: participant-portal-backend
 spec:
   replicas: 1
   revisionHistoryLimit: 5
@@ -35,13 +35,21 @@ spec:
           env:
             - name: SERVER_SERVLET_CONTEXT_PATH
               value: /api
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: partipant-portal.partipant-portal.credentials.postgresql.acid.zalan.do
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  key: username
+                  name: partipant-portal.partipant-portal.credentials.postgresql.acid.zalan.do
           envFrom:
+            #- configMapRef:
+            #    name: database
             - configMapRef:
-                name: database
-            - configMapRef:
-                name: portal-variables
-#            - secretRef:
-#                name: portal-database-secret
+                name: participant-portal-config
           #image: ghcr.io/possible-x/backend:e064cddf59d2a4b7a70f2dba8f599113bda1ac18
           image: backend-image
           imagePullPolicy: IfNotPresent

@@ -116,17 +116,30 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: "Update Deployment Image Tag" # [3]
-        working-directory: "./deployment/kustomize/overlays/dev/"
+      - name: "Update Deployment Image Tag for Provider" # [3]
+        working-directory: "./deployment/kustomize/overlays/provider/"
         run: |
           kustomize edit set image "frontend-image=*:${{ github.sha }}" "backend-image=*:${{ github.sha }}"
+
+      - name: "Update Deployment Image Tag for Consumer" # [3]
+        working-directory: "./deployment/kustomize/overlays/consumer/"
+        run: |
+          kustomize edit set image "frontend-image=*:${{ github.sha }}" "backend-image=*:${{ github.sha }}"
+
 
       - name: 'Apply to DEV'
         uses: actions-hub/kubectl@v1.31.0
         env:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
         with:
-          args: "apply -k ./deployment/kustomize/overlays/dev/"
+          args: "apply -k ./deployment/kustomize/overlays/provider/"
+
+      - name: 'Apply to DEV'
+        uses: actions-hub/kubectl@v1.31.0
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+        with:
+          args: "apply -k ./deployment/kustomize/overlays/consumer/"
 
 
 
