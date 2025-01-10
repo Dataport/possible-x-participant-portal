@@ -53,13 +53,3 @@ patches:
       - op: replace
         path: /spec/rules/0/host
         value: provider-portal-test.dev.possible-x.de
-  - target:
-      kind: Deployment
-      name: participant-portal-backend
-    patch: |
-      - op: replace
-        path: /spec/template/spec/containers/0/env/1/valueFrom/secretKeyRef/name
-        value: partipant-portal.provider-partipant-portal-db.credentials.postgresql.acid.zalan.do
-      - op: replace
-        path: /spec/template/spec/containers/0/env/2/valueFrom/secretKeyRef/name
-        value: partipant-portal.provider-partipant-portal-db.credentials.postgresql.acid.zalan.do

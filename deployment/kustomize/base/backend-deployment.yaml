@@ -35,16 +35,6 @@ spec:
           env:
             - name: SERVER_SERVLET_CONTEXT_PATH
               value: /api
-            - name: SPRING_DATASOURCE_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  key: password
-                  name: partipant-portal.partipant-portal.credentials.postgresql.acid.zalan.do
-            - name: SPRING_DATASOURCE_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  key: username
-                  name: partipant-portal.partipant-portal.credentials.postgresql.acid.zalan.do
           envFrom:
             #- configMapRef:
             #    name: database
