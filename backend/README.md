@@ -15,15 +15,16 @@ an [EDC Connector](https://github.com/eclipse-edc/Connector) in the version `v0.
 If you only want to build the project, you can go to the root of the repository and run
 
 ```
-./gradlew build
+./gradlew buildBackend
 ```
 
 after which the built jar can be found at `backend/build/libs/backend-x.y.z.jar`.
 
 ## Run
 
-The following environment variables can be set as needed. 
+The following environment variables can be set as needed.
 Replace the right hand side with the actual values.
+
 ```
 export EDC_XAPIKEY="EDC X-API-Key"
 export EDC_MGMTBASEURL="EDC management URL"
@@ -37,7 +38,7 @@ export PREFILLFIELDS_DATAPRODUCT_JSONFILEPATH="File Path"
 Through gradle:
 
 ```
-./gradlew bootRun
+./gradlew startBackend
 ```
 
 Alternatively running the jar directly (if built previously):
@@ -49,18 +50,22 @@ java -jar backend/build/libs/backend-x.y.z.jar
 Once the service is running, you can access it at http://localhost:8080/ .
 
 ## Environment Variables
+
 ### PREFILLFIELDS_DATAPRODUCT_JSONFILEPATH
-This environment variable should be set to the path of a JSON file containing text for prefilling fields for a 
+
+This environment variable should be set to the path of a JSON file containing text for prefilling fields for a
 data product. The intention is to have an easy way to configure prefill texts for different use cases.
 
 Currently, the JSON file should contain the following fields:
+
 ```
 {
   "serviceOfferingName": "Title",
   "serviceOfferingDescription": "Description"
 }
 ```
-It is possible to add a placeholder `<Data resource name>` in the `serviceOfferingName` and `serviceOfferingDescription` 
+
+It is possible to add a placeholder `<Data resource name>` in the `serviceOfferingName` and `serviceOfferingDescription`
 fields that would be replaced with the data resource name in the frontend.
 
 If no file path is provided or the file cannot be found, a default JSON file with default values is used.
