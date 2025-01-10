@@ -26,7 +26,7 @@ import {
   INodeKindIRITypeId,
   IParticipantRestrictionPolicy,
   IPojoCredentialSubject, IPrefillFieldsTO,
-  IStartDatePolicy, IEndDatePolicy, ITimeDatePolicy
+  ITimeDatePolicy
 } from '../../services/mgmt/api/backend';
 import {TBR_DATA_RESOURCE_ID, TBR_LEGITIMATE_INTEREST_ID, TBR_SERVICE_OFFERING_ID} from "../../views/offer/offer-data";
 import {MatStepper} from "@angular/material/stepper";
