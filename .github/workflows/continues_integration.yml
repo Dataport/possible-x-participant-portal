@@ -127,14 +127,14 @@ jobs:
           kustomize edit set image "frontend-image=*:${{ github.sha }}" "backend-image=*:${{ github.sha }}"
 
 
-      - name: 'Apply to DEV'
+      - name: 'install provider Portal to DEV'
         uses: actions-hub/kubectl@v1.31.0
         env:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
         with:
           args: "apply -k ./deployment/kustomize/overlays/provider/"
 
-      - name: 'Apply to DEV'
+      - name: 'install consumer Portal to DEV'
         uses: actions-hub/kubectl@v1.31.0
         env:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
