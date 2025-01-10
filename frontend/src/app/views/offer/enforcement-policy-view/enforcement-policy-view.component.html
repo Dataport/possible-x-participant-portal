@@ -6,7 +6,7 @@
     <div (click)="$event.stopPropagation();">
       <div *ngFor="let ep of enforcementPolicies">
         <div *ngIf="isEverythingAllowedPolicy(ep)">
-          <b>Everything is allowed</b>
+          <b>Everything is allowed.</b>
         </div>
         <div *ngIf="isParticipantRestrictionPolicy(ep)">
           <b>Contracting is restricted to the following organizations:</b>
@@ -15,15 +15,26 @@
               {{ getNameIdStringById(org) }}
             </li>
           </ul>
+          <div *ngIf="showValidity && !ep.valid">
+            <b class="text-error">This policy is not in compliance.</b>
+          </div>
           <br/>
         </div>
         <div *ngIf="isStartDatePolicy(ep)">
           <b>Contract validity is restricted to the following start date:</b><br/>
-          {{ asStartDatePolicy(ep).date | date: 'full' }}<br/><br/>
+          {{ asStartDatePolicy(ep).date | date: 'full' }}<br/>
+          <div *ngIf="showValidity && !ep.valid">
+            <b class="text-error">This policy is not in compliance.</b>
+          </div>
+          <br/>
         </div>
         <div *ngIf="isEndDatePolicy(ep)">
           <b>Contract validity is restricted to the following end date:</b><br/>
-          {{ asEndDatePolicy(ep).date | date: 'full'}}<br/><br/>
+          {{ asEndDatePolicy(ep).date | date: 'full'}}<br/>
+          <div *ngIf="showValidity && !ep.valid">
+            <b class="text-error">This policy is not in compliance.</b>
+          </div>
+          <br/>
         </div>
       </div>
     </div>

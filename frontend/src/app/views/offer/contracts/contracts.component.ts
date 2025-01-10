@@ -2,6 +2,8 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {
   IContractAgreementTO,
   IContractDetailsTO,
+  IEnforcementPolicy,
+  IEnforcementPolicyUnion,
   IPolicy,
 } from '../../../services/mgmt/api/backend';
 import {HttpErrorResponse} from "@angular/common/http";
@@ -136,5 +138,13 @@ export class ContractsComponent implements OnInit {
       console.log(e?.error?.detail || e?.error || e?.message);
       this.contractDetailsExportView.informationRetrievalStatusMessage.showErrorMessage(e?.error?.detail || e?.error || e?.message);
     });
+  }
+
+  isAnyPolicyInvalid(enforcementPolicies: IEnforcementPolicyUnion[]): boolean {
+    return enforcementPolicies.some(policy => !policy.valid)
+  }
+
+  shouldTransferButtonBeDisabled(item: IContractAgreementTO): boolean {
+    return this.isTransferButtonDisabled || this.isAnyPolicyInvalid(item.enforcementPolicies);
   }
 }

@@ -357,6 +357,7 @@ export interface IEndDatePolicyBuilderImpl extends IEndDatePolicyBuilder<IEndDat
 
 export interface IEnforcementPolicy {
     "@type": "EverythingAllowedPolicy" | "ParticipantRestrictionPolicy" | "EndAgreementOffsetPolicy" | "StartAgreementOffsetPolicy" | "EndDatePolicy" | "StartDatePolicy";
+    valid: boolean;
 }
 
 export interface IEnforcementPolicyBuilder<C, B> {
@@ -680,7 +681,7 @@ export type IOdrlOperator = "odrl:eq" | "odrl:gteq" | "odrl:lteq" | "odrl:neq" |
 
 export type IPojoCredentialSubjectUnion = IGxDataResourceCredentialSubject | IGxServiceOfferingCredentialSubject;
 
-export type IEnforcementPolicyUnion = IEverythingAllowedPolicy | IParticipantRestrictionPolicy;
+export type IEnforcementPolicyUnion = IEverythingAllowedPolicy | IParticipantRestrictionPolicy | IStartDatePolicy | IEndDatePolicy;
 
 function uriEncoding(template: TemplateStringsArray, ...substitutions: any[]): string {
     let result = "";

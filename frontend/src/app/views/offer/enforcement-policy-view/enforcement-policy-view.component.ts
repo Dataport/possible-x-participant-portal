@@ -19,6 +19,8 @@ export class EnforcementPolicyViewComponent {
 
   @Input() enforcementPolicies: IEnforcementPolicy[] = [];
 
+  @Input() showValidity: boolean = false;
+
   protected isEverythingAllowedPolicy = isEverythingAllowedPolicy;
 
   protected isParticipantRestrictionPolicy = isParticipantRestrictionPolicy;

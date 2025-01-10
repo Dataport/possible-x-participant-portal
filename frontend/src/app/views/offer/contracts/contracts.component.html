@@ -12,13 +12,13 @@
         <thead>
         <tr>
           <th class="w-10">Nr.</th>
-          <th class="w-40" mat-sort-header="contractsigned">Contract signed</th>
+          <th class="w-1/6" mat-sort-header="contractsigned">Contract signed</th>
           <th class="w-1/6" mat-sort-header="offer">Offering</th>
           <th class="w-1/6" mat-sort-header="provider">Provider</th>
           <th class="w-1/6" mat-sort-header="consumer">Consumer</th>
           <th class="w-1/6" mat-sort-header="contractagreementid">Contract Agreement ID</th>
-          <th class="w-1/16"></th>
-          <th class="w-1/16"></th>
+          <th class="w-1/12">Validity</th>
+          <th class="w-32"></th>
         </tr>
         </thead>
         <tbody>
@@ -38,11 +38,22 @@
             </td>
             <td [cTooltip]="item.id" class="overflow-clip text-nowrap text-ellipsis">{{ item.id }}</td>
             <td>
-              <button (click)="toggleAccordion(item.id)" cButton class="rounded-none">Details</button>
+              <ng-container *ngIf="isAnyPolicyInvalid(item.enforcementPolicies); else valid">
+                <span class="text-error">invalid</span>
+              </ng-container>
+              <ng-template #valid>
+                valid
+              </ng-template>
             </td>
-            <td>
-              <button *ngIf="isDataOffering(item)" (click)="transferAgain(item)" [disabled]=isTransferButtonDisabled cButton class="rounded-none">
-                Transfer
+            <td class="flex space-x-2">
+              <button (click)="toggleAccordion(item.id)" cButton class="rounded-none"
+                      [cTooltip]="'Details'">
+                <mat-icon>manage_search</mat-icon>
+              </button>
+              <button *ngIf="isDataOffering(item)" (click)="transferAgain(item)"
+                      [disabled]="shouldTransferButtonBeDisabled(item)" cButton class="rounded-none"
+                      [cTooltip]="'Transfer'">
+                <mat-icon>swap_horiz</mat-icon>
               </button>
             </td>
           </tr>
@@ -63,7 +74,10 @@
               <span *ngIf="item.assetDetails"><b>Offering Asset ID:</b> {{ item.assetDetails.assetId }}<br></span>
               <span *ngIf="item.assetDetails"><b>Offering Catalog ID:</b> {{ item.assetDetails.offeringId }}
                 <br><br></span>
-              <app-enforcement-policy-view [enforcementPolicies]="item.enforcementPolicies"/>
+              <div *ngIf="isAnyPolicyInvalid(item.enforcementPolicies)">
+                <b class="text-error">One or more policies are not in compliance.</b>
+              </div>
+              <app-enforcement-policy-view [enforcementPolicies]="item.enforcementPolicies" [showValidity]="true"/>
             </td>
           </tr>
         </ng-container>
