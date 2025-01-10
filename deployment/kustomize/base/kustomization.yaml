@@ -5,7 +5,8 @@ resources:
   - backend-deployment.yaml
 #  - gh-pull-secret.yaml
   - ingress.yaml
-  - postgres.yaml
   - sealed_secret.yaml
 
 
+configurations:
+  - name-reference-config.yaml

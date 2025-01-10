@@ -12,22 +12,22 @@ commonLabels:
 configMapGenerator:
   - name: participant-portal-config
     literals:
-      - DAPSSERVER_URL_EXTERNAL=https://daps.int.possible-x.de/auth
+      - DAPSSERVER_URL_EXTERNAL=https://daps.dev.possible-x.de/auth
       - DAPSSERVER_URL_INTERNAL=http://daps-daps-server:4567
       - DAPSSERVER_BASEURL=https://daps.dev.possible-x.de/auth
       - DIDWEBSERVICE_BASEURL=http://did-web-service:8080
       - DIDWEBSERVICE_IGNORESSL=false
-      - FH_CATALOG_SECRETKEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib3BlcmF0b3IiXX19.lMkYKTViVNVPFH49ntdkruLe5EaWRUYt1YL-1Y7b0gc
+      - FH_CATALOG_SPARQL_URL=https://catalog.dev.possible-x.de/ld/sparql/
+      - FH_CATALOG_REPO_URL=https://hub.catalog.dev.possible-x.de
       - FH_CATALOG_URL=https://hub.catalog.dev.possible-x.de/
       - SDCREATIONWIZARDAPI_BASEURL=https://sd-creation-wizard.dev.possible-x.de
       - SPRING_PROFILES_ACTIVE=dev
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://partipant-portal/portal
-      - SPRING_DATASOURCE_DATABASE=portal
-      - EDC_MGMTBASEURL=https://provider.edc.dev.possible-x.de/management
-      - EDC_PROTOCOLBASEURL=https://provider.edc.dev.possible-x.de/protocol
-      - EDC_XAPIKEY=password
-      - FH_CATALOG_SPARQL_URL=https://catalog.dev.possible-x.de/ld/sparql/
-      - FH_CATALOG_REPO_URL=https://hub.catalog.dev.possible-x.de
+      - S3_BUCKETSTORAGEREGION=eu-central-3
+# Specific Files
+      - S3_BUCKETNAME=dev-consumer-edc-bucket-possible-31952746
+      - EDC_MGMTBASEURL=https://consumer.edc.dev.possible-x.de/management
+      - EDC_PROTOCOLBASEURL=https://consumer.edc.dev.possible-x.de/protocol
+
 
 images:
 - name: backend-image

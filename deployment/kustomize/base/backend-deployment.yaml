@@ -50,6 +50,8 @@ spec:
             #    name: database
             - configMapRef:
                 name: participant-portal-config
+            - secretRef:
+                name: fh-secret
           #image: ghcr.io/possible-x/backend:e064cddf59d2a4b7a70f2dba8f599113bda1ac18
           image: backend-image
           imagePullPolicy: IfNotPresent
