@@ -185,6 +185,8 @@ public class ContractServiceImpl implements ContractService {
                 isValid = contractAgreementTime.plus(offset).isAfter(now);
             } else if (policy instanceof EverythingAllowedPolicy) {
                 isValid = true;
+            } else {
+                log.error("Could not compute validity for unknown policy type: {}", policy.getClass().getName());
             }
             policy.setValid(isValid);
         }
