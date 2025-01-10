@@ -2,7 +2,9 @@ import {Component, Input} from '@angular/core';
 import {
   isEverythingAllowedPolicy,
   isParticipantRestrictionPolicy,
-  asParticipantRestrictionPolicy
+  asParticipantRestrictionPolicy,
+  isStartDatePolicy, asStartDatePolicy,
+  isEndDatePolicy, asEndDatePolicy
 } from '../../../../utils/policy-utils';
 import {
   IEnforcementPolicyUnion,
@@ -24,6 +26,14 @@ export class ServiceOfferDetailsViewComponent {
   protected isParticipantRestrictionPolicy = isParticipantRestrictionPolicy;
 
   protected asParticipantRestrictionPolicy = asParticipantRestrictionPolicy;
+
+  protected isStartDatePolicy = isStartDatePolicy;
+
+  protected asStartDatePolicy = asStartDatePolicy;
+
+  protected isEndDatePolicy = isEndDatePolicy;
+
+  protected asEndDatePolicy = asEndDatePolicy;
 
   constructor(private readonly nameMappingService: NameMappingService) {
   }

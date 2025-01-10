@@ -131,6 +131,15 @@
           {{ getNameIdStringById(org) }}
         </li>
       </ul>
+      <br/>
+    </div>
+    <div *ngIf="isStartDatePolicy(ep)">
+      Contract validity is restricted to the following start date:<br/>
+      {{ asStartDatePolicy(ep).date | date: 'full' }}<br/><br/>
+    </div>
+    <div *ngIf="isEndDatePolicy(ep)">
+      Contract validity is restricted to the following end date:<br/>
+      {{ asEndDatePolicy(ep).date | date: 'full'}}<br/><br/>
     </div>
   </div>
 </div>

@@ -4,7 +4,9 @@ import {IEnforcementPolicy} from "../../../services/mgmt/api/backend";
 import {
   isEverythingAllowedPolicy,
   isParticipantRestrictionPolicy,
-  asParticipantRestrictionPolicy
+  asParticipantRestrictionPolicy,
+  isStartDatePolicy, asStartDatePolicy,
+  isEndDatePolicy, asEndDatePolicy
 } from '../../../utils/policy-utils';
 import {NameMappingService} from "../../../services/mgmt/name-mapping.service";
 
@@ -22,6 +24,14 @@ export class EnforcementPolicyViewComponent {
   protected isParticipantRestrictionPolicy = isParticipantRestrictionPolicy;
 
   protected asParticipantRestrictionPolicy = asParticipantRestrictionPolicy;
+
+  protected isStartDatePolicy = isStartDatePolicy;
+
+  protected asStartDatePolicy = asStartDatePolicy;
+
+  protected isEndDatePolicy = isEndDatePolicy;
+
+  protected asEndDatePolicy = asEndDatePolicy;
 
   constructor(private readonly nameMappingService: NameMappingService) {
   }
