@@ -26,7 +26,8 @@
           <tr>
             <td class="overflow-clip text-nowrap text-ellipsis">{{ i + 1 }}</td>
             <td [cTooltip]="item.contractSigningDate | date:'medium'"
-                class="overflow-clip text-nowrap text-ellipsis">{{ item.contractSigningDate | date:'medium' }}</td>
+                class="overflow-clip text-nowrap text-ellipsis">{{ item.contractSigningDate | date:'medium' }}
+            </td>
             <td [cTooltip]="item.assetDetails.name"
                 class="overflow-clip text-nowrap text-ellipsis">{{ item.assetDetails.name }}
             </td>
@@ -46,13 +47,13 @@
               </ng-template>
             </td>
             <td class="flex space-x-2">
-              <button (click)="toggleAccordion(item.id)" cButton class="rounded-none"
-                      [cTooltip]="'Details'">
+              <button (click)="toggleAccordion(item.id)" [cTooltip]="'Details'" cButton
+                      class="rounded-none">
                 <mat-icon>manage_search</mat-icon>
               </button>
-              <button *ngIf="isDataOffering(item)" (click)="transferAgain(item)"
-                      [disabled]="shouldTransferButtonBeDisabled(item)" cButton class="rounded-none"
-                      [cTooltip]="'Transfer'">
+              <button (click)="transferAgain(item)" *ngIf="isDataOffering(item)"
+                      [cTooltip]="'Transfer'" [disabled]="shouldTransferButtonBeDisabled(item)" cButton
+                      class="rounded-none">
                 <mat-icon>swap_horiz</mat-icon>
               </button>
             </td>
@@ -60,21 +61,26 @@
           <tr *ngIf="item.id === expandedItemId">
             <td colspan="8">
               <div class="mb-4">
-                <button [cModalToggle]="'modalInfoExportView'" (click)="retrieveAndSetOfferDetails(item.id)" cButton class="rounded-none">Export Related Information</button>
+                <button (click)="retrieveAndSetOfferDetails(item.id)" [cModalToggle]="'modalInfoExportView'" cButton
+                        class="rounded-none">Export Related Information
+                </button>
               </div>
               <span *ngIf="item.consumerDetails"><b>Consumer Name:</b> {{ item.consumerDetails.name }}<br></span>
               <span *ngIf="item.consumerDetails"><b>Consumer DID:</b> {{ item.consumerDetails.did }}<br></span>
-              <span *ngIf="item.consumerDetails"><b>Consumer DAPS ID:</b> {{ item.consumerDetails.dapsId }}<br><br></span>
+              <span *ngIf="item.consumerDetails"><b>Consumer DAPS ID:</b> {{ item.consumerDetails.dapsId }}
+                <br><br></span>
               <span *ngIf="item.providerDetails"><b>Provider Name:</b> {{ item.providerDetails.name }}<br></span>
               <span *ngIf="item.providerDetails"><b>Provider DID:</b> {{ item.providerDetails.did }}<br></span>
-              <span *ngIf="item.providerDetails"><b>Provider DAPS ID:</b> {{ item.providerDetails.dapsId }}<br><br></span>
+              <span *ngIf="item.providerDetails"><b>Provider DAPS ID:</b> {{ item.providerDetails.dapsId }}
+                <br><br></span>
               <span *ngIf="item.assetDetails"><b>Offering Name:</b> {{ item.assetDetails.name }}<br></span>
               <span *ngIf="item.assetDetails"><b>Offering Description:</b> {{ item.assetDetails.description }}
                 <br></span>
               <span *ngIf="item.assetDetails"><b>Offering Asset ID:</b> {{ item.assetDetails.assetId }}<br></span>
               <span *ngIf="item.assetDetails"><b>Offering Catalog ID:</b> {{ item.assetDetails.offeringId }}
                 <br><br></span>
-              <app-enforcement-policy-view [enforcementPolicies]="item.enforcementPolicies" [showValidity]="true"/>
+              <app-enforcement-policy-accordion-view [enforcementPolicies]="item.enforcementPolicies"
+                                                     [showValidity]="true"/>
             </td>
           </tr>
         </ng-container>
@@ -84,4 +90,5 @@
   </div>
 </div>
 
-<app-contract-details-export-view #contractDetailsExportView [contractDetails]="contractDetailsToExport"></app-contract-details-export-view>
+<app-contract-details-export-view #contractDetailsExportView
+                                  [contractDetails]="contractDetailsToExport"></app-contract-details-export-view>

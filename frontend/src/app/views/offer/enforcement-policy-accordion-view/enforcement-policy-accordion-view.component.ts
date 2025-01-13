@@ -2,7 +2,7 @@ import {Component, Input} from '@angular/core';
 import {IEnforcementPolicy} from "../../../services/mgmt/api/backend";
 
 @Component({
-  selector: 'app-enforcement-policy-view',
+  selector: 'app-enforcement-policy-accordion-view',
   templateUrl: './enforcement-policy-accordion-view.component.html',
   styleUrls: ['./enforcement-policy-accordion-view.component.scss']
 })
