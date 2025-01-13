@@ -1,6 +1,8 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { EnforcementPolicyContentComponent } from './enforcement-policy-content.component';
+import {HttpClientTestingModule} from '@angular/common/http/testing';
+
+import {EnforcementPolicyContentComponent} from './enforcement-policy-content.component';
 
 describe('EnforcementPolicyContentComponent', () => {
   let component: EnforcementPolicyContentComponent;
@@ -8,7 +10,8 @@ describe('EnforcementPolicyContentComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [EnforcementPolicyContentComponent]
+      declarations: [EnforcementPolicyContentComponent],
+      imports: [HttpClientTestingModule]
     });
     fixture = TestBed.createComponent(EnforcementPolicyContentComponent);
     component = fixture.componentInstance;
