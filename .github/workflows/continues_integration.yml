@@ -6,7 +6,7 @@ on:
   #      - reopened
   #      - review_requested
   push:
-    branches: [ "develop", "main", "feature/PI-747_split_build_process" ]
+    branches: [ "develop", "main"]
   workflow_dispatch:
 env:
   REGISTRY: ghcr.io
