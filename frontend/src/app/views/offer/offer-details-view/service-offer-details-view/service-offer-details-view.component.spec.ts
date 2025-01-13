@@ -6,12 +6,15 @@ import { NameMappingService } from "../../../../services/mgmt/name-mapping.servi
 describe('ServiceOfferDetailsViewComponent', () => {
   let component: ServiceOfferDetailsViewComponent;
   let fixture: ComponentFixture<ServiceOfferDetailsViewComponent>;
+  let nameMappingService: jasmine.SpyObj<NameMappingService>;
 
   beforeEach(() => {
+    const nameMappingServiceSpy = jasmine.createSpyObj('NameMappingService', ['getNameById']);
+
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
       declarations: [ServiceOfferDetailsViewComponent],
-      providers: [NameMappingService]
+      providers: [{ provide: NameMappingService, useValue: nameMappingServiceSpy }]
     });
     fixture = TestBed.createComponent(ServiceOfferDetailsViewComponent);
     component = fixture.componentInstance;
@@ -29,10 +32,19 @@ describe('ServiceOfferDetailsViewComponent', () => {
         } as any
       ]
     } as any;
+    nameMappingService = TestBed.inject(NameMappingService) as jasmine.SpyObj<NameMappingService>;
     fixture.detectChanges();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should return name', () => {
+    const name = 'Test Name';
+    nameMappingService.getNameById.and.returnValue(name);
+
+    const result = component.getNameById("any id");
+    expect(result).toBe(name);
   });
 });
