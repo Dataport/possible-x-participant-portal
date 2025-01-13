@@ -44,10 +44,10 @@ patches:
     patch: |
       - op: replace
         path: /spec/tls/0/hosts/0
-        value: consumer-portal-test.dev.possible-x.de
+        value: management.consumer.edc.dev.possible-x.de
       - op: replace
         path: /spec/tls/0/secretName
-        value: consumer-portal-ssl-certificate
+        value: management-consumer-portal-ssl-certificate
       - op: replace
         path: /spec/rules/0/host
-        value: consumer-portal-test.dev.possible-x.de
+        value: management.consumer.edc.dev.possible-x.de

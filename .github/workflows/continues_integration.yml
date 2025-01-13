@@ -140,28 +140,3 @@ jobs:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
         with:
           args: "apply -k ./deployment/kustomize/overlays/consumer/"
-
-
-
-
-
-#  deploy-consumer:
-#    runs-on: 'ubuntu-latest'
-#    needs: build-and-push-image
-#    steps:
-#      - name: 'Invoke Kubectl Consumer'
-#        uses: actions-hub/kubectl@v1.31.0
-#        env:
-#          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
-#        with:
-#          args: "set image deployment/consumer-edc-management-possible-x-edc-management -n ${{ env.K8S_NAMESPACE }} possible-x-edc-management=${{ env.REGISTRY }}/${{ env.REGISTRY_NAMESPACE }}/management:${{ github.sha }}"
-#  deploy-provider:
-#    runs-on: 'ubuntu-latest'
-#    needs: build-and-push-image
-#    steps:
-#      - name: 'Invoke Kubectl Provider'
-#        uses: actions-hub/kubectl@v1.31.0
-#        env:
-#          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
-#        with:
-#          args: "set image deployment/provider-edc-management-possible-x-edc-management -n ${{ env.K8S_NAMESPACE }} possible-x-edc-management=${{ env.REGISTRY }}/${{ env.REGISTRY_NAMESPACE }}/management:${{ github.sha }}"
