@@ -70,7 +70,8 @@
 </div>
 <br/><br/>
 <div>11. Data Protection Regime:<br/>
-  <ng-container *ngIf="!catalogOffering['gx:dataProtectionRegime'] || catalogOffering['gx:dataProtectionRegime'].length === 0; else dprList">
+  <ng-container
+    *ngIf="!catalogOffering['gx:dataProtectionRegime'] || catalogOffering['gx:dataProtectionRegime'].length === 0; else dprList">
     -
   </ng-container>
   <ng-template #dprList>
@@ -121,25 +122,6 @@
 <br/><br/>
 <div>15. POSSIBLE-X enforced policy:<br/>
   <div *ngFor="let ep of enforcementPolicies">
-    <div *ngIf="isEverythingAllowedPolicy(ep)">
-      Everything is allowed.
-    </div>
-    <div *ngIf="isParticipantRestrictionPolicy(ep)">
-      Contracting is restricted to the following organizations:
-      <ul *ngFor="let org of asParticipantRestrictionPolicy(ep).allowedParticipants">
-        <li>
-          {{ getNameIdStringById(org) }}
-        </li>
-      </ul>
-      <br/>
-    </div>
-    <div *ngIf="isStartDatePolicy(ep)">
-      Contract validity is restricted to the following start date:<br/>
-      {{ asStartDatePolicy(ep).date | date: 'full' }}<br/><br/>
-    </div>
-    <div *ngIf="isEndDatePolicy(ep)">
-      Contract validity is restricted to the following end date:<br/>
-      {{ asEndDatePolicy(ep).date | date: 'full'}}<br/><br/>
-    </div>
+    <app-enforcement-policy-content [enforcementPolicy]="ep"/>
   </div>
 </div>
