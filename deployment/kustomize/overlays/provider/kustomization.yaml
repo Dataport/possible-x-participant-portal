@@ -48,7 +48,7 @@ patches:
         path: /spec/tls/0/hosts/0
         value: management.provider.edc.dev.possible-x.de
       - op: replace
-        path: /spec/tls/0/hosts/0
+        path: /spec/tls/0/secretName
         value: management-provider-portal-ssl-certificate
       - op: replace
         path: /spec/rules/0/host
