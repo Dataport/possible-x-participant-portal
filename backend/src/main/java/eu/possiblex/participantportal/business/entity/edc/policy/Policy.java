@@ -20,6 +20,7 @@
 
 package eu.possiblex.participantportal.business.entity.edc.policy;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -49,14 +50,17 @@ public class Policy {
 
     @Builder.Default
     @JsonProperty(JsonLdConstants.ODRL_PREFIX + "permission")
+    @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     private List<OdrlPermission> permission = new ArrayList<>();
 
     @Builder.Default
     @JsonProperty(JsonLdConstants.ODRL_PREFIX + "prohibition")
+    @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     private List<JsonNode> prohibition = new ArrayList<>(); // replace this with proper classes once needed
 
     @Builder.Default
     @JsonProperty(JsonLdConstants.ODRL_PREFIX + "obligation")
+    @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     private List<JsonNode> obligation = new ArrayList<>(); // replace this with proper classes once needed
 
     @JsonProperty(JsonLdConstants.ODRL_PREFIX + "target")
