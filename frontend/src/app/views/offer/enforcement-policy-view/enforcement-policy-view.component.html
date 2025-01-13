@@ -1,14 +1,19 @@
 <mat-accordion multi togglePosition="before">
   <mat-expansion-panel>
     <mat-expansion-panel-header (click)="$event.stopPropagation();">
-      <mat-panel-title class="font-bold">Enforcement Policies</mat-panel-title>
+      <mat-panel-title class="font-bold">Enforcement Policies
+        <span *ngIf="showValidity && isAnyPolicyInvalid" class="text-error">&nbsp;q(One or more policies are not in compliance.)</span>
+      </mat-panel-title>
     </mat-expansion-panel-header>
     <div (click)="$event.stopPropagation();">
       <div *ngFor="let ep of enforcementPolicies">
-        <div *ngIf="isEverythingAllowedPolicy(ep)">
-          <b>Everything is allowed.</b>
+        <div *ngIf="isEverythingAllowedPolicy(ep)" [ngClass]="{'text-error': showValidity && !ep.valid}">
+          <b>Everything is allowed.</b><br/>
+          <div *ngIf="showValidity && !ep.valid">
+            <b>This policy is not in compliance.</b>
+          </div>
         </div>
-        <div *ngIf="isParticipantRestrictionPolicy(ep)">
+        <div *ngIf="isParticipantRestrictionPolicy(ep)" [ngClass]="{'text-error': showValidity && !ep.valid}">
           <b>Contracting is restricted to the following organizations:</b>
           <ul *ngFor="let org of asParticipantRestrictionPolicy(ep).allowedParticipants">
             <li>
@@ -16,23 +21,23 @@
             </li>
           </ul>
           <div *ngIf="showValidity && !ep.valid">
-            <b class="text-error">This policy is not in compliance.</b>
+            <b>This policy is not in compliance.</b>
           </div>
           <br/>
         </div>
-        <div *ngIf="isStartDatePolicy(ep)">
+        <div *ngIf="isStartDatePolicy(ep)" [ngClass]="{'text-error': showValidity && !ep.valid}">
           <b>Contract validity is restricted to the following start date:</b><br/>
           {{ asStartDatePolicy(ep).date | date: 'full' }}<br/>
           <div *ngIf="showValidity && !ep.valid">
-            <b class="text-error">This policy is not in compliance.</b>
+            <b>This policy is not in compliance.</b>
           </div>
           <br/>
         </div>
-        <div *ngIf="isEndDatePolicy(ep)">
+        <div *ngIf="isEndDatePolicy(ep)" [ngClass]="{'text-error': showValidity && !ep.valid}">
           <b>Contract validity is restricted to the following end date:</b><br/>
           {{ asEndDatePolicy(ep).date | date: 'full'}}<br/>
           <div *ngIf="showValidity && !ep.valid">
-            <b class="text-error">This policy is not in compliance.</b>
+            <b>This policy is not in compliance.</b>
           </div>
           <br/>
         </div>

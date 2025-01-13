@@ -43,4 +43,8 @@ export class EnforcementPolicyViewComponent {
     return `${name} (${id})`;
   }
 
+  get isAnyPolicyInvalid(): boolean {
+    return this.enforcementPolicies.some(policy => !policy.valid)
+  }
+
 }

@@ -74,9 +74,6 @@
               <span *ngIf="item.assetDetails"><b>Offering Asset ID:</b> {{ item.assetDetails.assetId }}<br></span>
               <span *ngIf="item.assetDetails"><b>Offering Catalog ID:</b> {{ item.assetDetails.offeringId }}
                 <br><br></span>
-              <div *ngIf="isAnyPolicyInvalid(item.enforcementPolicies)">
-                <b class="text-error">One or more policies are not in compliance.</b>
-              </div>
               <app-enforcement-policy-view [enforcementPolicies]="item.enforcementPolicies" [showValidity]="true"/>
             </td>
           </tr>
