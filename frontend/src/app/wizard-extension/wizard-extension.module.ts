@@ -45,6 +45,28 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatNativeDateModule} from '@angular/material/core';
+import {
+  NgxMatDatetimePickerModule,
+  NgxMatDateFormats,
+  NGX_MAT_DATE_FORMATS,
+} from '@angular-material-components/datetime-picker';
+import { NgxMatMomentModule, NGX_MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular-material-components/moment-adapter';
+import {MAT_MOMENT_DATE_ADAPTER_OPTIONS} from "@angular/material-moment-adapter";
+
+export const MOMENT_DATETIME_WITH_SECONDS_FORMAT = 'DD/MM/YYYY, HH:mm:ss';
+
+// If using Moment
+const CUSTOM_MOMENT_FORMATS: NgxMatDateFormats = {
+  parse: {
+    dateInput: MOMENT_DATETIME_WITH_SECONDS_FORMAT,
+  },
+  display: {
+    dateInput: MOMENT_DATETIME_WITH_SECONDS_FORMAT,
+    monthYearLabel: 'MMM YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'MMMM YYYY',
+  },
+};
 
 @NgModule({
   declarations: [BaseWizardExtensionComponent, OfferingWizardExtensionComponent, DataResourcePolicyHintsComponent, ServiceOfferingPolicyHintsComponent, PossibleXEnforcedPolicyHintsComponent],
@@ -71,8 +93,15 @@ import {MatNativeDateModule} from '@angular/material/core';
     AccordionItemComponent,
     TemplateIdDirective,
     AccordionButtonDirective,
-    MatFormFieldModule, MatInputModule, MatDatepickerModule, MatNativeDateModule
-  ]
+    MatFormFieldModule, MatInputModule, MatDatepickerModule, MatNativeDateModule,
+    NgxMatDatetimePickerModule,
+    NgxMatMomentModule
+  ],
+  providers: [
+    { provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: true } },
+    { provide: NGX_MAT_DATE_FORMATS, useValue: CUSTOM_MOMENT_FORMATS },
+    { provide: NGX_MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: true } },
+  ],
 })
 export class WizardExtensionModule {
 }

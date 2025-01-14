@@ -33,7 +33,7 @@ import {MatStepper} from "@angular/material/stepper";
 import {AccordionItemComponent} from "@coreui/angular";
 import {HttpErrorResponse} from "@angular/common/http";
 import {NameMappingService} from "../../services/mgmt/name-mapping.service";
-import { FormControl } from '@angular/forms';
+import moment from 'moment';
 
 @Component({
   selector: 'app-offering-wizard-extension',
@@ -65,7 +65,6 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
   @ViewChild("gxServiceOfferingWizard") private gxServiceOfferingWizard: BaseWizardExtensionComponent;
   @ViewChild("gxDataResourceWizard") private gxDataResourceWizard: BaseWizardExtensionComponent;
   @ViewChild("gxLegitimateInterestWizard") private gxLegitimateInterestWizard: BaseWizardExtensionComponent;
-  dateControl = new FormControl(new Date());
 
   constructor(
     private apiService: ApiService, private nameMappingService: NameMappingService, private cdr: ChangeDetectorRef
@@ -89,7 +88,16 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
   }
 
   isValidDate(date: any): boolean {
-    return date instanceof Date && !isNaN(date.getTime());
+    if (typeof date === 'number') {
+      date = new Date(date);
+    } else if (typeof date === 'string') {
+      date = new Date(date);
+    }
+
+    const momentDate = moment(date, moment.ISO_8601, true);
+    const isValid = momentDate.isValid();
+
+    return isValid && momentDate.toISOString() === date.toISOString();
   }
 
   get isAnyPolicyChecked(): boolean {
@@ -221,7 +229,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
        this.offerCreationStatusMessage.showErrorMessage(e.error.detail || e.error || e.message);
      }).catch(_ => {
        this.waitingForResponse = false;
-       this.offerCreationStatusMessage.showErrorMessage("Unbekannter Fehler");
+       this.offerCreationStatusMessage.showErrorMessage("Unknown error.");
      });
 
   }

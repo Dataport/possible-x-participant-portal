@@ -137,9 +137,9 @@
                 <mat-form-field>
                   <mat-label>Select the date</mat-label>
                   <input [ngxMatDatetimePicker]="picker" matInput [(ngModel)]="contractValidityStartDate">
-                  <mat-hint>MM/DD/YYYY, HH:MM:SS</mat-hint>
+                  <mat-hint>DD/MM/YYYY, HH:MM:SS</mat-hint>
                   <mat-datepicker-toggle [for]="$any(picker)" matIconSuffix></mat-datepicker-toggle>
-                  <ngx-mat-datetime-picker #picker>
+                  <ngx-mat-datetime-picker [showSeconds]="true" #picker>
                     <ngx-mat-datepicker-actions>
                       <button ngxMatDatepickerApply>
                         <mat-icon>done</mat-icon>
@@ -172,9 +172,9 @@
               <mat-form-field>
                 <mat-label>Select the date</mat-label>
                 <input [ngxMatDatetimePicker]="picker" matInput [(ngModel)]="contractValidityEndDate">
-                <mat-hint>MM/DD/YYYY, HH:MM:SS</mat-hint>
+                <mat-hint>DD/MM/YYYY, HH:MM:SS</mat-hint>
                 <mat-datepicker-toggle [for]="$any(picker)" matIconSuffix></mat-datepicker-toggle>
-                <ngx-mat-datetime-picker #picker>
+                <ngx-mat-datetime-picker [showSeconds]="true" #picker>
                   <ngx-mat-datepicker-actions>
                     <button ngxMatDatepickerApply>
                       <mat-icon>done</mat-icon>
