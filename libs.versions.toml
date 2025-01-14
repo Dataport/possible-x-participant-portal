@@ -1,6 +1,7 @@
 [versions]
 springBoot = "3.3.2"
 springDependencyManagement = "1.1.6"
+springSecurityTest = "6.4.2"
 lombok = "1.18.34"
 lombokMapStructBinding = "0.2.0"
 openApi = "2.6.0"
@@ -19,6 +20,8 @@ springBootStarterWeb = { module = "org.springframework.boot:spring-boot-starter-
 springBootStarterWebflux = { module = "org.springframework.boot:spring-boot-starter-webflux", version.ref = "springBoot" }
 springBootStarterTest = { module = "org.springframework.boot:spring-boot-starter-test", version.ref = "springBoot" }
 springBootDevtools = { module = "org.springframework.boot:spring-boot-devtools", version.ref = "springBoot" }
+springBootStarterSecurity = { module = "org.springframework.boot:spring-boot-starter-security", version.ref = "springBoot" }
+springSecurityTest = { module = "org.springframework.security:spring-security-test", version.ref = "springSecurityTest" }
 lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
 lombokMapStructBinding = { module = "org.projectlombok:lombok-mapstruct-binding", version.ref = "lombokMapStructBinding" }
 mapStruct = { module = "org.mapstruct:mapstruct", version.ref = "mapStruct" }

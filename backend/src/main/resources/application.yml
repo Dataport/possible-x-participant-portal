@@ -1,6 +1,10 @@
 spring:
   application:
     name: participant-portal
+  security:
+    admin:
+      username: admin
+      password: admin
 
 management:
   endpoints:
