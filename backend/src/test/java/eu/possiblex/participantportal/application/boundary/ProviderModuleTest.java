@@ -19,7 +19,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -69,6 +75,7 @@ class ProviderModuleTest extends ProviderTestParent {
     private FhCatalogClient fhCatalogClient;
 
     @Test
+    @WithMockUser(username = "admin")
     void shouldReturnMessageOnCreateServiceOfferingWithoutData() throws Exception {
 
         // GIVEN
@@ -88,6 +95,7 @@ class ProviderModuleTest extends ProviderTestParent {
     }
 
     @Test
+    @WithMockUser(username = "admin")
     void shouldReturnMessageOnCreateServiceOfferingWithData() throws Exception {
 
         // GIVEN
@@ -107,6 +115,7 @@ class ProviderModuleTest extends ProviderTestParent {
     }
 
     @Test
+    @WithMockUser(username = "admin")
     void shouldDeleteOfferInFhCatalogOnEdcErrorWhenCreatingServiceOfferingWithoutData() throws Exception {
 
         // GIVEN
@@ -136,6 +145,7 @@ class ProviderModuleTest extends ProviderTestParent {
     }
 
     @Test
+    @WithMockUser(username = "admin")
     void shouldDeleteOfferInFhCatalogOnEdcErrorWhenCreatingServiceOfferingWithData() throws Exception {
 
         // GIVEN
@@ -292,6 +302,18 @@ class ProviderModuleTest extends ProviderTestParent {
         public ObjectMapper objectMapper() {
 
             return new ObjectMapper();
+        }
+
+        @Bean
+        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+            http.authorizeHttpRequests((authorizeHttpRequests) ->
+                    authorizeHttpRequests
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .httpBasic(Customizer.withDefaults())
+                .csrf(AbstractHttpConfigurer::disable);
+            return http.build();
         }
     }
 }

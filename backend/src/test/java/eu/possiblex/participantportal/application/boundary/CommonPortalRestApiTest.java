@@ -1,5 +1,6 @@
 package eu.possiblex.participantportal.application.boundary;
 
+import eu.possiblex.participantportal.application.configuration.AppConfigurer;
 import eu.possiblex.participantportal.business.control.CommonPortalService;
 import eu.possiblex.participantportal.business.control.CommonPortalServiceFake;
 import org.hamcrest.Matchers;
@@ -9,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.junit.jupiter.api.Test;
@@ -19,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(CommonPortalRestApiImpl.class)
-@ContextConfiguration(classes = { CommonPortalRestApiTest.TestConfig.class, CommonPortalRestApiImpl.class })
+@ContextConfiguration(classes = { CommonPortalRestApiTest.TestConfig.class, CommonPortalRestApiImpl.class, AppConfigurer.class })
 class CommonPortalRestApiTest {
     @Autowired
     private MockMvc mockMvc;
@@ -28,6 +30,7 @@ class CommonPortalRestApiTest {
     private CommonPortalService commonPortalService;
 
     @Test
+    @WithMockUser(username = "admin")
     void shouldReturnMessageOnGetNameMapping() throws Exception {
         reset(commonPortalService);
 
@@ -38,6 +41,7 @@ class CommonPortalRestApiTest {
     }
 
     @Test
+    @WithMockUser(username = "admin")
     void shouldReturnMessageOnGetVersion() throws Exception {
         this.mockMvc.perform(get("/common/version").contentType(MediaType.APPLICATION_JSON)).andDo(print())
             .andExpect(status().isOk())

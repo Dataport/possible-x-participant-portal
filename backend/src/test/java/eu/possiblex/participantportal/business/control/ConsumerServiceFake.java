@@ -14,7 +14,6 @@ import eu.possiblex.participantportal.business.entity.exception.TransferFailedEx
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 public class ConsumerServiceFake implements ConsumerService {
 

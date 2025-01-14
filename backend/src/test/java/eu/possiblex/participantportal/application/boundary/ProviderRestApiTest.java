@@ -1,6 +1,7 @@
 package eu.possiblex.participantportal.application.boundary;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.possiblex.participantportal.application.configuration.AppConfigurer;
 import eu.possiblex.participantportal.application.control.ProviderApiMapper;
 import eu.possiblex.participantportal.application.entity.CreateDataOfferingRequestTO;
 import eu.possiblex.participantportal.application.entity.CreateServiceOfferingRequestTO;
@@ -24,6 +25,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -40,7 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ProviderRestApiImpl.class)
-@ContextConfiguration(classes = { ProviderRestApiTest.TestConfig.class, ProviderRestApiImpl.class })
+@ContextConfiguration(classes = { ProviderRestApiTest.TestConfig.class, ProviderRestApiImpl.class, AppConfigurer.class })
 class ProviderRestApiTest extends ProviderTestParent {
 
     @Autowired
@@ -53,6 +55,7 @@ class ProviderRestApiTest extends ProviderTestParent {
     private ObjectMapper objectMapper;
 
     @Test
+    @WithMockUser(username = "admin")
     void shouldReturnMessageOnCreateServiceOffering() throws Exception {
 
         // GIVEN
@@ -96,6 +99,7 @@ class ProviderRestApiTest extends ProviderTestParent {
     }
 
     @Test
+    @WithMockUser(username = "admin")
     void shouldReturnMessageOnCreateDataOffering() throws Exception {
 
         // GIVEN
@@ -143,6 +147,7 @@ class ProviderRestApiTest extends ProviderTestParent {
     }
 
     @Test
+    @WithMockUser(username = "admin")
     void shouldReturnMessageOnGetPrefillFields() throws Exception {
         // WHEN/THEN
         this.mockMvc.perform(get("/provider/prefillFields")).andDo(print()).andExpect(status().isOk())

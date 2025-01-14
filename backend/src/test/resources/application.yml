@@ -1,3 +1,8 @@
+spring:
+  security:
+    admin:
+      username: admin
+      password: admin
 edc:
   x-api-key: test
   mgmt-base-url: test
