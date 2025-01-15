@@ -87,11 +87,9 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
     return this.isContractValidityEndPolicyChecked && !this.isValidDate(this.contractValidityEndDate);
   }
 
-  isValidDate(date: any): boolean {
-    if (typeof date === 'number') {
-      date = new Date(date);
-    } else if (typeof date === 'string') {
-      date = new Date(date);
+  isValidDate(date: Date): boolean {
+    if (!date) {
+      return false;
     }
 
     const momentDate = moment(date, moment.ISO_8601, true);
