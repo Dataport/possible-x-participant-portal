@@ -55,7 +55,6 @@ import {MAT_MOMENT_DATE_ADAPTER_OPTIONS} from "@angular/material-moment-adapter"
 
 export const MOMENT_DATETIME_WITH_SECONDS_FORMAT = 'DD/MM/YYYY, HH:mm:ss';
 
-// If using Moment
 const CUSTOM_MOMENT_FORMATS: NgxMatDateFormats = {
   parse: {
     dateInput: MOMENT_DATETIME_WITH_SECONDS_FORMAT,
