@@ -44,15 +44,18 @@ public class ContractServiceImpl implements ContractService {
 
     private final String participantId;
 
+    private final String edcProtocolUrl;
+
     public ContractServiceImpl(@Autowired EdcClient edcClient, @Autowired FhCatalogClient fhCatalogClient,
         @Autowired OmejdnConnectorApiClient omejdnConnectorApiClient, @Autowired ConsumerService consumerService,
-        @Value("${participant-id}") String participantId) {
+        @Value("${participant-id}") String participantId, @Value("${edc.protocol-base-url}") String edcProtocolUrl) {
 
         this.edcClient = edcClient;
         this.fhCatalogClient = fhCatalogClient;
         this.omejdnConnectorApiClient = omejdnConnectorApiClient;
         this.consumerService = consumerService;
         this.participantId = participantId;
+        this.edcProtocolUrl = edcProtocolUrl;
     }
 
     /**
@@ -94,6 +97,7 @@ public class ContractServiceImpl implements ContractService {
 
         // convert contract agreements to contract agreement BEs
         contractAgreements.forEach(c -> contractAgreementBEs.add(ContractAgreementBE.builder().contractAgreement(c)
+            .isConsumer(isParticipantConsumer(participantDidMap.get(c.getConsumerId()), offeringDetails.get(c.getAssetId())))
             .isDataOffering(offeringDetails.getOrDefault(c.getAssetId(), unknownOffering).getAggregationOf() != null)
             .enforcementPolicies(getEnforcementPoliciesWithValidity(
                 List.of(c.getPolicy()), 
@@ -156,6 +160,14 @@ public class ContractServiceImpl implements ContractService {
     public OfferRetrievalResponseBE getOfferDetailsByContractAgreementId(String contractAgreementId) {
         ContractAgreement contractAgreement = edcClient.getContractAgreementById(contractAgreementId);
         return getOfferRetrievalResponseBE(contractAgreement);
+    }
+
+    private boolean isParticipantConsumer(String derivedConsumerDid, OfferingDetailsSparqlQueryResult associatedOffering) {
+        if (derivedConsumerDid == null) {
+            return associatedOffering != null && !edcProtocolUrl.equals(associatedOffering.getProviderUrl());
+        }
+
+        return participantId.equals(derivedConsumerDid);
     }
 
     private List<EnforcementPolicy> getEnforcementPoliciesWithValidity(List<Policy> edcPolicies, BigInteger contractSigningDate, String providerDid) {
