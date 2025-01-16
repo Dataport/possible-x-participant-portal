@@ -97,7 +97,7 @@ public class ContractServiceImpl implements ContractService {
 
         // convert contract agreements to contract agreement BEs
         contractAgreements.forEach(c -> contractAgreementBEs.add(ContractAgreementBE.builder().contractAgreement(c)
-            .isConsumer(isParticipantConsumer(participantDidMap.get(c.getConsumerId()), offeringDetails.get(c.getAssetId())))
+            .isProvider(isParticipantProvider(offeringDetails.get(c.getAssetId())))
             .isDataOffering(offeringDetails.getOrDefault(c.getAssetId(), unknownOffering).getAggregationOf() != null)
             .enforcementPolicies(getEnforcementPoliciesWithValidity(
                 List.of(c.getPolicy()), 
@@ -162,12 +162,10 @@ public class ContractServiceImpl implements ContractService {
         return getOfferRetrievalResponseBE(contractAgreement);
     }
 
-    private boolean isParticipantConsumer(String derivedConsumerDid, OfferingDetailsSparqlQueryResult associatedOffering) {
-        if (derivedConsumerDid == null) {
-            return associatedOffering != null && !edcProtocolUrl.equals(associatedOffering.getProviderUrl());
-        }
-
-        return participantId.equals(derivedConsumerDid);
+    private boolean isParticipantProvider(OfferingDetailsSparqlQueryResult associatedOffering) {
+        // check if the associated offering is still available in the catalog and
+        // if the provider URL of the offering is the same as the EDC protocol URL of the participant
+        return associatedOffering != null && edcProtocolUrl.equals(associatedOffering.getProviderUrl());
     }
 
     private List<EnforcementPolicy> getEnforcementPoliciesWithValidity(List<Policy> edcPolicies, BigInteger contractSigningDate, String providerDid) {

@@ -26,5 +26,5 @@ public class ContractAgreementBE {
 
     private boolean isDataOffering;
 
-    private boolean isConsumer;
+    private boolean isProvider;
 }

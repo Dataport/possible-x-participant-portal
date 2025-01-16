@@ -33,5 +33,5 @@ public class ContractAgreementTO {
 
     private boolean isDataOffering;
 
-    private boolean isConsumer;
+    private boolean isProvider;
 }
