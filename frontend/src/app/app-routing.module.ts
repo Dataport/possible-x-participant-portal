@@ -3,10 +3,13 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { DefaultLayoutComponent } from './containers';
 
+var authToken = sessionStorage.getItem('authToken');
+var redirectTo = authToken ? 'offer/provide' : 'login';
+
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'login',
+    redirectTo: redirectTo,
     pathMatch: 'full'
   },
   {
