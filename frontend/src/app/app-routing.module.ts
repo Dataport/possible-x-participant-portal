@@ -6,7 +6,7 @@ import { DefaultLayoutComponent } from './containers';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'offer/provide',
+    redirectTo: 'login',
     pathMatch: 'full'
   },
   {
@@ -20,8 +20,14 @@ const routes: Routes = [
         path: 'offer',
         loadChildren: () =>
           import('./views/offer/offer.module').then((m) => m.OfferModule)
-      }]
-  }
+      },
+      {
+        path: 'login',
+        loadChildren: () =>
+          import('./views/login/login.module').then((m) => m.LoginModule)
+      }
+      ]
+  },
 ];
 
 @NgModule({

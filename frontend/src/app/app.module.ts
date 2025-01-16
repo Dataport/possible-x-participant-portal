@@ -34,7 +34,12 @@ import { DefaultLayoutComponent } from './containers/default-layout/default-layo
 import {AuthInterceptor} from "./interceptors/auth.interceptor";
 
 export function initApp(nameMappingService: NameMappingService) {
-  return () => nameMappingService.retrieveNameMapping();
+  return () => {
+    if (sessionStorage.getItem('authToken')) {
+      return nameMappingService.retrieveNameMapping();
+    }
+    return Promise.resolve();
+  };
 }
 
 @NgModule({

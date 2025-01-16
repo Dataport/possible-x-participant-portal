@@ -9,11 +9,13 @@ import {ApiService} from "../../services/mgmt/api/api.service";
 export class DefaultLayoutComponent implements OnInit {
   versionNumber: string = '';
   versionDate: string = '';
+  authToken: string | null = null;
 
   constructor(private apiService: ApiService) {
   }
 
   ngOnInit() {
+    this.authToken = sessionStorage.getItem('authToken');
     this.apiService.getVersion().then(response => {
       this.versionNumber = response.version;
       this.versionDate = response.date;
