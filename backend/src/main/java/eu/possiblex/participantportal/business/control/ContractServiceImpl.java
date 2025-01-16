@@ -5,10 +5,8 @@ import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedS
 import eu.possiblex.participantportal.business.entity.daps.OmejdnConnectorDetailsBE;
 import eu.possiblex.participantportal.business.entity.edc.contractagreement.ContractAgreement;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
-import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
 import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsSparqlQueryResult;
 import eu.possiblex.participantportal.business.entity.fh.ParticipantDetailsSparqlQueryResult;
-import eu.possiblex.participantportal.utilities.PossibleXException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -214,19 +212,6 @@ public class ContractServiceImpl implements ContractService {
                 "Provider URL not found in Sparql query result for assetId: " + be.getEdcOfferId());
         }
         be.setCounterPartyAddress(providerUrl);
-        TransferOfferResponseBE transferOfferResponseBE;
-        try {
-            transferOfferResponseBE = consumerService.transferDataOffer(be);
-        } catch (OfferNotFoundException e) {
-            throw new OfferNotFoundException(
-                "Failed to transfer offer again with offerId" + be.getEdcOfferId() + ". OfferNotFoundException: " + e);
-        } catch (TransferFailedException e) {
-            throw new TransferFailedException(
-                "Failed to transfer offer again with offerId" + be.getEdcOfferId() + ". TransferFailedException: " + e);
-        } catch (Exception e) {
-            throw new PossibleXException(
-                "Failed to transfer offer again with offerId" + be.getEdcOfferId() + ". Other Exception: " + e);
-        }
-        return transferOfferResponseBE;
+        return consumerService.transferDataOffer(be);
     }
 }

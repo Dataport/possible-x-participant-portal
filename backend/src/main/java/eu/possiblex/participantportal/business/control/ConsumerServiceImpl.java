@@ -3,7 +3,6 @@ package eu.possiblex.participantportal.business.control;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.possiblex.participantportal.application.entity.policies.EnforcementPolicy;
-import eu.possiblex.participantportal.application.entity.policies.ParticipantRestrictionPolicy;
 import eu.possiblex.participantportal.business.entity.*;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.edc.DataspaceErrorMessage;
@@ -33,7 +32,6 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -139,15 +137,9 @@ public class ConsumerServiceImpl implements ConsumerService {
                         .build())).build()).build());
         DcatDataset dataset = getDatasetById(edcOffer, request.getEdcOfferId());
 
+        // fetch corresponding enforcement policies to check if negotiation fails
         List<EnforcementPolicy> enforcementPolicies = enforcementPolicyParserService.getEnforcementPoliciesWithValidity(
             dataset.getHasPolicy(), null, edcOffer.getParticipantId());
-        List<EnforcementPolicy> contractingRelatedPolicies = new ArrayList<>();
-
-        for (EnforcementPolicy enforcementPolicy : enforcementPolicies) {
-            if (enforcementPolicy instanceof ParticipantRestrictionPolicy) {
-                contractingRelatedPolicies.add(enforcementPolicy);
-            }
-        }
 
         // initiate negotiation
         NegotiationInitiateRequest negotiationInitiateRequest = NegotiationInitiateRequest.builder()
@@ -155,8 +147,7 @@ public class ConsumerServiceImpl implements ConsumerService {
                 ContractOffer.builder().offerId(dataset.getHasPolicy().get(0).getId()).assetId(dataset.getAssetId())
                     .policy(dataset.getHasPolicy().get(0)).build()).build();
 
-        ContractNegotiation contractNegotiation = negotiateOffer(negotiationInitiateRequest,
-            contractingRelatedPolicies);
+        ContractNegotiation contractNegotiation = negotiateOffer(negotiationInitiateRequest, enforcementPolicies);
 
         return new AcceptOfferResponseBE(contractNegotiation.getState(), contractNegotiation.getContractAgreementId(),
             request.isDataOffering());
@@ -173,6 +164,10 @@ public class ConsumerServiceImpl implements ConsumerService {
                         .build())).build()).build());
         DcatDataset dataset = getDatasetById(edcOffer, request.getEdcOfferId());
 
+        // fetch corresponding enforcement policies to check if negotiation fails
+        List<EnforcementPolicy> enforcementPolicies = enforcementPolicyParserService.getEnforcementPoliciesWithValidity(
+            dataset.getHasPolicy(), null, edcOffer.getParticipantId());
+
         // initiate transfer
         String timestamp = ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
         String bucketTargetPath = bucketTopLevelFolder + "/" + timestamp + "_" + request.getContractAgreementId() + "/";
@@ -181,7 +176,7 @@ public class ConsumerServiceImpl implements ConsumerService {
         TransferRequest transferRequest = TransferRequest.builder().connectorId(edcOffer.getParticipantId())
             .counterPartyAddress(request.getCounterPartyAddress()).assetId(dataset.getAssetId())
             .contractId(request.getContractAgreementId()).dataDestination(dataAddress).build();
-        TransferProcessState transferProcessState = performTransfer(transferRequest).getState();
+        TransferProcessState transferProcessState = performTransfer(transferRequest, enforcementPolicies).getState();
         return new TransferOfferResponseBE(transferProcessState);
     }
 
@@ -238,7 +233,8 @@ public class ConsumerServiceImpl implements ConsumerService {
         return contractNegotiation;
     }
 
-    private TransferProcess performTransfer(TransferRequest transferRequest) {
+    private TransferProcess performTransfer(TransferRequest transferRequest,
+        List<EnforcementPolicy> enforcementPolicies) {
 
         log.info("Initiate Transfer {}", transferRequest);
         IdResponse transfer = edcClient.initiateTransfer(transferRequest);
@@ -253,7 +249,8 @@ public class ConsumerServiceImpl implements ConsumerService {
             transferCheckAttempts += 1;
             if (transferCheckAttempts >= MAX_TRANSFER_CHECK_ATTEMPTS) {
                 deprovisionTransfer(transferProcess.getId());
-                throw new TransferFailedException("Transfer never reached COMPLETED state and timed out.");
+                throw new TransferFailedException("Transfer never reached COMPLETED state and timed out.",
+                    enforcementPolicies);
             } else if (transferProcess.getState().equals(TransferProcessState.TERMINATED)) {
                 deprovisionTransfer(transferProcess.getId());
 
@@ -268,7 +265,7 @@ public class ConsumerServiceImpl implements ConsumerService {
                     errorReason = UNKNOWN_ERROR;
                 }
 
-                throw new TransferFailedException("Transfer was terminated. " + errorReason);
+                throw new TransferFailedException("Transfer was terminated. " + errorReason, enforcementPolicies);
             }
         } while (!transferProcess.getState().equals(TransferProcessState.COMPLETED));
 
