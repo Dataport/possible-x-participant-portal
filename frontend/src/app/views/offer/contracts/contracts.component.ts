@@ -115,6 +115,10 @@ export class ContractsComponent implements OnInit {
     return item.dataOffering === true;
   }
 
+  isProvider(item: IContractAgreementTO) {
+    return item.provider === true;
+  }
+
   async retrieveAndSetOfferDetails(id: string) {
     this.contractDetailsToExport = undefined;
     this.contractDetailsExportView.informationRetrievalStatusMessage.showInfoMessage()
