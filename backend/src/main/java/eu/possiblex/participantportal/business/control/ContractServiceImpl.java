@@ -44,18 +44,15 @@ public class ContractServiceImpl implements ContractService {
 
     private final String participantId;
 
-    private final String edcProtocolUrl;
-
     public ContractServiceImpl(@Autowired EdcClient edcClient, @Autowired FhCatalogClient fhCatalogClient,
         @Autowired OmejdnConnectorApiClient omejdnConnectorApiClient, @Autowired ConsumerService consumerService,
-        @Value("${participant-id}") String participantId, @Value("${edc.protocol-base-url}") String edcProtocolUrl) {
+        @Value("${participant-id}") String participantId) {
 
         this.edcClient = edcClient;
         this.fhCatalogClient = fhCatalogClient;
         this.omejdnConnectorApiClient = omejdnConnectorApiClient;
         this.consumerService = consumerService;
         this.participantId = participantId;
-        this.edcProtocolUrl = edcProtocolUrl;
     }
 
     /**
@@ -97,7 +94,7 @@ public class ContractServiceImpl implements ContractService {
 
         // convert contract agreements to contract agreement BEs
         contractAgreements.forEach(c -> contractAgreementBEs.add(ContractAgreementBE.builder().contractAgreement(c)
-            .isProvider(edcProtocolUrl.equals(offeringDetails.getOrDefault(c.getAssetId(), unknownOffering).getProviderUrl()))
+            .isProvider(participantId.equals(participantDidMap.getOrDefault(c.getProviderId(), "")))
             .isDataOffering(offeringDetails.getOrDefault(c.getAssetId(), unknownOffering).getAggregationOf() != null)
             .enforcementPolicies(getEnforcementPoliciesWithValidity(
                 List.of(c.getPolicy()), 
