@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.possiblex.participantportal.business.entity.OfferRetrievalResponseBE;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedLegalParticipantCredentialSubjectSubset;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
-import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
-import eu.possiblex.participantportal.business.entity.exception.ParticipantNotFoundException;
 import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsSparqlQueryResult;
 import eu.possiblex.participantportal.business.entity.fh.ParticipantDetailsSparqlQueryResult;
 import eu.possiblex.participantportal.utils.TestUtils;
@@ -44,7 +42,7 @@ class FhCatalogClientImplTest {
     private ObjectMapper objectMapper;
 
     @Test
-    void parseOfferDataCorrectly() throws OfferNotFoundException {
+    void parseOfferDataCorrectly() {
         // GIVEN a mocked technical client that returns a test FH Catalog offer
 
         String fhCatalogOfferContent = TestUtils.loadTextFile("unit_tests/FHCatalogClientImplTest/validFhOffer.json");
@@ -70,7 +68,7 @@ class FhCatalogClientImplTest {
     }
 
     @Test
-    void parseOfferDataCorrectlyNoDataResource() throws OfferNotFoundException {
+    void parseOfferDataCorrectlyNoDataResource() {
         // GIVEN a mocked technical client that returns a test FH Catalog offer
 
         String fhCatalogOfferContent = TestUtils.loadTextFile(
@@ -100,7 +98,7 @@ class FhCatalogClientImplTest {
     }
 
     @Test
-    void parseParticipantDataCorrectly() throws ParticipantNotFoundException {
+    void parseParticipantDataCorrectly() {
         // GIVEN a mocked technical client that returns a test participant
 
         String participantContent = TestUtils.loadTextFile(
@@ -127,7 +125,8 @@ class FhCatalogClientImplTest {
     @Test
     void parseSparqlDataOfferCorrectly() {
 
-        String sparqlResponse = TestUtils.loadTextFile("unit_tests/FHCatalogClientImplTest/validSparqlResultOffer.json");
+        String sparqlResponse = TestUtils.loadTextFile(
+            "unit_tests/FHCatalogClientImplTest/validSparqlResultOffer.json");
 
         reset(technicalFhCatalogClient);
         reset(sparqlFhCatalogClient);
@@ -150,7 +149,8 @@ class FhCatalogClientImplTest {
     @Test
     void parseSparqlParticipantCorrectly() {
 
-        String sparqlResponse = TestUtils.loadTextFile("unit_tests/FHCatalogClientImplTest/validSparqlResultParticipant.json");
+        String sparqlResponse = TestUtils.loadTextFile(
+            "unit_tests/FHCatalogClientImplTest/validSparqlResultParticipant.json");
 
         reset(technicalFhCatalogClient);
         reset(sparqlFhCatalogClient);

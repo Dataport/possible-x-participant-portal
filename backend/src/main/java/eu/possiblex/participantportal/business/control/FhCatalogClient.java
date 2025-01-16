@@ -3,16 +3,12 @@ package eu.possiblex.participantportal.business.control;
 import eu.possiblex.participantportal.business.entity.OfferRetrievalResponseBE;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedLegalParticipantCredentialSubjectSubset;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
-import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
-import eu.possiblex.participantportal.business.entity.exception.ParticipantNotFoundException;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
+import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsSparqlQueryResult;
 import eu.possiblex.participantportal.business.entity.fh.ParticipantDetailsSparqlQueryResult;
 
-import java.util.Map;
-
 import java.util.Collection;
-import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsSparqlQueryResult;
-
+import java.util.Map;
 
 public interface FhCatalogClient {
     /**
@@ -25,10 +21,9 @@ public interface FhCatalogClient {
     FhCatalogIdResponse addServiceOfferingToFhCatalog(
         PxExtendedServiceOfferingCredentialSubject serviceOfferingCredentialSubject, boolean doesContainData);
 
-    OfferRetrievalResponseBE getFhCatalogOffer(String offeringId) throws OfferNotFoundException;
+    OfferRetrievalResponseBE getFhCatalogOffer(String offeringId);
 
-    PxExtendedLegalParticipantCredentialSubjectSubset getFhCatalogParticipant(String participantId)
-        throws ParticipantNotFoundException;
+    PxExtendedLegalParticipantCredentialSubjectSubset getFhCatalogParticipant(String participantId);
 
     /**
      * Delete an offer form the FH catalog.
@@ -54,7 +49,8 @@ public interface FhCatalogClient {
     Map<String, ParticipantDetailsSparqlQueryResult> getParticipantDetails();
 
     /**
-     * Given the referenced asset IDs, get selected details of the offerings with the type "px:PossibleXServiceOfferingExtension".
+     * Given the referenced asset IDs, get selected details of the offerings with the type
+     * "px:PossibleXServiceOfferingExtension".
      *
      * @param assetIds the asset IDs referenced in the offerings
      * @return the details of the service offerings

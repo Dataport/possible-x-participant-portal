@@ -2,17 +2,7 @@ package eu.possiblex.participantportal.business.control;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import eu.possiblex.participantportal.application.entity.policies.AgreementOffsetUnit;
-import eu.possiblex.participantportal.application.entity.policies.EndAgreementOffsetPolicy;
-import eu.possiblex.participantportal.application.entity.policies.EndDatePolicy;
-import eu.possiblex.participantportal.application.entity.policies.EnforcementPolicy;
-import eu.possiblex.participantportal.application.entity.policies.EverythingAllowedPolicy;
-import eu.possiblex.participantportal.application.entity.policies.ParticipantRestrictionPolicy;
-import eu.possiblex.participantportal.application.entity.policies.StartAgreementOffsetPolicy;
-import eu.possiblex.participantportal.application.entity.policies.StartDatePolicy;
-import eu.possiblex.participantportal.application.entity.policies.TimeAgreementOffsetPolicy;
-import eu.possiblex.participantportal.application.entity.policies.TimeDatePolicy;
+import eu.possiblex.participantportal.application.entity.policies.*;
 import eu.possiblex.participantportal.business.entity.*;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.edc.DataspaceErrorMessage;
@@ -94,8 +84,7 @@ public class ConsumerServiceImpl implements ConsumerService {
     }
 
     @Override
-    public SelectOfferResponseBE selectContractOffer(SelectOfferRequestBE request) throws OfferNotFoundException,
-        ParticipantNotFoundException {
+    public SelectOfferResponseBE selectContractOffer(SelectOfferRequestBE request) {
         // get offer from FH Catalog and parse the attributes needed to get the offer from EDC Catalog
         OfferRetrievalResponseBE offerRetrievalResponseBE = fhCatalogClient.getFhCatalogOffer(
             request.getFhCatalogOfferId());
@@ -105,16 +94,11 @@ public class ConsumerServiceImpl implements ConsumerService {
         log.info("got fh catalog offer {}", fhCatalogOffer);
 
         // get offer from EDC Catalog
-        DcatCatalog edcCatalog = queryEdcCatalog(CatalogRequest.builder()
-            .counterPartyAddress(fhCatalogOffer.getProviderUrl())
-            .querySpec(QuerySpec.builder()
-                .filterExpression(List.of(FilterExpression.builder()
-                    .operandLeft("id")
-                    .operator("=")
-                    .operandRight(fhCatalogOffer.getAssetId())
-                    .build()))
-                .build())
-            .build());
+        DcatCatalog edcCatalog = queryEdcCatalog(
+            CatalogRequest.builder().counterPartyAddress(fhCatalogOffer.getProviderUrl()).querySpec(QuerySpec.builder()
+                .filterExpression(List.of(
+                    FilterExpression.builder().operandLeft("id").operator("=").operandRight(fhCatalogOffer.getAssetId())
+                        .build())).build()).build());
         log.info("got edc catalog: {}", edcCatalog);
         DcatDataset edcCatalogOffer = getDatasetById(edcCatalog, fhCatalogOffer.getAssetId());
 
@@ -124,10 +108,12 @@ public class ConsumerServiceImpl implements ConsumerService {
         Map<String, ParticipantDetailsSparqlQueryResult> participantDetailsMap = fhCatalogClient.getParticipantDetailsByIds(
             List.of(fhCatalogOffer.getProvidedBy().getId()));
 
-        ParticipantDetailsSparqlQueryResult providerDetails = participantDetailsMap.get(fhCatalogOffer.getProvidedBy().getId());
+        ParticipantDetailsSparqlQueryResult providerDetails = participantDetailsMap.get(
+            fhCatalogOffer.getProvidedBy().getId());
 
         if (providerDetails == null) {
-            throw new ParticipantNotFoundException("Provider of offer with ID " + fhCatalogOffer.getId() + " not found in catalog.");
+            throw new ParticipantNotFoundException(
+                "Provider of offer with ID " + fhCatalogOffer.getId() + " not found in catalog.");
         }
 
         SelectOfferResponseBE response = new SelectOfferResponseBE();
@@ -142,20 +128,14 @@ public class ConsumerServiceImpl implements ConsumerService {
     }
 
     @Override
-    public AcceptOfferResponseBE acceptContractOffer(ConsumeOfferRequestBE request)
-        throws OfferNotFoundException, NegotiationFailedException {
+    public AcceptOfferResponseBE acceptContractOffer(ConsumeOfferRequestBE request) {
 
         // query edcOffer
-        DcatCatalog edcOffer = queryEdcCatalog(CatalogRequest.builder()
-            .counterPartyAddress(request.getCounterPartyAddress())
-            .querySpec(QuerySpec.builder()
-                .filterExpression(List.of(FilterExpression.builder()
-                    .operandLeft("id")
-                    .operator("=")
-                    .operandRight(request.getEdcOfferId())
-                    .build()))
-                .build())
-            .build());
+        DcatCatalog edcOffer = queryEdcCatalog(
+            CatalogRequest.builder().counterPartyAddress(request.getCounterPartyAddress()).querySpec(QuerySpec.builder()
+                .filterExpression(List.of(
+                    FilterExpression.builder().operandLeft("id").operator("=").operandRight(request.getEdcOfferId())
+                        .build())).build()).build());
         DcatDataset dataset = getDatasetById(edcOffer, request.getEdcOfferId());
 
         // initiate negotiation
@@ -171,21 +151,14 @@ public class ConsumerServiceImpl implements ConsumerService {
     }
 
     @Override
-    public TransferOfferResponseBE transferDataOffer(TransferOfferRequestBE request)
-        throws OfferNotFoundException, TransferFailedException {
+    public TransferOfferResponseBE transferDataOffer(TransferOfferRequestBE request) {
 
         // query edcOffer
         DcatCatalog edcOffer = queryEdcCatalog(
-            CatalogRequest.builder()
-                .counterPartyAddress(request.getCounterPartyAddress())
-                .querySpec(QuerySpec.builder()
-                    .filterExpression(List.of(FilterExpression.builder()
-                            .operandLeft("id")
-                            .operator("=")
-                            .operandRight(request.getEdcOfferId())
-                        .build()))
-                    .build())
-                .build());
+            CatalogRequest.builder().counterPartyAddress(request.getCounterPartyAddress()).querySpec(QuerySpec.builder()
+                .filterExpression(List.of(
+                    FilterExpression.builder().operandLeft("id").operator("=").operandRight(request.getEdcOfferId())
+                        .build())).build()).build());
         DcatDataset dataset = getDatasetById(edcOffer, request.getEdcOfferId());
 
         // initiate transfer
@@ -206,7 +179,7 @@ public class ConsumerServiceImpl implements ConsumerService {
         return edcClient.queryCatalog(catalogRequest);
     }
 
-    private DcatDataset getDatasetById(DcatCatalog catalog, String assetId) throws OfferNotFoundException {
+    private DcatDataset getDatasetById(DcatCatalog catalog, String assetId) {
 
         List<DcatDataset> datasets = catalog.getDataset();
 
@@ -218,8 +191,7 @@ public class ConsumerServiceImpl implements ConsumerService {
         }
     }
 
-    private ContractNegotiation negotiateOffer(NegotiationInitiateRequest negotiationInitiateRequest)
-        throws NegotiationFailedException {
+    private ContractNegotiation negotiateOffer(NegotiationInitiateRequest negotiationInitiateRequest) {
 
         log.info("Initiate Negotiation with Request {}", negotiationInitiateRequest);
         IdResponse negotiation = edcClient.negotiateOffer(negotiationInitiateRequest);
@@ -252,7 +224,7 @@ public class ConsumerServiceImpl implements ConsumerService {
         return contractNegotiation;
     }
 
-    private TransferProcess performTransfer(TransferRequest transferRequest) throws TransferFailedException {
+    private TransferProcess performTransfer(TransferRequest transferRequest) {
 
         log.info("Initiate Transfer {}", transferRequest);
         IdResponse transfer = edcClient.initiateTransfer(transferRequest);
@@ -324,12 +296,11 @@ public class ConsumerServiceImpl implements ConsumerService {
         Set<EnforcementPolicy> enforcementPolicies = new HashSet<>();
         for (OdrlConstraint constraint : constraints) {
             EnforcementPolicy policy = switch (constraint.getLeftOperand()) {
-                case ParticipantRestrictionPolicy.EDC_OPERAND 
-                    -> parseParticipantRestrictionPolicy(constraint);
-                case TimeAgreementOffsetPolicy.EDC_OPERAND  // currently time agreement offset and time date have the same name in the edc, hence we need to handle both here
-                    -> parseTimedEnforcementPolicy(constraint); 
-                default 
-                    -> null;
+                case ParticipantRestrictionPolicy.EDC_OPERAND -> parseParticipantRestrictionPolicy(constraint);
+                case
+                    TimeAgreementOffsetPolicy.EDC_OPERAND  // currently time agreement offset and time date have the same name in the edc, hence we need to handle both here
+                    -> parseTimedEnforcementPolicy(constraint);
+                default -> null;
             };
 
             if (policy != null) {
@@ -347,6 +318,7 @@ public class ConsumerServiceImpl implements ConsumerService {
     }
 
     ParticipantRestrictionPolicy parseParticipantRestrictionPolicy(OdrlConstraint constraint) {
+
         return new ParticipantRestrictionPolicy(List.of(constraint.getRightOperand().split(",")));
     }
 
@@ -373,21 +345,24 @@ public class ConsumerServiceImpl implements ConsumerService {
     }
 
     TimeAgreementOffsetPolicy parseTimeAgreementOffsetPolicy(OdrlConstraint constraint, boolean endDate) {
-        var matcher = Pattern.compile("(contract[A,a]greement)\\+(-?[0-9]+)(s|m|h|d)").matcher(constraint.getRightOperand());
+
+        var matcher = Pattern.compile("(contract[A,a]greement)\\+(-?[0-9]+)(s|m|h|d)")
+            .matcher(constraint.getRightOperand());
         if (matcher.matches()) {
             int number = Integer.parseInt(matcher.group(2));
             AgreementOffsetUnit unit = AgreementOffsetUnit.forValue(matcher.group(3));
-            return endDate ? EndAgreementOffsetPolicy.builder().offsetNumber(number).offsetUnit(unit).build()
+            return endDate
+                ? EndAgreementOffsetPolicy.builder().offsetNumber(number).offsetUnit(unit).build()
                 : StartAgreementOffsetPolicy.builder().offsetNumber(number).offsetUnit(unit).build();
-        } 
+        }
         return null;
     }
 
     TimeDatePolicy parseTimeDatePolicy(OdrlConstraint constraint, boolean endDate) {
+
         try {
             OffsetDateTime date = OffsetDateTime.parse(constraint.getRightOperand());
-            return endDate ? EndDatePolicy.builder().date(date).build() 
-                : StartDatePolicy.builder().date(date).build();
+            return endDate ? EndDatePolicy.builder().date(date).build() : StartDatePolicy.builder().date(date).build();
         } catch (Exception e) {
             log.error("Failed to parse timestamp in policy {}", constraint, e);
             return null;

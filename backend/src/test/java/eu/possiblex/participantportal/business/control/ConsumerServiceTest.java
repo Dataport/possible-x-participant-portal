@@ -2,29 +2,16 @@ package eu.possiblex.participantportal.business.control;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
-import eu.possiblex.participantportal.application.entity.policies.AgreementOffsetUnit;
-import eu.possiblex.participantportal.application.entity.policies.EndAgreementOffsetPolicy;
-import eu.possiblex.participantportal.application.entity.policies.EndDatePolicy;
-import eu.possiblex.participantportal.application.entity.policies.EnforcementPolicy;
-import eu.possiblex.participantportal.application.entity.policies.ParticipantRestrictionPolicy;
-import eu.possiblex.participantportal.application.entity.policies.StartAgreementOffsetPolicy;
-import eu.possiblex.participantportal.application.entity.policies.StartDatePolicy;
-import eu.possiblex.participantportal.application.entity.policies.TimeAgreementOffsetPolicy;
-import eu.possiblex.participantportal.application.entity.policies.TimeDatePolicy;
+import eu.possiblex.participantportal.application.entity.policies.*;
 import eu.possiblex.participantportal.business.entity.*;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedDataResourceCredentialSubject;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedLegalParticipantCredentialSubjectSubset;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.edc.catalog.DcatCatalog;
 import eu.possiblex.participantportal.business.entity.edc.catalog.DcatDataset;
-import eu.possiblex.participantportal.business.entity.edc.policy.OdrlAction;
-import eu.possiblex.participantportal.business.entity.edc.policy.OdrlConstraint;
-import eu.possiblex.participantportal.business.entity.edc.policy.OdrlOperator;
-import eu.possiblex.participantportal.business.entity.edc.policy.OdrlPermission;
-import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
+import eu.possiblex.participantportal.business.entity.edc.policy.*;
 import eu.possiblex.participantportal.business.entity.exception.NegotiationFailedException;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
-import eu.possiblex.participantportal.business.entity.exception.ParticipantNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
 import eu.possiblex.participantportal.business.entity.fh.ParticipantDetailsSparqlQueryResult;
 import org.junit.jupiter.api.Test;
@@ -54,6 +41,9 @@ import static org.mockito.Mockito.*;
 @ContextConfiguration(classes = { ConsumerServiceTest.TestConfig.class, ConsumerServiceImpl.class })
 class ConsumerServiceTest {
 
+    @Captor
+    ArgumentCaptor<Collection<String>> idCaptor;
+
     @Autowired
     private ConsumerService sut;
 
@@ -63,11 +53,8 @@ class ConsumerServiceTest {
     @Autowired
     private FhCatalogClient fhCatalogClient;
 
-    @Captor
-    ArgumentCaptor<Collection<String>> idCaptor;
-
     @Test
-    void selectContractOfferSucceedsDataOffering() throws OfferNotFoundException, ParticipantNotFoundException {
+    void selectContractOfferSucceedsDataOffering() {
 
         // GIVEN
 
@@ -75,8 +62,8 @@ class ConsumerServiceTest {
         reset(fhCatalogClient);
         PxExtendedServiceOfferingCredentialSubject fhCatalogOffer = getPxExtendedServiceOfferingCredentialSubject(true);
         OffsetDateTime offerRetrievalDate = OffsetDateTime.now();
-        Mockito.when(fhCatalogClient.getFhCatalogOffer(EdcClientFake.FAKE_ID)).thenReturn(new OfferRetrievalResponseBE(fhCatalogOffer,
-            offerRetrievalDate));
+        Mockito.when(fhCatalogClient.getFhCatalogOffer(EdcClientFake.FAKE_ID))
+            .thenReturn(new OfferRetrievalResponseBE(fhCatalogOffer, offerRetrievalDate));
         DcatCatalog catalog = new DcatCatalog();
         DcatDataset dataset = new DcatDataset();
         dataset.setId(EdcClientFake.FAKE_ID);
@@ -117,7 +104,7 @@ class ConsumerServiceTest {
     }
 
     @Test
-    void selectContractOfferSucceedsServiceOffering() throws OfferNotFoundException, ParticipantNotFoundException {
+    void selectContractOfferSucceedsServiceOffering() {
 
         // GIVEN
 
@@ -126,8 +113,8 @@ class ConsumerServiceTest {
         PxExtendedServiceOfferingCredentialSubject fhCatalogOffer = getPxExtendedServiceOfferingCredentialSubject(
             false);
         OffsetDateTime offerRetrievalDate = OffsetDateTime.now();
-        Mockito.when(fhCatalogClient.getFhCatalogOffer(EdcClientFake.FAKE_ID)).thenReturn(new OfferRetrievalResponseBE(fhCatalogOffer,
-            offerRetrievalDate));
+        Mockito.when(fhCatalogClient.getFhCatalogOffer(EdcClientFake.FAKE_ID))
+            .thenReturn(new OfferRetrievalResponseBE(fhCatalogOffer, offerRetrievalDate));
         DcatCatalog catalog = new DcatCatalog();
         DcatDataset dataset = new DcatDataset();
         dataset.setId(EdcClientFake.FAKE_ID);
@@ -166,7 +153,7 @@ class ConsumerServiceTest {
     }
 
     @Test
-    void selectContractOfferEnforcementPoliciesParsedCorrectly() throws OfferNotFoundException, ParticipantNotFoundException {
+    void selectContractOfferEnforcementPoliciesParsedCorrectly() {
 
         // GIVEN
 
@@ -175,8 +162,8 @@ class ConsumerServiceTest {
         PxExtendedServiceOfferingCredentialSubject fhCatalogOffer = getPxExtendedServiceOfferingCredentialSubject(
             false);
         OffsetDateTime offerRetrievalDate = OffsetDateTime.now();
-        Mockito.when(fhCatalogClient.getFhCatalogOffer(EdcClientFake.FAKE_ID)).thenReturn(new OfferRetrievalResponseBE(fhCatalogOffer,
-            offerRetrievalDate));
+        Mockito.when(fhCatalogClient.getFhCatalogOffer(EdcClientFake.FAKE_ID))
+            .thenReturn(new OfferRetrievalResponseBE(fhCatalogOffer, offerRetrievalDate));
         DcatCatalog catalog = new DcatCatalog();
         DcatDataset dataset = new DcatDataset();
         dataset.setId(EdcClientFake.FAKE_ID);
@@ -185,38 +172,17 @@ class ConsumerServiceTest {
         dataset.setContenttype("correctContentType");
         dataset.setDescription("correctDescription");
         dataset.setHasPolicy(List.of(Policy.builder().permission(List.of(
-            OdrlPermission.builder()
-                .action(OdrlAction.USE)
-                .target("http://example.com")
-                .constraint(List.of(
-                    OdrlConstraint.builder()
-                        .leftOperand(ParticipantRestrictionPolicy.EDC_OPERAND)
-                        .operator(OdrlOperator.IN)
-                        .rightOperand("did:web:123,did:web:456")
-                    .build(),
-                    OdrlConstraint.builder()
-                        .leftOperand(TimeDatePolicy.EDC_OPERAND)
-                        .operator(OdrlOperator.LEQ)
-                        .rightOperand("2125-01-01T10:00:00+00:00")
-                    .build(),
-                    OdrlConstraint.builder()
-                        .leftOperand(TimeAgreementOffsetPolicy.EDC_OPERAND)
-                        .operator(OdrlOperator.LEQ)
-                        .rightOperand("contractAgreement+10d")
-                    .build(),
-                    OdrlConstraint.builder()
-                        .leftOperand(TimeDatePolicy.EDC_OPERAND)
-                        .operator(OdrlOperator.GEQ)
-                        .rightOperand("2025-01-01T10:00:00+00:00")
-                    .build(),
-                    OdrlConstraint.builder()
-                        .leftOperand(TimeAgreementOffsetPolicy.EDC_OPERAND)
-                        .operator(OdrlOperator.GEQ)
-                        .rightOperand("contractAgreement+5d")
-                    .build()
-                ))
-                .build()))
-        .build()));
+            OdrlPermission.builder().action(OdrlAction.USE).target("http://example.com").constraint(List.of(
+                OdrlConstraint.builder().leftOperand(ParticipantRestrictionPolicy.EDC_OPERAND).operator(OdrlOperator.IN)
+                    .rightOperand("did:web:123,did:web:456").build(),
+                OdrlConstraint.builder().leftOperand(TimeDatePolicy.EDC_OPERAND).operator(OdrlOperator.LEQ)
+                    .rightOperand("2125-01-01T10:00:00+00:00").build(),
+                OdrlConstraint.builder().leftOperand(TimeAgreementOffsetPolicy.EDC_OPERAND).operator(OdrlOperator.LEQ)
+                    .rightOperand("contractAgreement+10d").build(),
+                OdrlConstraint.builder().leftOperand(TimeDatePolicy.EDC_OPERAND).operator(OdrlOperator.GEQ)
+                    .rightOperand("2025-01-01T10:00:00+00:00").build(),
+                OdrlConstraint.builder().leftOperand(TimeAgreementOffsetPolicy.EDC_OPERAND).operator(OdrlOperator.GEQ)
+                    .rightOperand("contractAgreement+5d").build())).build())).build()));
         catalog.setDataset(List.of(dataset));
         Mockito.when(edcClient.queryCatalog(any())).thenReturn(catalog);
         Map<String, ParticipantDetailsSparqlQueryResult> participantDetails = Map.of(FhCatalogClientFake.FAKE_DID,
@@ -240,7 +206,8 @@ class ConsumerServiceTest {
 
         for (EnforcementPolicy enforcementPolicy : response.getEnforcementPolicies()) {
             if (enforcementPolicy instanceof ParticipantRestrictionPolicy participantRestrictionPolicy) {
-                assertIterableEquals(List.of("did:web:123", "did:web:456"), participantRestrictionPolicy.getAllowedParticipants());
+                assertIterableEquals(List.of("did:web:123", "did:web:456"),
+                    participantRestrictionPolicy.getAllowedParticipants());
             } else if (enforcementPolicy instanceof StartAgreementOffsetPolicy startAgreementOffsetPolicy) {
                 assertEquals(5, startAgreementOffsetPolicy.getOffsetNumber());
                 assertEquals(AgreementOffsetUnit.DAYS, startAgreementOffsetPolicy.getOffsetUnit());
@@ -275,8 +242,7 @@ class ConsumerServiceTest {
     }
 
     @Test
-    void acceptContractOfferSucceeds()
-        throws NegotiationFailedException, ParticipantNotFoundException, OfferNotFoundException {
+    void acceptContractOfferSucceeds() {
 
         // GIVEN
 
@@ -285,7 +251,8 @@ class ConsumerServiceTest {
         PxExtendedLegalParticipantCredentialSubjectSubset fhCatalogParticipant = new PxExtendedLegalParticipantCredentialSubjectSubset();
         fhCatalogParticipant.setId(FhCatalogClientFake.FAKE_PROVIDER_ID);
         fhCatalogParticipant.setMailAddress(FhCatalogClientFake.FAKE_EMAIL_ADDRESS);
-        Mockito.when(fhCatalogClient.getFhCatalogParticipant(FhCatalogClientFake.FAKE_PROVIDER_ID)).thenReturn(fhCatalogParticipant);
+        Mockito.when(fhCatalogClient.getFhCatalogParticipant(FhCatalogClientFake.FAKE_PROVIDER_ID))
+            .thenReturn(fhCatalogParticipant);
         DcatCatalog catalog = new DcatCatalog();
         DcatDataset dataset = new DcatDataset();
         dataset.setId(EdcClientFake.FAKE_ID);
@@ -311,8 +278,7 @@ class ConsumerServiceTest {
     }
 
     @Test
-    void acceptContractOfferSucceedsNoTransfer()
-        throws NegotiationFailedException, ParticipantNotFoundException, OfferNotFoundException {
+    void acceptContractOfferSucceedsNoTransfer() {
 
         // GIVEN
 
@@ -321,7 +287,8 @@ class ConsumerServiceTest {
         PxExtendedLegalParticipantCredentialSubjectSubset fhCatalogParticipant = new PxExtendedLegalParticipantCredentialSubjectSubset();
         fhCatalogParticipant.setId(FhCatalogClientFake.FAKE_PROVIDER_ID);
         fhCatalogParticipant.setMailAddress(FhCatalogClientFake.FAKE_EMAIL_ADDRESS);
-        Mockito.when(fhCatalogClient.getFhCatalogParticipant(FhCatalogClientFake.FAKE_PROVIDER_ID)).thenReturn(fhCatalogParticipant);
+        Mockito.when(fhCatalogClient.getFhCatalogParticipant(FhCatalogClientFake.FAKE_PROVIDER_ID))
+            .thenReturn(fhCatalogParticipant);
         DcatCatalog catalog = new DcatCatalog();
         DcatDataset dataset = new DcatDataset();
         dataset.setId(EdcClientFake.FAKE_ID);
@@ -394,7 +361,7 @@ class ConsumerServiceTest {
     }
 
     @Test
-    void shouldTransfer() throws OfferNotFoundException, TransferFailedException {
+    void shouldTransfer() {
 
         // GIVEN
 

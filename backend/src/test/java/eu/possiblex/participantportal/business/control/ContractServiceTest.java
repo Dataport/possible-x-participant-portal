@@ -13,8 +13,6 @@ import eu.possiblex.participantportal.business.entity.edc.contractagreement.Cont
 import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyTarget;
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcessState;
-import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
-import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
 import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsSparqlQueryResult;
 import eu.possiblex.participantportal.business.entity.fh.ParticipantDetailsSparqlQueryResult;
 import org.junit.jupiter.api.Test;
@@ -62,7 +60,7 @@ class ContractServiceTest {
     private String participantId;
 
     @Test
-    void testGetContractAgreements() throws OfferNotFoundException {
+    void testGetContractAgreements() {
 
         reset(fhCatalogClient);
         reset(edcClient);
@@ -90,7 +88,7 @@ class ContractServiceTest {
     }
 
     @Test
-    void testGetContractDetailsByContractAgreementId() throws OfferNotFoundException {
+    void testGetContractDetailsByContractAgreementId() {
 
         reset(fhCatalogClient);
         reset(edcClient);
@@ -128,7 +126,7 @@ class ContractServiceTest {
     }
 
     @Test
-    void testGetOfferDetailsByContractAgreementId() throws OfferNotFoundException {
+    void testGetOfferDetailsByContractAgreementId() {
 
         reset(fhCatalogClient);
         reset(edcClient);
@@ -158,7 +156,7 @@ class ContractServiceTest {
     }
 
     @Test
-    void policyValidityAllValid() throws OfferNotFoundException {
+    void policyValidityAllValid() {
 
         reset(fhCatalogClient);
         reset(edcClient);
@@ -205,7 +203,7 @@ class ContractServiceTest {
     }
 
     @Test
-    void policyValidityAllInvalid() throws OfferNotFoundException {
+    void policyValidityAllInvalid() {
 
         reset(fhCatalogClient);
         reset(edcClient);
@@ -252,7 +250,7 @@ class ContractServiceTest {
     }
 
     @Test
-    void transferDataOfferAgain() throws OfferNotFoundException, TransferFailedException {
+    void transferDataOfferAgain() {
         //GIVEN
         reset(fhCatalogClient);
         reset(consumerService);

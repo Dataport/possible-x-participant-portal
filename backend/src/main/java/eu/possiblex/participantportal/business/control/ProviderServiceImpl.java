@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.possiblex.participantportal.application.entity.CreateOfferResponseTO;
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
-import eu.possiblex.participantportal.application.entity.exception.OfferingComplianceException;
 import eu.possiblex.participantportal.application.entity.policies.*;
 import eu.possiblex.participantportal.business.entity.CreateDataOfferingRequestBE;
 import eu.possiblex.participantportal.business.entity.CreateServiceOfferingRequestBE;
@@ -18,6 +17,7 @@ import eu.possiblex.participantportal.business.entity.edc.contractdefinition.Con
 import eu.possiblex.participantportal.business.entity.edc.policy.*;
 import eu.possiblex.participantportal.business.entity.exception.EdcOfferCreationException;
 import eu.possiblex.participantportal.business.entity.exception.FhOfferCreationException;
+import eu.possiblex.participantportal.business.entity.exception.OfferingComplianceException;
 import eu.possiblex.participantportal.business.entity.exception.PrefillFieldsProcessingException;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
 import eu.possiblex.participantportal.utilities.PossibleXException;
@@ -72,10 +72,8 @@ public class ProviderServiceImpl implements ProviderService {
     @Autowired
     public ProviderServiceImpl(@Autowired EdcClient edcClient, @Autowired FhCatalogClient fhCatalogClient,
         @Autowired ProviderServiceMapper providerServiceMapper,
-        @Value("${edc.protocol-base-url}") String edcProtocolUrl,
-        @Value("${participant-id}") String participantId,
-        @Value("${s3.bucket-storage-region}") String bucketStorageRegion,
-        @Value("${s3.bucket-name}") String bucketName,
+        @Value("${edc.protocol-base-url}") String edcProtocolUrl, @Value("${participant-id}") String participantId,
+        @Value("${s3.bucket-storage-region}") String bucketStorageRegion, @Value("${s3.bucket-name}") String bucketName,
         @Value("${prefill-fields.data-product.json-file-path}") String prefillFieldsDataProductJsonFilePath,
         @Autowired ObjectMapper objectMapper) {
 
@@ -98,6 +96,7 @@ public class ProviderServiceImpl implements ProviderService {
      */
     @Override
     public CreateOfferResponseTO createOffering(CreateServiceOfferingRequestBE request) {
+
         Policy policy = createEdcPolicyFromEnforcementPolicies(request.getEnforcementPolicies());
 
         PxExtendedServiceOfferingCredentialSubject pxExtendedServiceOfferingCs = createCombinedCsFromRequest(request,
@@ -142,6 +141,7 @@ public class ProviderServiceImpl implements ProviderService {
     }
 
     private PrefillFieldsBE getPrefillFields(String participantId, String filePath) {
+
         return new PrefillFieldsBE(participantId, readDataProductPrefillFieldsFromFile(filePath));
     }
 
@@ -152,9 +152,11 @@ public class ProviderServiceImpl implements ProviderService {
         DataProductPrefillFieldsBE dataProductPrefillFields;
 
         try {
-            dataProductPrefillFields = objectMapper.readValue(resource.getInputStream(), DataProductPrefillFieldsBE.class);
+            dataProductPrefillFields = objectMapper.readValue(resource.getInputStream(),
+                DataProductPrefillFieldsBE.class);
         } catch (IOException e) {
-            throw new PrefillFieldsProcessingException("Failed to process data product prefill fields from file: " + e.getMessage());
+            throw new PrefillFieldsProcessingException(
+                "Failed to process data product prefill fields from file: " + e.getMessage());
         }
 
         return dataProductPrefillFields;
@@ -186,9 +188,8 @@ public class ProviderServiceImpl implements ProviderService {
      *
      * @param createEdcOfferBE the EDC offer business entity
      * @return the ID response from EDC
-     * @throws EdcOfferCreationException if EDC offer creation fails
      */
-    private IdResponse createEdcOffer(CreateEdcOfferBE createEdcOfferBE) throws EdcOfferCreationException {
+    private IdResponse createEdcOffer(CreateEdcOfferBE createEdcOfferBE) {
 
         ProviderRequestBuilder requestBuilder = new ProviderRequestBuilder(createEdcOfferBE);
 
@@ -221,15 +222,14 @@ public class ProviderServiceImpl implements ProviderService {
      *
      * @param serviceOfferingCredentialSubject the service offering credential subject
      * @return the ID response from FH catalog
-     * @throws FhOfferCreationException if FH offer creation fails
      */
     private FhCatalogIdResponse createFhCatalogOffer(
-        PxExtendedServiceOfferingCredentialSubject serviceOfferingCredentialSubject)
-        throws FhOfferCreationException, OfferingComplianceException {
+        PxExtendedServiceOfferingCredentialSubject serviceOfferingCredentialSubject) {
 
         try {
             boolean isOfferWithData = isServiceOfferWithData(serviceOfferingCredentialSubject);
-            log.info("Adding Service Offering to Fraunhofer Catalog {}, with data: {}", serviceOfferingCredentialSubject, isOfferWithData);
+            log.info("Adding Service Offering to Fraunhofer Catalog {}, with data: {}",
+                serviceOfferingCredentialSubject, isOfferWithData);
 
             return fhCatalogClient.addServiceOfferingToFhCatalog(serviceOfferingCredentialSubject, isOfferWithData);
         } catch (WebClientResponseException e) {
@@ -240,13 +240,13 @@ public class ProviderServiceImpl implements ProviderService {
     }
 
     /**
-     * Check if the service offer payload contains data.
-     * Currently, the check is just if gx:aggregationOf is empty.
+     * Check if the service offer payload contains data. Currently, the check is just if gx:aggregationOf is empty.
      *
      * @param serviceOfferPayload the service offer payload
      * @return true: The service offer contains data. false: otherwise
      */
     private boolean isServiceOfferWithData(PxExtendedServiceOfferingCredentialSubject serviceOfferPayload) {
+
         boolean serviceOfferContainsData = !serviceOfferPayload.getAggregationOf().isEmpty();
 
         return serviceOfferContainsData;
@@ -330,30 +330,28 @@ public class ProviderServiceImpl implements ProviderService {
             if (enforcementPolicy instanceof ParticipantRestrictionPolicy participantRestrictionPolicy) { // restrict to participants
 
                 // create constraint
-                OdrlConstraint participantConstraint = OdrlConstraint.builder().leftOperand(ParticipantRestrictionPolicy.EDC_OPERAND)
-                    .operator(OdrlOperator.IN)
+                OdrlConstraint participantConstraint = OdrlConstraint.builder()
+                    .leftOperand(ParticipantRestrictionPolicy.EDC_OPERAND).operator(OdrlOperator.IN)
                     .rightOperand(String.join(",", participantRestrictionPolicy.getAllowedParticipants())).build();
                 constraints.add(participantConstraint);
             } else if (enforcementPolicy instanceof TimeDatePolicy timeDatePolicy) { // restrict to fixed time
-                
+
                 boolean isEndDate = timeDatePolicy instanceof EndDatePolicy;
                 // create constraint
                 OdrlConstraint timeConstraint = OdrlConstraint.builder().leftOperand(TimeDatePolicy.EDC_OPERAND)
                     .operator(isEndDate ? OdrlOperator.LEQ : OdrlOperator.GEQ)
                     .rightOperand(DateTimeFormatter.ISO_DATE_TIME.format(timeDatePolicy.getDate()))
-                .build(); // ISO 8601 date
+                    .build(); // ISO 8601 date
                 constraints.add(timeConstraint);
             } else if (enforcementPolicy instanceof TimeAgreementOffsetPolicy timeAgreementOffsetPolicy) { // restrict to time after agreement
-                
+
                 boolean isEndOffset = timeAgreementOffsetPolicy instanceof EndAgreementOffsetPolicy;
                 // create constraint
-                OdrlConstraint timeConstraint = OdrlConstraint.builder().leftOperand(TimeAgreementOffsetPolicy.EDC_OPERAND)
-                    .operator(isEndOffset ? OdrlOperator.LEQ : OdrlOperator.GEQ)
-                    .rightOperand(
-                        "contractAgreement+" 
-                        + timeAgreementOffsetPolicy.getOffsetNumber() 
-                        + timeAgreementOffsetPolicy.getOffsetUnit().toValue()
-                    )
+                OdrlConstraint timeConstraint = OdrlConstraint.builder()
+                    .leftOperand(TimeAgreementOffsetPolicy.EDC_OPERAND)
+                    .operator(isEndOffset ? OdrlOperator.LEQ : OdrlOperator.GEQ).rightOperand(
+                        "contractAgreement+" + timeAgreementOffsetPolicy.getOffsetNumber()
+                            + timeAgreementOffsetPolicy.getOffsetUnit().toValue())
                     .build(); // format "contractAgreement+<number><unit>"
                 constraints.add(timeConstraint);
             } // else unknown or everything allowed => no constraint

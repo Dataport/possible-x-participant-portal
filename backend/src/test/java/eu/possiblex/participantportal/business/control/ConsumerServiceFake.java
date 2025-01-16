@@ -14,7 +14,6 @@ import eu.possiblex.participantportal.business.entity.exception.TransferFailedEx
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 public class ConsumerServiceFake implements ConsumerService {
 
@@ -37,7 +36,7 @@ public class ConsumerServiceFake implements ConsumerService {
     public static final String FAKE_EMAIL_ADDRESS = "example@mail.com";
 
     @Override
-    public SelectOfferResponseBE selectContractOffer(SelectOfferRequestBE request) throws OfferNotFoundException {
+    public SelectOfferResponseBE selectContractOffer(SelectOfferRequestBE request) {
 
         if (request.getFhCatalogOfferId().equals(MISSING_OFFER_ID)) {
             throw new OfferNotFoundException("not found");
@@ -53,15 +52,15 @@ public class ConsumerServiceFake implements ConsumerService {
         PxExtendedServiceOfferingCredentialSubject cs = new PxExtendedServiceOfferingCredentialSubject();
         cs.setProviderUrl(VALID_COUNTER_PARTY_ADDRESS);
         response.setCatalogOffering(cs);
-        response.setProviderDetails(ParticipantWithMailBE.builder().did(FAKE_DID).mailAddress(FAKE_EMAIL_ADDRESS).build());
+        response.setProviderDetails(
+            ParticipantWithMailBE.builder().did(FAKE_DID).mailAddress(FAKE_EMAIL_ADDRESS).build());
         response.setOfferRetrievalDate(OffsetDateTime.now());
 
         return response;
     }
 
     @Override
-    public AcceptOfferResponseBE acceptContractOffer(ConsumeOfferRequestBE request)
-        throws OfferNotFoundException, NegotiationFailedException {
+    public AcceptOfferResponseBE acceptContractOffer(ConsumeOfferRequestBE request) {
 
         return switch (request.getEdcOfferId()) {
             case MISSING_OFFER_ID -> throw new OfferNotFoundException("not found");
@@ -73,8 +72,7 @@ public class ConsumerServiceFake implements ConsumerService {
     }
 
     @Override
-    public TransferOfferResponseBE transferDataOffer(TransferOfferRequestBE request)
-        throws OfferNotFoundException, TransferFailedException {
+    public TransferOfferResponseBE transferDataOffer(TransferOfferRequestBE request) {
 
         return switch (request.getEdcOfferId()) {
             case MISSING_OFFER_ID -> throw new OfferNotFoundException("not found");

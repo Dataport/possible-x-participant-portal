@@ -137,6 +137,12 @@ export interface IDataProductPrefillFieldsTO {
 export interface IDataProductPrefillFieldsTOBuilder {
 }
 
+export interface IErrorResponseTO {
+    timestamp: Date;
+    message: string;
+    details: string;
+}
+
 export interface IOfferDetailsTO {
     edcOfferId: string;
     catalogOffering: IPxExtendedServiceOfferingCredentialSubject;
@@ -332,9 +338,6 @@ export interface IGxServiceOfferingCredentialSubjectBuilderImpl extends IGxServi
     "schema:description": string;
 }
 
-export interface IOfferingComplianceException extends IException {
-}
-
 export interface IEndAgreementOffsetPolicy extends ITimeAgreementOffsetPolicy {
     "@type": "EndAgreementOffsetPolicy";
 }
@@ -447,28 +450,6 @@ export interface IPxExtendedServiceOfferingCredentialSubject {
     "@type": string[];
 }
 
-export interface IThrowable extends ISerializable {
-    cause: IThrowable;
-    stackTrace: IStackTraceElement[];
-    message: string;
-    suppressed: IThrowable[];
-    localizedMessage: string;
-}
-
-export interface IStackTraceElement extends ISerializable {
-    classLoaderName: string;
-    moduleName: string;
-    moduleVersion: string;
-    methodName: string;
-    fileName: string;
-    lineNumber: number;
-    nativeMethod: boolean;
-    className: string;
-}
-
-export interface IException extends IThrowable {
-}
-
 export interface IOdrlPermission {
     "odrl:target": string;
     "odrl:action": IOdrlAction;
@@ -492,9 +473,6 @@ export interface IPxExtendedDataResourceCredentialSubject {
     "schema:description": string;
     "@context": { [index: string]: string };
     "@type": string[];
-}
-
-export interface ISerializable {
 }
 
 export interface IOdrlConstraint {
@@ -675,7 +653,7 @@ export type INegotiationState = "INITIAL" | "REQUESTING" | "REQUESTED" | "OFFERI
 
 export type ITransferProcessState = "INITIAL" | "PROVISIONING" | "PROVISIONING_REQUESTED" | "PROVISIONED" | "REQUESTING" | "REQUESTED" | "STARTING" | "STARTED" | "SUSPENDING" | "SUSPENDED" | "COMPLETING" | "COMPLETED" | "TERMINATING" | "TERMINATED" | "DEPROVISIONING" | "DEPROVISIONING_REQUESTED" | "DEPROVISIONED";
 
-export type IOdrlAction = "odrl:use" | "odrl:transfer";
+export type IOdrlAction = "http://www.w3.org/ns/odrl/2/use" | "http://www.w3.org/ns/odrl/2/transfer";
 
 export type IOdrlOperator = "odrl:eq" | "odrl:gteq" | "odrl:lteq" | "odrl:neq" | "odrl:isPartOf" | "odrl:isAnyOf";
 
