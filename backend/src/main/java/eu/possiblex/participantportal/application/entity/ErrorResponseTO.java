@@ -2,11 +2,15 @@ package eu.possiblex.participantportal.application.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import java.time.OffsetDateTime;
 
+@EqualsAndHashCode
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class ErrorResponseTO {
     private OffsetDateTime timestamp;
 

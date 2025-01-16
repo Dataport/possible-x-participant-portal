@@ -1,10 +1,6 @@
 package eu.possiblex.participantportal.business.control;
 
-import eu.possiblex.participantportal.application.entity.policies.EnforcementPolicy;
 import eu.possiblex.participantportal.business.entity.*;
-import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
-
-import java.util.List;
 
 public interface ConsumerService {
     /**
@@ -30,12 +26,4 @@ public interface ConsumerService {
      * @return final result of the transfer
      */
     TransferOfferResponseBE transferDataOffer(TransferOfferRequestBE request);
-
-    /**
-     * Get the enforcement policies from the EDC policies.
-     *
-     * @param policies edc policies
-     * @return enforcement policies
-     */
-    List<EnforcementPolicy> getEnforcementPoliciesFromEdcPolicies(List<Policy> policies);
 }

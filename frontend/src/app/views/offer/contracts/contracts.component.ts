@@ -2,7 +2,6 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {
   IContractAgreementTO,
   IContractDetailsTO,
-  IEnforcementPolicy,
   IEnforcementPolicyUnion,
   IPolicy,
 } from '../../../services/mgmt/api/backend';
@@ -14,6 +13,7 @@ import {Sort} from "@angular/material/sort";
 import {
   ContractDetailsExportViewComponent
 } from "../contract-details-export-view/contract-details-export-view.component";
+import {commonMessages} from "../../../../environments/common-messages";
 
 @Component({
   selector: 'app-contracts',
@@ -92,7 +92,19 @@ export class ContractsComponent implements OnInit {
       this.isTransferButtonDisabled = false;
     }).catch((e: HttpErrorResponse) => {
       console.log(e);
-      this.popUpMessage.open("Data Transfer failed: " + (e.error.detail || e.error || e.message), 'Close', {
+      let errorMessage = "";
+      if (e.status === 500) {
+        errorMessage = commonMessages.general_error;
+      } else {
+        errorMessage = e.error.details;
+      }
+      this.popUpMessage.open("Data Transfer failed: " + errorMessage, 'Close', {
+        duration: undefined,
+      });
+      this.isTransferButtonDisabled = false;
+    }).catch(e => {
+      console.log(e);
+      this.popUpMessage.open("Data Transfer failed: " + commonMessages.general_error, 'Close', {
         duration: undefined,
       });
       this.isTransferButtonDisabled = false;
@@ -101,14 +113,6 @@ export class ContractsComponent implements OnInit {
 
   getPolicyAsString(policy: IPolicy): string {
     return JSON.stringify(policy, null, 2);
-  }
-
-  private handleGetContractAgreements() {
-    this.getContractAgreements().catch((e: HttpErrorResponse) => {
-      this.requestContractAgreementsStatusMessage.showErrorMessage(e.error.detail);
-    }).catch(_ => {
-      this.requestContractAgreementsStatusMessage.showErrorMessage("Unknown error occurred");
-    });
   }
 
   isDataOffering(item: IContractAgreementTO) {
@@ -123,20 +127,27 @@ export class ContractsComponent implements OnInit {
       console.log(response);
       this.contractDetailsExportView.informationRetrievalStatusMessage.hideAllMessages();
       this.contractDetailsToExport = {
-        id : contractAgreement.id,
-        assetId : contractAgreement.assetId,
-        catalogOffering : response.catalogOffering,
-        offerRetrievalDate : response.offerRetrievalDate,
-        policy : contractAgreement.policy,
-        enforcementPolicies : contractAgreement.enforcementPolicies,
-        contractSigningDate : contractAgreement.contractSigningDate,
-        consumerDetails : contractAgreement.consumerDetails,
-        providerDetails : contractAgreement.providerDetails,
-        dataOffering : contractAgreement.dataOffering,
+        id: contractAgreement.id,
+        assetId: contractAgreement.assetId,
+        catalogOffering: response.catalogOffering,
+        offerRetrievalDate: response.offerRetrievalDate,
+        policy: contractAgreement.policy,
+        enforcementPolicies: contractAgreement.enforcementPolicies,
+        contractSigningDate: contractAgreement.contractSigningDate,
+        consumerDetails: contractAgreement.consumerDetails,
+        providerDetails: contractAgreement.providerDetails,
+        dataOffering: contractAgreement.dataOffering,
       } as IContractDetailsTO;
     }).catch((e: HttpErrorResponse) => {
-      console.log(e?.error?.detail || e?.error || e?.message);
-      this.contractDetailsExportView.informationRetrievalStatusMessage.showErrorMessage(e?.error?.detail || e?.error || e?.message);
+      console.log(e);
+      if (e.status === 500) {
+        this.contractDetailsExportView.informationRetrievalStatusMessage.showErrorMessage(commonMessages.general_error);
+      } else {
+        this.contractDetailsExportView.informationRetrievalStatusMessage.showErrorMessage(e.error.details);
+      }
+    }).catch(e => {
+      console.log(e);
+      this.contractDetailsExportView.informationRetrievalStatusMessage.showErrorMessage(commonMessages.general_error);
     });
   }
 
@@ -146,5 +157,13 @@ export class ContractsComponent implements OnInit {
 
   shouldTransferButtonBeDisabled(item: IContractAgreementTO): boolean {
     return this.isTransferButtonDisabled || this.isAnyPolicyInvalid(item.enforcementPolicies);
+  }
+
+  private handleGetContractAgreements() {
+    this.getContractAgreements().catch((e: HttpErrorResponse) => {
+      this.requestContractAgreementsStatusMessage.showErrorMessage(e.error.detail);
+    }).catch(_ => {
+      this.requestContractAgreementsStatusMessage.showErrorMessage("Unknown error occurred");
+    });
   }
 }

@@ -6,7 +6,7 @@ edc:
   mgmt-base-url: http://localhost:29193/management
   protocol-base-url: http://localhost:29194/protocol
 
-participant-id: "did:web:example-organization.eu"
+participant-id: "did:web:didwebservice.dev.possible-x.de:participant:a8d62eee-3a16-3a05-adc1-88404998d781"
 
 s3:
   bucket-storage-region: "eu-central-3"

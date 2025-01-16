@@ -14,18 +14,20 @@
  *  limitations under the License.
  */
 
-import {AfterViewInit, Component, ViewChild, ChangeDetectorRef} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, ViewChild} from '@angular/core';
 import {StatusMessageComponent} from '../../views/common-views/status-message/status-message.component';
 import {BaseWizardExtensionComponent} from '../base-wizard-extension/base-wizard-extension.component';
 import {isDataResourceCs, isGxServiceOfferingCs} from '../../utils/credential-utils';
 import {ApiService} from '../../services/mgmt/api/api.service';
 import {
   IEverythingAllowedPolicy,
-  IGxDataResourceCredentialSubject, IGxLegitimateInterest,
+  IGxDataResourceCredentialSubject,
+  IGxLegitimateInterest,
   IGxServiceOfferingCredentialSubject,
   INodeKindIRITypeId,
   IParticipantRestrictionPolicy,
-  IPojoCredentialSubject, IPrefillFieldsTO,
+  IPojoCredentialSubject,
+  IPrefillFieldsTO,
   ITimeDatePolicy
 } from '../../services/mgmt/api/backend';
 import {TBR_DATA_RESOURCE_ID, TBR_LEGITIMATE_INTEREST_ID, TBR_SERVICE_OFFERING_ID} from "../../views/offer/offer-data";
@@ -34,6 +36,7 @@ import {AccordionItemComponent} from "@coreui/angular";
 import {HttpErrorResponse} from "@angular/common/http";
 import {NameMappingService} from "../../services/mgmt/name-mapping.service";
 import moment from 'moment';
+import {commonMessages} from "../../../environments/common-messages";
 
 @Component({
   selector: 'app-offering-wizard-extension',
@@ -87,6 +90,10 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
     return this.isContractValidityEndPolicyChecked && !this.isValidDate(this.contractValidityEndDate);
   }
 
+  get isAnyPolicyChecked(): boolean {
+    return this.isContractBookingPolicyChecked || this.isContractValidityStartPolicyChecked || this.isContractValidityEndPolicyChecked;
+  }
+
   isValidDate(date: Date): boolean {
     if (!date) {
       return false;
@@ -98,19 +105,15 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
     return isValid && momentDate.toISOString() === date.toISOString();
   }
 
-  get isAnyPolicyChecked(): boolean {
-    return this.isContractBookingPolicyChecked || this.isContractValidityStartPolicyChecked || this.isContractValidityEndPolicyChecked;
-  }
-
   ngAfterViewInit(): void {
-      this.retrieveAndAdaptServiceOfferingShape();
-      this.retrieveAndAdaptDataResourceShape();
-      this.retrieveLegitimateInterestShape();
-      this.retrieveAndSetPrefillFields();
-      this.resetPossibleSpecificFormValues();
-      this.resetAccordion();
-      this.setNameMapping();
-      this.containsPII = false;
+    this.retrieveAndAdaptServiceOfferingShape();
+    this.retrieveAndAdaptDataResourceShape();
+    this.retrieveLegitimateInterestShape();
+    this.retrieveAndSetPrefillFields();
+    this.resetPossibleSpecificFormValues();
+    this.resetAccordion();
+    this.setNameMapping();
+    this.containsPII = false;
   }
 
   setNameMapping() {
@@ -218,17 +221,23 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
     let trimmedCreateOfferTo = this.trimStringsInDataStructure(createOfferTo);
     console.log(trimmedCreateOfferTo);
 
-     createOfferMethod(trimmedCreateOfferTo).then(response => {
-       console.log(response);
-       this.waitingForResponse = false;
-       this.offerCreationStatusMessage.showSuccessMessage("");
-     }).catch((e: HttpErrorResponse) => {
-       this.waitingForResponse = false;
-       this.offerCreationStatusMessage.showErrorMessage(e.error.detail || e.error || e.message);
-     }).catch(_ => {
-       this.waitingForResponse = false;
-       this.offerCreationStatusMessage.showErrorMessage("Unknown error.");
-     });
+    createOfferMethod(trimmedCreateOfferTo).then(response => {
+      console.log(response);
+      this.waitingForResponse = false;
+      this.offerCreationStatusMessage.showSuccessMessage("");
+    }).catch((e: HttpErrorResponse) => {
+      console.log(e);
+      this.waitingForResponse = false;
+      if (e.status === 500) {
+        this.offerCreationStatusMessage.showErrorMessage(commonMessages.general_error);
+      } else {
+        this.offerCreationStatusMessage.showErrorMessage(e.error.details);
+      }
+    }).catch(e => {
+      console.log(e);
+      this.waitingForResponse = false;
+      this.offerCreationStatusMessage.showErrorMessage(commonMessages.general_error);
+    });
 
   }
 
@@ -357,6 +366,49 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
     this.resetAccordion();
   }
 
+  trimStringsInDataStructure = (obj: any): any => {
+    if (typeof obj === 'string') {
+      return obj.trim();
+    } else if (Array.isArray(obj)) {
+      return obj.map(this.trimStringsInDataStructure);
+    } else if (typeof obj === 'object' && obj !== null) {
+      return Object.keys(obj).reduce((acc, key) => {
+        acc[key] = this.trimStringsInDataStructure(obj[key]);
+        return acc;
+      }, {} as any);
+    }
+    return obj;
+  }
+
+  prepareStepBeforeDataResource() {
+    this.containsPII = false;
+  }
+
+  getIdsSortedByNames(): string[] {
+    return Object.keys(this.nameMapping).sort((a, b) => {
+      return this.nameMapping[a].localeCompare(this.nameMapping[b]);
+    });
+  }
+
+  getNameIdStringById(id: string): string {
+    const name = this.nameMappingService.getNameById(id);
+    return `${name} (${id})`;
+  }
+
+  handleCheckboxClick(event: Event, policyChecked: string, accordionItem: any) {
+    event.stopPropagation();
+
+    if (this[policyChecked]) {
+      if (accordionItem.visible === false) {
+        accordionItem.toggleItem();
+      }
+    } else {
+      if (accordionItem.visible === true) {
+        accordionItem.toggleItem();
+      }
+    }
+  }
+
   protected isOfferingDataOffering() {
     return this.offerType === "data";
   }
@@ -420,49 +472,6 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
       this.gxDataResourceWizard.prefillFields(cs, []);
     }
 
-  }
-
-  trimStringsInDataStructure = (obj: any): any => {
-    if (typeof obj === 'string') {
-      return obj.trim();
-    } else if (Array.isArray(obj)) {
-      return obj.map(this.trimStringsInDataStructure);
-    } else if (typeof obj === 'object' && obj !== null) {
-      return Object.keys(obj).reduce((acc, key) => {
-        acc[key] = this.trimStringsInDataStructure(obj[key]);
-        return acc;
-      }, {} as any);
-    }
-    return obj;
-  }
-
-  prepareStepBeforeDataResource() {
-    this.containsPII = false;
-  }
-
-  getIdsSortedByNames(): string[] {
-    return Object.keys(this.nameMapping).sort((a, b) => {
-      return this.nameMapping[a].localeCompare(this.nameMapping[b]);
-    });
-  }
-
-  getNameIdStringById(id: string): string {
-    const name = this.nameMappingService.getNameById(id);
-    return `${name} (${id})`;
-  }
-
-  handleCheckboxClick(event: Event, policyChecked: string, accordionItem: any) {
-    event.stopPropagation();
-
-    if (this[policyChecked]) {
-      if (accordionItem.visible === false) {
-        accordionItem.toggleItem();
-      }
-    } else {
-      if (accordionItem.visible === true) {
-        accordionItem.toggleItem();
-      }
-    }
   }
 
 }

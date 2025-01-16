@@ -17,6 +17,8 @@ export class DefaultLayoutComponent implements OnInit {
     this.apiService.getVersion().then(response => {
       this.versionNumber = response.version;
       this.versionDate = response.date;
+    }).catch(e => {
+      console.log(e);
     });
   }
 }

@@ -8,16 +8,14 @@ import {
   ViewChild,
   ViewContainerRef
 } from '@angular/core';
-import {
-  IAcceptOfferResponseTO, IContractDetailsTO,
-  IOfferDetailsTO
-} from "../../../services/mgmt/api/backend";
+import {IAcceptOfferResponseTO, IContractDetailsTO, IOfferDetailsTO} from "../../../services/mgmt/api/backend";
 import {StatusMessageComponent} from "../../common-views/status-message/status-message.component";
 import {ApiService} from "../../../services/mgmt/api/api.service";
 import {HttpErrorResponse} from "@angular/common/http";
 import {
   ContractDetailsExportViewComponent
 } from "../contract-details-export-view/contract-details-export-view.component";
+import {commonMessages} from "../../../../environments/common-messages";
 
 @Component({
   selector: 'app-transfer',
@@ -34,14 +32,14 @@ export class TransferComponent implements OnChanges {
   isTransferButtonDisabled = false;
   contractDetailsToExport?: IContractDetailsTO = undefined;
 
-  @ViewChild('viewContainerRef', { read: ViewContainerRef, static: true }) viewContainerRef: ViewContainerRef;
-  @ViewChild('contractDetails', { read: TemplateRef, static: true }) contractDetails: TemplateRef<any>;
+  @ViewChild('viewContainerRef', {read: ViewContainerRef, static: true}) viewContainerRef: ViewContainerRef;
+  @ViewChild('contractDetails', {read: TemplateRef, static: true}) contractDetails: TemplateRef<any>;
 
   constructor(private apiService: ApiService) {
   }
 
   ngOnChanges(): void {
-    if(this.contract) {
+    if (this.contract) {
       this.viewContainerRef.clear();
       this.dismissButtonLabel = this.contract.dataOffering ? "Cancel" : "Close";
       this.viewContainerRef.createEmbeddedView(this.contractDetails);
@@ -63,7 +61,16 @@ export class TransferComponent implements OnChanges {
       console.log(response);
       this.dataTransferStatusMessage.showSuccessMessage("Data Transfer successful: " + response.transferProcessState);
     }).catch((e: HttpErrorResponse) => {
-      this.dataTransferStatusMessage.showErrorMessage(e.error.detail || e.error || e.message);
+      console.log(e);
+      if (e.status === 500) {
+        this.dataTransferStatusMessage.showErrorMessage(commonMessages.general_error);
+      } else {
+        this.dataTransferStatusMessage.showErrorMessage(e.error.details);
+      }
+      this.isTransferButtonDisabled = false;
+    }).catch(e => {
+      console.log(e);
+      this.dataTransferStatusMessage.showErrorMessage(commonMessages.general_error);
       this.isTransferButtonDisabled = false;
     });
   }
