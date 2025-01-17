@@ -3,6 +3,7 @@ import {CommonModule} from '@angular/common';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {WizardExtensionModule} from '../../wizard-extension/wizard-extension.module';
 
+
 import {
   AccordionButtonDirective,
   AccordionComponent,
@@ -16,6 +17,8 @@ import {
   GridModule,
   ModalModule,
   NavModule,
+  PaginationModule,
+  PaginationComponent,
   ProgressModule,
   TableModule,
   TabsModule,
@@ -58,6 +61,7 @@ import {
 import {
   EnforcementPolicyContentComponent
 } from './enforcement-policy-accordion-view/enforcement-policy-content/enforcement-policy-content.component';
+import {MatPaginatorModule} from "@angular/material/paginator";
 
 @NgModule({
   imports: [
@@ -93,7 +97,8 @@ import {
     MatSnackBarModule,
     ModalModule,
     NgxPrintModule,
-    MatSortModule
+    MatSortModule,
+    MatPaginatorModule
   ],
   declarations: [ProvideComponent, ConsumeComponent, AcceptComponent, SelectComponent, ContractsComponent, TransferComponent, OfferPrintViewComponent, EnforcementPolicyAccordionViewComponent, ContractDetailsExportViewComponent, OfferDetailsViewComponent, ServiceOfferDetailsViewComponent, DataOfferDetailsViewComponent, EnforcementPolicyContentComponent],
   exports: [

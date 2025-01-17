@@ -1,8 +1,8 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {
+  IContractAgreementsResponseTO,
   IContractAgreementTO,
   IContractDetailsTO,
-  IEnforcementPolicy,
   IEnforcementPolicyUnion,
   IPolicy,
 } from '../../../services/mgmt/api/backend';
@@ -25,6 +25,9 @@ export class ContractsComponent implements OnInit {
   @ViewChild(("contractDetailsExportView")) public contractDetailsExportView!: ContractDetailsExportViewComponent;
   contractAgreements: IContractAgreementTO[] = [];
   sortedAgreements: IContractAgreementTO[] = [];
+  totalNumberOfContractAgreements: number = 0;
+  pageSize: number = 10;
+  pageIndex: number = 0;
   expandedItemId: string | null = null;
   isTransferButtonDisabled = false;
   contractDetailsToExport?: IContractDetailsTO = undefined;
@@ -33,7 +36,12 @@ export class ContractsComponent implements OnInit {
   }
 
   async getContractAgreements() {
-    this.contractAgreements = await this.apiService.getContractAgreements();
+    let response: IContractAgreementsResponseTO = await this.apiService.getContractAgreements({
+      offset: this.pageIndex * this.pageSize,
+      limit: this.pageSize
+    });
+    this.totalNumberOfContractAgreements = response.totalNumberOfContractAgreements;
+    this.contractAgreements = response.contractAgreements;
     this.contractAgreements = this.contractAgreements.sort((a, b) => {
       return a.contractSigningDate > b.contractSigningDate ? -1 : 1;
     });
@@ -127,16 +135,16 @@ export class ContractsComponent implements OnInit {
       console.log(response);
       this.contractDetailsExportView.informationRetrievalStatusMessage.hideAllMessages();
       this.contractDetailsToExport = {
-        id : contractAgreement.id,
-        assetId : contractAgreement.assetId,
-        catalogOffering : response.catalogOffering,
-        offerRetrievalDate : response.offerRetrievalDate,
-        policy : contractAgreement.policy,
-        enforcementPolicies : contractAgreement.enforcementPolicies,
-        contractSigningDate : contractAgreement.contractSigningDate,
-        consumerDetails : contractAgreement.consumerDetails,
-        providerDetails : contractAgreement.providerDetails,
-        dataOffering : contractAgreement.dataOffering,
+        id: contractAgreement.id,
+        assetId: contractAgreement.assetId,
+        catalogOffering: response.catalogOffering,
+        offerRetrievalDate: response.offerRetrievalDate,
+        policy: contractAgreement.policy,
+        enforcementPolicies: contractAgreement.enforcementPolicies,
+        contractSigningDate: contractAgreement.contractSigningDate,
+        consumerDetails: contractAgreement.consumerDetails,
+        providerDetails: contractAgreement.providerDetails,
+        dataOffering: contractAgreement.dataOffering,
       } as IContractDetailsTO;
     }).catch((e: HttpErrorResponse) => {
       console.log(e?.error?.detail || e?.error || e?.message);
@@ -150,5 +158,11 @@ export class ContractsComponent implements OnInit {
 
   shouldTransferButtonBeDisabled(item: IContractAgreementTO): boolean {
     return this.isTransferButtonDisabled || this.isAnyPolicyInvalid(item.enforcementPolicies);
+  }
+
+  onPageChange(event: any): void {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.handleGetContractAgreements();
   }
 }

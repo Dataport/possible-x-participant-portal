@@ -6,7 +6,7 @@
       </div>
       <br/>
       <div class="text-xl font-bold text-brand-400">
-        Contract Agreements ({{ sortedAgreements.length }})
+        Contract Agreements ({{ totalNumberOfContractAgreements }})
       </div>
       <table (matSortChange)="sortData($event)" class="table table-fixed" matSort>
         <thead>
@@ -46,7 +46,7 @@
                 valid
               </ng-template>
             </td>
-            <td class="flex space-x-2">
+            <td class="space-x-2">
               <button (click)="toggleAccordion(item.id)" [cTooltip]="'Details'" cButton
                       class="rounded-none">
                 <mat-icon>manage_search</mat-icon>
@@ -86,6 +86,13 @@
         </ng-container>
         </tbody>
       </table>
+      <mat-paginator [length]="totalNumberOfContractAgreements"
+                     [pageSize]="pageSize"
+                     [pageSizeOptions]="[10, 15, 20, 25]"
+                     [showFirstLastButtons]='true'
+                     (page)="onPageChange($event)"
+                     class="custom-paginator">
+      </mat-paginator>
     </div>
   </div>
 </div>
