@@ -23,6 +23,7 @@ import eu.possiblex.participantportal.business.entity.edc.asset.AssetCreateReque
 import eu.possiblex.participantportal.business.entity.edc.asset.possible.PossibleAsset;
 import eu.possiblex.participantportal.business.entity.edc.catalog.CatalogRequest;
 import eu.possiblex.participantportal.business.entity.edc.catalog.DcatCatalog;
+import eu.possiblex.participantportal.business.entity.edc.catalog.QuerySpec;
 import eu.possiblex.participantportal.business.entity.edc.common.IdResponse;
 import eu.possiblex.participantportal.business.entity.edc.contractagreement.ContractAgreement;
 import eu.possiblex.participantportal.business.entity.edc.contractdefinition.ContractDefinitionCreateRequest;
@@ -71,7 +72,7 @@ public interface EdcClient {
     void revokeContractDefinition(@PathVariable String contractDefinitionId);
 
     @PostExchange("/v2/contractagreements/request")
-    List<ContractAgreement> queryContractAgreements();
+    List<ContractAgreement> queryContractAgreements(@RequestBody QuerySpec querySpec);
 
     @GetExchange("/v2/contractagreements/{contractAgreementId}")
     ContractAgreement getContractAgreementById(@PathVariable String contractAgreementId);

@@ -18,4 +18,8 @@ public class QuerySpec {
     private int limit = 50;
 
     private int offset;
+
+    private String sortField;
+
+    private String sortOrder;
 }

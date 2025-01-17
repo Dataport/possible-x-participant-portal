@@ -4,6 +4,7 @@ import eu.possiblex.participantportal.application.control.ConsumerApiMapper;
 import eu.possiblex.participantportal.application.control.ContractApiMapper;
 import eu.possiblex.participantportal.application.entity.*;
 import eu.possiblex.participantportal.business.control.ContractService;
+import eu.possiblex.participantportal.business.entity.ContractAgreementsRequestBE;
 import eu.possiblex.participantportal.business.entity.TransferOfferRequestBE;
 import eu.possiblex.participantportal.business.entity.TransferOfferResponseBE;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
@@ -15,8 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 /**
  * REST controller for managing contract-related operations.
@@ -45,57 +44,56 @@ public class ContractRestApiImpl implements ContractRestApi {
      * @return list of contract agreements
      */
     @Override
-    public List<ContractAgreementTO> getContractAgreements() {
+    public ContractAgreementsResponseTO getContractAgreements(int offset, int limit) {
+
         try {
-            return contractService.getContractAgreements().stream().map(contractApiMapper::contractAgreementBEToTO)
-                .toList();
+            return contractApiMapper.contractAgreementsResponseBEToTO(contractService.getContractAgreements(
+                ContractAgreementsRequestBE.builder().limit(limit).offset(offset).build()));
         } catch (OfferNotFoundException e) {
-            throw new PossibleXException("" + e,
-                HttpStatus.NOT_FOUND);
+            throw new PossibleXException("" + e, HttpStatus.NOT_FOUND);
         }
 
     }
 
     @Override
     public ContractDetailsTO getContractDetailsByContractAgreementId(String contractAgreementId) {
+
         try {
-            return contractApiMapper.contractDetailsBEToTO(contractService.getContractDetailsByContractAgreementId(
-                contractAgreementId));
+            return contractApiMapper.contractDetailsBEToTO(
+                contractService.getContractDetailsByContractAgreementId(contractAgreementId));
         } catch (OfferNotFoundException e) {
-            throw new PossibleXException("" + e,
-                HttpStatus.NOT_FOUND);
+            throw new PossibleXException("" + e, HttpStatus.NOT_FOUND);
         }
 
     }
 
     @Override
     public OfferWithTimestampTO getOfferWithTimestampByContractAgreementId(String contractAgreementId) {
-       try {
-           return contractApiMapper.offerRetrievalResponseBEToOfferWithTimestampTO(
-               contractService.getOfferDetailsByContractAgreementId(contractAgreementId));
-       } catch (OfferNotFoundException e) {
-           throw new PossibleXException("" + e,
-               HttpStatus.NOT_FOUND);
-       }
+
+        try {
+            return contractApiMapper.offerRetrievalResponseBEToOfferWithTimestampTO(
+                contractService.getOfferDetailsByContractAgreementId(contractAgreementId));
+        } catch (OfferNotFoundException e) {
+            throw new PossibleXException("" + e, HttpStatus.NOT_FOUND);
+        }
     }
 
     @Override
     public TransferOfferResponseTO transferDataOfferAgain(@RequestBody TransferOfferRequestTO request) {
+
         TransferOfferRequestBE be = consumerApiMapper.transferOfferRequestTOToBE(request);
         TransferOfferResponseBE responseBE;
         try {
             responseBE = contractService.transferDataOfferAgain(be);
         } catch (OfferNotFoundException e) {
-            throw new PossibleXException("" + e,
-                HttpStatus.NOT_FOUND);
+            throw new PossibleXException("" + e, HttpStatus.NOT_FOUND);
         } catch (TransferFailedException e) {
-            throw new PossibleXException(
-                "" + e);
+            throw new PossibleXException("" + e);
         } catch (Exception e) {
-            throw new PossibleXException(
-                "" + e);
+            throw new PossibleXException("" + e);
         }
-        TransferOfferResponseTO responseTO = consumerApiMapper.transferOfferResponseBEToTransferOfferResponseTO(responseBE);
+        TransferOfferResponseTO responseTO = consumerApiMapper.transferOfferResponseBEToTransferOfferResponseTO(
+            responseBE);
         log.info("Returning for transferring data of contract again: " + responseTO);
         return responseTO;
     }

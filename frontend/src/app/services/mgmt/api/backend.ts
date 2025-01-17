@@ -10,7 +10,6 @@ export interface IConsumerRestApi {
 }
 
 export interface IContractRestApi {
-    contractAgreements: IContractAgreementTO[];
 }
 
 export interface IProviderRestApi {
@@ -18,12 +17,12 @@ export interface IProviderRestApi {
 }
 
 export interface IResourceShapeRestApi {
+    gxInstantiatedVirtualResourceShape: string;
+    gxDataResourceShape: string;
     gxPhysicalResourceShape: string;
     gxSoftwareResourceShape: string;
     gxVirtualResourceShape: string;
     gxLegitimateInterestShape: string;
-    gxDataResourceShape: string;
-    gxInstantiatedVirtualResourceShape: string;
 }
 
 export interface IServiceOfferingShapeRestApi {
@@ -67,11 +66,19 @@ export interface IContractAgreementTO {
     contractSigningDate: Date;
     consumerDetails: IContractParticipantDetailsTO;
     providerDetails: IContractParticipantDetailsTO;
-    provider: boolean;
     dataOffering: boolean;
+    provider: boolean;
 }
 
 export interface IContractAgreementTOBuilder {
+}
+
+export interface IContractAgreementsResponseTO {
+    contractAgreements: IContractAgreementTO[];
+    totalNumberOfContractAgreements: number;
+}
+
+export interface IContractAgreementsResponseTOBuilder {
 }
 
 export interface IContractDetailsTO {
@@ -559,7 +566,7 @@ export class RestApplicationClient {
      * HTTP GET /contract/agreement
      * Java method: eu.possiblex.participantportal.application.boundary.ContractRestApiImpl.getContractAgreements
      */
-    getContractAgreements(): RestResponse<IContractAgreementTO[]> {
+    getContractAgreements(): RestResponse<IContractAgreementsResponseTO> {
         return this.httpClient.request({ method: "GET", url: uriEncoding`contract/agreement` });
     }
 

@@ -30,6 +30,7 @@ import eu.possiblex.participantportal.business.entity.edc.asset.possible.Possibl
 import eu.possiblex.participantportal.business.entity.edc.catalog.CatalogRequest;
 import eu.possiblex.participantportal.business.entity.edc.catalog.DcatCatalog;
 import eu.possiblex.participantportal.business.entity.edc.catalog.DcatDataset;
+import eu.possiblex.participantportal.business.entity.edc.catalog.QuerySpec;
 import eu.possiblex.participantportal.business.entity.edc.common.IdResponse;
 import eu.possiblex.participantportal.business.entity.edc.contractagreement.ContractAgreement;
 import eu.possiblex.participantportal.business.entity.edc.contractdefinition.ContractDefinitionCreateRequest;
@@ -171,7 +172,7 @@ public class EdcClientFake implements EdcClient {
     }
 
     @Override
-    public List<ContractAgreement> queryContractAgreements() {
+    public List<ContractAgreement> queryContractAgreements(QuerySpec querySpec) {
 
         Policy policy = Policy.builder().target(PolicyTarget.builder().id(FAKE_ID).build()).build();
 
@@ -186,7 +187,7 @@ public class EdcClientFake implements EdcClient {
     @Override
     public ContractAgreement getContractAgreementById(String contractAgreementId) {
 
-        return queryContractAgreements().get(0);
+        return queryContractAgreements(QuerySpec.builder().build()).get(0);
     }
 
     @Override

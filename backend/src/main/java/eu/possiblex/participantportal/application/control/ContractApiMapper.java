@@ -14,6 +14,11 @@ import java.time.ZonedDateTime;
 
 @Mapper(componentModel = "spring", imports = { OffsetDateTime.class })
 public interface ContractApiMapper {
+
+    @Mapping(target = "contractAgreements", source = "be.contractAgreements")
+    @Mapping(target = "totalNumberOfContractAgreements", source = "be.totalNumberOfContractAgreements")
+    ContractAgreementsResponseTO contractAgreementsResponseBEToTO(ContractAgreementsResponseBE be);
+
     @Mapping(target = "id", source = "be.contractAgreement.id")
     @Mapping(target = "assetId", source = "be.contractAgreement.assetId")
     @Mapping(target = "assetDetails", source = "be.offeringDetails")

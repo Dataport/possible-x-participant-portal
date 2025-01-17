@@ -45,9 +45,10 @@ public class ContractServiceFake implements ContractService {
      * @return List of contract agreements.
      */
     @Override
-    public List<ContractAgreementBE> getContractAgreements() {
+    public ContractAgreementsResponseBE getContractAgreements(ContractAgreementsRequestBE request) {
 
-        return getContractAgreementBEs();
+        return ContractAgreementsResponseBE.builder().contractAgreements(getContractAgreementBEs())
+            .totalNumberOfContractAgreements(getContractAgreementBEs().size()).build();
     }
 
     @Override
@@ -61,8 +62,9 @@ public class ContractServiceFake implements ContractService {
     public OfferRetrievalResponseBE getOfferDetailsByContractAgreementId(String contractAgreementId)
         throws OfferNotFoundException {
 
-        return new OfferRetrievalResponseBE(PxExtendedServiceOfferingCredentialSubject.builder().name(NAME)
-            .description(DESCRIPTION).id(FAKE_ID_OFFERING).assetId(FAKE_ID_ASSET).build(), getDateAsOffsetDateTime());
+        return new OfferRetrievalResponseBE(
+            PxExtendedServiceOfferingCredentialSubject.builder().name(NAME).description(DESCRIPTION)
+                .id(FAKE_ID_OFFERING).assetId(FAKE_ID_ASSET).build(), getDateAsOffsetDateTime());
     }
 
     private List<ContractAgreementBE> getContractAgreementBEs() {
@@ -75,8 +77,7 @@ public class ContractServiceFake implements ContractService {
         ContractAgreementBE contractAgreementBE = ContractAgreementBE.builder().contractAgreement(contractAgreement)
             .isProvider(false).isDataOffering(false)
             .offeringDetails(new OfferingDetailsBE(NAME, DESCRIPTION, FAKE_ID_ASSET, FAKE_ID_OFFERING))
-            .providerDetails(new ParticipantWithDapsBE())
-            .consumerDetails(new ParticipantWithDapsBE()).build();
+            .providerDetails(new ParticipantWithDapsBE()).consumerDetails(new ParticipantWithDapsBE()).build();
 
         return List.of(contractAgreementBE);
     }
@@ -88,11 +89,11 @@ public class ContractServiceFake implements ContractService {
             .providerId(FAKE_ID_PROVIDER)
             .policy(Policy.builder().target(PolicyTarget.builder().id(FAKE_ID_ASSET).build()).build()).build();
 
-        return ContractDetailsBE.builder().contractAgreement(contractAgreement)
-            .offeringDetails(new OfferRetrievalResponseBE(PxExtendedServiceOfferingCredentialSubject.builder().name(NAME)
-                .description(DESCRIPTION).id(FAKE_ID_OFFERING).assetId(FAKE_ID_ASSET).build(), getDateAsOffsetDateTime()))
-            .providerDetails(new ParticipantWithDapsBE())
-            .consumerDetails(new ParticipantWithDapsBE()).build();
+        return ContractDetailsBE.builder().contractAgreement(contractAgreement).offeringDetails(
+                new OfferRetrievalResponseBE(
+                    PxExtendedServiceOfferingCredentialSubject.builder().name(NAME).description(DESCRIPTION)
+                        .id(FAKE_ID_OFFERING).assetId(FAKE_ID_ASSET).build(), getDateAsOffsetDateTime()))
+            .providerDetails(new ParticipantWithDapsBE()).consumerDetails(new ParticipantWithDapsBE()).build();
     }
 
     @Override
