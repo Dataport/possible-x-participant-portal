@@ -9,6 +9,7 @@ import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsSparqlQu
 import eu.possiblex.participantportal.business.entity.fh.ParticipantDetailsSparqlQueryResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -28,15 +29,19 @@ public class ContractServiceImpl implements ContractService {
 
     private final OmejdnConnectorApiClient omejdnConnectorApiClient;
 
+    private final String participantId;
+
     public ContractServiceImpl(@Autowired EdcClient edcClient, @Autowired FhCatalogClient fhCatalogClient,
         @Autowired OmejdnConnectorApiClient omejdnConnectorApiClient, @Autowired ConsumerService consumerService,
-        @Autowired EnforcementPolicyParserService enforcementPolicyParserService) {
+        @Autowired EnforcementPolicyParserService enforcementPolicyParserService,
+        @Value("${participant-id}") String participantId) {
 
         this.edcClient = edcClient;
         this.fhCatalogClient = fhCatalogClient;
         this.omejdnConnectorApiClient = omejdnConnectorApiClient;
         this.consumerService = consumerService;
         this.enforcementPolicyParserService = enforcementPolicyParserService;
+        this.participantId = participantId;
     }
 
     /**
