@@ -51,7 +51,7 @@
                       class="rounded-none">
                 <mat-icon>manage_search</mat-icon>
               </button>
-              <button (click)="transferAgain(item)" *ngIf="isDataOffering(item)"
+              <button (click)="transferAgain(item)" *ngIf="isDataOffering(item) && !isProvider(item)"
                       [cTooltip]="'Transfer'" [disabled]="shouldTransferButtonBeDisabled(item)" cButton
                       class="rounded-none">
                 <mat-icon>swap_horiz</mat-icon>

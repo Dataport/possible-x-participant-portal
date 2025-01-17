@@ -71,6 +71,7 @@ public class ContractServiceFake implements ContractService {
             .policy(Policy.builder().target(PolicyTarget.builder().id(FAKE_ID_ASSET).build()).build()).build();
 
         ContractAgreementBE contractAgreementBE = ContractAgreementBE.builder().contractAgreement(contractAgreement)
+            .isProvider(false).isDataOffering(false)
             .offeringDetails(new OfferingDetailsBE(NAME, DESCRIPTION, FAKE_ID_ASSET, FAKE_ID_OFFERING))
             .providerDetails(new ParticipantWithDapsBE()).consumerDetails(new ParticipantWithDapsBE()).build();
 

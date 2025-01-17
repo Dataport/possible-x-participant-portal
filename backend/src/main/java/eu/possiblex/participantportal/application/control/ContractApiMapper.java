@@ -22,6 +22,7 @@ public interface ContractApiMapper {
     @Mapping(target = "consumerDetails", source = "be.consumerDetails")
     @Mapping(target = "providerDetails", source = "be.providerDetails")
     @Mapping(target = "isDataOffering", source = "be.dataOffering")
+    @Mapping(target = "isProvider", source = "be.provider")
     @Mapping(target = "enforcementPolicies", source = "be.enforcementPolicies")
     ContractAgreementTO contractAgreementBEToTO(ContractAgreementBE be);
 

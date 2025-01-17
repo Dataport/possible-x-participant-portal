@@ -78,6 +78,7 @@ public class ContractServiceImpl implements ContractService {
 
         // convert contract agreements to contract agreement BEs
         contractAgreements.forEach(c -> contractAgreementBEs.add(ContractAgreementBE.builder().contractAgreement(c)
+            .isProvider(participantId.equals(participantDidMap.getOrDefault(c.getProviderId(), "")))
             .isDataOffering(offeringDetails.getOrDefault(c.getAssetId(), unknownOffering).getAggregationOf() != null)
             .enforcementPolicies(
                 enforcementPolicyParserService.getEnforcementPoliciesWithValidity(List.of(c.getPolicy()),

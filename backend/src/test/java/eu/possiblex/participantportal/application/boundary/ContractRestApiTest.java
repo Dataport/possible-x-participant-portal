@@ -44,6 +44,8 @@ class ContractRestApiTest {
             .andExpect(jsonPath("$[0].contractSigningDate").value(ContractServiceFake.getDateAsOffsetDateTime().toString()))
             .andExpect(jsonPath("$[0].providerDetails").exists())
             .andExpect(jsonPath("$[0].consumerDetails").exists())
+            .andExpect(jsonPath("$[0].provider").value(false))
+            .andExpect(jsonPath("$[0].dataOffering").value(false))
             .andExpect(jsonPath("$[0].assetId").value(ContractServiceFake.FAKE_ID_ASSET))
             .andExpect(jsonPath("$[0].assetDetails.name").value(ContractServiceFake.NAME))
             .andExpect(jsonPath("$[0].assetDetails.description").value(ContractServiceFake.DESCRIPTION))

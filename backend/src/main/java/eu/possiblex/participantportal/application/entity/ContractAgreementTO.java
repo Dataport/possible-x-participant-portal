@@ -33,4 +33,5 @@ public class ContractAgreementTO {
 
     private boolean isDataOffering;
 
+    private boolean isProvider;
 }
