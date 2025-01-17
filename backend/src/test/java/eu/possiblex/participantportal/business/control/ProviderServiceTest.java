@@ -7,7 +7,7 @@ import eu.possiblex.participantportal.application.entity.credentials.gx.datatype
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
 import eu.possiblex.participantportal.application.entity.credentials.gx.resources.GxDataResourceCredentialSubject;
 import eu.possiblex.participantportal.application.entity.credentials.gx.serviceofferings.GxServiceOfferingCredentialSubject;
-import eu.possiblex.participantportal.application.entity.policies.*;
+import eu.possiblex.participantportal.application.entity.policies.EverythingAllowedPolicy;
 import eu.possiblex.participantportal.business.entity.CreateDataOfferingRequestBE;
 import eu.possiblex.participantportal.business.entity.CreateServiceOfferingRequestBE;
 import eu.possiblex.participantportal.business.entity.PrefillFieldsBE;
@@ -17,7 +17,8 @@ import eu.possiblex.participantportal.business.entity.edc.asset.AssetCreateReque
 import eu.possiblex.participantportal.business.entity.edc.asset.ionoss3extension.IonosS3DataSource;
 import eu.possiblex.participantportal.business.entity.edc.asset.possible.PossibleAssetProperties;
 import eu.possiblex.participantportal.business.entity.edc.contractdefinition.ContractDefinitionCreateRequest;
-import eu.possiblex.participantportal.business.entity.edc.policy.*;
+import eu.possiblex.participantportal.business.entity.edc.policy.OdrlPermission;
+import eu.possiblex.participantportal.business.entity.edc.policy.PolicyCreateRequest;
 import eu.possiblex.participantportal.utilities.PossibleXException;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
@@ -29,8 +30,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ContextConfiguration;
 
-import java.time.OffsetDateTime;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,8 +39,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-@ContextConfiguration(classes = { ProviderServiceTest.TestConfig.class, ProviderServiceImpl.class,
-    EnforcementPolicyParserServiceImpl.class })
+@ContextConfiguration(classes = { ProviderServiceTest.TestConfig.class, ProviderServiceImpl.class })
 class ProviderServiceTest {
     private static final String FILE_NAME = "file.txt";
 
@@ -282,89 +280,6 @@ class ProviderServiceTest {
             prefillFields.getDataProductPrefillFields().getServiceOfferingDescription());
     }
 
-    @Test
-    void testEnforcementPoliciesAreTranslatedCorrectly() {
-
-        reset(fhCatalogClient);
-        reset(edcClient);
-
-        //given
-        GxServiceOfferingCredentialSubject offeringCs = getGxServiceOfferingCredentialSubject();
-
-        ParticipantRestrictionPolicy participantRestrictionPolicy = ParticipantRestrictionPolicy.builder()
-            .allowedParticipants(List.of("did:web:123", "did:web:456")).build();
-        StartAgreementOffsetPolicy startAgreementOffsetPolicy = StartAgreementOffsetPolicy.builder().offsetNumber(5)
-            .offsetUnit(AgreementOffsetUnit.DAYS).build();
-        EndAgreementOffsetPolicy endAgreementOffsetPolicy = EndAgreementOffsetPolicy.builder().offsetNumber(10)
-            .offsetUnit(AgreementOffsetUnit.DAYS).build();
-        StartDatePolicy startDatePolicy = StartDatePolicy.builder()
-            .date(OffsetDateTime.parse("2025-01-01T10:00:00+00:00")).build();
-        EndDatePolicy endDatePolicy = EndDatePolicy.builder().date(OffsetDateTime.parse("2125-01-01T10:00:00+00:00"))
-            .build();
-
-        List<EnforcementPolicy> policies = List.of(participantRestrictionPolicy, startAgreementOffsetPolicy,
-            endAgreementOffsetPolicy, startDatePolicy, endDatePolicy);
-
-        CreateServiceOfferingRequestBE be = CreateServiceOfferingRequestBE.builder().enforcementPolicies(policies)
-            .providedBy(offeringCs.getProvidedBy()).name(offeringCs.getName()).description(offeringCs.getDescription())
-            .termsAndConditions(offeringCs.getTermsAndConditions()).dataAccountExport(offeringCs.getDataAccountExport())
-            .policy(offeringCs.getPolicy()).dataProtectionRegime(offeringCs.getDataProtectionRegime()).build();
-
-        //when
-        providerService.createOffering(be);
-
-        //then
-        ArgumentCaptor<PolicyCreateRequest> policyCreateRequestCaptor = forClass(PolicyCreateRequest.class);
-        verify(edcClient, times(2)).createPolicy(policyCreateRequestCaptor.capture());
-
-        List<PolicyCreateRequest> policyCreateRequests = policyCreateRequestCaptor.getAllValues();
-        // contract policy gets created last
-        PolicyCreateRequest contractPolicyCreateRequest = policyCreateRequests.get(policyCreateRequests.size() - 1);
-        //check if policyId is set correctly
-        assertTrue(contractPolicyCreateRequest.getId()
-            .matches("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"));
-        int constraintCount = 0;
-        // for access policy make sure there are no constraints
-        for (OdrlPermission permission : contractPolicyCreateRequest.getPolicy().getPermission()) {
-            if (permission.getAction().equals(OdrlAction.USE)) {  // currently only use is enforced
-                continue;
-            }
-            for (OdrlConstraint constraint : permission.getConstraint()) {
-                constraintCount++;
-                if (constraint.getLeftOperand().equals(ParticipantRestrictionPolicy.EDC_OPERAND)) {
-                    assertIterableEquals(participantRestrictionPolicy.getAllowedParticipants(),
-                        Arrays.asList(constraint.getRightOperand().split(",")));
-                } else if (constraint.getLeftOperand().equals(TimeAgreementOffsetPolicy.EDC_OPERAND)) {
-                    boolean endDate = constraint.getOperator().equals(OdrlOperator.LEQ);
-                    boolean offsetPolicy = constraint.getRightOperand().startsWith("contractAgreement+");
-
-                    if (offsetPolicy) {
-                        String offsetString = constraint.getRightOperand().substring("contractAgreement+".length());
-                        int offsetNumber = Integer.parseInt(offsetString.substring(0, offsetString.length() - 1));
-                        AgreementOffsetUnit offsetUnit = AgreementOffsetUnit.forValue(
-                            offsetString.substring(offsetString.length() - 1));
-                        if (endDate) {
-                            assertEquals(endAgreementOffsetPolicy.getOffsetNumber(), offsetNumber);
-                            assertEquals(endAgreementOffsetPolicy.getOffsetUnit(), offsetUnit);
-                        } else {
-                            assertEquals(startAgreementOffsetPolicy.getOffsetNumber(), offsetNumber);
-                            assertEquals(startAgreementOffsetPolicy.getOffsetUnit(), offsetUnit);
-                        }
-                    } else {
-                        if (endDate) {
-                            assertEquals(endDatePolicy.getDate(), OffsetDateTime.parse(constraint.getRightOperand()));
-                        } else {
-                            assertEquals(startDatePolicy.getDate(), OffsetDateTime.parse(constraint.getRightOperand()));
-                        }
-                    }
-                } else {
-                    fail("Unexpected constraint: " + constraint);
-                }
-            }
-        }
-        assertEquals(policies.size(), constraintCount);
-    }
-
     GxServiceOfferingCredentialSubject getGxServiceOfferingCredentialSubject() {
 
         return GxServiceOfferingCredentialSubject.builder()
@@ -400,6 +315,12 @@ class ProviderServiceTest {
         public FhCatalogClient fhCatalogClient() {
 
             return Mockito.spy(new FhCatalogClientFake());
+        }
+
+        @Bean
+        public EnforcementPolicyParserService enforcementPolicyParserService() {
+
+            return Mockito.spy(new EnforcementPolicyParserServiceFake());
         }
 
         @Bean

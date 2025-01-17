@@ -2,14 +2,13 @@ package eu.possiblex.participantportal.business.control;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
-import eu.possiblex.participantportal.application.entity.policies.*;
 import eu.possiblex.participantportal.business.entity.*;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedDataResourceCredentialSubject;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedLegalParticipantCredentialSubjectSubset;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.edc.catalog.DcatCatalog;
 import eu.possiblex.participantportal.business.entity.edc.catalog.DcatDataset;
-import eu.possiblex.participantportal.business.entity.edc.policy.*;
+import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import eu.possiblex.participantportal.business.entity.exception.NegotiationFailedException;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
@@ -38,8 +37,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-@ContextConfiguration(classes = { ConsumerServiceTest.TestConfig.class, ConsumerServiceImpl.class,
-    EnforcementPolicyParserServiceImpl.class })
+@ContextConfiguration(classes = { ConsumerServiceTest.TestConfig.class, ConsumerServiceImpl.class })
 class ConsumerServiceTest {
 
     @Captor
@@ -151,78 +149,6 @@ class ConsumerServiceTest {
         assertEquals(FhCatalogClientFake.FAKE_DID, response.getProviderDetails().getDid());
         assertEquals(FhCatalogClientFake.FAKE_EMAIL_ADDRESS, response.getProviderDetails().getMailAddress());
         assertEquals(offerRetrievalDate, response.getOfferRetrievalDate());
-    }
-
-    @Test
-    void selectContractOfferEnforcementPoliciesParsedCorrectly() {
-
-        // GIVEN
-
-        reset(edcClient);
-        reset(fhCatalogClient);
-        PxExtendedServiceOfferingCredentialSubject fhCatalogOffer = getPxExtendedServiceOfferingCredentialSubject(
-            false);
-        OffsetDateTime offerRetrievalDate = OffsetDateTime.now();
-        Mockito.when(fhCatalogClient.getFhCatalogOffer(EdcClientFake.FAKE_ID))
-            .thenReturn(new OfferRetrievalResponseBE(fhCatalogOffer, offerRetrievalDate));
-        DcatCatalog catalog = new DcatCatalog();
-        DcatDataset dataset = new DcatDataset();
-        dataset.setId(EdcClientFake.FAKE_ID);
-        dataset.setAssetId(EdcClientFake.FAKE_ID);
-        dataset.setName("correctName");
-        dataset.setContenttype("correctContentType");
-        dataset.setDescription("correctDescription");
-        dataset.setHasPolicy(List.of(Policy.builder().permission(List.of(
-            OdrlPermission.builder().action(OdrlAction.USE).target("http://example.com").constraint(List.of(
-                OdrlConstraint.builder().leftOperand(ParticipantRestrictionPolicy.EDC_OPERAND).operator(OdrlOperator.IN)
-                    .rightOperand("did:web:123,did:web:456").build(),
-                OdrlConstraint.builder().leftOperand(TimeDatePolicy.EDC_OPERAND).operator(OdrlOperator.LEQ)
-                    .rightOperand("2125-01-01T10:00:00+00:00").build(),
-                OdrlConstraint.builder().leftOperand(TimeAgreementOffsetPolicy.EDC_OPERAND).operator(OdrlOperator.LEQ)
-                    .rightOperand("contractAgreement+10d").build(),
-                OdrlConstraint.builder().leftOperand(TimeDatePolicy.EDC_OPERAND).operator(OdrlOperator.GEQ)
-                    .rightOperand("2025-01-01T10:00:00+00:00").build(),
-                OdrlConstraint.builder().leftOperand(TimeAgreementOffsetPolicy.EDC_OPERAND).operator(OdrlOperator.GEQ)
-                    .rightOperand("contractAgreement+5d").build())).build())).build()));
-        catalog.setDataset(List.of(dataset));
-        Mockito.when(edcClient.queryCatalog(any())).thenReturn(catalog);
-        Map<String, ParticipantDetailsSparqlQueryResult> participantDetails = Map.of(FhCatalogClientFake.FAKE_DID,
-            ParticipantDetailsSparqlQueryResult.builder().uri(FhCatalogClientFake.FAKE_DID)
-                .mailAddress(FhCatalogClientFake.FAKE_EMAIL_ADDRESS).build());
-        Mockito.when(fhCatalogClient.getParticipantDetailsByIds(any())).thenReturn(participantDetails);
-
-        // WHEN
-
-        SelectOfferResponseBE response = sut.selectContractOffer(
-            SelectOfferRequestBE.builder().fhCatalogOfferId(EdcClientFake.FAKE_ID).build());
-
-        // THEN
-
-        verify(edcClient).queryCatalog(any());
-        verify(edcClient, times(0)).initiateTransfer(any());
-        verify(fhCatalogClient, times(1)).getParticipantDetailsByIds(any());
-
-        assertNotNull(response);
-        assertEquals(5, response.getEnforcementPolicies().size());
-
-        for (EnforcementPolicy enforcementPolicy : response.getEnforcementPolicies()) {
-            if (enforcementPolicy instanceof ParticipantRestrictionPolicy participantRestrictionPolicy) {
-                assertIterableEquals(List.of("did:web:123", "did:web:456"),
-                    participantRestrictionPolicy.getAllowedParticipants());
-            } else if (enforcementPolicy instanceof StartAgreementOffsetPolicy startAgreementOffsetPolicy) {
-                assertEquals(5, startAgreementOffsetPolicy.getOffsetNumber());
-                assertEquals(AgreementOffsetUnit.DAYS, startAgreementOffsetPolicy.getOffsetUnit());
-            } else if (enforcementPolicy instanceof EndAgreementOffsetPolicy endAgreementOffsetPolicy) {
-                assertEquals(10, endAgreementOffsetPolicy.getOffsetNumber());
-                assertEquals(AgreementOffsetUnit.DAYS, endAgreementOffsetPolicy.getOffsetUnit());
-            } else if (enforcementPolicy instanceof StartDatePolicy startDatePolicy) {
-                assertEquals(OffsetDateTime.parse("2025-01-01T10:00:00+00:00"), startDatePolicy.getDate());
-            } else if (enforcementPolicy instanceof EndDatePolicy endDatePolicy) {
-                assertEquals(OffsetDateTime.parse("2125-01-01T10:00:00+00:00"), endDatePolicy.getDate());
-            } else {
-                fail("Unexpected enforcement policy type");
-            }
-        }
     }
 
     private PxExtendedServiceOfferingCredentialSubject getPxExtendedServiceOfferingCredentialSubject(
@@ -400,6 +326,12 @@ class ConsumerServiceTest {
         public EdcClient edcClient() {
 
             return Mockito.spy(new EdcClientFake());
+        }
+
+        @Bean
+        public EnforcementPolicyParserService enforcementPolicyParserService() {
+
+            return Mockito.spy(new EnforcementPolicyParserServiceFake());
         }
 
         @Bean
