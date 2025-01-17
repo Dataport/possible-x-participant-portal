@@ -1,6 +1,5 @@
 package eu.possiblex.participantportal.business.control;
 
-import eu.possiblex.participantportal.application.entity.policies.EnforcementPolicy;
 import eu.possiblex.participantportal.business.entity.*;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.edc.catalog.DcatDataset;
@@ -64,7 +63,8 @@ public class ConsumerServiceFake implements ConsumerService {
 
         return switch (request.getEdcOfferId()) {
             case MISSING_OFFER_ID -> throw new OfferNotFoundException("not found");
-            case BAD_EDC_OFFER_ID -> throw new NegotiationFailedException("negotiation failed");
+            case BAD_EDC_OFFER_ID ->
+                throw new NegotiationFailedException("negotiation failed", Collections.emptyList());
             default ->
                 AcceptOfferResponseBE.builder().negotiationState(NegotiationState.FINALIZED).dataOffering(true).build();
         };
@@ -76,14 +76,8 @@ public class ConsumerServiceFake implements ConsumerService {
 
         return switch (request.getEdcOfferId()) {
             case MISSING_OFFER_ID -> throw new OfferNotFoundException("not found");
-            case BAD_TRANSFER_OFFER_ID -> throw new TransferFailedException("transfer failed");
+            case BAD_TRANSFER_OFFER_ID -> throw new TransferFailedException("transfer failed", Collections.emptyList());
             default -> TransferOfferResponseBE.builder().transferProcessState(TransferProcessState.COMPLETED).build();
         };
-    }
-
-    @Override
-    public List<EnforcementPolicy> getEnforcementPoliciesFromEdcPolicies(List<Policy> policies) {
-
-        return List.of();
     }
 }

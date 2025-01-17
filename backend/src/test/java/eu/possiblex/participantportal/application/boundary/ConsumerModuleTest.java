@@ -1,5 +1,6 @@
 package eu.possiblex.participantportal.application.boundary;
 
+import eu.possiblex.participantportal.application.configuration.BoundaryExceptionHandler;
 import eu.possiblex.participantportal.application.control.ConsumerApiMapper;
 import eu.possiblex.participantportal.application.entity.ConsumeOfferRequestTO;
 import eu.possiblex.participantportal.application.entity.SelectOfferRequestTO;
@@ -49,7 +50,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @WebMvcTest(ConsumerRestApiImpl.class)
 @ContextConfiguration(classes = { ConsumerModuleTest.TestConfig.class, ConsumerRestApiImpl.class,
-    ConsumerServiceImpl.class, FhCatalogClientImpl.class })
+    ConsumerServiceImpl.class, FhCatalogClientImpl.class, EnforcementPolicyParserServiceImpl.class })
 class ConsumerModuleTest {
 
     private static final String TEST_FILES_PATH = "unit_tests/ConsumerModuleTest/";
@@ -59,6 +60,9 @@ class ConsumerModuleTest {
 
     @Autowired
     private ConsumerService consumerService;
+
+    @Autowired
+    private EnforcementPolicyParserService enforcementPolicyParserService;
 
     @Autowired
     private FhCatalogClientImpl fhCatalogClient;
@@ -77,7 +81,7 @@ class ConsumerModuleTest {
 
         this.mockMvc = MockMvcBuilders.standaloneSetup(
                 new ConsumerRestApiImpl(consumerService, Mappers.getMapper(ConsumerApiMapper.class)))
-            .addFilters(new ExceptionHandlingFilter()).build();
+            .setControllerAdvice(new BoundaryExceptionHandler()).addFilters(new ExceptionHandlingFilter()).build();
     }
 
     @Test
@@ -218,8 +222,7 @@ class ConsumerModuleTest {
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
             .andExpect(jsonPath("$.catalogOffering['px:providerUrl']").value(expectedEdcProviderUrl))
             .andExpect(jsonPath("$.edcOfferId").value(expectedAssetId))
-            .andExpect(jsonPath("$.dataOffering").value(true))
-            .andExpect(jsonPath("$.providerDetails").exists())
+            .andExpect(jsonPath("$.dataOffering").value(true)).andExpect(jsonPath("$.providerDetails").exists())
             .andExpect(jsonPath("$.providerDetails.participantId").value(expectedProviderId))
             .andExpect(jsonPath("$.providerDetails.participantName").value("EXPECTED_NAME_VALUE"))
             .andExpect(jsonPath("$.providerDetails.participantEmail").value("EXPECTED_MAIL_ADDRESS_VALUE"))
@@ -245,12 +248,12 @@ class ConsumerModuleTest {
         WebClientResponseException offerNotFoundEx = Mockito.mock(WebClientResponseException.class);
         Mockito.when(offerNotFoundEx.getStatusCode()).thenReturn(HttpStatusCode.valueOf(404));
         Mockito.when(technicalFhCatalogClientMock.getFhCatalogOfferWithData(ConsumerServiceFake.VALID_FH_OFFER_ID))
-                .thenThrow(offerNotFoundEx);
+            .thenThrow(offerNotFoundEx);
 
         // let the FH catalog provide the test offer without data
         String fhCatalogOfferContent = TestUtils.loadTextFile(TEST_FILES_PATH + "validFhOfferWithoutData.json");
         Mockito.when(technicalFhCatalogClientMock.getFhCatalogOffer(ConsumerServiceFake.VALID_FH_OFFER_ID))
-                .thenReturn(fhCatalogOfferContent);
+            .thenReturn(fhCatalogOfferContent);
 
         // let the FH catalog provide the test participant details
         String sparqlQueryResultString = TestUtils.loadTextFile(TEST_FILES_PATH + "validSparqlResultParticipant.json");
@@ -278,8 +281,7 @@ class ConsumerModuleTest {
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
             .andExpect(jsonPath("$.catalogOffering['px:providerUrl']").value(expectedEdcProviderUrl))
             .andExpect(jsonPath("$.edcOfferId").value(expectedAssetId))
-            .andExpect(jsonPath("$.dataOffering").value(false))
-            .andExpect(jsonPath("$.providerDetails").exists())
+            .andExpect(jsonPath("$.dataOffering").value(false)).andExpect(jsonPath("$.providerDetails").exists())
             .andExpect(jsonPath("$.providerDetails.participantId").value(expectedProviderId))
             .andExpect(jsonPath("$.providerDetails.participantName").value("EXPECTED_NAME_VALUE"))
             .andExpect(jsonPath("$.providerDetails.participantEmail").value("EXPECTED_MAIL_ADDRESS_VALUE"))
@@ -333,7 +335,7 @@ class ConsumerModuleTest {
         Mockito.when(technicalFhCatalogClientMock.getFhCatalogOfferWithData(ConsumerServiceFake.VALID_FH_OFFER_ID))
             .thenThrow(expectedException);
         Mockito.when(technicalFhCatalogClientMock.getFhCatalogOffer(ConsumerServiceFake.VALID_FH_OFFER_ID))
-                .thenThrow(expectedException);
+            .thenThrow(expectedException);
 
         // WHEN/THEN
 

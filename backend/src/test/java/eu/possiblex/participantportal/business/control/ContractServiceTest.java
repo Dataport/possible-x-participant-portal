@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -55,6 +56,9 @@ class ContractServiceTest {
 
     @Autowired
     private ConsumerService consumerService;
+
+    @MockBean
+    private EnforcementPolicyParserService enforcementPolicyParserService;
 
     @Value("${participant-id}")
     private String participantId;
@@ -191,7 +195,7 @@ class ContractServiceTest {
             endAgreementOffsetPolicy, startDatePolicy, endDatePolicy);
 
         Mockito.when(edcClient.getContractAgreementById(any())).thenReturn(contractAgreement);
-        Mockito.when(consumerService.getEnforcementPoliciesFromEdcPolicies(any())).thenReturn(policies);
+        Mockito.when(enforcementPolicyParserService.getEnforcementPoliciesFromEdcPolicies(any())).thenReturn(policies);
 
         ContractDetailsBE actual = contractService.getContractDetailsByContractAgreementId("some id");
 
@@ -238,7 +242,7 @@ class ContractServiceTest {
             endAgreementOffsetPolicy, startDatePolicy, endDatePolicy);
 
         Mockito.when(edcClient.getContractAgreementById(any())).thenReturn(contractAgreement);
-        Mockito.when(consumerService.getEnforcementPoliciesFromEdcPolicies(any())).thenReturn(policies);
+        Mockito.when(enforcementPolicyParserService.getEnforcementPoliciesFromEdcPolicies(any())).thenReturn(policies);
 
         ContractDetailsBE actual = contractService.getContractDetailsByContractAgreementId("some id");
 

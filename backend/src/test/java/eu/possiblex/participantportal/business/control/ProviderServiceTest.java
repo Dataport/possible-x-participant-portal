@@ -40,7 +40,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-@ContextConfiguration(classes = { ProviderServiceTest.TestConfig.class, ProviderServiceImpl.class })
+@ContextConfiguration(classes = { ProviderServiceTest.TestConfig.class, ProviderServiceImpl.class,
+    EnforcementPolicyParserServiceImpl.class })
 class ProviderServiceTest {
     private static final String FILE_NAME = "file.txt";
 
