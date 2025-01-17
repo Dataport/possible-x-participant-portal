@@ -15,11 +15,14 @@
 -->
 
 <div>
-  <strong *ngIf="successMessageVisible" class="success-message">{{ successMessage }} {{ (successDetails === '') ? '' :
-    '(' + successDetails + ')' }}</strong>
-  <strong *ngIf="errorMessageVisible" class="error-message">{{ errorMessage }} {{ (errorDetails === '') ? '' : '(' +
-    errorDetails + ')' }}</strong>
-  <strong *ngIf="infoMessageVisible" class="info-message">{{ infoMessage }} {{ (infoDetails === '') ? '' : '(' +
-    infoDetails + ')' }}</strong>
+  <strong *ngIf="successMessageVisible" class="success-message">{{ successMessage }}<br *ngIf="successDetails"/>{{
+      successDetails
+    }}</strong>
+  <strong *ngIf="errorMessageVisible" class="error-message">{{ errorMessage }}<br *ngIf="errorDetails"/>{{
+      errorDetails
+    }}</strong>
+  <strong *ngIf="infoMessageVisible" class="info-message">{{ infoMessage }}<br *ngIf="infoDetails"/>{{
+      infoDetails
+    }}</strong>
 </div>
 
