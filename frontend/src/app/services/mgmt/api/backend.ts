@@ -566,8 +566,8 @@ export class RestApplicationClient {
      * HTTP GET /contract/agreement
      * Java method: eu.possiblex.participantportal.application.boundary.ContractRestApiImpl.getContractAgreements
      */
-    getContractAgreements(): RestResponse<IContractAgreementsResponseTO> {
-        return this.httpClient.request({ method: "GET", url: uriEncoding`contract/agreement` });
+    getContractAgreements(queryParams?: { offset?: number; limit?: number; }): RestResponse<IContractAgreementsResponseTO> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`contract/agreement`, queryParams: queryParams });
     }
 
     /**

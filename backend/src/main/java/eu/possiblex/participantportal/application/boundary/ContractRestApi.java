@@ -13,7 +13,7 @@ public interface ContractRestApi {
      */
     @GetMapping(value = "/agreement", produces = MediaType.APPLICATION_JSON_VALUE)
     ContractAgreementsResponseTO getContractAgreements(@RequestParam(value = "offset", defaultValue = "0") int offset,
-        @RequestParam(value = "limit", defaultValue = "9") int limit);
+        @RequestParam(value = "limit", defaultValue = "10") int limit);
 
     /**
      * GET request for retrieving contract details by contract agreement id.
