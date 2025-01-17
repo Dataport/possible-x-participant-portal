@@ -57,6 +57,8 @@ export class SelectComponent implements ControlValueAccessor {
       console.log(e);
       if (e.status === 500) {
         this.queryCatalogStatusMessage.showErrorMessage(commonMessages.general_error);
+      } else if (e.status == 404) {
+        this.queryCatalogStatusMessage.showErrorMessage(commonMessages.offer_not_found);
       } else {
         this.queryCatalogStatusMessage.showErrorMessage(e.error.details);
       }
