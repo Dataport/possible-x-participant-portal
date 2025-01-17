@@ -122,7 +122,7 @@ public class BoundaryExceptionHandler extends ResponseEntityExceptionHandler {
             }
 
             if (!policyDetails.isEmpty()) {
-                policyDetails.insert(0, "\t - ");
+                policyDetails.insert(0, "\t- ");
                 policyDetails.append("\n");
                 // add single policy violation to full message
                 details.append(policyDetails);
