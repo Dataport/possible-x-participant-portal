@@ -24,7 +24,9 @@
         <tbody>
         <ng-container *ngFor="let item of sortedAgreements">
           <tr>
-            <td class="overflow-clip text-nowrap text-ellipsis">{{ item.assetDetails.name }} {{ isIndexedContractAgreement(item) ? getRowNumber(item.originalIndex) : '' }}</td>
+            <td [cTooltip]="getInitialRowNumber(item)"
+                class="overflow-clip text-nowrap text-ellipsis">{{ getInitialRowNumber(item) }}
+            </td>
             <td [cTooltip]="item.contractSigningDate | date:'medium'"
                 class="overflow-clip text-nowrap text-ellipsis">{{ item.contractSigningDate | date:'medium' }}
             </td>
@@ -38,7 +40,7 @@
                 class="overflow-clip text-nowrap text-ellipsis">{{ item.consumerDetails.name }}
             </td>
             <td [cTooltip]="item.id" class="overflow-clip text-nowrap text-ellipsis">{{ item.id }}</td>
-            <td>
+            <td [cTooltip]="isAnyPolicyInvalid(item.enforcementPolicies) ? 'invalid' : 'valid'">
               <ng-container *ngIf="isAnyPolicyInvalid(item.enforcementPolicies); else valid">
                 <span class="text-error">invalid</span>
               </ng-container>

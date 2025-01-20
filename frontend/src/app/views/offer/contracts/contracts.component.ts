@@ -16,7 +16,7 @@ import {
 } from "../contract-details-export-view/contract-details-export-view.component";
 
 interface IndexedContractAgreement extends IContractAgreementTO {
-  originalIndex: number;
+  initialIndex: number;
 }
 
 @Component({
@@ -52,7 +52,7 @@ export class ContractsComponent implements OnInit {
     });
     this.contractAgreements = this.contractAgreements.map((item, index) => ({
       ...item,
-      originalIndex: index
+      initialIndex: this.pageIndex * this.pageSize + index
     }));
     this.sortedAgreements = this.contractAgreements.slice();
   }
@@ -183,11 +183,11 @@ export class ContractsComponent implements OnInit {
     this.sortDirective.sort({ id: '', start: 'asc', disableClear: false });
   }
 
-  getRowNumber(index: number): number {
-    return this.pageIndex * this.pageSize + index + 1;
+  getInitialRowNumber(item: IContractAgreementTO): string {
+    return this.isValidIndexedContractAgreement(item) ? (item.initialIndex + 1).toString() : "";
   }
 
-  isIndexedContractAgreement(item: IContractAgreementTO | IndexedContractAgreement): item is IndexedContractAgreement {
-    return (item as IndexedContractAgreement).originalIndex !== undefined;
+  isValidIndexedContractAgreement(item: IContractAgreementTO): item is IndexedContractAgreement {
+    return (item as IndexedContractAgreement).initialIndex !== undefined;
   }
 }
