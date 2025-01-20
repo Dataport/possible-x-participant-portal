@@ -1,6 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {
-  IContractAgreementsResponseTO,
   IContractAgreementTO,
   IContractDetailsTO,
   IEnforcementPolicyUnion,
@@ -9,14 +8,10 @@ import {HttpErrorResponse} from "@angular/common/http";
 import {StatusMessageComponent} from "../../common-views/status-message/status-message.component";
 import {ApiService} from '../../../services/mgmt/api/api.service';
 import {MatSnackBar} from "@angular/material/snack-bar";
-import {MatSort, Sort} from "@angular/material/sort";
+import {Sort} from "@angular/material/sort";
 import {
   ContractDetailsExportViewComponent
 } from "../contract-details-export-view/contract-details-export-view.component";
-
-interface IndexedContractAgreement extends IContractAgreementTO {
-  initialIndex: number;
-}
 
 @Component({
   selector: 'app-contracts',
@@ -26,12 +21,11 @@ interface IndexedContractAgreement extends IContractAgreementTO {
 export class ContractsComponent implements OnInit {
   @ViewChild("requestContractAgreementsStatusMessage") public requestContractAgreementsStatusMessage!: StatusMessageComponent;
   @ViewChild(("contractDetailsExportView")) public contractDetailsExportView!: ContractDetailsExportViewComponent;
-  @ViewChild(MatSort) sortDirective: MatSort;
-  contractAgreements: IndexedContractAgreement[] = [];
-  sortedAgreements: IndexedContractAgreement[] = [];
-  totalNumberOfContractAgreements: number = 0;
-  pageSize: number = 10;
-  pageIndex: number = 0;
+  contractAgreements: IContractAgreementTO[] = [];
+  sortedAgreements: IContractAgreementTO[] = [];
+  pagedItems: IContractAgreementTO[] = [];
+  pageSize = 10;
+  pageIndex = 0;
   expandedItemId: string | null = null;
   isTransferButtonDisabled = false;
   contractDetailsToExport?: IContractDetailsTO = undefined;
@@ -40,21 +34,12 @@ export class ContractsComponent implements OnInit {
   }
 
   async getContractAgreements() {
-    let response: IContractAgreementsResponseTO = await this.apiService.getContractAgreements({
-      offset: this.pageIndex * this.pageSize,
-      limit: this.pageSize
-    });
-    this.totalNumberOfContractAgreements = response.totalNumberOfContractAgreements;
-    let contractAgreements: IContractAgreementTO[] = response.contractAgreements;
-    contractAgreements.sort((a, b) => {
+    this.contractAgreements = await this.apiService.getContractAgreements();
+    this.contractAgreements.sort((a, b) => {
       return a.contractSigningDate > b.contractSigningDate ? -1 : 1;
     });
-
-    this.contractAgreements = contractAgreements.map((item, index) => ({
-      ...item,
-      initialIndex: this.pageIndex * this.pageSize + index
-    }));
     this.sortedAgreements = this.contractAgreements.slice();
+    this.updatePagedItems()
   }
 
   sortData(sort: Sort) {
@@ -85,6 +70,8 @@ export class ContractsComponent implements OnInit {
     });
 
     this.sortedAgreements = data;
+    this.pageIndex = 0;
+    this.updatePagedItems()
   }
 
   compare(a: number | string | Date, b: number | string | Date, isAsc: boolean) {
@@ -170,16 +157,14 @@ export class ContractsComponent implements OnInit {
   }
 
   onPageChange(event: any): void {
+    this.pageSize = event.pageSize;
     this.pageIndex = event.pageIndex;
-    this.handleGetContractAgreements();
-    this.resetSort();
+    this.updatePagedItems();
   }
 
-  resetSort() {
-    this.sortDirective.sort({ id: '', start: 'asc', disableClear: false });
-  }
-
-  getInitialRowNumber(item: IndexedContractAgreement): number {
-    return item.initialIndex + 1;
+  updatePagedItems() {
+    const startIndex = this.pageIndex * this.pageSize;
+    const endIndex = startIndex + this.pageSize;
+    this.pagedItems = this.sortedAgreements.slice(startIndex, endIndex);
   }
 }

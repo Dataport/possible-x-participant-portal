@@ -14,7 +14,6 @@ import {
 } from "../../../services/mgmt/api/backend";
 import {ModalModule} from "@coreui/angular";
 import {MatPaginatorModule} from "@angular/material/paginator";
-import {MatSortModule} from "@angular/material/sort";
 
 describe('ContractsComponent', () => {
   let component: ContractsComponent;
@@ -25,7 +24,7 @@ describe('ContractsComponent', () => {
     const apiServiceSpy = jasmine.createSpyObj('ApiService', ['getContractAgreements', 'transferDataOfferAgain', 'getOfferWithTimestampByContractAgreementId']);
 
     await TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, MatSnackBarModule, ModalModule, BrowserAnimationsModule, MatPaginatorModule, MatSortModule],
+      imports: [HttpClientTestingModule, MatSnackBarModule, ModalModule, BrowserAnimationsModule, MatPaginatorModule],
       declarations: [ContractsComponent, StatusMessageComponent, ContractDetailsExportViewComponent],
       providers: [{ provide: ApiService, useValue: apiServiceSpy }]
     }).compileComponents();
@@ -41,26 +40,17 @@ describe('ContractsComponent', () => {
   });
 
   it('should get and sort contract agreements', async () => {
-    let date1 = new Date('2023-01-01');
-    let date2 = new Date('2023-01-02');
-
     const mockAgreements = [
-      { id: '1', contractSigningDate: date1 },
-      { id: '2', contractSigningDate: date2 }
+      { id: '1', contractSigningDate: new Date() },
+      { id: '2', contractSigningDate: new Date() }
     ] as any;
 
-    const expectedAgreements = [
-      { id: '2', contractSigningDate: date2, initialIndex: 0 },
-      { id: '1', contractSigningDate: date1, initialIndex: 1 }
-    ] as any; // sorted by contractSigningDate and indexed accordingly
-
-    apiService.getContractAgreements.and.returnValue(Promise.resolve({contractAgreements: mockAgreements, totalNumberOfContractAgreements: 2}));
+    apiService.getContractAgreements.and.returnValue(Promise.resolve(mockAgreements));
 
     await component.getContractAgreements();
 
-    expect(component.totalNumberOfContractAgreements).toEqual(2);
-    expect(component.contractAgreements).toEqual(expectedAgreements);
-    expect(component.sortedAgreements).toEqual(expectedAgreements);
+    expect(component.contractAgreements).toEqual(mockAgreements.reverse());
+    expect(component.sortedAgreements).toEqual(mockAgreements.reverse());
   });
 
   it('should detect invalid policies', () => {
