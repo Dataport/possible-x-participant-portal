@@ -13,10 +13,16 @@ import java.util.List;
 
 import static org.springframework.http.HttpStatus.*;
 
+/**
+ * Exception handler for boundary exceptions that should be passed to the frontend.
+ */
 @RestControllerAdvice
 @Slf4j
 public class BoundaryExceptionHandler extends ResponseEntityExceptionHandler {
 
+    /**
+     * Handle exceptions that occur when an EDC transfer fails.
+     */
     @ExceptionHandler
     public ResponseEntity<ErrorResponseTO> handleException(TransferFailedException e) {
 
@@ -26,6 +32,9 @@ public class BoundaryExceptionHandler extends ResponseEntityExceptionHandler {
             policyViolationMessage.isEmpty() ? e.getMessage() : policyViolationMessage), UNPROCESSABLE_ENTITY);
     }
 
+    /**
+     * Handle exceptions that occur when a referenced participant is not found.
+     */
     @ExceptionHandler
     public ResponseEntity<ErrorResponseTO> handleException(ParticipantNotFoundException e) {
 
@@ -34,6 +43,9 @@ public class BoundaryExceptionHandler extends ResponseEntityExceptionHandler {
             NOT_FOUND);
     }
 
+    /**
+     * Handle exceptions that occur when an offering is not found.
+     */
     @ExceptionHandler
     public ResponseEntity<ErrorResponseTO> handleException(OfferNotFoundException e) {
 
@@ -42,6 +54,9 @@ public class BoundaryExceptionHandler extends ResponseEntityExceptionHandler {
             NOT_FOUND);
     }
 
+    /**
+     * Handle exceptions that occur when an offering being published is not compliant.
+     */
     @ExceptionHandler
     public ResponseEntity<ErrorResponseTO> handleException(OfferingComplianceException e) {
 
@@ -50,6 +65,9 @@ public class BoundaryExceptionHandler extends ResponseEntityExceptionHandler {
             new ErrorResponseTO("Compliance was not attested for this offering", e.getMessage()), UNPROCESSABLE_ENTITY);
     }
 
+    /**
+     * Handle exceptions that occur when an offer negotiation fails.
+     */
     @ExceptionHandler
     public ResponseEntity<ErrorResponseTO> handleException(NegotiationFailedException e) {
 
@@ -59,6 +77,9 @@ public class BoundaryExceptionHandler extends ResponseEntityExceptionHandler {
             policyViolationMessage.isEmpty() ? e.getMessage() : policyViolationMessage), UNPROCESSABLE_ENTITY);
     }
 
+    /**
+     * Handle exceptions that occur when an offer creation on the catalog fails.
+     */
     @ExceptionHandler
     public ResponseEntity<ErrorResponseTO> handleException(FhOfferCreationException e) {
 
@@ -67,6 +88,9 @@ public class BoundaryExceptionHandler extends ResponseEntityExceptionHandler {
             UNPROCESSABLE_ENTITY);
     }
 
+    /**
+     * Handle exceptions that occur when an offer creation on the EDC fails.
+     */
     @ExceptionHandler
     public ResponseEntity<ErrorResponseTO> handleException(EdcOfferCreationException e) {
 
@@ -75,6 +99,9 @@ public class BoundaryExceptionHandler extends ResponseEntityExceptionHandler {
             UNPROCESSABLE_ENTITY);
     }
 
+    /**
+     * Handle all other exceptions.
+     */
     @ExceptionHandler
     public ResponseEntity<ErrorResponseTO> handleException(Exception e) {
 
@@ -87,6 +114,13 @@ public class BoundaryExceptionHandler extends ResponseEntityExceptionHandler {
         log.error("Caught boundary exception: {}", e.getClass().getName(), e);
     }
 
+    /**
+     * If policies are involved in the exception, build a message with the violated policies.
+     *
+     * @param enforcementPolicies list of policies that were potentially violated
+     * @param isTransfer whether the exception occurred during a transfer
+     * @return message with violated policies
+     */
     private String getPolicyViolationMessage(List<EnforcementPolicy> enforcementPolicies, boolean isTransfer) {
 
         StringBuilder details = new StringBuilder();
