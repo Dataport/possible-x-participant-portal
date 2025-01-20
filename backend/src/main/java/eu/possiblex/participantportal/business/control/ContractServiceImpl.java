@@ -63,16 +63,10 @@ public class ContractServiceImpl implements ContractService {
      * @return List of contract agreements.
      */
     @Override
-    public ContractAgreementsResponseBE getContractAgreements(ContractAgreementsRequestBE request) {
-
-        int totalNumberOfContractAgreements = getTotalNumberOfContractAgreements();
-
-        // Query the contract agreements with the given limit and offset and sort by contract signing date (descending)
-        QuerySpec query = QuerySpec.builder().sortField("contractSigningDate")
-            .sortOrder(SortOrder.DESC.name()).limit(request.getLimit()).offset(request.getOffset()).build();
+    public List<ContractAgreementBE> getContractAgreements() {
 
         List<ContractAgreementBE> contractAgreementBEs = new ArrayList<>();
-        List<ContractAgreement> contractAgreements = edcClient.queryContractAgreements(query);
+        List<ContractAgreement> contractAgreements = edcClient.queryContractAgreements(QuerySpec.builder().limit(Integer.MAX_VALUE).build());
 
         // Get all referenced assetIds from the contracts
         Set<String> referencedAssetIds = contractAgreements.stream().map(ContractAgreement::getAssetId)
@@ -119,8 +113,7 @@ public class ContractServiceImpl implements ContractService {
                         participantNames.getOrDefault(participantDidMap.getOrDefault(c.getProviderId(), ""),
                             unknownParticipant).getName()).build()).build()));
 
-        return ContractAgreementsResponseBE.builder().contractAgreements(contractAgreementBEs).totalNumberOfContractAgreements(
-            totalNumberOfContractAgreements).build();
+        return contractAgreementBEs;
     }
 
     @Override
@@ -301,10 +294,5 @@ public class ContractServiceImpl implements ContractService {
                 "Failed to transfer offer again with offerId" + be.getEdcOfferId() + ". Other Exception: " + e);
         }
         return transferOfferResponseBE;
-    }
-
-    private int getTotalNumberOfContractAgreements() {
-
-        return edcClient.queryContractAgreements(QuerySpec.builder().limit(Integer.MAX_VALUE).build()).size();
     }
 }

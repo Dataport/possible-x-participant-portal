@@ -39,21 +39,20 @@ class ContractRestApiTest {
         //then
 
         this.mockMvc.perform(get("/contract/agreement")).andDo(print()).andExpect(status().isOk())
-            .andExpect(jsonPath("$.totalNumberOfContractAgreements").value(1))
-            .andExpect(jsonPath("$.contractAgreements.length()").value(1))
-            .andExpect(jsonPath("$.contractAgreements[0].id").value(ContractServiceFake.FAKE_ID_CONTRACT_AGREEMENT))
-            .andExpect(jsonPath("$.contractAgreements[0].contractSigningDate").value(ContractServiceFake.getDateAsOffsetDateTime().toString()))
-            .andExpect(jsonPath("$.contractAgreements[0].providerDetails").exists())
-            .andExpect(jsonPath("$.contractAgreements[0].consumerDetails").exists())
-            .andExpect(jsonPath("$.contractAgreements[0].provider").value(false))
-            .andExpect(jsonPath("$.contractAgreements[0].dataOffering").value(false))
-            .andExpect(jsonPath("$.contractAgreements[0].assetId").value(ContractServiceFake.FAKE_ID_ASSET))
-            .andExpect(jsonPath("$.contractAgreements[0].assetDetails.name").value(ContractServiceFake.NAME))
-            .andExpect(jsonPath("$.contractAgreements[0].assetDetails.description").value(ContractServiceFake.DESCRIPTION))
-            .andExpect(jsonPath("$.contractAgreements[0].policy['odrl:target']['@id']").value(ContractServiceFake.FAKE_ID_ASSET))
-            .andExpect(jsonPath("$.contractAgreements[0].policy['odrl:prohibition']").isEmpty())
-            .andExpect(jsonPath("$.contractAgreements[0].policy['odrl:obligation']").isEmpty())
-            .andExpect(jsonPath("$.contractAgreements[0].policy['odrl:permission']").isEmpty());
+            .andExpect(jsonPath("$.length()").value(1))
+            .andExpect(jsonPath("$[0].id").value(ContractServiceFake.FAKE_ID_CONTRACT_AGREEMENT))
+            .andExpect(jsonPath("$[0].contractSigningDate").value(ContractServiceFake.getDateAsOffsetDateTime().toString()))
+            .andExpect(jsonPath("$[0].providerDetails").exists())
+            .andExpect(jsonPath("$[0].consumerDetails").exists())
+            .andExpect(jsonPath("$[0].provider").value(false))
+            .andExpect(jsonPath("$[0].dataOffering").value(false))
+            .andExpect(jsonPath("$[0].assetId").value(ContractServiceFake.FAKE_ID_ASSET))
+            .andExpect(jsonPath("$[0].assetDetails.name").value(ContractServiceFake.NAME))
+            .andExpect(jsonPath("$[0].assetDetails.description").value(ContractServiceFake.DESCRIPTION))
+            .andExpect(jsonPath("$[0].policy['odrl:target']['@id']").value(ContractServiceFake.FAKE_ID_ASSET))
+            .andExpect(jsonPath("$[0].policy['odrl:prohibition']").isEmpty())
+            .andExpect(jsonPath("$[0].policy['odrl:obligation']").isEmpty())
+            .andExpect(jsonPath("$[0].policy['odrl:permission']").isEmpty());
     }
 
     @Test

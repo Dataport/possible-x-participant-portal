@@ -4,6 +4,8 @@ import eu.possiblex.participantportal.application.entity.*;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequestMapping("/contract")
 public interface ContractRestApi {
     /**
@@ -12,8 +14,7 @@ public interface ContractRestApi {
      * @return list of contract agreements
      */
     @GetMapping(value = "/agreement", produces = MediaType.APPLICATION_JSON_VALUE)
-    ContractAgreementsResponseTO getContractAgreements(@RequestParam(value = "offset", defaultValue = "0") int offset,
-        @RequestParam(value = "limit", defaultValue = "10") int limit);
+    List<ContractAgreementTO> getContractAgreements();
 
     /**
      * GET request for retrieving contract details by contract agreement id.

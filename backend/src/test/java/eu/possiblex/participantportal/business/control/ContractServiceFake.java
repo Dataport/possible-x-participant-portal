@@ -45,10 +45,9 @@ public class ContractServiceFake implements ContractService {
      * @return List of contract agreements.
      */
     @Override
-    public ContractAgreementsResponseBE getContractAgreements(ContractAgreementsRequestBE request) {
+    public List<ContractAgreementBE> getContractAgreements() {
 
-        return ContractAgreementsResponseBE.builder().contractAgreements(getContractAgreementBEs())
-            .totalNumberOfContractAgreements(getContractAgreementBEs().size()).build();
+        return getContractAgreementBEs();
     }
 
     @Override

@@ -40,7 +40,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
 
 @SpringBootTest
 @ContextConfiguration(classes = { ContractServiceTest.TestConfig.class, ContractServiceImpl.class })
@@ -81,22 +82,19 @@ class ContractServiceTest {
                     .clientName(OmejdnConnectorApiClientFake.PARTICIPANT_NAME).attributes(Map.of("did", participantId))
                     .build()));
 
-        ContractAgreementsResponseBE expected = ContractAgreementsResponseBE.builder().contractAgreements(getContractAgreementBEs())
-            .totalNumberOfContractAgreements(getContractAgreementBEs().size()).build();
-
-        ContractAgreementsResponseBE actual = contractService.getContractAgreements(ContractAgreementsRequestBE.builder()
-            .build());
+        List<ContractAgreementBE> expected = getContractAgreementBEs();
+        List<ContractAgreementBE> actual = contractService.getContractAgreements();
 
         verify(fhCatalogClient).getParticipantDetailsByIds(any());
         verify(fhCatalogClient).getOfferingDetailsByAssetIds(any());
-        verify(edcClient, times(2)).queryContractAgreements(any());
+        verify(edcClient).queryContractAgreements(any());
 
-        assertThat(actual.getContractAgreements()).isNotEmpty();
-        assertThat(actual.getContractAgreements().size()).isEqualTo(1).isEqualTo(expected.getContractAgreements().size());
-        assertThat(actual.getContractAgreements().get(0).getOfferingDetails().getAssetId()).isEqualTo(EdcClientFake.FAKE_ID);
-        assertThat(actual.getContractAgreements().get(0).getProviderDetails().getName()).isEqualTo("Unknown");
-        assertThat(actual.getContractAgreements().get(0).getConsumerDetails().getName()).isEqualTo("Unknown");
-        assertThat(actual.getContractAgreements().get(0).isProvider()).isTrue();
+        assertThat(actual).isNotEmpty();
+        assertThat(actual.size()).isEqualTo(1).isEqualTo(expected.size());
+        assertThat(actual.get(0).getOfferingDetails().getAssetId()).isEqualTo(EdcClientFake.FAKE_ID);
+        assertThat(actual.get(0).getProviderDetails().getName()).isEqualTo("Unknown");
+        assertThat(actual.get(0).getConsumerDetails().getName()).isEqualTo("Unknown");
+        assertThat(actual.get(0).isProvider()).isTrue();
 
     }
 
@@ -112,22 +110,19 @@ class ContractServiceTest {
         Mockito.when(fhCatalogClient.getOfferingDetailsByAssetIds(any())).thenReturn(Map.of(EdcClientFake.FAKE_ID,
             OfferingDetailsSparqlQueryResult.builder().assetId(EdcClientFake.FAKE_ID).build()));
 
-        ContractAgreementsResponseBE expected = ContractAgreementsResponseBE.builder().contractAgreements(getContractAgreementBEs())
-            .totalNumberOfContractAgreements(getContractAgreementBEs().size()).build();
-
-        ContractAgreementsResponseBE actual = contractService.getContractAgreements(ContractAgreementsRequestBE.builder()
-            .build());
+        List<ContractAgreementBE> expected = getContractAgreementBEs();
+        List<ContractAgreementBE> actual = contractService.getContractAgreements();
 
         verify(fhCatalogClient).getParticipantDetailsByIds(any());
         verify(fhCatalogClient).getOfferingDetailsByAssetIds(any());
-        verify(edcClient, times(2)).queryContractAgreements(any());
+        verify(edcClient).queryContractAgreements(any());
 
-        assertThat(actual.getContractAgreements()).isNotEmpty();
-        assertThat(actual.getContractAgreements().size()).isEqualTo(1).isEqualTo(expected.getContractAgreements().size());
-        assertThat(actual.getContractAgreements().get(0).getOfferingDetails().getAssetId()).isEqualTo(EdcClientFake.FAKE_ID);
-        assertThat(actual.getContractAgreements().get(0).getProviderDetails().getName()).isEqualTo("Unknown");
-        assertThat(actual.getContractAgreements().get(0).getConsumerDetails().getName()).isEqualTo("Unknown");
-        assertThat(actual.getContractAgreements().get(0).isProvider()).isFalse();
+        assertThat(actual).isNotEmpty();
+        assertThat(actual.size()).isEqualTo(1).isEqualTo(expected.size());
+        assertThat(actual.get(0).getOfferingDetails().getAssetId()).isEqualTo(EdcClientFake.FAKE_ID);
+        assertThat(actual.get(0).getProviderDetails().getName()).isEqualTo("Unknown");
+        assertThat(actual.get(0).getConsumerDetails().getName()).isEqualTo("Unknown");
+        assertThat(actual.get(0).isProvider()).isFalse();
 
     }
 
@@ -144,22 +139,19 @@ class ContractServiceTest {
             OfferingDetailsSparqlQueryResult.builder().assetId(EdcClientFake.FAKE_ID).build()));
         Mockito.when(omejdnConnectorApiClient.getConnectorDetails(any())).thenReturn(new HashMap<>());
 
-        ContractAgreementsResponseBE expected = ContractAgreementsResponseBE.builder().contractAgreements(getContractAgreementBEs())
-            .totalNumberOfContractAgreements(getContractAgreementBEs().size()).build();
-
-        ContractAgreementsResponseBE actual = contractService.getContractAgreements(ContractAgreementsRequestBE.builder()
-            .build());
+        List<ContractAgreementBE> expected = getContractAgreementBEs();
+        List<ContractAgreementBE> actual = contractService.getContractAgreements();
 
         verify(fhCatalogClient).getParticipantDetailsByIds(any());
         verify(fhCatalogClient).getOfferingDetailsByAssetIds(any());
-        verify(edcClient, times(2)).queryContractAgreements(any());
+        verify(edcClient).queryContractAgreements(any());
 
-        assertThat(actual.getContractAgreements()).isNotEmpty();
-        assertThat(actual.getContractAgreements().size()).isEqualTo(1).isEqualTo(expected.getContractAgreements().size());
-        assertThat(actual.getContractAgreements().get(0).getOfferingDetails().getAssetId()).isEqualTo(EdcClientFake.FAKE_ID);
-        assertThat(actual.getContractAgreements().get(0).getProviderDetails().getName()).isEqualTo("Unknown");
-        assertThat(actual.getContractAgreements().get(0).getConsumerDetails().getName()).isEqualTo("Unknown");
-        assertThat(actual.getContractAgreements().get(0).isProvider()).isFalse();
+        assertThat(actual).isNotEmpty();
+        assertThat(actual.size()).isEqualTo(1).isEqualTo(expected.size());
+        assertThat(actual.get(0).getOfferingDetails().getAssetId()).isEqualTo(EdcClientFake.FAKE_ID);
+        assertThat(actual.get(0).getProviderDetails().getName()).isEqualTo("Unknown");
+        assertThat(actual.get(0).getConsumerDetails().getName()).isEqualTo("Unknown");
+        assertThat(actual.get(0).isProvider()).isFalse();
 
     }
 

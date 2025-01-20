@@ -4,7 +4,6 @@ import eu.possiblex.participantportal.application.control.ConsumerApiMapper;
 import eu.possiblex.participantportal.application.control.ContractApiMapper;
 import eu.possiblex.participantportal.application.entity.*;
 import eu.possiblex.participantportal.business.control.ContractService;
-import eu.possiblex.participantportal.business.entity.ContractAgreementsRequestBE;
 import eu.possiblex.participantportal.business.entity.TransferOfferRequestBE;
 import eu.possiblex.participantportal.business.entity.TransferOfferResponseBE;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
@@ -15,8 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * REST controller for managing contract-related operations.
@@ -45,15 +45,13 @@ public class ContractRestApiImpl implements ContractRestApi {
      * @return list of contract agreements
      */
     @Override
-    public ContractAgreementsResponseTO getContractAgreements(
-        @RequestParam(value = "offset", defaultValue = "0") int offset,
-        @RequestParam(value = "limit", defaultValue = "10") int limit) {
-
+    public List<ContractAgreementTO> getContractAgreements() {
         try {
-            return contractApiMapper.contractAgreementsResponseBEToTO(contractService.getContractAgreements(
-                ContractAgreementsRequestBE.builder().limit(limit).offset(offset).build()));
+            return contractService.getContractAgreements().stream().map(contractApiMapper::contractAgreementBEToTO)
+                .toList();
         } catch (OfferNotFoundException e) {
-            throw new PossibleXException("" + e, HttpStatus.NOT_FOUND);
+            throw new PossibleXException("" + e,
+                HttpStatus.NOT_FOUND);
         }
 
     }
