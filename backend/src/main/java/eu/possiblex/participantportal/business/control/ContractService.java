@@ -6,7 +6,6 @@ import eu.possiblex.participantportal.business.entity.exception.TransferFailedEx
 
 import java.util.List;
 
-
 public interface ContractService {
 
     /**
@@ -30,9 +29,8 @@ public interface ContractService {
      * @param contractAgreementId Contract agreement id.
      * @return Referenced offer with timestamp.
      */
-    OfferRetrievalResponseBE getOfferDetailsByContractAgreementId(String contractAgreementId)
-        throws OfferNotFoundException;
+    OfferRetrievalResponseBE getOfferDetailsByContractAgreementId(String contractAgreementId) throws OfferNotFoundException;
 
-    TransferOfferResponseBE transferDataOfferAgain(TransferOfferRequestBE request)
-        throws OfferNotFoundException, TransferFailedException;
+    TransferOfferResponseBE transferDataOfferAgain(TransferOfferRequestBE request) throws OfferNotFoundException,
+        TransferFailedException;
 }

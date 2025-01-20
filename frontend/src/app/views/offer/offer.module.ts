@@ -3,7 +3,6 @@ import {CommonModule} from '@angular/common';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {WizardExtensionModule} from '../../wizard-extension/wizard-extension.module';
 
-
 import {
   AccordionButtonDirective,
   AccordionComponent,

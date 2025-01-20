@@ -58,24 +58,24 @@ public class ContractRestApiImpl implements ContractRestApi {
 
     @Override
     public ContractDetailsTO getContractDetailsByContractAgreementId(String contractAgreementId) {
-
         try {
-            return contractApiMapper.contractDetailsBEToTO(
-                contractService.getContractDetailsByContractAgreementId(contractAgreementId));
+            return contractApiMapper.contractDetailsBEToTO(contractService.getContractDetailsByContractAgreementId(
+                contractAgreementId));
         } catch (OfferNotFoundException e) {
-            throw new PossibleXException("" + e, HttpStatus.NOT_FOUND);
+            throw new PossibleXException("" + e,
+                HttpStatus.NOT_FOUND);
         }
 
     }
 
     @Override
     public OfferWithTimestampTO getOfferWithTimestampByContractAgreementId(String contractAgreementId) {
-
         try {
             return contractApiMapper.offerRetrievalResponseBEToOfferWithTimestampTO(
                 contractService.getOfferDetailsByContractAgreementId(contractAgreementId));
         } catch (OfferNotFoundException e) {
-            throw new PossibleXException("" + e, HttpStatus.NOT_FOUND);
+            throw new PossibleXException("" + e,
+                HttpStatus.NOT_FOUND);
         }
     }
 
@@ -87,14 +87,16 @@ public class ContractRestApiImpl implements ContractRestApi {
         try {
             responseBE = contractService.transferDataOfferAgain(be);
         } catch (OfferNotFoundException e) {
-            throw new PossibleXException("" + e, HttpStatus.NOT_FOUND);
+            throw new PossibleXException("" + e,
+                HttpStatus.NOT_FOUND);
         } catch (TransferFailedException e) {
-            throw new PossibleXException("" + e);
+            throw new PossibleXException(
+                "" + e);
         } catch (Exception e) {
-            throw new PossibleXException("" + e);
+            throw new PossibleXException(
+                "" + e);
         }
-        TransferOfferResponseTO responseTO = consumerApiMapper.transferOfferResponseBEToTransferOfferResponseTO(
-            responseBE);
+        TransferOfferResponseTO responseTO = consumerApiMapper.transferOfferResponseBEToTransferOfferResponseTO(responseBE);
         log.info("Returning for transferring data of contract again: " + responseTO);
         return responseTO;
     }

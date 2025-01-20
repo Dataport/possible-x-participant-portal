@@ -131,16 +131,16 @@ export class ContractsComponent implements OnInit {
       console.log(response);
       this.contractDetailsExportView.informationRetrievalStatusMessage.hideAllMessages();
       this.contractDetailsToExport = {
-        id: contractAgreement.id,
-        assetId: contractAgreement.assetId,
-        catalogOffering: response.catalogOffering,
-        offerRetrievalDate: response.offerRetrievalDate,
-        policy: contractAgreement.policy,
-        enforcementPolicies: contractAgreement.enforcementPolicies,
-        contractSigningDate: contractAgreement.contractSigningDate,
-        consumerDetails: contractAgreement.consumerDetails,
-        providerDetails: contractAgreement.providerDetails,
-        dataOffering: contractAgreement.dataOffering,
+        id : contractAgreement.id,
+        assetId : contractAgreement.assetId,
+        catalogOffering : response.catalogOffering,
+        offerRetrievalDate : response.offerRetrievalDate,
+        policy : contractAgreement.policy,
+        enforcementPolicies : contractAgreement.enforcementPolicies,
+        contractSigningDate : contractAgreement.contractSigningDate,
+        consumerDetails : contractAgreement.consumerDetails,
+        providerDetails : contractAgreement.providerDetails,
+        dataOffering : contractAgreement.dataOffering,
       } as IContractDetailsTO;
     }).catch((e: HttpErrorResponse) => {
       console.log(e?.error?.detail || e?.error || e?.message);
