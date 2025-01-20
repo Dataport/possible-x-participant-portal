@@ -25,7 +25,7 @@ public class EnforcementPolicyParserServiceFake implements EnforcementPolicyPars
     }
 
     @Override
-    public Policy createEdcPolicyFromEnforcementPolicies(List<EnforcementPolicy> enforcementPolicies) {
+    public Policy getEdcPolicyFromEnforcementPolicies(List<EnforcementPolicy> enforcementPolicies) {
 
         return getEverythingAllowedPolicy();
     }

@@ -121,6 +121,14 @@ public class EnforcementPolicyParserServiceImpl implements EnforcementPolicyPars
         }
     }
 
+    /**
+     * Given a list of edc policies, compute their validity based on the contract signing date and the provider DID.
+     *
+     * @param edcPolicies list of edc policies
+     * @param contractSigningDate contract signing date
+     * @param providerDid provider DID
+     * @return list of enforcement policies with validity
+     */
     @Override
     public List<EnforcementPolicy> getEnforcementPoliciesWithValidity(List<Policy> edcPolicies,
         BigInteger contractSigningDate, String providerDid) {
@@ -179,7 +187,7 @@ public class EnforcementPolicyParserServiceImpl implements EnforcementPolicyPars
      * @return edc policy
      */
     @Override
-    public Policy createEdcPolicyFromEnforcementPolicies(List<EnforcementPolicy> enforcementPolicies) {
+    public Policy getEdcPolicyFromEnforcementPolicies(List<EnforcementPolicy> enforcementPolicies) {
 
         List<OdrlConstraint> constraints = new ArrayList<>();
 
@@ -224,7 +232,7 @@ public class EnforcementPolicyParserServiceImpl implements EnforcementPolicyPars
     }
 
     /**
-     * Get base policy that can be extended with constraints.
+     * Get EDC base policy that can be extended with constraints.
      *
      * @return everything allowed policy
      */

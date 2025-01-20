@@ -96,7 +96,7 @@ public class ProviderServiceImpl implements ProviderService {
     @Override
     public CreateOfferResponseTO createOffering(CreateServiceOfferingRequestBE request) {
 
-        Policy policy = enforcementPolicyParserService.createEdcPolicyFromEnforcementPolicies(
+        Policy policy = enforcementPolicyParserService.getEdcPolicyFromEnforcementPolicies(
             request.getEnforcementPolicies());
 
         PxExtendedServiceOfferingCredentialSubject pxExtendedServiceOfferingCs = createCombinedCsFromRequest(request,

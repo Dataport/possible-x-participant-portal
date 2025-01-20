@@ -197,6 +197,12 @@ public class ContractServiceImpl implements ContractService {
         return participantDids;
     }
 
+    /**
+     * Repeat the transfer for a given EDC contract.
+     *
+     * @param request request referencing existing EDC contract.
+     * @return transfer result.
+     */
     @Override
     public TransferOfferResponseBE transferDataOfferAgain(TransferOfferRequestBE be) {
 

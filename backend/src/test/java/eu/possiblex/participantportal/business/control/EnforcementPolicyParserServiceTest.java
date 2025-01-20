@@ -108,7 +108,7 @@ class EnforcementPolicyParserServiceTest {
         List<EnforcementPolicy> policies = List.of(participantRestrictionPolicy, startAgreementOffsetPolicy,
             endAgreementOffsetPolicy, startDatePolicy, endDatePolicy);
 
-        List<Policy> edcPolicies = List.of(sut.createEdcPolicyFromEnforcementPolicies(policies));
+        List<Policy> edcPolicies = List.of(sut.getEdcPolicyFromEnforcementPolicies(policies));
 
         // when
 
@@ -142,7 +142,7 @@ class EnforcementPolicyParserServiceTest {
         List<EnforcementPolicy> policies = List.of(participantRestrictionPolicy, startAgreementOffsetPolicy,
             endAgreementOffsetPolicy, startDatePolicy, endDatePolicy);
 
-        List<Policy> edcPolicies = List.of(sut.createEdcPolicyFromEnforcementPolicies(policies));
+        List<Policy> edcPolicies = List.of(sut.getEdcPolicyFromEnforcementPolicies(policies));
 
         // when
 
@@ -174,7 +174,7 @@ class EnforcementPolicyParserServiceTest {
             endAgreementOffsetPolicy, startDatePolicy, endDatePolicy);
 
         // when
-        Policy edcPolicy = sut.createEdcPolicyFromEnforcementPolicies(policies);
+        Policy edcPolicy = sut.getEdcPolicyFromEnforcementPolicies(policies);
 
         // then
         int constraintCount = 0;
