@@ -17,8 +17,6 @@ import {
   GridModule,
   ModalModule,
   NavModule,
-  PaginationModule,
-  PaginationComponent,
   ProgressModule,
   TableModule,
   TabsModule,
