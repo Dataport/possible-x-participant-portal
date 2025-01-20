@@ -200,7 +200,7 @@ public class ContractServiceImpl implements ContractService {
     /**
      * Repeat the transfer for a given EDC contract.
      *
-     * @param request request referencing existing EDC contract.
+     * @param be request referencing existing EDC contract.
      * @return transfer result.
      */
     @Override
