@@ -24,7 +24,7 @@
         <tbody>
         <ng-container *ngFor="let item of sortedAgreements">
           <tr>
-            <td [cTooltip]="getInitialRowNumber(item)"
+            <td [cTooltip]="getInitialRowNumber(item).toString()"
                 class="overflow-clip text-nowrap text-ellipsis">{{ getInitialRowNumber(item) }}
             </td>
             <td [cTooltip]="item.contractSigningDate | date:'medium'"

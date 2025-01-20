@@ -4,7 +4,6 @@ import {
   IContractAgreementTO,
   IContractDetailsTO,
   IEnforcementPolicyUnion,
-  IPolicy,
 } from '../../../services/mgmt/api/backend';
 import {HttpErrorResponse} from "@angular/common/http";
 import {StatusMessageComponent} from "../../common-views/status-message/status-message.component";
@@ -28,8 +27,8 @@ export class ContractsComponent implements OnInit {
   @ViewChild("requestContractAgreementsStatusMessage") public requestContractAgreementsStatusMessage!: StatusMessageComponent;
   @ViewChild(("contractDetailsExportView")) public contractDetailsExportView!: ContractDetailsExportViewComponent;
   @ViewChild(MatSort) sortDirective: MatSort;
-  contractAgreements: (IContractAgreementTO | IndexedContractAgreement)[] = [];
-  sortedAgreements: (IContractAgreementTO | IndexedContractAgreement)[] = [];
+  contractAgreements: IndexedContractAgreement[] = [];
+  sortedAgreements: IndexedContractAgreement[] = [];
   totalNumberOfContractAgreements: number = 0;
   pageSize: number = 10;
   pageIndex: number = 0;
@@ -46,11 +45,12 @@ export class ContractsComponent implements OnInit {
       limit: this.pageSize
     });
     this.totalNumberOfContractAgreements = response.totalNumberOfContractAgreements;
-    this.contractAgreements = response.contractAgreements;
-    this.contractAgreements.sort((a, b) => {
+    let contractAgreements: IContractAgreementTO[] = response.contractAgreements;
+    contractAgreements.sort((a, b) => {
       return a.contractSigningDate > b.contractSigningDate ? -1 : 1;
     });
-    this.contractAgreements = this.contractAgreements.map((item, index) => ({
+
+    this.contractAgreements = contractAgreements.map((item, index) => ({
       ...item,
       initialIndex: this.pageIndex * this.pageSize + index
     }));
@@ -120,10 +120,6 @@ export class ContractsComponent implements OnInit {
     });
   }
 
-  getPolicyAsString(policy: IPolicy): string {
-    return JSON.stringify(policy, null, 2);
-  }
-
   private handleGetContractAgreements() {
     this.getContractAgreements().catch((e: HttpErrorResponse) => {
       this.requestContractAgreementsStatusMessage.showErrorMessage(e.error.detail);
@@ -183,11 +179,7 @@ export class ContractsComponent implements OnInit {
     this.sortDirective.sort({ id: '', start: 'asc', disableClear: false });
   }
 
-  getInitialRowNumber(item: IContractAgreementTO): string {
-    return this.isValidIndexedContractAgreement(item) ? (item.initialIndex + 1).toString() : "";
-  }
-
-  isValidIndexedContractAgreement(item: IContractAgreementTO): item is IndexedContractAgreement {
-    return (item as IndexedContractAgreement).initialIndex !== undefined;
+  getInitialRowNumber(item: IndexedContractAgreement): number {
+    return item.initialIndex + 1;
   }
 }
