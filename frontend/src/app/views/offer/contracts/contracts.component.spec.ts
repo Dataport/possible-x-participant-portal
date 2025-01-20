@@ -58,6 +58,7 @@ describe('ContractsComponent', () => {
 
     await component.getContractAgreements();
 
+    expect(component.totalNumberOfContractAgreements).toEqual(2);
     expect(component.contractAgreements).toEqual(expectedAgreements);
     expect(component.sortedAgreements).toEqual(expectedAgreements);
   });
