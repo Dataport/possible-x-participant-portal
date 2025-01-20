@@ -20,14 +20,12 @@ import eu.possiblex.participantportal.business.entity.exception.FhOfferCreationE
 import eu.possiblex.participantportal.business.entity.exception.OfferingComplianceException;
 import eu.possiblex.participantportal.business.entity.exception.PrefillFieldsProcessingException;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
-import eu.possiblex.participantportal.utilities.PossibleXException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
@@ -108,15 +106,7 @@ public class ProviderServiceImpl implements ProviderService {
         boolean isOfferWithData = isServiceOfferWithData(pxExtendedServiceOfferingCs);
 
         FhCatalogIdResponse fhResponseId;
-        try {
-            fhResponseId = createFhCatalogOffer(pxExtendedServiceOfferingCs);
-        } catch (FhOfferCreationException e) {
-            throw new PossibleXException("Failed to create offer. FhOfferCreationException: " + e,
-                HttpStatus.BAD_REQUEST);
-        } catch (OfferingComplianceException e) {
-            throw new PossibleXException("Failed to create offer. Compliance not attested: " + e.getMessage(),
-                HttpStatus.UNPROCESSABLE_ENTITY);
-        }
+        fhResponseId = createFhCatalogOffer(pxExtendedServiceOfferingCs);
 
         IdResponse edcResponseId;
         try {
@@ -124,8 +114,7 @@ public class ProviderServiceImpl implements ProviderService {
         } catch (EdcOfferCreationException e) {
             // rollback catalog offering creation
             fhCatalogClient.deleteServiceOfferingFromFhCatalog(fhResponseId.getId(), isOfferWithData);
-            throw new PossibleXException("Failed to create offer. EdcOfferCreationException: " + e,
-                HttpStatus.BAD_REQUEST);
+            throw e;
         }
         return new CreateOfferResponseTO(edcResponseId.getId(), fhResponseId.getId());
     }

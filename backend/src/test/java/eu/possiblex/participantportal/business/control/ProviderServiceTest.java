@@ -19,7 +19,7 @@ import eu.possiblex.participantportal.business.entity.edc.asset.possible.Possibl
 import eu.possiblex.participantportal.business.entity.edc.contractdefinition.ContractDefinitionCreateRequest;
 import eu.possiblex.participantportal.business.entity.edc.policy.OdrlPermission;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyCreateRequest;
-import eu.possiblex.participantportal.utilities.PossibleXException;
+import eu.possiblex.participantportal.business.entity.exception.EdcOfferCreationException;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import org.mockito.ArgumentCaptor;
@@ -261,7 +261,7 @@ class ProviderServiceTest {
             .policy(offeringCs.getPolicy()).dataProtectionRegime(offeringCs.getDataProtectionRegime()).build();
 
         //when
-        assertThrows(PossibleXException.class, () -> providerService.createOffering(be));
+        assertThrows(EdcOfferCreationException.class, () -> providerService.createOffering(be));
         verify(fhCatalogClient).deleteServiceOfferingFromFhCatalog(any(), Mockito.anyBoolean());
     }
 

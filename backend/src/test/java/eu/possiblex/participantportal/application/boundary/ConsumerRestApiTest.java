@@ -10,7 +10,6 @@ import eu.possiblex.participantportal.business.control.ConsumerServiceFake;
 import eu.possiblex.participantportal.business.entity.ConsumeOfferRequestBE;
 import eu.possiblex.participantportal.business.entity.SelectOfferRequestBE;
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcessState;
-import eu.possiblex.participantportal.utilities.ExceptionHandlingFilter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
@@ -48,7 +47,7 @@ class ConsumerRestApiTest {
 
         this.mockMvc = MockMvcBuilders.standaloneSetup(
                 new ConsumerRestApiImpl(consumerService, Mappers.getMapper(ConsumerApiMapper.class)))
-            .setControllerAdvice(new BoundaryExceptionHandler()).addFilters(new ExceptionHandlingFilter()).build();
+            .setControllerAdvice(new BoundaryExceptionHandler()).build();
     }
 
     @Test

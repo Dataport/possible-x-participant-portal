@@ -13,7 +13,6 @@ import eu.possiblex.participantportal.business.entity.edc.negotiation.Negotiatio
 import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import eu.possiblex.participantportal.business.entity.edc.transfer.IonosS3TransferProcess;
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcessState;
-import eu.possiblex.participantportal.utilities.ExceptionHandlingFilter;
 import eu.possiblex.participantportal.utils.TestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -81,7 +80,7 @@ class ConsumerModuleTest {
 
         this.mockMvc = MockMvcBuilders.standaloneSetup(
                 new ConsumerRestApiImpl(consumerService, Mappers.getMapper(ConsumerApiMapper.class)))
-            .setControllerAdvice(new BoundaryExceptionHandler()).addFilters(new ExceptionHandlingFilter()).build();
+            .setControllerAdvice(new BoundaryExceptionHandler()).build();
     }
 
     @Test
