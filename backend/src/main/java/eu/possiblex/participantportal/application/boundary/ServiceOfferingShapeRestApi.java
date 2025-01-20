@@ -11,5 +11,5 @@ public interface ServiceOfferingShapeRestApi {
      * @return catalog shape
      */
     @GetMapping("/gx/serviceoffering")
-    public String getGxServiceOfferingShape();
+    String getGxServiceOfferingShape();
 }
