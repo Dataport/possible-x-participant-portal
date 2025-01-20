@@ -11,7 +11,7 @@ public interface ResourceShapeRestApi {
      * @return catalog shape
      */
     @GetMapping("/gx/resource/dataresource")
-    public String getGxDataResourceShape();
+    String getGxDataResourceShape();
 
     /**
      * GET request for retrieving the Gaia-X instantiated virtual resource shape.
@@ -19,7 +19,7 @@ public interface ResourceShapeRestApi {
      * @return catalog shape
      */
     @GetMapping("/gx/resource/instantiatedvirtualresource")
-    public String getGxInstantiatedVirtualResourceShape();
+    String getGxInstantiatedVirtualResourceShape();
 
     /**
      * GET request for retrieving the Gaia-X physical resource shape.
@@ -27,7 +27,7 @@ public interface ResourceShapeRestApi {
      * @return catalog shape
      */
     @GetMapping("/gx/resource/physicalresource")
-    public String getGxPhysicalResourceShape();
+    String getGxPhysicalResourceShape();
 
     /**
      * GET request for retrieving the Gaia-X software resource shape.
@@ -35,7 +35,7 @@ public interface ResourceShapeRestApi {
      * @return catalog shape
      */
     @GetMapping("/gx/resource/softwareresource")
-    public String getGxSoftwareResourceShape();
+    String getGxSoftwareResourceShape();
 
     /**
      * GET request for retrieving the Gaia-X virtual resource shape.
@@ -43,7 +43,7 @@ public interface ResourceShapeRestApi {
      * @return catalog shape
      */
     @GetMapping("/gx/resource/virtualresource")
-    public String getGxVirtualResourceShape();
+    String getGxVirtualResourceShape();
 
     /**
      * GET request for retrieving the Gaia-X legitimate interest shape.
@@ -51,5 +51,5 @@ public interface ResourceShapeRestApi {
      * @return catalog shape
      */
     @GetMapping("/gx/resource/legitimateinterest")
-    public String getGxLegitimateInterestShape();
+    String getGxLegitimateInterestShape();
 }
