@@ -8,7 +8,7 @@
       <div class="text-xl font-bold text-brand-400">
         Contract Agreements ({{ totalNumberOfContractAgreements }})
       </div>
-      <table (matSortChange)="sortData($event)" class="table table-fixed" matSort>
+      <table (matSortChange)="sortData($event)" class="table table-fixed" matSort #sortDirective="matSort">
         <thead>
         <tr>
           <th class="w-10">Nr.</th>
@@ -17,14 +17,14 @@
           <th class="w-1/6" mat-sort-header="provider">Provider</th>
           <th class="w-1/6" mat-sort-header="consumer">Consumer</th>
           <th class="w-1/6" mat-sort-header="contractagreementid">Contract Agreement ID</th>
-          <th class="w-1/12">Validity</th>
+          <th class="w-1/12" mat-sort-header="validity">Validity</th>
           <th class="w-32"></th>
         </tr>
         </thead>
         <tbody>
-        <ng-container *ngFor="let item of sortedAgreements; let i = index">
+        <ng-container *ngFor="let item of sortedAgreements">
           <tr>
-            <td class="overflow-clip text-nowrap text-ellipsis">{{ i + 1 }}</td>
+            <td class="overflow-clip text-nowrap text-ellipsis">{{ item.assetDetails.name }} {{ isIndexedContractAgreement(item) ? getRowNumber(item.originalIndex) : '' }}</td>
             <td [cTooltip]="item.contractSigningDate | date:'medium'"
                 class="overflow-clip text-nowrap text-ellipsis">{{ item.contractSigningDate | date:'medium' }}
             </td>
@@ -88,8 +88,8 @@
       </table>
       <mat-paginator [length]="totalNumberOfContractAgreements"
                      [pageSize]="pageSize"
-                     [pageSizeOptions]="[10, 15, 20, 25]"
                      [showFirstLastButtons]='true'
+                     [hidePageSize]='true'
                      (page)="onPageChange($event)"
                      class="custom-paginator">
       </mat-paginator>
