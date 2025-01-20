@@ -6,7 +6,7 @@
           <img alt="POSSIBLE-X Logo" width="142" src="assets/images/brand/possible_blue.svg"/>
         </a>
         <c-navbar-nav class="navbar-nav">
-          <c-nav-item *ngIf="!authToken">
+          <c-nav-item *ngIf="!this.auth.isLoggedIn()">
             <a [routerLink]="['/login']" routerLinkActive="active-tab" data-text="Login" cNavLink>Login</a>
           </c-nav-item>
           <c-nav-item>

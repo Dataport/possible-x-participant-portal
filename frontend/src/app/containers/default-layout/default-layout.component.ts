@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ApiService} from "../../services/mgmt/api/api.service";
+import {AuthService} from "../../services/mgmt/auth/auth.service";
 
 @Component({
   selector: 'app-default-layout',
@@ -9,13 +10,12 @@ import {ApiService} from "../../services/mgmt/api/api.service";
 export class DefaultLayoutComponent implements OnInit {
   versionNumber: string = '';
   versionDate: string = '';
-  authToken: string | null = null;
+  authToken: boolean = false;
 
-  constructor(private apiService: ApiService) {
+  constructor(private apiService: ApiService, protected auth: AuthService) {
   }
 
   ngOnInit() {
-    this.authToken = sessionStorage.getItem('authToken');
     this.apiService.getVersion().then(response => {
       this.versionNumber = response.version;
       this.versionDate = response.date;

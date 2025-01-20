@@ -32,10 +32,11 @@ import {
 } from '@coreui/angular';
 import { DefaultLayoutComponent } from './containers/default-layout/default-layout.component';
 import {AuthInterceptor} from "./interceptors/auth.interceptor";
+import { AuthService} from "./services/mgmt/auth/auth.service";
 
-export function initApp(nameMappingService: NameMappingService) {
+export function initApp(nameMappingService: NameMappingService, authService: AuthService) {
   return () => {
-    if (sessionStorage.getItem('authToken')) {
+    if (authService.isLoggedIn()) {
       return nameMappingService.retrieveNameMapping();
     }
     return Promise.resolve();
@@ -80,7 +81,7 @@ export function initApp(nameMappingService: NameMappingService) {
     {
       provide: APP_INITIALIZER,
       useFactory: initApp,
-      deps: [NameMappingService],
+      deps: [NameMappingService, AuthService],
       multi: true
     },
     {

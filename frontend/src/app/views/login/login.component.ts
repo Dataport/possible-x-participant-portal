@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {Router} from "@angular/router";
+import {AuthService} from "../../services/mgmt/auth/auth.service";
 
 @Component({
   selector: 'app-login',
@@ -10,11 +11,10 @@ export class LoginComponent {
   username: string = '';
   password: string = '';
 
-  constructor(private router: Router)  {}
+  constructor(private router: Router, private auth: AuthService)  {}
 
   login(username: string, password: string) {
-    var authToken = btoa(username + ':' + password);
-    sessionStorage.setItem('authToken', authToken);
+    this.auth.login(username, password);
     this.username = '';
     this.password = '';
     this.router.navigate(['/offer/provide']).then(() => {

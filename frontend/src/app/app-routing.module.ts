@@ -1,15 +1,12 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-
+import { authGuard } from './services/mgmt/auth/auth.guard';
 import { DefaultLayoutComponent } from './containers';
-
-var authToken = sessionStorage.getItem('authToken');
-var redirectTo = authToken ? 'offer/provide' : 'login';
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: redirectTo,
+    redirectTo: 'offer/provide',
     pathMatch: 'full'
   },
   {
@@ -22,7 +19,8 @@ const routes: Routes = [
       {
         path: 'offer',
         loadChildren: () =>
-          import('./views/offer/offer.module').then((m) => m.OfferModule)
+          import('./views/offer/offer.module').then((m) => m.OfferModule),
+        canActivate: [authGuard]
       },
       {
         path: 'login',
