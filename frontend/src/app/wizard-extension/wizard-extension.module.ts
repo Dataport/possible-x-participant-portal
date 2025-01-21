@@ -51,6 +51,7 @@ import {
   NGX_MAT_DATE_FORMATS,
 } from '@angular-material-components/datetime-picker';
 import { NgxMatMomentModule } from '@angular-material-components/moment-adapter';
+import { PossibleXEnforcedPolicySelectorComponent } from './offering-wizard-extension/possible-x-enforced-policy-selector/possible-x-enforced-policy-selector.component';
 
 export const MOMENT_DATETIME_WITH_SECONDS_FORMAT = 'DD/MM/YYYY, HH:mm:ss';
 
@@ -67,7 +68,7 @@ const CUSTOM_MOMENT_FORMATS: NgxMatDateFormats = {
 };
 
 @NgModule({
-  declarations: [BaseWizardExtensionComponent, OfferingWizardExtensionComponent, DataResourcePolicyHintsComponent, ServiceOfferingPolicyHintsComponent, PossibleXEnforcedPolicyHintsComponent],
+  declarations: [BaseWizardExtensionComponent, OfferingWizardExtensionComponent, DataResourcePolicyHintsComponent, ServiceOfferingPolicyHintsComponent, PossibleXEnforcedPolicyHintsComponent, PossibleXEnforcedPolicySelectorComponent],
   exports: [
     BaseWizardExtensionComponent, OfferingWizardExtensionComponent
   ],
