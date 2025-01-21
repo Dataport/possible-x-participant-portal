@@ -10,7 +10,6 @@ import {AuthService} from "../../services/mgmt/auth/auth.service";
 export class DefaultLayoutComponent implements OnInit {
   versionNumber: string = '';
   versionDate: string = '';
-  authToken: boolean = false;
 
   constructor(private apiService: ApiService, protected auth: AuthService) {
   }
