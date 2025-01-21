@@ -34,7 +34,7 @@ export class AuthInterceptor implements HttpInterceptor {
           window.location.reload();
         });
       }
-      return throwError(() => new Error(error.message));
+      return throwError(() => error);
     }));
   }
 }
