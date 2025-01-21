@@ -26,9 +26,13 @@ const routes: Routes = [
         path: 'login',
         loadChildren: () =>
           import('./views/login/login.module').then((m) => m.LoginModule)
-      }
+      },
       ]
   },
+  {
+    path: '**',
+    redirectTo: 'offer/provide'
+  }
 ];
 
 @NgModule({
