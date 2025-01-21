@@ -171,7 +171,6 @@ public class ContractServiceImpl implements ContractService {
     }
 
     private void computePolicyValidities(List<EnforcementPolicy> policies, OffsetDateTime contractAgreementTime, String providerDid) {
-
         for (EnforcementPolicy policy : policies) {
             boolean isValid = false;
             OffsetDateTime now = OffsetDateTime.now();
@@ -214,7 +213,7 @@ public class ContractServiceImpl implements ContractService {
         PxExtendedServiceOfferingCredentialSubject unknownCatalogOffering = PxExtendedServiceOfferingCredentialSubject
             .builder().id("Unknown").name("Unknown").description("Unknown").build();
 
-        if (!offeringDetails.containsKey(contractAgreement.getAssetId())) {
+        if(!offeringDetails.containsKey(contractAgreement.getAssetId())) {
             log.warn("No offer found in catalog with referenced assetId: {}", contractAgreement.getAssetId());
             offerRetrievalResponseBE = OfferRetrievalResponseBE.builder().offerRetrievalDate(OffsetDateTime.now())
                 .catalogOffering(unknownCatalogOffering).build();

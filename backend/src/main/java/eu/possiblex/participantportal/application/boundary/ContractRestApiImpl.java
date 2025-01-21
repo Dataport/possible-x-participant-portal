@@ -70,18 +70,17 @@ public class ContractRestApiImpl implements ContractRestApi {
 
     @Override
     public OfferWithTimestampTO getOfferWithTimestampByContractAgreementId(String contractAgreementId) {
-        try {
-            return contractApiMapper.offerRetrievalResponseBEToOfferWithTimestampTO(
-                contractService.getOfferDetailsByContractAgreementId(contractAgreementId));
-        } catch (OfferNotFoundException e) {
-            throw new PossibleXException("" + e,
-                HttpStatus.NOT_FOUND);
-        }
+       try {
+           return contractApiMapper.offerRetrievalResponseBEToOfferWithTimestampTO(
+               contractService.getOfferDetailsByContractAgreementId(contractAgreementId));
+       } catch (OfferNotFoundException e) {
+           throw new PossibleXException("" + e,
+               HttpStatus.NOT_FOUND);
+       }
     }
 
     @Override
     public TransferOfferResponseTO transferDataOfferAgain(@RequestBody TransferOfferRequestTO request) {
-
         TransferOfferRequestBE be = consumerApiMapper.transferOfferRequestTOToBE(request);
         TransferOfferResponseBE responseBE;
         try {
