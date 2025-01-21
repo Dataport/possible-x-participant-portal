@@ -1,6 +1,5 @@
 package eu.possiblex.participantportal.business.control;
 
-import eu.possiblex.participantportal.business.entity.ParticipantNameBE;
 import eu.possiblex.participantportal.business.entity.ParticipantWithMailBE;
 import eu.possiblex.participantportal.business.entity.fh.ParticipantDetailsSparqlQueryResult;
 import org.mapstruct.Builder;

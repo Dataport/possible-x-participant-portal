@@ -1,6 +1,6 @@
 import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import {HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi} from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -31,9 +31,16 @@ import {
   UtilitiesModule,
 } from '@coreui/angular';
 import { DefaultLayoutComponent } from './containers/default-layout/default-layout.component';
+import {AuthInterceptor} from "./interceptors/auth.interceptor";
+import { AuthService} from "./services/mgmt/auth/auth.service";
 
-export function initApp(nameMappingService: NameMappingService) {
-  return () => nameMappingService.retrieveNameMapping();
+export function initApp(nameMappingService: NameMappingService, authService: AuthService) {
+  return () => {
+    if (authService.isLoggedIn()) {
+      return nameMappingService.retrieveNameMapping();
+    }
+    return Promise.resolve();
+  };
 }
 
 @NgModule({
@@ -74,7 +81,12 @@ export function initApp(nameMappingService: NameMappingService) {
     {
       provide: APP_INITIALIZER,
       useFactory: initApp,
-      deps: [NameMappingService],
+      deps: [NameMappingService, AuthService],
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
       multi: true
     }
   ],

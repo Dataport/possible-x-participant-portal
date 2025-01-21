@@ -1,5 +1,6 @@
 package eu.possiblex.participantportal.application.boundary;
 
+import eu.possiblex.participantportal.application.configuration.AppConfigurer;
 import eu.possiblex.participantportal.application.control.ConsumerApiMapper;
 import eu.possiblex.participantportal.application.control.ContractApiMapper;
 import eu.possiblex.participantportal.business.control.*;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -19,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ContractRestApiImpl.class)
-@ContextConfiguration(classes = { ContractRestApiTest.TestConfig.class, ContractRestApiImpl.class })
+@ContextConfiguration(classes = { ContractRestApiTest.TestConfig.class, ContractRestApiImpl.class, AppConfigurer.class })
 class ContractRestApiTest {
     @Autowired
     private MockMvc mockMvc;
@@ -34,6 +36,7 @@ class ContractRestApiTest {
     private ConsumerApiMapper consumerApiMapper;
 
     @Test
+    @WithMockUser(username = "admin")
     void shouldReturnMessageOnGetContractAgreements() throws Exception {
         //when
         //then
@@ -56,6 +59,7 @@ class ContractRestApiTest {
     }
 
     @Test
+    @WithMockUser(username = "admin")
     void shouldReturnMessageOnGetContractDetailsByContractAgreementId() throws Exception {
         //when
         //then
@@ -76,6 +80,7 @@ class ContractRestApiTest {
     }
 
     @Test
+    @WithMockUser(username = "admin")
     void shouldReturnMessageOnGetOfferWithTimestampByContractAgreementId() throws Exception {
         //when
         //then

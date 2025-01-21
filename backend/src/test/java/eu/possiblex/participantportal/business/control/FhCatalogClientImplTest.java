@@ -108,7 +108,7 @@ class FhCatalogClientImplTest {
         Mockito.when(technicalFhCatalogClientMock.getFhCatalogParticipant(Mockito.anyString()))
             .thenReturn(participantContent);
         FhCatalogClientImpl sut = new FhCatalogClientImpl(technicalFhCatalogClientMock, sparqlFhCatalogClient,
-            new ObjectMapper());
+            new ObjectMapper(), "");
 
         // WHEN a participant is retrieved
 

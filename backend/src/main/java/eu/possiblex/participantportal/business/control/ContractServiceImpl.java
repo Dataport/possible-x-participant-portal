@@ -1,8 +1,10 @@
 package eu.possiblex.participantportal.business.control;
 
+import eu.possiblex.participantportal.application.entity.policies.*;
 import eu.possiblex.participantportal.business.entity.*;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.daps.OmejdnConnectorDetailsBE;
+import eu.possiblex.participantportal.business.entity.edc.catalog.QuerySpec;
 import eu.possiblex.participantportal.business.entity.edc.contractagreement.ContractAgreement;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsSparqlQueryResult;
@@ -53,7 +55,12 @@ public class ContractServiceImpl implements ContractService {
     public List<ContractAgreementBE> getContractAgreements() {
 
         List<ContractAgreementBE> contractAgreementBEs = new ArrayList<>();
-        List<ContractAgreement> contractAgreements = edcClient.queryContractAgreements();
+        List<ContractAgreement> contractAgreements = edcClient.queryContractAgreements(
+            QuerySpec.builder().limit(Integer.MAX_VALUE).build());
+
+        if (contractAgreements.isEmpty()) {
+            return Collections.emptyList();
+        }
 
         // Get all referenced assetIds from the contracts
         Set<String> referencedAssetIds = contractAgreements.stream().map(ContractAgreement::getAssetId)
@@ -182,8 +189,10 @@ public class ContractServiceImpl implements ContractService {
 
     private Map<String, String> getParticipantDids(Collection<String> participantDapsIds) {
 
-        Map<String, OmejdnConnectorDetailsBE> connectorDetails = omejdnConnectorApiClient.getConnectorDetails(
-            participantDapsIds);
+        Map<String, OmejdnConnectorDetailsBE> connectorDetails = Collections.emptyMap();
+        if (!participantDapsIds.isEmpty()) {
+            connectorDetails = omejdnConnectorApiClient.getConnectorDetails(participantDapsIds);
+        }
         Map<String, String> participantDids = new HashMap<>();
 
         for (String participantDapsId : participantDapsIds) {

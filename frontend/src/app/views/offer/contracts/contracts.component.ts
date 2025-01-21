@@ -2,8 +2,7 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {
   IContractAgreementTO,
   IContractDetailsTO,
-  IEnforcementPolicyUnion,
-  IPolicy,
+  IEnforcementPolicyUnion, IPolicy,
 } from '../../../services/mgmt/api/backend';
 import {HttpErrorResponse} from "@angular/common/http";
 import {StatusMessageComponent} from "../../common-views/status-message/status-message.component";
@@ -25,19 +24,23 @@ export class ContractsComponent implements OnInit {
   @ViewChild(("contractDetailsExportView")) public contractDetailsExportView!: ContractDetailsExportViewComponent;
   contractAgreements: IContractAgreementTO[] = [];
   sortedAgreements: IContractAgreementTO[] = [];
+  pagedItems: IContractAgreementTO[] = [];
+  pageSize = 10;
+  pageIndex = 0;
   expandedItemId: string | null = null;
   isTransferButtonDisabled = false;
   contractDetailsToExport?: IContractDetailsTO = undefined;
 
-  constructor(private apiService: ApiService, private popUpMessage: MatSnackBar) {
+  constructor(private readonly apiService: ApiService, private readonly popUpMessage: MatSnackBar) {
   }
 
   async getContractAgreements() {
     this.contractAgreements = await this.apiService.getContractAgreements();
-    this.contractAgreements = this.contractAgreements.sort((a, b) => {
+    this.contractAgreements.sort((a, b) => {
       return a.contractSigningDate > b.contractSigningDate ? -1 : 1;
     });
     this.sortedAgreements = this.contractAgreements.slice();
+    this.updatePagedItems()
   }
 
   sortData(sort: Sort) {
@@ -47,7 +50,7 @@ export class ContractsComponent implements OnInit {
       return;
     }
 
-    this.sortedAgreements = data.sort((a, b) => {
+    data.sort((a, b) => {
       const isAsc = sort.direction === 'asc';
       switch (sort.active) {
         case 'contractsigned':
@@ -60,10 +63,16 @@ export class ContractsComponent implements OnInit {
           return this.compare(a.consumerDetails.name, b.consumerDetails.name, isAsc);
         case 'contractagreementid':
           return this.compare(a.id, b.id, isAsc);
+        case 'validity':
+          return this.compare(+this.isAnyPolicyInvalid(a.enforcementPolicies), +this.isAnyPolicyInvalid(b.enforcementPolicies), isAsc);
         default:
           return 0;
       }
     });
+
+    this.sortedAgreements = data;
+    this.pageIndex = 0;
+    this.updatePagedItems()
   }
 
   compare(a: number | string | Date, b: number | string | Date, isAsc: boolean) {
@@ -161,6 +170,18 @@ export class ContractsComponent implements OnInit {
 
   shouldTransferButtonBeDisabled(item: IContractAgreementTO): boolean {
     return this.isTransferButtonDisabled || this.isAnyPolicyInvalid(item.enforcementPolicies);
+  }
+
+  onPageChange(event: any): void {
+    this.pageSize = event.pageSize;
+    this.pageIndex = event.pageIndex;
+    this.updatePagedItems();
+  }
+
+  updatePagedItems() {
+    const startIndex = this.pageIndex * this.pageSize;
+    const endIndex = startIndex + this.pageSize;
+    this.pagedItems = this.sortedAgreements.slice(startIndex, endIndex);
   }
 
   private handleGetContractAgreements() {

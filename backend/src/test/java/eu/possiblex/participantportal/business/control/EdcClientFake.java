@@ -30,6 +30,7 @@ import eu.possiblex.participantportal.business.entity.edc.asset.possible.Possibl
 import eu.possiblex.participantportal.business.entity.edc.catalog.CatalogRequest;
 import eu.possiblex.participantportal.business.entity.edc.catalog.DcatCatalog;
 import eu.possiblex.participantportal.business.entity.edc.catalog.DcatDataset;
+import eu.possiblex.participantportal.business.entity.edc.catalog.QuerySpec;
 import eu.possiblex.participantportal.business.entity.edc.common.IdResponse;
 import eu.possiblex.participantportal.business.entity.edc.contractagreement.ContractAgreement;
 import eu.possiblex.participantportal.business.entity.edc.contractdefinition.ContractDefinitionCreateRequest;
@@ -39,10 +40,7 @@ import eu.possiblex.participantportal.business.entity.edc.negotiation.Negotiatio
 import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyCreateRequest;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyTarget;
-import eu.possiblex.participantportal.business.entity.edc.transfer.DataRequest;
-import eu.possiblex.participantportal.business.entity.edc.transfer.IonosS3TransferProcess;
-import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcessState;
-import eu.possiblex.participantportal.business.entity.edc.transfer.TransferRequest;
+import eu.possiblex.participantportal.business.entity.edc.transfer.*;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.math.BigInteger;
@@ -166,12 +164,17 @@ public class EdcClientFake implements EdcClient {
     }
 
     @Override
+    public void terminateTransfer(String transferId, TerminateTransferRequest request) {
+        
+    }
+
+    @Override
     public void revokeContractDefinition(String contractDefinitionId) {
 
     }
 
     @Override
-    public List<ContractAgreement> queryContractAgreements() {
+    public List<ContractAgreement> queryContractAgreements(QuerySpec querySpec) {
 
         Policy policy = Policy.builder().target(PolicyTarget.builder().id(FAKE_ID).build()).build();
 
@@ -186,7 +189,7 @@ public class EdcClientFake implements EdcClient {
     @Override
     public ContractAgreement getContractAgreementById(String contractAgreementId) {
 
-        return queryContractAgreements().get(0);
+        return queryContractAgreements(QuerySpec.builder().build()).get(0);
     }
 
     @Override

@@ -1,0 +1,20 @@
+<div class="grid-container">
+    <br><br>
+    <div class="pb-3 text-2xl font-bold text-brand-800">
+      Login Page
+    </div>
+  <div class="text">
+    Please enter your username and password to use the participant portal.
+  </div>
+    <div class="input">
+      <label for="username" class="text">Username:</label>
+      <input type="text" id="username" [(ngModel)]="username">
+    </div>
+    <div class="input">
+      <label for="password" class="text">Password:</label>
+      <input type="password" id="password" [(ngModel)]="password">
+    </div>
+  <a (click)="login(username, password)" class="custom-button">
+    Login
+  </a>
+</div>

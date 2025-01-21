@@ -7,7 +7,6 @@ import eu.possiblex.participantportal.business.entity.CreateDataOfferingRequestB
 import eu.possiblex.participantportal.business.entity.CreateServiceOfferingRequestBE;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
  * REST controller for managing provider-related operations.
  */
 @RestController
-@CrossOrigin("*") // TODO replace this with proper CORS configuration
 @Slf4j
 public class ProviderRestApiImpl implements ProviderRestApi {
 

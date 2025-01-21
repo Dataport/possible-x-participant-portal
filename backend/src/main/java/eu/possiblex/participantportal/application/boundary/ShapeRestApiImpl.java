@@ -2,11 +2,9 @@ package eu.possiblex.participantportal.application.boundary;
 
 import eu.possiblex.participantportal.business.control.SdCreationWizardApiService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@CrossOrigin("*")
 public class ShapeRestApiImpl implements ServiceOfferingShapeRestApi, ResourceShapeRestApi {
 
     private static final String ECOSYSTEM_GAIAX = "gx";

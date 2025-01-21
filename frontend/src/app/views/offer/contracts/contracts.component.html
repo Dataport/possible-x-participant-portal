@@ -17,14 +17,16 @@
           <th class="w-1/6" mat-sort-header="provider">Provider</th>
           <th class="w-1/6" mat-sort-header="consumer">Consumer</th>
           <th class="w-1/6" mat-sort-header="contractagreementid">Contract Agreement ID</th>
-          <th class="w-1/12">Validity</th>
+          <th class="w-1/12" mat-sort-header="validity">Validity</th>
           <th class="w-32"></th>
         </tr>
         </thead>
         <tbody>
-        <ng-container *ngFor="let item of sortedAgreements; let i = index">
+        <ng-container *ngFor="let item of pagedItems; let i = index">
           <tr>
-            <td class="overflow-clip text-nowrap text-ellipsis">{{ i + 1 }}</td>
+            <td [cTooltip]="(i + 1).toString()"
+                class="overflow-clip text-nowrap text-ellipsis">{{ i + 1 }}
+            </td>
             <td [cTooltip]="item.contractSigningDate | date:'medium'"
                 class="overflow-clip text-nowrap text-ellipsis">{{ item.contractSigningDate | date:'medium' }}
             </td>
@@ -38,7 +40,7 @@
                 class="overflow-clip text-nowrap text-ellipsis">{{ item.consumerDetails.name }}
             </td>
             <td [cTooltip]="item.id" class="overflow-clip text-nowrap text-ellipsis">{{ item.id }}</td>
-            <td>
+            <td [cTooltip]="isAnyPolicyInvalid(item.enforcementPolicies) ? 'invalid' : 'valid'">
               <ng-container *ngIf="isAnyPolicyInvalid(item.enforcementPolicies); else valid">
                 <span class="text-error">invalid</span>
               </ng-container>
@@ -46,7 +48,7 @@
                 valid
               </ng-template>
             </td>
-            <td class="flex space-x-2">
+            <td class="space-x-2">
               <button (click)="toggleAccordion(item.id)" [cTooltip]="'Details'" cButton
                       class="rounded-none">
                 <mat-icon>manage_search</mat-icon>
@@ -86,6 +88,14 @@
         </ng-container>
         </tbody>
       </table>
+      <mat-paginator [length]="contractAgreements.length"
+                     [pageSize]="pageSize"
+                     [pageIndex]="pageIndex"
+                     [showFirstLastButtons]='true'
+                     [pageSizeOptions]="[5, 10, 20]"
+                     (page)="onPageChange($event)"
+                     class="custom-paginator">
+      </mat-paginator>
     </div>
   </div>
 </div>

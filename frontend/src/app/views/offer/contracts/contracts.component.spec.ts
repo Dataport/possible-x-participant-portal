@@ -13,6 +13,7 @@ import {
   IParticipantRestrictionPolicy
 } from "../../../services/mgmt/api/backend";
 import {ModalModule} from "@coreui/angular";
+import {MatPaginatorModule} from "@angular/material/paginator";
 
 describe('ContractsComponent', () => {
   let component: ContractsComponent;
@@ -23,7 +24,7 @@ describe('ContractsComponent', () => {
     const apiServiceSpy = jasmine.createSpyObj('ApiService', ['getContractAgreements', 'transferDataOfferAgain', 'getOfferWithTimestampByContractAgreementId']);
 
     await TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, MatSnackBarModule, ModalModule, BrowserAnimationsModule],
+      imports: [HttpClientTestingModule, MatSnackBarModule, ModalModule, BrowserAnimationsModule, MatPaginatorModule],
       declarations: [ContractsComponent, StatusMessageComponent, ContractDetailsExportViewComponent],
       providers: [{ provide: ApiService, useValue: apiServiceSpy }]
     }).compileComponents();

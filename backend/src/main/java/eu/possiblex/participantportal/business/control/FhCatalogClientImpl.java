@@ -35,23 +35,25 @@ import java.util.function.UnaryOperator;
 @Slf4j
 public class FhCatalogClientImpl implements FhCatalogClient {
 
-    private static final String PARTICIPANT_URI_PREFIX = "https://piveau.io/set/resource/legal-participant/";
-
     private final TechnicalFhCatalogClient technicalFhCatalogClient;
 
     private final SparqlFhCatalogClient sparqlFhCatalogClient;
 
     private final ObjectMapper objectMapper;
 
+    private final String participantUriPrefix;
+
     @Value("${participant-id}")
     private String participantId;
 
     public FhCatalogClientImpl(@Autowired TechnicalFhCatalogClient technicalFhCatalogClient,
-        @Autowired SparqlFhCatalogClient sparqlFhCatalogClient, @Autowired ObjectMapper objectMapper) {
+        @Autowired SparqlFhCatalogClient sparqlFhCatalogClient, @Autowired ObjectMapper objectMapper,
+        @Value("${fh.catalog.uri-resource-base}") String fhCatalogUriResourceBase) {
 
         this.technicalFhCatalogClient = technicalFhCatalogClient;
         this.objectMapper = objectMapper;
         this.sparqlFhCatalogClient = sparqlFhCatalogClient;
+        this.participantUriPrefix = fhCatalogUriResourceBase + "legal-participant/";
     }
 
     private static JsonDocument getFrameByType(List<String> type, Map<String, String> context) {
@@ -111,7 +113,7 @@ public class FhCatalogClientImpl implements FhCatalogClient {
         boolean participantIdsAvailable = participantDids != null && !participantDids.isEmpty();
 
         String conditionalFilterClause = participantIdsAvailable ? "FILTER(?uri IN (" + String.join(",",
-            participantDids.stream().map(id -> "<" + PARTICIPANT_URI_PREFIX + id + ">").toList()) + "))" : "";
+            participantDids.stream().map(id -> "<" + participantUriPrefix + id + ">").toList()) + "))" : "";
 
         String query = """
             PREFIX gx: <https://w3id.org/gaia-x/development#>
@@ -137,7 +139,7 @@ public class FhCatalogClientImpl implements FhCatalogClient {
         }
 
         return result.getResults().getBindings().stream()
-            .collect(HashMap::new, (map, p) -> map.put(p.getUri().replace(PARTICIPANT_URI_PREFIX, ""), p),
+            .collect(HashMap::new, (map, p) -> map.put(p.getUri().replace(participantUriPrefix, ""), p),
                 HashMap::putAll);
     }
 
