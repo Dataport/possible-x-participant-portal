@@ -3,6 +3,7 @@ import {AccordionItemComponent} from "@coreui/angular";
 import {NameMappingService} from "../../../services/mgmt/name-mapping.service";
 import moment from "moment";
 import {
+  IAgreementOffsetUnit,
   IEnforcementPolicyUnion,
   IEverythingAllowedPolicy,
   IParticipantRestrictionPolicy
@@ -14,17 +15,29 @@ import {
   styleUrls: ['./possible-x-enforced-policy-selector.component.scss']
 })
 export class PossibleXEnforcedPolicySelectorComponent implements AfterViewInit {
-  isContractBookingPolicyChecked: boolean = false;
-  contractBookingPolicyIds: string[] = [''];
-  isContractValidityStartPolicyChecked: boolean = false;
-  contractValidityStartDate: Date = undefined;
-  isContractValidityEndPolicyChecked: boolean = false;
-  contractValidityEndDate: Date = undefined;
   nameMapping: { [key: string]: string } = {};
   sortedIds: string[] = [];
+  isParticipantRestrictionPolicyChecked: boolean = false;
+  participantRestrictionPolicyIds: string[] = [''];
+  isStartDatePolicyDisabled: boolean = false;
+  isStartDatePolicyChecked: boolean = false;
+  startDate: Date = undefined;
+  isEndDatePolicyDisabled: boolean = false;
+  isEndDatePolicyChecked: boolean = false;
+  endDate: Date = undefined;
+  isStartAgreementOffsetPolicyDisabled: boolean = false;
+  isStartAgreementOffsetPolicyChecked: boolean = false;
+  startAgreementOffset: number = undefined;
+  startAgreementOffsetUnit: IAgreementOffsetUnit = undefined;
+  isEndAgreementOffsetPolicyDisabled: boolean = false;
+  isEndAgreementOffsetPolicyChecked: boolean = false;
+  endAgreementOffset: number = undefined;
+  endAgreementOffsetUnit: IAgreementOffsetUnit = undefined;
   @ViewChild('accordionItem1') accordionItem1!: AccordionItemComponent;
   @ViewChild('accordionItem2') accordionItem2!: AccordionItemComponent;
   @ViewChild('accordionItem3') accordionItem3!: AccordionItemComponent;
+  @ViewChild('accordionItem4') accordionItem4!: AccordionItemComponent;
+  @ViewChild('accordionItem5') accordionItem5!: AccordionItemComponent;
 
   constructor(
     private readonly nameMappingService: NameMappingService, private readonly cdr: ChangeDetectorRef
@@ -41,20 +54,37 @@ export class PossibleXEnforcedPolicySelectorComponent implements AfterViewInit {
     this.cdr.detectChanges();
   }
 
-  protected get isInvalidContractBookingPolicy(): boolean {
-    return this.isContractBookingPolicyChecked && this.contractBookingPolicyIds.some(id => !this.isFieldFilled(id));
+  protected get isInvalidParticipantRestrictionPolicy(): boolean {
+    return this.isParticipantRestrictionPolicyChecked && this.participantRestrictionPolicyIds.some(id => !this.isFieldFilled(id));
   }
 
-  protected get isInvalidContractValidityStartPolicy(): boolean {
-    return this.isContractValidityStartPolicyChecked && !this.isValidDate(this.contractValidityStartDate);
+  protected get isInvalidStartDatePolicy(): boolean {
+    return this.isStartDatePolicyChecked && !this.isValidDate(this.startDate);
   }
 
-  protected get isInvalidContractValidityEndPolicy(): boolean {
-    return this.isContractValidityEndPolicyChecked && !this.isValidDate(this.contractValidityEndDate);
+  protected get isInvalidEndDatePolicy(): boolean {
+    return this.isEndDatePolicyChecked && !this.isValidDate(this.endDate);
+  }
+
+  protected get isInvalidStartAgreementOffsetPolicy(): boolean {
+    return this.isStartAgreementOffsetPolicyChecked && (!this.isValidOffset(this.startAgreementOffset) || !this.isValidOffsetUnit(this.startAgreementOffsetUnit));
+  }
+
+  protected get isInvalidEndAgreementOffsetPolicy(): boolean {
+    return this.isEndAgreementOffsetPolicyChecked && (!this.isValidOffset(this.endAgreementOffset) || !this.isValidOffsetUnit(this.endAgreementOffsetUnit));
   }
 
   public get isAnyPolicyInvalid(): boolean {
-    return this.isInvalidContractBookingPolicy || this.isInvalidContractValidityStartPolicy || this.isInvalidContractValidityEndPolicy;
+    return this.isInvalidParticipantRestrictionPolicy || this.isInvalidStartDatePolicy || this.isInvalidEndDatePolicy
+      || this.isInvalidStartAgreementOffsetPolicy || this.isInvalidEndAgreementOffsetPolicy;
+  }
+
+  protected isValidOffset(offset: number): boolean {
+    return offset != null && Number.isFinite(offset) && offset >= 0;
+  }
+
+  protected isValidOffsetUnit(unit: IAgreementOffsetUnit): boolean {
+    return unit != null && ["s", "m", "h", "d"].includes(unit);
   }
 
   protected isValidDate(date: Date): boolean {
@@ -73,16 +103,17 @@ export class PossibleXEnforcedPolicySelectorComponent implements AfterViewInit {
   }
 
   protected get isAnyPolicyChecked(): boolean {
-    return this.isContractBookingPolicyChecked || this.isContractValidityStartPolicyChecked || this.isContractValidityEndPolicyChecked;
+    return this.isParticipantRestrictionPolicyChecked || this.isStartDatePolicyChecked || this.isEndDatePolicyChecked
+      || this.isStartAgreementOffsetPolicyChecked || this.isEndAgreementOffsetPolicyChecked;
   }
 
   protected addInput(): void {
-    this.contractBookingPolicyIds.push('');
+    this.participantRestrictionPolicyIds.push('');
   }
 
   protected removeInput(index: number): void {
-    if (this.contractBookingPolicyIds.length > 1) {
-      this.contractBookingPolicyIds.splice(index, 1);
+    if (this.participantRestrictionPolicyIds.length > 1) {
+      this.participantRestrictionPolicyIds.splice(index, 1);
     }
   }
 
@@ -115,6 +146,36 @@ export class PossibleXEnforcedPolicySelectorComponent implements AfterViewInit {
     }
   }
 
+  protected computeCheckBoxStates() {
+    if (this.isStartDatePolicyChecked) {
+      this.isStartDatePolicyDisabled = false;
+      this.isEndDatePolicyDisabled = false;
+      this.isEndAgreementOffsetPolicyDisabled = true; // Term of Contract
+      this.isStartAgreementOffsetPolicyDisabled = true; // Term until Valid
+    }
+
+    if (this.isEndDatePolicyChecked) {
+      this.isStartDatePolicyDisabled = false;
+      this.isEndDatePolicyDisabled = false;
+      this.isEndAgreementOffsetPolicyDisabled = true; // Term of Contract
+      this.isStartAgreementOffsetPolicyDisabled = false; // Term until Valid
+    }
+
+    if (this.isEndAgreementOffsetPolicyChecked) {
+      this.isStartDatePolicyDisabled = true;
+      this.isEndDatePolicyDisabled = true;
+      this.isEndAgreementOffsetPolicyDisabled = false; // Term of Contract
+      this.isStartAgreementOffsetPolicyDisabled = true; // Term until Valid
+    }
+
+    if (this.isStartAgreementOffsetPolicyChecked) {
+      this.isStartDatePolicyDisabled = true;
+      this.isEndDatePolicyDisabled = false;
+      this.isEndAgreementOffsetPolicyDisabled = true; // Term of Contract
+      this.isStartAgreementOffsetPolicyDisabled = false; // Term until Valid
+    }
+  }
+
   public getPolicies(): IEnforcementPolicyUnion[] {
     let policies: IEnforcementPolicyUnion[] = [];
 
@@ -123,24 +184,24 @@ export class PossibleXEnforcedPolicySelectorComponent implements AfterViewInit {
         "@type": "EverythingAllowedPolicy"
       } as IEverythingAllowedPolicy);
     } else {
-      if (this.isContractBookingPolicyChecked) {
+      if (this.isParticipantRestrictionPolicyChecked) {
         policies.push({
           "@type": "ParticipantRestrictionPolicy",
-          allowedParticipants: Array.from(new Set(this.contractBookingPolicyIds))
+          allowedParticipants: Array.from(new Set(this.participantRestrictionPolicyIds))
         } as IParticipantRestrictionPolicy);
       }
 
-      if (this.isContractValidityStartPolicyChecked) {
+      if (this.isStartDatePolicyChecked) {
         policies.push({
           "@type": "StartDatePolicy",
-          date: this.contractValidityStartDate.toISOString()
+          date: this.startDate.toISOString()
         } as any);
       }
 
-      if (this.isContractValidityEndPolicyChecked) {
+      if (this.isEndDatePolicyChecked) {
         policies.push({
           "@type": "EndDatePolicy",
-          date: this.contractValidityEndDate.toISOString()
+          date: this.endDate.toISOString()
         } as any);
       }
     }
@@ -152,15 +213,27 @@ export class PossibleXEnforcedPolicySelectorComponent implements AfterViewInit {
     this.accordionItem1.visible = false;
     this.accordionItem2.visible = false;
     this.accordionItem3.visible = false;
+    this.accordionItem4.visible = false;
+    this.accordionItem5.visible = false;
   }
 
   public resetEnforcementPolicyForm() {
-    this.isContractBookingPolicyChecked = false;
-    this.contractBookingPolicyIds = [''];
-    this.isContractValidityStartPolicyChecked = false;
-    this.contractValidityStartDate = undefined;
-    this.isContractValidityEndPolicyChecked = false;
-    this.contractValidityEndDate = undefined;
+    this.isParticipantRestrictionPolicyChecked = false;
+    this.participantRestrictionPolicyIds = [''];
+    this.isStartDatePolicyDisabled = false;
+    this.isStartDatePolicyChecked = false;
+    this.startDate = undefined;
+    this.isEndDatePolicyDisabled = false;
+    this.isEndDatePolicyChecked = false;
+    this.endDate = undefined;
+    this.isStartAgreementOffsetPolicyDisabled = false;
+    this.isStartAgreementOffsetPolicyChecked = false;
+    this.startAgreementOffset = undefined;
+    this.startAgreementOffsetUnit = undefined;
+    this.isEndAgreementOffsetPolicyDisabled = false;
+    this.isEndAgreementOffsetPolicyChecked = false;
+    this.endAgreementOffset = undefined;
+    this.endAgreementOffsetUnit = undefined;
     this.resetAccordion();
   }
 }

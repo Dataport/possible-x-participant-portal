@@ -8,7 +8,7 @@
     <ng-template cTemplateId="accordionHeaderTemplate">
       <div class="accordion-header" (click)="accordionItem1.toggleItem()">
         <label> Restrict the contractual booking to organization(s)</label>
-        <mat-checkbox [(ngModel)]="isContractBookingPolicyChecked" (click)="handleCheckboxClick($event, 'isContractBookingPolicyChecked', accordionItem1)"></mat-checkbox>
+        <mat-checkbox [(ngModel)]="isParticipantRestrictionPolicyChecked" (click)="handleCheckboxClick($event, 'isParticipantRestrictionPolicyChecked', accordionItem1)"></mat-checkbox>
       </div>
     </ng-template>
     <ng-template cTemplateId="accordionBody">
@@ -16,9 +16,9 @@
         <div cFormText style="color: #7f7f7f;">
           Please select the organization(s).
         </div>
-        <div *ngFor="let id of contractBookingPolicyIds; let i = index; trackBy:customTrackBy" class="flex flex-col space-y-2">
+        <div *ngFor="let id of participantRestrictionPolicyIds; let i = index; trackBy:customTrackBy" class="flex flex-col space-y-2">
           <div class="flex items-center space-x-2">
-            <select [(ngModel)]="contractBookingPolicyIds[i]" required class="form-select">
+            <select [(ngModel)]="participantRestrictionPolicyIds[i]" required class="form-select">
               <option *ngFor="let id of sortedIds" [value]="id">{{ getNameIdStringById(id) }}</option>
             </select>
             <button (click)="addInput()" *ngIf="i === 0" cButton color="primary" size="sm" variant="ghost">
@@ -28,7 +28,7 @@
               <svg cIcon class="" name="cil-trash" size="xl"></svg>
             </button>
           </div>
-          <div *ngIf="!isFieldFilled(contractBookingPolicyIds[i])" style="color: red">
+          <div *ngIf="!isFieldFilled(participantRestrictionPolicyIds[i])" style="color: red">
             <small>
               Please select an organization.
             </small>
@@ -41,7 +41,7 @@
     <ng-template cTemplateId="accordionHeaderTemplate">
       <div class="accordion-header"  (click)="accordionItem2.toggleItem()">
         <label> Restrict contract validity - start of contract</label>
-        <mat-checkbox [(ngModel)]="isContractValidityStartPolicyChecked" (click)="handleCheckboxClick($event, 'isContractValidityStartPolicyChecked', accordionItem2)"></mat-checkbox>
+        <mat-checkbox [disabled]="true" [(ngModel)]="isStartDatePolicyChecked" (click)="handleCheckboxClick($event, 'isStartDatePolicyChecked', accordionItem2)"></mat-checkbox>
       </div>
     </ng-template>
     <ng-template cTemplateId="accordionBody">
@@ -52,7 +52,7 @@
         <div class="flex flex-col space-y-2">
           <mat-form-field>
             <mat-label>Select the date</mat-label>
-            <input [ngxMatDatetimePicker]="picker" matInput [(ngModel)]="contractValidityStartDate">
+            <input [ngxMatDatetimePicker]="picker" matInput [(ngModel)]="startDate">
             <mat-hint>DD/MM/YYYY, HH:MM:SS</mat-hint>
             <mat-datepicker-toggle [for]="$any(picker)" matIconSuffix></mat-datepicker-toggle>
             <ngx-mat-datetime-picker [showSeconds]="true" #picker>
@@ -63,7 +63,7 @@
               </ngx-mat-datepicker-actions>
             </ngx-mat-datetime-picker>
           </mat-form-field>
-          <div *ngIf="!isValidDate(contractValidityStartDate)" style="color: red">
+          <div *ngIf="!isValidDate(startDate)" style="color: red">
             <small>
               Please select a start date.
             </small>
@@ -76,7 +76,7 @@
     <ng-template cTemplateId="accordionHeaderTemplate">
       <div class="accordion-header"  (click)="accordionItem3.toggleItem()">
         <label> Restrict contract validity - end of contract</label>
-        <mat-checkbox [(ngModel)]="isContractValidityEndPolicyChecked" (click)="handleCheckboxClick($event, 'isContractValidityEndPolicyChecked', accordionItem3)"></mat-checkbox>
+        <mat-checkbox [(ngModel)]="isEndDatePolicyChecked" (click)="handleCheckboxClick($event, 'isEndDatePolicyChecked', accordionItem3)"></mat-checkbox>
       </div>
     </ng-template>
     <ng-template cTemplateId="accordionBody">
@@ -87,7 +87,7 @@
         <div class="flex flex-col space-y-2">
           <mat-form-field>
             <mat-label>Select the date</mat-label>
-            <input [ngxMatDatetimePicker]="picker" matInput [(ngModel)]="contractValidityEndDate">
+            <input [ngxMatDatetimePicker]="picker" matInput [(ngModel)]="endDate">
             <mat-hint>DD/MM/YYYY, HH:MM:SS</mat-hint>
             <mat-datepicker-toggle [for]="$any(picker)" matIconSuffix></mat-datepicker-toggle>
             <ngx-mat-datetime-picker [showSeconds]="true" #picker>
@@ -98,7 +98,7 @@
               </ngx-mat-datepicker-actions>
             </ngx-mat-datetime-picker>
           </mat-form-field>
-          <div *ngIf="!isValidDate(contractValidityEndDate)" style="color: red">
+          <div *ngIf="!isValidDate(endDate)" style="color: red">
             <small>
               Please select an end date.
             </small>
@@ -108,7 +108,7 @@
     </ng-template>
   </c-accordion-item>
 </c-accordion>
-<div *ngIf="this.isInvalidContractBookingPolicy || this.isInvalidContractValidityStartPolicy || this.isInvalidContractValidityEndPolicy" style="color: red">
+<div *ngIf="this.isInvalidParticipantRestrictionPolicy || this.isInvalidStartDatePolicy || this.isInvalidEndDatePolicy" style="color: red">
   <small>
     Please check the selected POSSIBLE-X enforced policies.
   </small>
