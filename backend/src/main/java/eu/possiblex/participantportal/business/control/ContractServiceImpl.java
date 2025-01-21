@@ -1,18 +1,10 @@
 package eu.possiblex.participantportal.business.control;
 
-import eu.possiblex.participantportal.application.entity.policies.EndAgreementOffsetPolicy;
-import eu.possiblex.participantportal.application.entity.policies.EndDatePolicy;
-import eu.possiblex.participantportal.application.entity.policies.EnforcementPolicy;
-import eu.possiblex.participantportal.application.entity.policies.EverythingAllowedPolicy;
-import eu.possiblex.participantportal.application.entity.policies.ParticipantRestrictionPolicy;
-import eu.possiblex.participantportal.application.entity.policies.StartAgreementOffsetPolicy;
-import eu.possiblex.participantportal.application.entity.policies.StartDatePolicy;
-import eu.possiblex.participantportal.application.entity.policies.TimeAgreementOffsetPolicy;
+import eu.possiblex.participantportal.application.entity.policies.*;
 import eu.possiblex.participantportal.business.entity.*;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.daps.OmejdnConnectorDetailsBE;
 import eu.possiblex.participantportal.business.entity.edc.catalog.QuerySpec;
-import eu.possiblex.participantportal.business.entity.edc.catalog.SortOrder;
 import eu.possiblex.participantportal.business.entity.edc.contractagreement.ContractAgreement;
 import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
@@ -66,7 +58,12 @@ public class ContractServiceImpl implements ContractService {
     public List<ContractAgreementBE> getContractAgreements() {
 
         List<ContractAgreementBE> contractAgreementBEs = new ArrayList<>();
-        List<ContractAgreement> contractAgreements = edcClient.queryContractAgreements(QuerySpec.builder().limit(Integer.MAX_VALUE).build());
+        List<ContractAgreement> contractAgreements = edcClient.queryContractAgreements(
+            QuerySpec.builder().limit(Integer.MAX_VALUE).build());
+
+        if (contractAgreements.isEmpty()) {
+            return Collections.emptyList();
+        }
 
         // Get all referenced assetIds from the contracts
         Set<String> referencedAssetIds = contractAgreements.stream().map(ContractAgreement::getAssetId)
@@ -98,32 +95,32 @@ public class ContractServiceImpl implements ContractService {
         contractAgreements.forEach(c -> contractAgreementBEs.add(ContractAgreementBE.builder().contractAgreement(c)
             .isProvider(participantId.equals(participantDidMap.getOrDefault(c.getProviderId(), "")))
             .isDataOffering(offeringDetails.getOrDefault(c.getAssetId(), unknownOffering).getAggregationOf() != null)
-            .enforcementPolicies(getEnforcementPoliciesWithValidity(
-                List.of(c.getPolicy()),
-                c.getContractSigningDate(),
-                participantDidMap.getOrDefault(c.getProviderId(), "")))
-            .offeringDetails(OfferingDetailsBE.builder().assetId(c.getAssetId())
-                .offeringId(offeringDetails.getOrDefault(c.getAssetId(), unknownOffering).getUri())
-                .name(offeringDetails.getOrDefault(c.getAssetId(), unknownOffering).getName())
-                .description(offeringDetails.getOrDefault(c.getAssetId(), unknownOffering).getDescription()).build())
-            .consumerDetails(
-                ParticipantWithDapsBE.builder().dapsId(c.getConsumerId()).did(participantDidMap.getOrDefault(c.getConsumerId(), ""))
-                    .name(participantNames.getOrDefault(participantDidMap.getOrDefault(c.getConsumerId(), ""),
+            .enforcementPolicies(getEnforcementPoliciesWithValidity(List.of(c.getPolicy()), c.getContractSigningDate(),
+                participantDidMap.getOrDefault(c.getProviderId(), ""))).offeringDetails(
+                OfferingDetailsBE.builder().assetId(c.getAssetId())
+                    .offeringId(offeringDetails.getOrDefault(c.getAssetId(), unknownOffering).getUri())
+                    .name(offeringDetails.getOrDefault(c.getAssetId(), unknownOffering).getName())
+                    .description(offeringDetails.getOrDefault(c.getAssetId(), unknownOffering).getDescription())
+                    .build()).consumerDetails(ParticipantWithDapsBE.builder().dapsId(c.getConsumerId())
+                .did(participantDidMap.getOrDefault(c.getConsumerId(), "")).name(
+                    participantNames.getOrDefault(participantDidMap.getOrDefault(c.getConsumerId(), ""),
                         unknownParticipant).getName()).build()).providerDetails(
-                ParticipantWithDapsBE.builder().dapsId(c.getProviderId()).did(participantDidMap.getOrDefault(c.getProviderId(), ""))
-                    .name(participantNames.getOrDefault(participantDidMap.getOrDefault(c.getProviderId(), ""),
-                        unknownParticipant).getName()).build()).build()));
+                ParticipantWithDapsBE.builder().dapsId(c.getProviderId())
+                    .did(participantDidMap.getOrDefault(c.getProviderId(), "")).name(
+                        participantNames.getOrDefault(participantDidMap.getOrDefault(c.getProviderId(), ""),
+                            unknownParticipant).getName()).build()).build()));
 
         return contractAgreementBEs;
     }
 
     @Override
     public ContractDetailsBE getContractDetailsByContractAgreementId(String contractAgreementId) {
+
         ContractAgreement contractAgreement = edcClient.getContractAgreementById(contractAgreementId);
 
         // build a map of consumer and provider daps ids to dids
-        Map<String, String> participantDidMap = getParticipantDids(List.of(contractAgreement.getConsumerId(),
-            contractAgreement.getProviderId()));
+        Map<String, String> participantDidMap = getParticipantDids(
+            List.of(contractAgreement.getConsumerId(), contractAgreement.getProviderId()));
 
         // build a map of consumer and provider dids to participant names
         Map<String, ParticipantDetailsSparqlQueryResult> participantNames = fhCatalogClient.getParticipantDetailsByIds(
@@ -139,43 +136,48 @@ public class ContractServiceImpl implements ContractService {
 
         return ContractDetailsBE.builder().contractAgreement(contractAgreement)
             .isDataOffering(offerRetrievalResponseBE.getCatalogOffering().getAggregationOf() != null)
-            .enforcementPolicies(getEnforcementPoliciesWithValidity(
-                List.of(contractAgreement.getPolicy()),
+            .enforcementPolicies(getEnforcementPoliciesWithValidity(List.of(contractAgreement.getPolicy()),
                 contractAgreement.getContractSigningDate(),
                 participantDidMap.getOrDefault(contractAgreement.getProviderId(), "")))
-            .offeringDetails(offerRetrievalResponseBE)
-            .consumerDetails(
-                ParticipantWithDapsBE.builder().dapsId(contractAgreement.getConsumerId()).did(participantDidMap.getOrDefault(contractAgreement.getConsumerId(), ""))
-                    .name(participantNames.getOrDefault(participantDidMap.getOrDefault(contractAgreement.getConsumerId(), ""),
-                        unknownParticipant).getName()).build())
-            .providerDetails(
-                ParticipantWithDapsBE.builder().dapsId(contractAgreement.getProviderId()).did(participantDidMap.getOrDefault(contractAgreement.getProviderId(), ""))
-                    .name(participantNames.getOrDefault(participantDidMap.getOrDefault(contractAgreement.getProviderId(), ""),
-                        unknownParticipant).getName()).build()).build();
+            .offeringDetails(offerRetrievalResponseBE).consumerDetails(
+                ParticipantWithDapsBE.builder().dapsId(contractAgreement.getConsumerId())
+                    .did(participantDidMap.getOrDefault(contractAgreement.getConsumerId(), "")).name(
+                        participantNames.getOrDefault(participantDidMap.getOrDefault(contractAgreement.getConsumerId(), ""),
+                            unknownParticipant).getName()).build()).providerDetails(
+                ParticipantWithDapsBE.builder().dapsId(contractAgreement.getProviderId())
+                    .did(participantDidMap.getOrDefault(contractAgreement.getProviderId(), "")).name(
+                        participantNames.getOrDefault(participantDidMap.getOrDefault(contractAgreement.getProviderId(), ""),
+                            unknownParticipant).getName()).build()).build();
 
     }
 
     @Override
     public OfferRetrievalResponseBE getOfferDetailsByContractAgreementId(String contractAgreementId) {
+
         ContractAgreement contractAgreement = edcClient.getContractAgreementById(contractAgreementId);
         return getOfferRetrievalResponseBE(contractAgreement);
     }
 
-    private List<EnforcementPolicy> getEnforcementPoliciesWithValidity(List<Policy> edcPolicies, BigInteger contractSigningDate, String providerDid) {
-        List<EnforcementPolicy> enforcementPolicies = consumerService.getEnforcementPoliciesFromEdcPolicies(edcPolicies);
-        computePolicyValidities(
-            enforcementPolicies,
+    private List<EnforcementPolicy> getEnforcementPoliciesWithValidity(List<Policy> edcPolicies,
+        BigInteger contractSigningDate, String providerDid) {
+
+        List<EnforcementPolicy> enforcementPolicies = consumerService.getEnforcementPoliciesFromEdcPolicies(
+            edcPolicies);
+        computePolicyValidities(enforcementPolicies,
             OffsetDateTime.ofInstant(Instant.ofEpochMilli(contractSigningDate.longValue()), ZoneId.systemDefault()),
             providerDid);
         return enforcementPolicies;
     }
 
-    private void computePolicyValidities(List<EnforcementPolicy> policies, OffsetDateTime contractAgreementTime, String providerDid) {
+    private void computePolicyValidities(List<EnforcementPolicy> policies, OffsetDateTime contractAgreementTime,
+        String providerDid) {
+
         for (EnforcementPolicy policy : policies) {
             boolean isValid = false;
             OffsetDateTime now = OffsetDateTime.now();
             if (policy instanceof ParticipantRestrictionPolicy participantRestrictionPolicy) {
-                isValid = providerDid.equals(participantId) || participantRestrictionPolicy.getAllowedParticipants().contains(participantId);
+                isValid = providerDid.equals(participantId) || participantRestrictionPolicy.getAllowedParticipants()
+                    .contains(participantId);
             } else if (policy instanceof StartDatePolicy startDatePolicy) {
                 isValid = startDatePolicy.getDate().isBefore(now);
             } else if (policy instanceof EndDatePolicy endDatePolicy) {
@@ -196,6 +198,7 @@ public class ContractServiceImpl implements ContractService {
     }
 
     private Duration getOffsetFromTimeAgreementOffsetPolicy(TimeAgreementOffsetPolicy policy) {
+
         return switch (policy.getOffsetUnit()) {
             case DAYS -> Duration.ofDays(policy.getOffsetNumber());
             case HOURS -> Duration.ofHours(policy.getOffsetNumber());
@@ -210,10 +213,10 @@ public class ContractServiceImpl implements ContractService {
             List.of(contractAgreement.getAssetId()));
 
         OfferRetrievalResponseBE offerRetrievalResponseBE;
-        PxExtendedServiceOfferingCredentialSubject unknownCatalogOffering = PxExtendedServiceOfferingCredentialSubject
-            .builder().id("Unknown").name("Unknown").description("Unknown").build();
+        PxExtendedServiceOfferingCredentialSubject unknownCatalogOffering = PxExtendedServiceOfferingCredentialSubject.builder()
+            .id("Unknown").name("Unknown").description("Unknown").build();
 
-        if(!offeringDetails.containsKey(contractAgreement.getAssetId())) {
+        if (!offeringDetails.containsKey(contractAgreement.getAssetId())) {
             log.warn("No offer found in catalog with referenced assetId: {}", contractAgreement.getAssetId());
             offerRetrievalResponseBE = OfferRetrievalResponseBE.builder().offerRetrievalDate(OffsetDateTime.now())
                 .catalogOffering(unknownCatalogOffering).build();
@@ -237,8 +240,10 @@ public class ContractServiceImpl implements ContractService {
 
     private Map<String, String> getParticipantDids(Collection<String> participantDapsIds) {
 
-        Map<String, OmejdnConnectorDetailsBE> connectorDetails = omejdnConnectorApiClient.getConnectorDetails(
-            participantDapsIds);
+        Map<String, OmejdnConnectorDetailsBE> connectorDetails = Collections.emptyMap();
+        if (!participantDapsIds.isEmpty()) {
+            connectorDetails = omejdnConnectorApiClient.getConnectorDetails(participantDapsIds);
+        }
         Map<String, String> participantDids = new HashMap<>();
 
         for (String participantDapsId : participantDapsIds) {

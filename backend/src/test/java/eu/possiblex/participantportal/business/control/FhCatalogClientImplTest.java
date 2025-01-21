@@ -110,7 +110,7 @@ class FhCatalogClientImplTest {
         Mockito.when(technicalFhCatalogClientMock.getFhCatalogParticipant(Mockito.anyString()))
             .thenReturn(participantContent);
         FhCatalogClientImpl sut = new FhCatalogClientImpl(technicalFhCatalogClientMock, sparqlFhCatalogClient,
-            new ObjectMapper());
+            new ObjectMapper(), "");
 
         // WHEN a participant is retrieved
 
@@ -127,7 +127,8 @@ class FhCatalogClientImplTest {
     @Test
     void parseSparqlDataOfferCorrectly() {
 
-        String sparqlResponse = TestUtils.loadTextFile("unit_tests/FHCatalogClientImplTest/validSparqlResultOffer.json");
+        String sparqlResponse = TestUtils.loadTextFile(
+            "unit_tests/FHCatalogClientImplTest/validSparqlResultOffer.json");
 
         reset(technicalFhCatalogClient);
         reset(sparqlFhCatalogClient);
@@ -150,7 +151,8 @@ class FhCatalogClientImplTest {
     @Test
     void parseSparqlParticipantCorrectly() {
 
-        String sparqlResponse = TestUtils.loadTextFile("unit_tests/FHCatalogClientImplTest/validSparqlResultParticipant.json");
+        String sparqlResponse = TestUtils.loadTextFile(
+            "unit_tests/FHCatalogClientImplTest/validSparqlResultParticipant.json");
 
         reset(technicalFhCatalogClient);
         reset(sparqlFhCatalogClient);

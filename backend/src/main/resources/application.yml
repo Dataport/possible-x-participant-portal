@@ -26,9 +26,10 @@ springdoc:
 fh:
   catalog:
     repo:
-      url: http://localhost:5081
+      url: http://localhost:5081/
     sparql:
       url: http://localhost:8890/sparql/
+    uri-resource-base: http://localhost:5081/resources/
     secret-key: yourRepoApiKey
 
 sd-creation-wizard-api:

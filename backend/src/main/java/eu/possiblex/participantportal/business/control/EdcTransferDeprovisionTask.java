@@ -19,6 +19,7 @@ package eu.possiblex.participantportal.business.control;
 import eu.possiblex.participantportal.business.entity.edc.transfer.TerminateTransferRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 public class EdcTransferDeprovisionTask implements Runnable {
 
@@ -38,10 +39,12 @@ public class EdcTransferDeprovisionTask implements Runnable {
     public void run() {
 
         logger.info("Deprovisioning transfer with id {}", transferId);
-        
+
         try {
             this.edcClient.terminateTransfer(this.transferId,
                 TerminateTransferRequest.builder().reason("Transfer timed out.").build());
+        } catch (WebClientResponseException.Conflict e) {
+            logger.info("Did not terminate transfer with id {} as it is already in some terminated state", transferId);
         } catch (Exception e) {
             logger.error("Failed to terminate transfer with id {}", transferId, e);
         }
