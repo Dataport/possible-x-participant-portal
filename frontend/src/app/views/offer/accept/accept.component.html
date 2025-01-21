@@ -1,28 +1,10 @@
-<div class="flex justify-between w-full max-w-3xl mb-6 bg-white">
+<div class="mb-6 bg-white">
   <div class="font-bold text-lg text-brand-800 p-3">
     {{ offer?.catalogOffering["schema:name"] }}
   </div>
 </div>
 
-<div class="flex justify-between mb-3">
-  <app-status-message
-    #retrieveConsumerDetailsMessage
-    [errorMessage]="'Consumer details retrieval failed.'"
-    [infoMessage]="'Consumer details retrieval ongoing.'"
-    [successMessage]="'Consumer details retrieval successful.'">
-  </app-status-message>
-</div>
-
-<div class="flex justify-between mb-3">
-  <app-status-message
-    #retrieveProviderDetailsMessage
-    [errorMessage]="'Provider details retrieval failed.'"
-    [infoMessage]="'Provider details retrieval ongoing.'"
-    [successMessage]="'Provider details retrieval successful.'">
-  </app-status-message>
-</div>
-
-<div class="w-full max-w-3xl pb-6">
+<div class="pb-6">
   <div #viewContainerRef></div>
   <ng-template #accordion>
     <mat-accordion multi togglePosition="before">
@@ -31,10 +13,9 @@
           <mat-panel-title class="font-bold">View contract details</mat-panel-title>
         </mat-expansion-panel-header>
         <div *ngIf="!offer.dataOffering" class="accordion-body">
-          <b>Offer ID:</b> {{ offer.catalogOffering.id }} <br/>
-          <b>Offer name:</b> {{ offer.catalogOffering["schema:name"] }} <br/>
-          <b>Provided by:</b> {{ offer.catalogOffering["gx:providedBy"].id }} <br/>
-          <b>Publisher:</b> Not implemented yet <br/>
+          <b>Offering ID:</b> {{ offer.catalogOffering.id }} <br/>
+          <b>Offering name:</b> {{ offer.catalogOffering["schema:name"] }} <br/>
+          <b>Provided by:</b> {{ getNameIdStringById(offer.catalogOffering["gx:providedBy"].id) }} <br/>
           <b>Description:</b> {{ offer.catalogOffering["schema:description"] }} <br/>
           <b>Terms & Conditions:</b> <br/>
           <ul *ngFor="let tnc of offer.catalogOffering['gx:termsAndConditions']">
@@ -64,13 +45,12 @@
           </ul>
         </div>
         <div *ngIf="offer.dataOffering" class="accordion-body">
-          <b>Offer ID:</b> {{ offer.catalogOffering.id }} <br/>
-          <b>Data Ressource Name:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["schema:name"] }} <br/>
-          <b>Provided by:</b> {{ offer.catalogOffering["gx:providedBy"].id }} <br/>
-          <b>Publisher:</b> Not implemented yet <br/>
-          <b>Data Ressource Description:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["schema:description"] }}
+          <b>Offering ID:</b> {{ offer.catalogOffering.id }} <br/>
+          <b>Data Resource Name:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["schema:name"] }} <br/>
+          <b>Provided by:</b> {{ getNameIdStringById(offer.catalogOffering["gx:providedBy"].id) }} <br/>
+          <b>Data Resource Description:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["schema:description"] }}
           <br/>
-          <b>Data Ressource Policy:</b><br/>
+          <b>Data Resource Policy:</b><br/>
           <ul *ngFor="let p of offer.catalogOffering['gx:aggregationOf'][0]['gx:policy']">
             <li>{{ p }}</li>
           </ul>
@@ -78,12 +58,16 @@
           <ul *ngFor="let l of offer.catalogOffering['gx:aggregationOf'][0]['gx:license']">
             <li>{{ l }}</li>
           </ul>
-          <b>Copyright owned by:</b>
+          <b>Copyright owned
+            by:</b>
           <ul *ngFor="let owner of offer.catalogOffering['gx:aggregationOf'][0]['gx:copyrightOwnedBy']">
-            <li>{{ owner }}</li>
+            <li>
+              {{ owner.id }}
+            </li>
           </ul>
           <br/>
-          <b>Produced by:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:producedBy"].id }} <br/>
+          <b>Produced
+            by:</b> {{ getNameIdStringById(offer.catalogOffering["gx:aggregationOf"][0]["gx:producedBy"].id) }} <br/>
           <b>Exposed through:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:exposedThrough"].id }} <br/>
           <b>Contains personal identifiable Information
             (PII):</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:containsPII"] }} <br/>
@@ -95,7 +79,7 @@
             {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:legitimateInterest"]["gx:legalBasis"] }} <br/>
           </div>
           <br/><br/>
-          <b>Offer name:</b> {{ offer.catalogOffering["schema:name"] }} <br/>
+          <b>Offering name:</b> {{ offer.catalogOffering["schema:name"] }} <br/>
           <b>Description:</b> {{ offer.catalogOffering["schema:description"] }} <br/>
           <b>Terms & Conditions:</b> <br/>
           <ul *ngFor="let tnc of offer.catalogOffering['gx:termsAndConditions']">
@@ -124,9 +108,9 @@
             </li>
           </ul>
         </div>
-        <app-enforcement-policy-view [enforcementPolicies]="offer.enforcementPolicies"/>
+        <app-enforcement-policy-accordion-view [enforcementPolicies]="offer.enforcementPolicies"/>
         <div class="flex justify-end p-3">
-          <button (click)="setTimestamp()" [cModalToggle]="'modalOfferPrintView'" cButton color="primary"
+          <button [cModalToggle]="'modalOfferPrintView'" cButton color="primary"
                   shape="rounded-0">Print View
           </button>
         </div>
@@ -138,10 +122,10 @@
           <mat-checkbox [(ngModel)]="isPoliciesAccepted" required></mat-checkbox>
         </mat-expansion-panel-header>
         <div>
-          Please accept the policies for the provided offer.
+          Please accept the policies for the provided offering.
         </div>
         <br/>
-        <app-enforcement-policy-view [enforcementPolicies]="offer.enforcementPolicies"/>
+        <app-enforcement-policy-accordion-view [enforcementPolicies]="offer.enforcementPolicies"/>
       </mat-expansion-panel>
 
       <mat-expansion-panel #termsAndConditions>
@@ -150,7 +134,7 @@
           <mat-checkbox [(ngModel)]="isTnCAccepted" required></mat-checkbox>
         </mat-expansion-panel-header>
         <div>
-          Please accept the Terms and Conditions for the provided offer.
+          Please accept the Terms and Conditions for the provided offering.
         </div>
         <br/>
         <b>Terms & Conditions:</b>
@@ -170,7 +154,7 @@
   </ng-template>
 </div>
 
-<div class="w-full max-w-3xl">
+<div>
   <div class="flex justify-between">
     <button (click)="cancel()" cButton color="secondary" shape="rounded-0">
       Cancel
@@ -191,5 +175,4 @@
   </div>
 </div>
 
-<app-offer-print-view [consumerDetails]="consumerDetails" [offer]="offer"
-                      [printTimestamp]="printTimestamp" [providerDetails]="providerDetails"></app-offer-print-view>
+<app-offer-print-view [offer]="offer"></app-offer-print-view>

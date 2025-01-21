@@ -1,20 +1,22 @@
 .headerWrapper {
-    @apply bg-white;
+  @apply bg-white;
+  height: 8vh;
+}
+
+.header {
+  @apply flex items-end justify-between;
+  @apply container fixed max-w-screen-4xl px-8 py-4 xl:px-20;
+  z-index: 998;
+
+  .logo {
+    @apply flex flex-shrink-0 items-baseline;
+    margin-right:1rem;
   }
 
-  .header {
-    @apply flex items-end justify-between;
-    @apply container max-w-screen-4xl px-8 py-4 xl:px-20;
-
-    .logo {
-      @apply flex flex-shrink-0 items-baseline;
-      margin-right:1rem;
-    }
-
-    .navbar-nav{
-      @apply flex flex-row flex-grow;
-    }
+  .navbar-nav{
+    @apply flex flex-row flex-grow;
   }
+}
 
 .active-tab {
   @apply underline text-brand-700;
@@ -38,8 +40,9 @@ a[cNavLink]::before {
 }
 
 .footerWrapper {
-    @apply overflow-hidden bg-brand-700;
-    @apply w-full;
+  @apply overflow-hidden bg-brand-700;
+  @apply w-full;
+  height: 17vh;
 }
 
 .footer {

@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Data
@@ -34,4 +35,14 @@ public class OfferDetailsTO {
      * The enforcement policies for this offer.
      */
     private List<EnforcementPolicy> enforcementPolicies;
+
+    /**
+     * The provider details.
+     */
+    private ParticipantDetailsTO providerDetails;
+
+    /**
+     * The timestamp when the offer was retrieved from the catalog.
+     */
+    private OffsetDateTime offerRetrievalDate;
 }

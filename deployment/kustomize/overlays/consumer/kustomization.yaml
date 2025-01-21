@@ -1,0 +1,60 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../base
+
+namespace: edc-dev
+namePrefix: consumer-
+commonLabels:
+  frontend: consumer-portal
+
+
+configMapGenerator:
+  - name: participant-portal-config
+    literals:
+      - DAPSSERVER_URL_EXTERNAL=https://daps.dev.possible-x.de/auth
+      - DAPSSERVER_URL_INTERNAL=http://daps-daps-server:4567
+      - DAPSSERVER_BASEURL=https://daps.dev.possible-x.de/auth
+      - DIDWEBSERVICE_BASEURL=http://did-web-service:8080
+      - DIDWEBSERVICE_IGNORESSL=false
+      - FH_CATALOG_SPARQL_URL=https://catalog.dev.possible-x.de/ld/sparql/
+      - FH_CATALOG_REPO_URL=https://hub.catalog.dev.possible-x.de
+      - FH_CATALOG_URL=https://hub.catalog.dev.possible-x.de/
+      - SDCREATIONWIZARDAPI_BASEURL=https://sd-creation-wizard.dev.possible-x.de
+      - SPRING_PROFILES_ACTIVE=dev
+      - S3_BUCKETSTORAGEREGION=eu-central-3
+      - PARTICIPANTID=did:web:didwebservice.dev.possible-x.de:participant:a8d62eee-3a16-3a05-adc1-88404998d781
+      # Specific Files
+      - S3_BUCKETNAME=dev-consumer-edc-bucket-possible-31952746
+      - EDC_MGMTBASEURL=https://consumer.edc.dev.possible-x.de/management
+      - EDC_PROTOCOLBASEURL=https://consumer.edc.dev.possible-x.de/protocol
+
+
+images:
+  - name: backend-image
+    newName: ghcr.io/possible-x/backend
+    newTag: a54b9ae9eb2dca28ba1c64d78587c4b728660100
+  - name: frontend-image
+    newName: ghcr.io/possible-x/frontend
+    newTag: a54b9ae9eb2dca28ba1c64d78587c4b728660100
+
+patches:
+  - target:
+      kind: Ingress
+      name: participant-portal-ingress
+    patch: |
+      - op: replace
+        path: /spec/tls/0/hosts/0
+        value: management.consumer.edc.dev.possible-x.de
+      - op: replace
+        path: /spec/tls/0/secretName
+        value: management-consumer-portal-ssl-certificate
+      - op: replace
+        path: /spec/rules/0/host
+        value: management.consumer.edc.dev.possible-x.de
+      - op: replace
+        path: /spec/rules/0/http/paths/0/backend/service/name
+        value: consumer-participant-portal-backend-svc
+      - op: replace
+        path: /spec/rules/0/http/paths/1/backend/service/name
+        value: consumer-participant-portal-frontend-svc

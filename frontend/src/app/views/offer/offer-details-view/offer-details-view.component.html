@@ -1,0 +1,6 @@
+<ng-container *ngIf="isDataOffering; else serviceOfferDetails">
+  <app-data-offer-details-view [catalogOffering]="catalogOffering" [enforcementPolicies]="enforcementPolicies"></app-data-offer-details-view>
+</ng-container>
+<ng-template #serviceOfferDetails>
+  <app-service-offer-details-view [catalogOffering]="catalogOffering" [enforcementPolicies]="enforcementPolicies"></app-service-offer-details-view>
+</ng-template>

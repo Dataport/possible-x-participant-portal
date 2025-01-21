@@ -63,9 +63,11 @@
       "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
       "vcard": "http://www.w3.org/2006/vcard/ns#"
     },
-    "gx:copyrightOwnedBy": {
+    "gx:copyrightOwnedBy": [
+      {
       "@id": "did:web:example-organization.eu"
-    },
+      }
+    ],
     "gx:producedBy": {
       "@id": "did:web:example-organization.eu"
     },

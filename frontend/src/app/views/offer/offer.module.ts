@@ -41,8 +41,24 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MaterialModule} from "../../sdwizard/material.module";
 import {MatSnackBarModule} from "@angular/material/snack-bar";
 import {OfferPrintViewComponent} from './offer-print-view/offer-print-view.component';
-import {EnforcementPolicyViewComponent} from './enforcement-policy-view/enforcement-policy-view.component';
+import {
+  EnforcementPolicyAccordionViewComponent
+} from './enforcement-policy-accordion-view/enforcement-policy-accordion-view.component';
 import {MatSortModule} from "@angular/material/sort";
+import {
+  ContractDetailsExportViewComponent
+} from './contract-details-export-view/contract-details-export-view.component';
+import {OfferDetailsViewComponent} from './offer-details-view/offer-details-view.component';
+import {
+  ServiceOfferDetailsViewComponent
+} from './offer-details-view/service-offer-details-view/service-offer-details-view.component';
+import {
+  DataOfferDetailsViewComponent
+} from './offer-details-view/data-offer-details-view/data-offer-details-view.component';
+import {
+  EnforcementPolicyContentComponent
+} from './enforcement-policy-accordion-view/enforcement-policy-content/enforcement-policy-content.component';
+import {MatPaginatorModule} from "@angular/material/paginator";
 
 @NgModule({
   imports: [
@@ -78,9 +94,10 @@ import {MatSortModule} from "@angular/material/sort";
     MatSnackBarModule,
     ModalModule,
     NgxPrintModule,
-    MatSortModule
+    MatSortModule,
+    MatPaginatorModule
   ],
-  declarations: [ProvideComponent, ConsumeComponent, AcceptComponent, SelectComponent, ContractsComponent, TransferComponent, OfferPrintViewComponent, EnforcementPolicyViewComponent],
+  declarations: [ProvideComponent, ConsumeComponent, AcceptComponent, SelectComponent, ContractsComponent, TransferComponent, OfferPrintViewComponent, EnforcementPolicyAccordionViewComponent, ContractDetailsExportViewComponent, OfferDetailsViewComponent, ServiceOfferDetailsViewComponent, DataOfferDetailsViewComponent, EnforcementPolicyContentComponent],
   exports: [
     TransferComponent
   ]

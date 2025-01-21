@@ -1,10 +1,10 @@
-import {Component, ViewChild, ElementRef, Input} from '@angular/core';
+import {Component, Input} from '@angular/core';
 
 import {
-  IOfferDetailsTO, IParticipantDetailsTO,
-  IPxExtendedServiceOfferingCredentialSubject
+  IOfferDetailsTO, IPxExtendedServiceOfferingCredentialSubject
 } from "../../../services/mgmt/api/backend";
 import {DatePipe} from "@angular/common";
+
 
 @Component({
   selector: 'app-offer-print-view',
@@ -14,19 +14,12 @@ import {DatePipe} from "@angular/common";
 })
 export class OfferPrintViewComponent {
   @Input() offer?: IOfferDetailsTO = undefined;
-  @Input() providerDetails?: IParticipantDetailsTO = undefined;
-  @Input() consumerDetails?: IParticipantDetailsTO = undefined;
-  @Input() printTimestamp?: Date = undefined;
-  @ViewChild('modalContent') modalContent: ElementRef;
 
   constructor(private datePipe: DatePipe) {}
 
-  containsPII(catalogOffering: IPxExtendedServiceOfferingCredentialSubject): boolean {
-    return catalogOffering["gx:aggregationOf"][0]["gx:containsPII"];
-  }
 
   getUrnUuid(id: string): string {
-    const match = id.match(/(urn:uuid:.*)/);
+    const match = RegExp(/(urn:uuid:.*)/).exec(id);
 
     if (match) {
       return match[1];
@@ -35,7 +28,7 @@ export class OfferPrintViewComponent {
     }
   }
 
-  getFormattedTimestamp(date: Date): string {
-    return this.datePipe.transform(date, 'yyyyMMdd_HHmmss_z') || '';
+  getFormattedOfferRetrievalTimestamp(): string {
+    return this.datePipe.transform(this.offer?.offerRetrievalDate, 'yyyyMMdd_HHmmss_z') || '';
   }
 }

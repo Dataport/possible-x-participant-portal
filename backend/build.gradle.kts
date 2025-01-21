@@ -32,6 +32,7 @@ dependencies {
   implementation(libs.springBootStarterActuator)
   implementation(libs.springBootStarterWeb)
   implementation(libs.springBootStarterWebflux)
+  implementation(libs.springBootStarterSecurity)
   implementation(libs.openApi)
   implementation(libs.titaniumJsonLd)
   implementation(libs.jakartaJson)
@@ -44,6 +45,7 @@ dependencies {
   annotationProcessor(libs.lombok)
   annotationProcessor(libs.therApiScribe)
   testImplementation(libs.springBootStarterTest)
+  testImplementation(libs.springSecurityTest)
   testImplementation(libs.reactorTest)
   testRuntimeOnly(libs.jUnit)
   testImplementation("org.wiremock:wiremock-standalone:3.9.2")
@@ -51,6 +53,9 @@ dependencies {
 
 tasks.withType<Test> {
   useJUnitPlatform()
+  testLogging {
+    events("passed", "skipped", "failed")
+  }
 }
 
 
@@ -63,20 +68,24 @@ tasks.getByName<Jar>("jar") {
   enabled = false
 }
 
-tasks.register<Copy>("copyWebApp") {
-  outputs.upToDateWhen { false }
-  description = "Copies the GUI into the resources of the Spring project."
-  group = "Application"
-  from("$rootDir/frontend/build/resources")
-  into(layout.buildDirectory.dir("resources/main/static/."))
+tasks.register("buildBackend") {
+  dependsOn(":backend:build")
+  description = "Builds the backend application."
+  group = "build"
 }
 
-tasks.named("compileJava") {
-  dependsOn(":frontend:npmBuild")
-}
 
-tasks.named("processResources") {
-  dependsOn("copyWebApp")
+tasks.register<JavaExec>("startBackend") {
+  dependsOn("bootJar")
+  description = "Runs the backend application."
+  group = "application"
+  mainClass.set("eu.possiblex.participantportal.ParticipantPortalApplication")
+  classpath = sourceSets["main"].runtimeClasspath
+  val activeProfile = project.findProperty("activeProfile")?.toString()
+  if (activeProfile != null) {
+    systemProperty("spring.profiles.active", activeProfile)
+  }
+
 }
 
 tasks {

@@ -1,0 +1,30 @@
+{
+  "head": {
+    "link": [],
+    "vars": [
+      "uri",
+      "name",
+      "mailAddress"
+    ]
+  },
+  "results": {
+    "distinct": false,
+    "ordered": true,
+    "bindings": [
+      {
+        "uri": {
+          "type": "uri",
+          "value": "did:web:portal.dev.possible-x.de:participant:df15587a-0760-32b5-9c42-bb7be66e8076"
+        },
+        "name": {
+          "type": "literal",
+          "value": "EXPECTED_NAME_VALUE"
+        },
+        "mailAddress": {
+          "type": "literal",
+          "value": "EXPECTED_MAIL_ADDRESS_VALUE"
+        }
+      }
+    ]
+  }
+}

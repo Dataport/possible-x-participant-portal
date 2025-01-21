@@ -12,8 +12,8 @@ public enum OdrlAction {
     private static final Map<String, OdrlAction> actionMap = new HashMap<>();
 
     static {
-        actionMap.put("use", USE);
-        actionMap.put("transfer", TRANSFER);
+        actionMap.put("http://www.w3.org/ns/odrl/2/use", USE);
+        actionMap.put("http://www.w3.org/ns/odrl/2/transfer", TRANSFER);
     }
 
     @JsonCreator

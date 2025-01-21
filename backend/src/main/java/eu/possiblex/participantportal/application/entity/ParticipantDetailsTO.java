@@ -1,16 +1,13 @@
 package eu.possiblex.participantportal.application.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ParticipantDetailsTO {
-    private String participantId;
-    private String participantName;
+public class ParticipantDetailsTO extends ParticipantNameTO {
     private String participantEmail;
 }

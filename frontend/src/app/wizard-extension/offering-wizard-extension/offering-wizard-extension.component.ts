@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-import {AfterViewInit, Component, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ViewChild, ChangeDetectorRef} from '@angular/core';
 import {StatusMessageComponent} from '../../views/common-views/status-message/status-message.component';
 import {BaseWizardExtensionComponent} from '../base-wizard-extension/base-wizard-extension.component';
 import {isDataResourceCs, isGxServiceOfferingCs} from '../../utils/credential-utils';
@@ -25,12 +25,15 @@ import {
   IGxServiceOfferingCredentialSubject,
   INodeKindIRITypeId,
   IParticipantRestrictionPolicy,
-  IPojoCredentialSubject, IPrefillFieldsTO
+  IPojoCredentialSubject, IPrefillFieldsTO,
+  ITimeDatePolicy
 } from '../../services/mgmt/api/backend';
 import {TBR_DATA_RESOURCE_ID, TBR_LEGITIMATE_INTEREST_ID, TBR_SERVICE_OFFERING_ID} from "../../views/offer/offer-data";
 import {MatStepper} from "@angular/material/stepper";
 import {AccordionItemComponent} from "@coreui/angular";
 import {HttpErrorResponse} from "@angular/common/http";
+import {NameMappingService} from "../../services/mgmt/name-mapping.service";
+import moment from 'moment';
 
 @Component({
   selector: 'app-offering-wizard-extension',
@@ -40,8 +43,14 @@ import {HttpErrorResponse} from "@angular/common/http";
 export class OfferingWizardExtensionComponent implements AfterViewInit {
   @ViewChild("offerCreationStatusMessage") public offerCreationStatusMessage!: StatusMessageComponent;
   selectedFileName: string = "";
-  isPolicyChecked: boolean = false;
-  dapsIDs: string[] = [''];
+  isContractBookingPolicyChecked: boolean = false;
+  contractBookingPolicyIds: string[] = [''];
+  isContractValidityStartPolicyChecked: boolean = false;
+  contractValidityStartDate: Date = undefined;
+  isContractValidityEndPolicyChecked: boolean = false;
+  contractValidityEndDate: Date = undefined;
+  nameMapping: { [key: string]: string } = {};
+  sortedIds: string[] = [];
   waitingForResponse = true;
   offerType: string = "data";
   prefillFields: IPrefillFieldsTO | undefined = undefined;
@@ -49,14 +58,16 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
   dataResourceShapeSource = "";
   legitimateInterestShapeSource = "";
   @ViewChild("stepper") stepper: MatStepper;
-  @ViewChild('accordionItem') accordionItem!: AccordionItemComponent;
+  @ViewChild('accordionItem1') accordionItem1!: AccordionItemComponent;
+  @ViewChild('accordionItem2') accordionItem2!: AccordionItemComponent;
+  @ViewChild('accordionItem3') accordionItem3!: AccordionItemComponent;
   protected containsPII: boolean = false;
   @ViewChild("gxServiceOfferingWizard") private gxServiceOfferingWizard: BaseWizardExtensionComponent;
   @ViewChild("gxDataResourceWizard") private gxDataResourceWizard: BaseWizardExtensionComponent;
   @ViewChild("gxLegitimateInterestWizard") private gxLegitimateInterestWizard: BaseWizardExtensionComponent;
 
   constructor(
-    private apiService: ApiService
+    private apiService: ApiService, private nameMappingService: NameMappingService, private cdr: ChangeDetectorRef
   ) {
   }
 
@@ -64,8 +75,31 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
     return !this.isFieldFilled(this.selectedFileName);
   }
 
-  get isInvalidPolicy(): boolean {
-    return this.isPolicyChecked && this.dapsIDs.some(id => !this.isFieldFilled(id));
+  get isInvalidContractBookingPolicy(): boolean {
+    return this.isContractBookingPolicyChecked && this.contractBookingPolicyIds.some(id => !this.isFieldFilled(id));
+  }
+
+  get isInvalidContractValidityStartPolicy(): boolean {
+    return this.isContractValidityStartPolicyChecked && !this.isValidDate(this.contractValidityStartDate);
+  }
+
+  get isInvalidContractValidityEndPolicy(): boolean {
+    return this.isContractValidityEndPolicyChecked && !this.isValidDate(this.contractValidityEndDate);
+  }
+
+  isValidDate(date: Date): boolean {
+    if (!date) {
+      return false;
+    }
+
+    const momentDate = moment(date, moment.ISO_8601, true);
+    const isValid = momentDate.isValid();
+
+    return isValid && momentDate.toISOString() === date.toISOString();
+  }
+
+  get isAnyPolicyChecked(): boolean {
+    return this.isContractBookingPolicyChecked || this.isContractValidityStartPolicyChecked || this.isContractValidityEndPolicyChecked;
   }
 
   ngAfterViewInit(): void {
@@ -74,8 +108,15 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
       this.retrieveLegitimateInterestShape();
       this.retrieveAndSetPrefillFields();
       this.resetPossibleSpecificFormValues();
-      this.resetAccordionItem();
+      this.resetAccordion();
+      this.setNameMapping();
       this.containsPII = false;
+  }
+
+  setNameMapping() {
+    this.nameMapping = this.nameMappingService.getNameMapping();
+    this.sortedIds = this.getIdsSortedByNames();
+    this.cdr.detectChanges();
   }
 
   async retrieveAndAdaptServiceOfferingShape() {
@@ -120,26 +161,40 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
 
     let gxOfferingJsonSd: IGxServiceOfferingCredentialSubject = this.gxServiceOfferingWizard.generateJsonCs();
 
-    let policy: IParticipantRestrictionPolicy | IEverythingAllowedPolicy;
+    let policyList: (ITimeDatePolicy | IParticipantRestrictionPolicy | IEverythingAllowedPolicy)[] = [];
 
     let gxLegitimateInterestJsonSd: IGxLegitimateInterest;
 
-    if (this.isPolicyChecked) {
-      policy = {
-        "@type": "ParticipantRestrictionPolicy",
-        allowedParticipants: this.dapsIDs
-      } as IParticipantRestrictionPolicy;
-    } else {
-      policy = {
+    if (!this.isAnyPolicyChecked) {
+      policyList.push({
         "@type": "EverythingAllowedPolicy"
-      } as IEverythingAllowedPolicy;
+      } as IEverythingAllowedPolicy);
+    } else {
+      if (this.isContractBookingPolicyChecked) {
+        policyList.push({
+          "@type": "ParticipantRestrictionPolicy",
+          allowedParticipants: Array.from(new Set(this.contractBookingPolicyIds))
+        } as IParticipantRestrictionPolicy);
+      }
+
+      if (this.isContractValidityStartPolicyChecked) {
+        policyList.push({
+          "@type": "StartDatePolicy",
+          date: this.contractValidityStartDate.toISOString()
+        } as any);
+      }
+
+      if (this.isContractValidityEndPolicyChecked) {
+        policyList.push({
+          "@type": "EndDatePolicy",
+          date: this.contractValidityEndDate.toISOString()
+        } as any);
+      }
     }
 
     let createOfferTo: any = {
       serviceOfferingCredentialSubject: gxOfferingJsonSd,
-      enforcementPolicies: [
-        policy
-      ],
+      enforcementPolicies: policyList,
       legitimateInterest: gxLegitimateInterestJsonSd,
     };
 
@@ -172,7 +227,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
        this.offerCreationStatusMessage.showErrorMessage(e.error.detail || e.error || e.message);
      }).catch(_ => {
        this.waitingForResponse = false;
-       this.offerCreationStatusMessage.showErrorMessage("Unbekannter Fehler");
+       this.offerCreationStatusMessage.showErrorMessage("Unknown error.");
      });
 
   }
@@ -182,7 +237,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
     this.gxDataResourceWizard?.ngOnDestroy();
     this.gxLegitimateInterestWizard?.ngOnDestroy();
     this.resetPossibleSpecificFormValues();
-    this.resetAccordionItem();
+    this.resetAccordion();
     this.offerCreationStatusMessage.hideAllMessages();
     this.containsPII = false;
   }
@@ -197,22 +252,28 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
 
   public resetPossibleSpecificFormValues() {
     this.selectedFileName = "";
-    this.isPolicyChecked = false;
-    this.dapsIDs = [''];
+    this.isContractBookingPolicyChecked = false;
+    this.contractBookingPolicyIds = [''];
+    this.isContractValidityStartPolicyChecked = false;
+    this.contractValidityStartDate = undefined;
+    this.isContractValidityEndPolicyChecked = false;
+    this.contractValidityEndDate = undefined;
     this.containsPII = false;
   }
 
-  public resetAccordionItem() {
-    this.accordionItem.visible = false;
+  public resetAccordion() {
+    this.accordionItem1.visible = false;
+    this.accordionItem2.visible = false;
+    this.accordionItem3.visible = false;
   }
 
   addInput(): void {
-    this.dapsIDs.push('');
+    this.contractBookingPolicyIds.push('');
   }
 
   removeInput(index: number): void {
-    if (this.dapsIDs.length > 1) {
-      this.dapsIDs.splice(index, 1);
+    if (this.contractBookingPolicyIds.length > 1) {
+      this.contractBookingPolicyIds.splice(index, 1);
     }
   }
 
@@ -222,6 +283,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
 
   async prefillWizardNewOffering() {
     this.resetPossibleSpecificFormValues();
+    this.resetAccordion();
     if (this.isOfferingDataOffering()) {
       this.prefillDataResourceWizard();
     } else {
@@ -255,9 +317,12 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
 
   async prefillServiceOfferingWizard() {
 
+    const participantId = this.prefillFields?.participantId;
+    const participantNameIdString = this.getNameIdStringById(participantId);
+
     let gxServiceOfferingCs = {
       "gx:providedBy": {
-        "@id": this.prefillFields?.participantId
+        "@id": participantNameIdString,
       },
       "@type": "gx:ServiceOffering",
     } as any;
@@ -289,7 +354,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
   reset() {
     this.stepper.reset();
     this.resetPossibleSpecificFormValues();
-    this.resetAccordionItem();
+    this.resetAccordion();
   }
 
   protected isOfferingDataOffering() {
@@ -309,7 +374,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
   }
 
   protected isServiceOfferingValid(): boolean {
-    return !this.gxServiceOfferingWizard?.isWizardFormInvalid() && !this.isInvalidPolicy;
+    return !this.gxServiceOfferingWizard?.isWizardFormInvalid() && !this.isInvalidContractBookingPolicy && !this.isInvalidContractValidityStartPolicy && !this.isInvalidContractValidityEndPolicy;
   }
 
   protected adaptGxShape(shapeSource: any, shapeName: string, excludedFields: string[]) {
@@ -373,6 +438,31 @@ export class OfferingWizardExtensionComponent implements AfterViewInit {
 
   prepareStepBeforeDataResource() {
     this.containsPII = false;
+  }
+
+  getIdsSortedByNames(): string[] {
+    return Object.keys(this.nameMapping).sort((a, b) => {
+      return this.nameMapping[a].localeCompare(this.nameMapping[b]);
+    });
+  }
+
+  getNameIdStringById(id: string): string {
+    const name = this.nameMappingService.getNameById(id);
+    return `${name} (${id})`;
+  }
+
+  handleCheckboxClick(event: Event, policyChecked: string, accordionItem: any) {
+    event.stopPropagation();
+
+    if (this[policyChecked]) {
+      if (accordionItem.visible === false) {
+        accordionItem.toggleItem();
+      }
+    } else {
+      if (accordionItem.visible === true) {
+        accordionItem.toggleItem();
+      }
+    }
   }
 
 }

@@ -90,7 +90,6 @@ class ConsumerModuleTest {
 
         String edcOfferId = "edcOfferId";
         String counterPartyAddress = "counterPartyAddress";
-        String providerId = "someDid";
 
         // let the EDC provide the test data catalog
         DcatDataset mockDatasetCorrectOne = new DcatDataset(); // the offer in the EDC Catalog which the user looks for
@@ -140,7 +139,6 @@ class ConsumerModuleTest {
 
         String edcOfferId = "edcOfferId";
         String counterPartyAddress = "counterPartyAddress";
-        String providerId = "someDid";
 
         // let the EDC provide the test data catalog
         DcatDataset mockDatasetCorrectOne = new DcatDataset(); // the offer in the EDC Catalog which the user looks for
@@ -187,14 +185,20 @@ class ConsumerModuleTest {
 
         reset(edcClientMock);
         reset(technicalFhCatalogClientMock);
+        reset(sparqlFhCatalogClientMock);
 
         // let the FH catalog provide the test data offer
         String fhCatalogOfferContent = TestUtils.loadTextFile(TEST_FILES_PATH + "validFhOffer.json");
         Mockito.when(technicalFhCatalogClientMock.getFhCatalogOfferWithData(ConsumerServiceFake.VALID_FH_OFFER_ID))
             .thenReturn(fhCatalogOfferContent);
 
+        // let the FH catalog provide the test participant details
+        String sparqlQueryResultString = TestUtils.loadTextFile(TEST_FILES_PATH + "validSparqlResultParticipant.json");
+        Mockito.when(sparqlFhCatalogClientMock.queryCatalog(any(), any())).thenReturn(sparqlQueryResultString);
+
         String expectedEdcProviderUrl = "EXPECTED_PROVIDER_URL_VALUE"; // from the "px:providerURL" attribute in the test data offer
         String expectedAssetId = "EXPECTED_ASSET_ID_VALUE"; // from the "px:assetId" attribute in the test data offer
+        String expectedProviderId = "did:web:portal.dev.possible-x.de:participant:df15587a-0760-32b5-9c42-bb7be66e8076";
 
         // let the EDC provide the test data catalog
         DcatDataset mockDatasetCorrectOne = new DcatDataset(); // the offer in the EDC Catalog which the user looks for
@@ -214,7 +218,12 @@ class ConsumerModuleTest {
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
             .andExpect(jsonPath("$.catalogOffering['px:providerUrl']").value(expectedEdcProviderUrl))
             .andExpect(jsonPath("$.edcOfferId").value(expectedAssetId))
-            .andExpect(jsonPath("$.dataOffering").value(true));
+            .andExpect(jsonPath("$.dataOffering").value(true))
+            .andExpect(jsonPath("$.providerDetails").exists())
+            .andExpect(jsonPath("$.providerDetails.participantId").value(expectedProviderId))
+            .andExpect(jsonPath("$.providerDetails.participantName").value("EXPECTED_NAME_VALUE"))
+            .andExpect(jsonPath("$.providerDetails.participantEmail").value("EXPECTED_MAIL_ADDRESS_VALUE"))
+            .andExpect(jsonPath("$.offerRetrievalDate").exists());
 
         // THEN
 
@@ -230,19 +239,26 @@ class ConsumerModuleTest {
 
         reset(edcClientMock);
         reset(technicalFhCatalogClientMock);
+        reset(sparqlFhCatalogClientMock);
 
         // FH catalog does not find offer with data
         WebClientResponseException offerNotFoundEx = Mockito.mock(WebClientResponseException.class);
         Mockito.when(offerNotFoundEx.getStatusCode()).thenReturn(HttpStatusCode.valueOf(404));
         Mockito.when(technicalFhCatalogClientMock.getFhCatalogOfferWithData(ConsumerServiceFake.VALID_FH_OFFER_ID))
                 .thenThrow(offerNotFoundEx);
+
         // let the FH catalog provide the test offer without data
         String fhCatalogOfferContent = TestUtils.loadTextFile(TEST_FILES_PATH + "validFhOfferWithoutData.json");
         Mockito.when(technicalFhCatalogClientMock.getFhCatalogOffer(ConsumerServiceFake.VALID_FH_OFFER_ID))
                 .thenReturn(fhCatalogOfferContent);
 
+        // let the FH catalog provide the test participant details
+        String sparqlQueryResultString = TestUtils.loadTextFile(TEST_FILES_PATH + "validSparqlResultParticipant.json");
+        Mockito.when(sparqlFhCatalogClientMock.queryCatalog(any(), any())).thenReturn(sparqlQueryResultString);
+
         String expectedEdcProviderUrl = "EXPECTED_PROVIDER_URL_VALUE"; // from the "px:providerURL" attribute in the test data offer
         String expectedAssetId = "EXPECTED_ASSET_ID_VALUE"; // from the "px:assetId" attribute in the test data offer
+        String expectedProviderId = "did:web:portal.dev.possible-x.de:participant:df15587a-0760-32b5-9c42-bb7be66e8076";
 
         // let the EDC provide the test data catalog
         DcatDataset mockDatasetCorrectOne = new DcatDataset(); // the offer in the EDC Catalog which the user looks for
@@ -262,7 +278,12 @@ class ConsumerModuleTest {
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
             .andExpect(jsonPath("$.catalogOffering['px:providerUrl']").value(expectedEdcProviderUrl))
             .andExpect(jsonPath("$.edcOfferId").value(expectedAssetId))
-            .andExpect(jsonPath("$.dataOffering").value(false));
+            .andExpect(jsonPath("$.dataOffering").value(false))
+            .andExpect(jsonPath("$.providerDetails").exists())
+            .andExpect(jsonPath("$.providerDetails.participantId").value(expectedProviderId))
+            .andExpect(jsonPath("$.providerDetails.participantName").value("EXPECTED_NAME_VALUE"))
+            .andExpect(jsonPath("$.providerDetails.participantEmail").value("EXPECTED_MAIL_ADDRESS_VALUE"))
+            .andExpect(jsonPath("$.offerRetrievalDate").exists());
 
         // THEN
 
@@ -390,6 +411,12 @@ class ConsumerModuleTest {
         public SparqlFhCatalogClient sparqlFhCatalogClient() {
 
             return Mockito.mock(SparqlFhCatalogClient.class);
+        }
+
+        @Bean
+        public ConsumerServiceMapper consumerServiceMapper() {
+
+            return Mappers.getMapper(ConsumerServiceMapper.class);
         }
     }
 

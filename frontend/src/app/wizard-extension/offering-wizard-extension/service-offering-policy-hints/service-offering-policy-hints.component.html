@@ -1,0 +1,112 @@
+<c-accordion [flush]="true">
+    <c-accordion-item *ngIf="isOfferingDataOffering" #accordionItemServiceOfferFreePolicyHints="cAccordionItem" [visible]="false">
+      <ng-template cTemplateId="accordionHeaderTemplate">
+        <button (click)="accordionItemServiceOfferFreePolicyHints.toggleItem()" [collapsed]="!accordionItemServiceOfferFreePolicyHints.visible" cAccordionButton>
+          For further guidance related to “Service Offering Policy”, click here
+        </button>
+      </ng-template>
+      <ng-template cTemplateId="accordionBodyTemplate">
+        <div class="bg-brand-50 accordion-body">
+          You must define machine readable policies for the Service Offering as expected by Gaia-X and POSSIBLE-X.
+          <ul>
+            <li>
+              Use under Service Offering “POSSIBLE-X enforced policy” to restrict booking of this Data Service Offering by a consumer organisation in the POSSIBLE-X Dataspace.
+            </li>
+            <li>
+              Other policies for Service Offerings are not technically enforced in the POSSIBLE-X Dataspace
+            </li>
+            <li>
+              A consumer organisation booking the (Data) Service Offering shall comply to those policies.
+            </li>
+            <li>
+              Tip : Add all Service Offering policies in human readable form under the T&Cs.
+            </li>
+            <li>
+              Compatible IT systems could automatically technically enforce them.
+            </li>
+          </ul>
+          <br>
+          You may define 3 types of policies: prohibitions, permissions, obligations for the Service Offering.
+          <br><br>
+          For each of them, you may take the following dimensions into account:
+          <ul>
+            <li>
+              <b>Access control</b>: Who is allowed to interact with the service or specific functions? (e.g. only certain organisation, departments or roles to use a function, book the service, etc..)
+              <ul>
+                <li>
+                  Please note that the policy list in the Data Resource / Service Offering description will automatically include the “POSSIBLE-X enforced policy”  if you select and configure it in the next section.
+                </li>
+              </ul>
+            </li>
+            <li>
+              <b>Terms of use / Usage control</b>: Under what conditions may the service be used? (e.g. only or not for specific purposes, if a pre-condition/a obligation is (not) met, with a defined frequency, at specific time windows etc.. )
+            </li>
+            <li>
+              <b>Security</b>: What security precautions need to be taken? (e.g. use of VPNs, two-factor authentication)
+            </li>
+            <li>
+              <b>Logging and monitoring</b>: How is the use of the service logged and monitored? (e.g. regular review of transmission logs must be done)
+            </li>
+            <li>
+              <b>Data integrity</b>: What obligations has the user to comply to ensure the integrity of the data input/output to/from the service? (e.g. maintain integrity proofs of data input like checksums, error correction procedures, protect data output received from the service)
+            </li>
+          </ul>
+        </div>
+      </ng-template>
+    </c-accordion-item>
+    <c-accordion-item *ngIf="!isOfferingDataOffering" #accordionItemServiceOfferFreePolicyHints="cAccordionItem" [visible]="false">
+      <ng-template cTemplateId="accordionHeaderTemplate">
+        <button (click)="accordionItemServiceOfferFreePolicyHints.toggleItem()" [collapsed]="!accordionItemServiceOfferFreePolicyHints.visible" cAccordionButton>
+          For further guidance related to “Service Offering Policy”, click here
+        </button>
+      </ng-template>
+      <ng-template cTemplateId="accordionBodyTemplate">
+        <div class="bg-brand-50 accordion-body">
+          You must define machine readable policies for the Service Offering as expected by Gaia-X and POSSIBLE-X.
+          <ul>
+            <li>
+              Use under Service Offering “POSSIBLE-X enforced policy” to restrict booking of this service by a consumer organisation in the POSSIBLE-X Dataspace.
+            </li>
+            <li>
+              Other policies for Service Offerings are not technically enforced in the POSSIBLE-X Dataspace
+            </li>
+            <li>
+              A consumer organisation booking the Service Offering shall comply to those policies.
+            </li>
+            <li>
+              Tip : Add all Service Offering policies in human readable form under the T&Cs.
+            </li>
+            <li>
+              Compatible IT systems could automatically technically enforce them.
+            </li>
+          </ul>
+          <br>
+          You may define 3 types of policies: prohibitions, permissions, obligations for the Service Offering.
+          <br><br>
+          For each of them, you may take the following dimensions into account:
+          <ul>
+            <li>
+              <b>Access control</b>: Who is allowed to interact with the service or specific functions? (e.g. only certain organisation, departments or roles to use a function, book the service, etc..)
+              <ul>
+                <li>
+                  Please note that the policy list in the Service Offering description will automatically include the “POSSIBLE-X enforced policy”  if you select and configure it in the next section.
+                </li>
+              </ul>
+            </li>
+            <li>
+              <b>Terms of use / Usage control</b>: Under what conditions may the service be used? (e.g. only or not for specific purposes, if a pre-condition/a obligation is (not) met, with a defined frequency, at specific time windows etc.. )
+            </li>
+            <li>
+              <b>Security</b>: What security precautions need to be taken? (e.g. use of VPNs, two-factor authentication)
+            </li>
+            <li>
+              <b>Logging and monitoring</b>: How is the use of the service logged and monitored? (e.g. regular review of transmission logs must be done)
+            </li>
+            <li>
+              <b>Data integrity</b>: What obligations has the user to comply to ensure the integrity of the data input/output to/from the service? (e.g. maintain integrity proofs of data input like checksums, error correction procedures, protect data output received from the service)
+            </li>
+          </ul>
+        </div>
+      </ng-template>
+    </c-accordion-item>
+  </c-accordion>

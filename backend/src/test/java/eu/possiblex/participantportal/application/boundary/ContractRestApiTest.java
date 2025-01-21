@@ -1,5 +1,6 @@
 package eu.possiblex.participantportal.application.boundary;
 
+import eu.possiblex.participantportal.application.configuration.AppConfigurer;
 import eu.possiblex.participantportal.application.control.ConsumerApiMapper;
 import eu.possiblex.participantportal.application.control.ContractApiMapper;
 import eu.possiblex.participantportal.business.control.*;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -19,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ContractRestApiImpl.class)
-@ContextConfiguration(classes = { ContractRestApiTest.TestConfig.class, ContractRestApiImpl.class })
+@ContextConfiguration(classes = { ContractRestApiTest.TestConfig.class, ContractRestApiImpl.class, AppConfigurer.class })
 class ContractRestApiTest {
     @Autowired
     private MockMvc mockMvc;
@@ -34,6 +36,7 @@ class ContractRestApiTest {
     private ConsumerApiMapper consumerApiMapper;
 
     @Test
+    @WithMockUser(username = "admin")
     void shouldReturnMessageOnGetContractAgreements() throws Exception {
         //when
         //then
@@ -44,6 +47,8 @@ class ContractRestApiTest {
             .andExpect(jsonPath("$[0].contractSigningDate").value(ContractServiceFake.getDateAsOffsetDateTime().toString()))
             .andExpect(jsonPath("$[0].providerDetails").exists())
             .andExpect(jsonPath("$[0].consumerDetails").exists())
+            .andExpect(jsonPath("$[0].provider").value(false))
+            .andExpect(jsonPath("$[0].dataOffering").value(false))
             .andExpect(jsonPath("$[0].assetId").value(ContractServiceFake.FAKE_ID_ASSET))
             .andExpect(jsonPath("$[0].assetDetails.name").value(ContractServiceFake.NAME))
             .andExpect(jsonPath("$[0].assetDetails.description").value(ContractServiceFake.DESCRIPTION))
@@ -51,6 +56,39 @@ class ContractRestApiTest {
             .andExpect(jsonPath("$[0].policy['odrl:prohibition']").isEmpty())
             .andExpect(jsonPath("$[0].policy['odrl:obligation']").isEmpty())
             .andExpect(jsonPath("$[0].policy['odrl:permission']").isEmpty());
+    }
+
+    @Test
+    @WithMockUser(username = "admin")
+    void shouldReturnMessageOnGetContractDetailsByContractAgreementId() throws Exception {
+        //when
+        //then
+
+        this.mockMvc.perform(get("/contract/details/anyId")).andDo(print()).andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(ContractServiceFake.FAKE_ID_CONTRACT_AGREEMENT))
+            .andExpect(jsonPath("$.contractSigningDate").value(ContractServiceFake.getDateAsOffsetDateTime().toString()))
+            .andExpect(jsonPath("$.providerDetails").exists())
+            .andExpect(jsonPath("$.consumerDetails").exists())
+            .andExpect(jsonPath("$.assetId").value(ContractServiceFake.FAKE_ID_ASSET))
+            .andExpect(jsonPath("$.catalogOffering['schema:name']").value(ContractServiceFake.NAME))
+            .andExpect(jsonPath("$.catalogOffering['schema:description']").value(ContractServiceFake.DESCRIPTION))
+            .andExpect(jsonPath("$.offerRetrievalDate").exists())
+            .andExpect(jsonPath("$.policy['odrl:target']['@id']").value(ContractServiceFake.FAKE_ID_ASSET))
+            .andExpect(jsonPath("$.policy['odrl:prohibition']").isEmpty())
+            .andExpect(jsonPath("$.policy['odrl:obligation']").isEmpty())
+            .andExpect(jsonPath("$.policy['odrl:permission']").isEmpty());
+    }
+
+    @Test
+    @WithMockUser(username = "admin")
+    void shouldReturnMessageOnGetOfferWithTimestampByContractAgreementId() throws Exception {
+        //when
+        //then
+
+        this.mockMvc.perform(get("/contract/details/anyId/offer")).andDo(print()).andExpect(status().isOk())
+            .andExpect(jsonPath("$.catalogOffering['schema:name']").value(ContractServiceFake.NAME))
+            .andExpect(jsonPath("$.catalogOffering['schema:description']").value(ContractServiceFake.DESCRIPTION))
+            .andExpect(jsonPath("$.offerRetrievalDate").exists());
     }
 
     @TestConfiguration

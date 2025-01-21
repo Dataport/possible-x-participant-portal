@@ -1,8 +1,10 @@
 package eu.possiblex.participantportal.business.control;
 
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
+import eu.possiblex.participantportal.application.entity.policies.*;
 import eu.possiblex.participantportal.business.entity.*;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
+import eu.possiblex.participantportal.business.entity.daps.OmejdnConnectorDetailsBE;
 import eu.possiblex.participantportal.business.entity.edc.asset.ionoss3extension.IonosS3DataSource;
 import eu.possiblex.participantportal.business.entity.edc.asset.possible.PossibleAsset;
 import eu.possiblex.participantportal.business.entity.edc.asset.possible.PossibleAssetDataAccountExport;
@@ -15,21 +17,28 @@ import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProce
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
 import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsSparqlQueryResult;
-import eu.possiblex.participantportal.business.entity.fh.ParticipantNameSparqlQueryResult;
-import eu.possiblex.participantportal.utils.TestUtils;
+import eu.possiblex.participantportal.business.entity.fh.ParticipantDetailsSparqlQueryResult;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ContextConfiguration;
 
 import java.math.BigInteger;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
@@ -37,10 +46,12 @@ import static org.mockito.Mockito.verify;
 @SpringBootTest
 @ContextConfiguration(classes = { ContractServiceTest.TestConfig.class, ContractServiceImpl.class })
 class ContractServiceTest {
-    private static final String TEST_FILES_PATH = "unit_tests/ConsumerModuleTest/";
 
     @Autowired
     private EdcClient edcClient;
+
+    @Autowired
+    private OmejdnConnectorApiClient omejdnConnectorApiClient;
 
     @Autowired
     private FhCatalogClient fhCatalogClient;
@@ -51,33 +62,255 @@ class ContractServiceTest {
     @Autowired
     private ConsumerService consumerService;
 
+    @Value("${participant-id}")
+    private String participantId;
+
     @Test
-    void testGetContractAgreementsAsProviderOfAssets() throws OfferNotFoundException {
+    void testGetContractAgreementsWhenParticipantIsProvider() throws OfferNotFoundException {
 
-        reset(fhCatalogClient);
-        reset(edcClient);
+        resetMocks();
 
-        PxExtendedServiceOfferingCredentialSubject pxExtendedServiceOfferingCredentialSubject = new PxExtendedServiceOfferingCredentialSubject();
-        pxExtendedServiceOfferingCredentialSubject.setAggregationOf(List.of());
-        Mockito.when(fhCatalogClient.getParticipantNames(any())).thenReturn(Map.of(OmejdnConnectorApiClientFake.PARTICIPANT_ID,
-            ParticipantNameSparqlQueryResult.builder().name(OmejdnConnectorApiClientFake.PARTICIPANT_NAME).build()));
-        Mockito.when(fhCatalogClient.getOfferingDetails(any())).thenReturn(Map.of(EdcClientFake.FAKE_ID,
+        Mockito.when(fhCatalogClient.getParticipantDetailsByIds(any())).thenReturn(
+            Map.of(OmejdnConnectorApiClientFake.PARTICIPANT_ID,
+                ParticipantDetailsSparqlQueryResult.builder().name(OmejdnConnectorApiClientFake.PARTICIPANT_NAME)
+                    .build()));
+        Mockito.when(fhCatalogClient.getOfferingDetailsByAssetIds(any())).thenReturn(Map.of(EdcClientFake.FAKE_ID,
             OfferingDetailsSparqlQueryResult.builder().assetId(EdcClientFake.FAKE_ID).build()));
-        Mockito.when(fhCatalogClient.getFhCatalogOffer(any())).thenReturn(pxExtendedServiceOfferingCredentialSubject);
+        Mockito.when(omejdnConnectorApiClient.getConnectorDetails(any())).thenReturn(
+            Map.of(OmejdnConnectorApiClientFake.PARTICIPANT_ID,
+                OmejdnConnectorDetailsBE.builder().clientId(OmejdnConnectorApiClientFake.PARTICIPANT_ID)
+                    .clientName(OmejdnConnectorApiClientFake.PARTICIPANT_NAME).attributes(Map.of("did", participantId))
+                    .build()));
 
         List<ContractAgreementBE> expected = getContractAgreementBEs();
         List<ContractAgreementBE> actual = contractService.getContractAgreements();
 
-        verify(fhCatalogClient).getParticipantNames(any());
-        verify(fhCatalogClient).getOfferingDetails(any());
-        verify(edcClient).queryContractAgreements();
+        verify(fhCatalogClient).getParticipantDetailsByIds(any());
+        verify(fhCatalogClient).getOfferingDetailsByAssetIds(any());
+        verify(edcClient).queryContractAgreements(any());
 
-        assertThat(!actual.isEmpty());
+        assertThat(actual).isNotEmpty();
         assertThat(actual.size()).isEqualTo(1).isEqualTo(expected.size());
         assertThat(actual.get(0).getOfferingDetails().getAssetId()).isEqualTo(EdcClientFake.FAKE_ID);
         assertThat(actual.get(0).getProviderDetails().getName()).isEqualTo("Unknown");
         assertThat(actual.get(0).getConsumerDetails().getName()).isEqualTo("Unknown");
+        assertThat(actual.get(0).isProvider()).isTrue();
 
+    }
+
+    @Test
+    void testGetContractAgreementsWhenParticipantIsNotProvider() throws OfferNotFoundException {
+
+        resetMocks();
+
+        Mockito.when(fhCatalogClient.getParticipantDetailsByIds(any())).thenReturn(
+            Map.of(OmejdnConnectorApiClientFake.PARTICIPANT_ID,
+                ParticipantDetailsSparqlQueryResult.builder().name(OmejdnConnectorApiClientFake.PARTICIPANT_NAME)
+                    .build()));
+        Mockito.when(fhCatalogClient.getOfferingDetailsByAssetIds(any())).thenReturn(Map.of(EdcClientFake.FAKE_ID,
+            OfferingDetailsSparqlQueryResult.builder().assetId(EdcClientFake.FAKE_ID).build()));
+
+        List<ContractAgreementBE> expected = getContractAgreementBEs();
+        List<ContractAgreementBE> actual = contractService.getContractAgreements();
+
+        verify(fhCatalogClient).getParticipantDetailsByIds(any());
+        verify(fhCatalogClient).getOfferingDetailsByAssetIds(any());
+        verify(edcClient).queryContractAgreements(any());
+
+        assertThat(actual).isNotEmpty();
+        assertThat(actual.size()).isEqualTo(1).isEqualTo(expected.size());
+        assertThat(actual.get(0).getOfferingDetails().getAssetId()).isEqualTo(EdcClientFake.FAKE_ID);
+        assertThat(actual.get(0).getProviderDetails().getName()).isEqualTo("Unknown");
+        assertThat(actual.get(0).getConsumerDetails().getName()).isEqualTo("Unknown");
+        assertThat(actual.get(0).isProvider()).isFalse();
+
+    }
+
+    @Test
+    void testGetContractAgreementsWhenDapsIdNotKnown() throws OfferNotFoundException {
+
+        resetMocks();
+
+        Mockito.when(fhCatalogClient.getParticipantDetailsByIds(any())).thenReturn(
+            Map.of(OmejdnConnectorApiClientFake.PARTICIPANT_ID,
+                ParticipantDetailsSparqlQueryResult.builder().name(OmejdnConnectorApiClientFake.PARTICIPANT_NAME)
+                    .build()));
+        Mockito.when(fhCatalogClient.getOfferingDetailsByAssetIds(any())).thenReturn(Map.of(EdcClientFake.FAKE_ID,
+            OfferingDetailsSparqlQueryResult.builder().assetId(EdcClientFake.FAKE_ID).build()));
+        Mockito.when(omejdnConnectorApiClient.getConnectorDetails(any())).thenReturn(new HashMap<>());
+
+        List<ContractAgreementBE> expected = getContractAgreementBEs();
+        List<ContractAgreementBE> actual = contractService.getContractAgreements();
+
+        verify(fhCatalogClient).getParticipantDetailsByIds(any());
+        verify(fhCatalogClient).getOfferingDetailsByAssetIds(any());
+        verify(edcClient).queryContractAgreements(any());
+
+        assertThat(actual).isNotEmpty();
+        assertThat(actual.size()).isEqualTo(1).isEqualTo(expected.size());
+        assertThat(actual.get(0).getOfferingDetails().getAssetId()).isEqualTo(EdcClientFake.FAKE_ID);
+        assertThat(actual.get(0).getProviderDetails().getName()).isEqualTo("Unknown");
+        assertThat(actual.get(0).getConsumerDetails().getName()).isEqualTo("Unknown");
+        assertThat(actual.get(0).isProvider()).isFalse();
+
+    }
+
+    @Test
+    void testGetContractDetailsByContractAgreementId() throws OfferNotFoundException {
+
+        resetMocks();
+
+        String serviceName = "test name";
+        String serviceDescription = "test description";
+        PxExtendedServiceOfferingCredentialSubject pxExtendedServiceOfferingCredentialSubject = PxExtendedServiceOfferingCredentialSubject.builder()
+            .aggregationOf(List.of()).name(serviceName).description(serviceDescription).assetId(EdcClientFake.FAKE_ID)
+            .build();
+        OffsetDateTime offerRetrievalDate = OffsetDateTime.now();
+        Mockito.when(fhCatalogClient.getFhCatalogOffer(any()))
+            .thenReturn(new OfferRetrievalResponseBE(pxExtendedServiceOfferingCredentialSubject, offerRetrievalDate));
+
+        Mockito.when(fhCatalogClient.getParticipantDetailsByIds(any())).thenReturn(
+            Map.of(OmejdnConnectorApiClientFake.PARTICIPANT_ID,
+                ParticipantDetailsSparqlQueryResult.builder().name(OmejdnConnectorApiClientFake.PARTICIPANT_NAME)
+                    .build()));
+        Mockito.when(fhCatalogClient.getOfferingDetailsByAssetIds(any())).thenReturn(Map.of(EdcClientFake.FAKE_ID,
+            OfferingDetailsSparqlQueryResult.builder().assetId(EdcClientFake.FAKE_ID).uri("some uri").build()));
+
+        ContractDetailsBE actual = contractService.getContractDetailsByContractAgreementId("some id");
+
+        verify(fhCatalogClient).getFhCatalogOffer(any());
+        verify(fhCatalogClient).getParticipantDetailsByIds(any());
+        verify(fhCatalogClient).getOfferingDetailsByAssetIds(any());
+        verify(edcClient).getContractAgreementById(any());
+
+        assertThat(actual).isNotNull();
+        assertThat(actual.getOfferingDetails().getOfferRetrievalDate()).isEqualTo(offerRetrievalDate);
+        assertThat(actual.getOfferingDetails().getCatalogOffering().getName()).isEqualTo(serviceName);
+        assertThat(actual.getOfferingDetails().getCatalogOffering().getDescription()).isEqualTo(serviceDescription);
+        assertThat(actual.getProviderDetails().getName()).isEqualTo("Unknown");
+        assertThat(actual.getConsumerDetails().getName()).isEqualTo("Unknown");
+
+    }
+
+    @Test
+    void testGetOfferDetailsByContractAgreementId() throws OfferNotFoundException {
+
+        resetMocks();
+
+        PxExtendedServiceOfferingCredentialSubject pxExtendedServiceOfferingCredentialSubject = PxExtendedServiceOfferingCredentialSubject.builder()
+            .aggregationOf(List.of()).name("test name").description("test description").assetId(EdcClientFake.FAKE_ID)
+            .build();
+        OffsetDateTime offerRetrievalDate = OffsetDateTime.now();
+        Mockito.when(fhCatalogClient.getFhCatalogOffer(any()))
+            .thenReturn(new OfferRetrievalResponseBE(pxExtendedServiceOfferingCredentialSubject, offerRetrievalDate));
+
+        Mockito.when(fhCatalogClient.getOfferingDetailsByAssetIds(any())).thenReturn(Map.of(EdcClientFake.FAKE_ID,
+            OfferingDetailsSparqlQueryResult.builder().assetId(EdcClientFake.FAKE_ID).uri("some uri").build()));
+
+        OfferRetrievalResponseBE actual = contractService.getOfferDetailsByContractAgreementId("some id");
+
+        verify(fhCatalogClient).getFhCatalogOffer(any());
+        verify(fhCatalogClient).getOfferingDetailsByAssetIds(any());
+        verify(edcClient).getContractAgreementById(any());
+
+        assertThat(actual).isNotNull();
+        assertThat(actual.getOfferRetrievalDate()).isEqualTo(offerRetrievalDate);
+        assertThat(actual.getCatalogOffering().getName()).isEqualTo("test name");
+        assertThat(actual.getCatalogOffering().getDescription()).isEqualTo("test description");
+        assertThat(actual.getCatalogOffering().getAssetId()).isEqualTo(EdcClientFake.FAKE_ID);
+
+    }
+
+    @Test
+    void policyValidityAllValid() throws OfferNotFoundException {
+
+        resetMocks();
+
+        PxExtendedServiceOfferingCredentialSubject pxExtendedServiceOfferingCredentialSubject = PxExtendedServiceOfferingCredentialSubject.builder()
+            .aggregationOf(List.of()).name("test name").description("test description").assetId(EdcClientFake.FAKE_ID)
+            .build();
+        OffsetDateTime offerRetrievalDate = OffsetDateTime.now();
+        Mockito.when(fhCatalogClient.getFhCatalogOffer(any()))
+            .thenReturn(new OfferRetrievalResponseBE(pxExtendedServiceOfferingCredentialSubject, offerRetrievalDate));
+
+        Mockito.when(fhCatalogClient.getOfferingDetailsByAssetIds(any())).thenReturn(Map.of(EdcClientFake.FAKE_ID,
+            OfferingDetailsSparqlQueryResult.builder().assetId(EdcClientFake.FAKE_ID).uri("some uri").build()));
+
+        ContractAgreement contractAgreement = getContractAgreement();
+        OffsetDateTime now = OffsetDateTime.now();
+        OffsetDateTime signingDate = now.minusDays(7);
+        Timestamp signingDateTimestamp = Timestamp.valueOf(
+            LocalDateTime.ofInstant(signingDate.toInstant(), ZoneOffset.UTC));
+        contractAgreement.setContractSigningDate(BigInteger.valueOf(signingDateTimestamp.getTime()));
+
+        ParticipantRestrictionPolicy participantRestrictionPolicy = ParticipantRestrictionPolicy.builder()
+            .allowedParticipants(List.of("did:web:123", "did:web:456", participantId)).build();
+        StartAgreementOffsetPolicy startAgreementOffsetPolicy = StartAgreementOffsetPolicy.builder().offsetNumber(5)
+            .offsetUnit(AgreementOffsetUnit.DAYS).build();
+        EndAgreementOffsetPolicy endAgreementOffsetPolicy = EndAgreementOffsetPolicy.builder().offsetNumber(10)
+            .offsetUnit(AgreementOffsetUnit.DAYS).build();
+        StartDatePolicy startDatePolicy = StartDatePolicy.builder().date(now.minusDays(3)).build();
+        EndDatePolicy endDatePolicy = EndDatePolicy.builder().date(now.plusDays(3)).build();
+
+        List<EnforcementPolicy> policies = List.of(participantRestrictionPolicy, startAgreementOffsetPolicy,
+            endAgreementOffsetPolicy, startDatePolicy, endDatePolicy);
+
+        Mockito.when(edcClient.getContractAgreementById(any())).thenReturn(contractAgreement);
+        Mockito.when(consumerService.getEnforcementPoliciesFromEdcPolicies(any())).thenReturn(policies);
+
+        ContractDetailsBE actual = contractService.getContractDetailsByContractAgreementId("some id");
+
+        List<EnforcementPolicy> validatedPolicies = actual.getEnforcementPolicies();
+
+        for (EnforcementPolicy p : validatedPolicies) {
+            assertTrue(p.isValid());
+        }
+    }
+
+    @Test
+    void policyValidityAllInvalid() throws OfferNotFoundException {
+
+        resetMocks();
+
+        PxExtendedServiceOfferingCredentialSubject pxExtendedServiceOfferingCredentialSubject = PxExtendedServiceOfferingCredentialSubject.builder()
+            .aggregationOf(List.of()).name("test name").description("test description").assetId(EdcClientFake.FAKE_ID)
+            .build();
+        OffsetDateTime offerRetrievalDate = OffsetDateTime.now();
+        Mockito.when(fhCatalogClient.getFhCatalogOffer(any()))
+            .thenReturn(new OfferRetrievalResponseBE(pxExtendedServiceOfferingCredentialSubject, offerRetrievalDate));
+
+        Mockito.when(fhCatalogClient.getOfferingDetailsByAssetIds(any())).thenReturn(Map.of(EdcClientFake.FAKE_ID,
+            OfferingDetailsSparqlQueryResult.builder().assetId(EdcClientFake.FAKE_ID).uri("some uri").build()));
+
+        ContractAgreement contractAgreement = getContractAgreement();
+        OffsetDateTime now = OffsetDateTime.now();
+        OffsetDateTime signingDate = now.minusDays(7);
+        Timestamp signingDateTimestamp = Timestamp.valueOf(
+            LocalDateTime.ofInstant(signingDate.toInstant(), ZoneOffset.UTC));
+        contractAgreement.setContractSigningDate(BigInteger.valueOf(signingDateTimestamp.getTime()));
+
+        ParticipantRestrictionPolicy participantRestrictionPolicy = ParticipantRestrictionPolicy.builder()
+            .allowedParticipants(List.of("garbage")).build();
+        StartAgreementOffsetPolicy startAgreementOffsetPolicy = StartAgreementOffsetPolicy.builder().offsetNumber(10)
+            .offsetUnit(AgreementOffsetUnit.DAYS).build();
+        EndAgreementOffsetPolicy endAgreementOffsetPolicy = EndAgreementOffsetPolicy.builder().offsetNumber(5)
+            .offsetUnit(AgreementOffsetUnit.DAYS).build();
+        StartDatePolicy startDatePolicy = StartDatePolicy.builder().date(now.plusDays(3)).build();
+        EndDatePolicy endDatePolicy = EndDatePolicy.builder().date(now.minusDays(3)).build();
+
+        List<EnforcementPolicy> policies = List.of(participantRestrictionPolicy, startAgreementOffsetPolicy,
+            endAgreementOffsetPolicy, startDatePolicy, endDatePolicy);
+
+        Mockito.when(edcClient.getContractAgreementById(any())).thenReturn(contractAgreement);
+        Mockito.when(consumerService.getEnforcementPoliciesFromEdcPolicies(any())).thenReturn(policies);
+
+        ContractDetailsBE actual = contractService.getContractDetailsByContractAgreementId("some id");
+
+        List<EnforcementPolicy> validatedPolicies = actual.getEnforcementPolicies();
+
+        for (EnforcementPolicy p : validatedPolicies) {
+            assertFalse(p.isValid());
+        }
     }
 
     @Test
@@ -93,7 +326,8 @@ class ContractServiceTest {
         OfferingDetailsSparqlQueryResult queryResult = new OfferingDetailsSparqlQueryResult();
         queryResult.setAssetId(EdcClientFake.FAKE_ID);
         queryResult.setProviderUrl(EdcClientFake.VALID_COUNTER_PARTY_ADDRESS);
-        Mockito.when(fhCatalogClient.getOfferingDetails(any())).thenReturn(Map.of(EdcClientFake.FAKE_ID, queryResult));
+        Mockito.when(fhCatalogClient.getOfferingDetailsByAssetIds(any()))
+            .thenReturn(Map.of(EdcClientFake.FAKE_ID, queryResult));
 
         //WHEN
         TransferOfferResponseBE actual = contractService.transferDataOfferAgain(request);
@@ -101,7 +335,7 @@ class ContractServiceTest {
         //THEN
         assertThat(actual.getTransferProcessState()).isEqualTo(response.getTransferProcessState());
         verify(consumerService).transferDataOffer(any());
-        verify(fhCatalogClient).getOfferingDetails(List.of(EdcClientFake.FAKE_ID));
+        verify(fhCatalogClient).getOfferingDetailsByAssetIds(List.of(EdcClientFake.FAKE_ID));
     }
 
     private List<ContractAgreementBE> getContractAgreementBEs() {
@@ -110,10 +344,11 @@ class ContractServiceTest {
 
         ContractAgreementBE contractAgreementBE = ContractAgreementBE.builder().contractAgreement(contractAgreement)
             .offeringDetails(OfferingDetailsBE.builder().name("name").description("description").build())
-            .consumerDetails(ParticipantDetailsBE.builder().name(OmejdnConnectorApiClientFake.PARTICIPANT_NAME).build())
-            .providerDetails(ParticipantDetailsBE.builder().name(OmejdnConnectorApiClientFake.PARTICIPANT_NAME).build())
-            .isDataOffering(false)
-            .build();
+            .consumerDetails(
+                ParticipantWithDapsBE.builder().name(OmejdnConnectorApiClientFake.PARTICIPANT_NAME).build())
+            .providerDetails(
+                ParticipantWithDapsBE.builder().name(OmejdnConnectorApiClientFake.PARTICIPANT_NAME).build())
+            .isDataOffering(false).build();
 
         return List.of(contractAgreementBE);
     }
@@ -148,6 +383,13 @@ class ContractServiceTest {
             .assetId(EdcClientFake.FAKE_ID).consumerId(OmejdnConnectorApiClientFake.PARTICIPANT_ID)
             .providerId(OmejdnConnectorApiClientFake.PARTICIPANT_ID)
             .policy(Policy.builder().target(PolicyTarget.builder().id(EdcClientFake.FAKE_ID).build()).build()).build();
+    }
+
+    private void resetMocks() {
+
+        reset(fhCatalogClient);
+        reset(edcClient);
+        reset(omejdnConnectorApiClient);
     }
 
     // Test-specific configuration to provide mocks

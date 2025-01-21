@@ -1,4 +1,3 @@
-.custom-pre {
-  font-family: inherit; /* Inherit the font from the parent element */
-  white-space: pre-wrap; /* Preserve whitespace and wrap lines */
+.custom-paginator {
+  @apply bg-brand-50;
 }

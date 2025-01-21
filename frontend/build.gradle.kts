@@ -1,7 +1,14 @@
 import com.github.gradle.node.npm.task.NpmTask
+import org.yaml.snakeyaml.Yaml
 
 plugins {
-  id("com.github.node-gradle.node") version "7.0.2"
+  id("com.github.node-gradle.node") version "7.1.0"
+}
+
+buildscript {
+  dependencies {
+    classpath("org.yaml:snakeyaml:1.29")
+  }
 }
 
 node {
@@ -11,14 +18,59 @@ node {
 }
 
 tasks {
-  val npmInstalll by registering(NpmTask::class) {
-    outputs.upToDateWhen { false }
-    args.set(listOf("clean-install"))
+
+  val testFrontend by registering(NpmTask::class) {
+    args.set(listOf("run", "test", "--", "--no-watch", "--no-progress", "--browsers=ChromeHeadlessNoSandbox"))
   }
 
-  val npmBuild by registering(NpmTask::class) {
+  val buildFrontend by registering(NpmTask::class) {
+    dependsOn(npmInstall)
+    dependsOn(testFrontend)
+    val activeProfile = project.findProperty("activeProfile")?.toString()
+    args.set(listOf("run", "build", "--", "--configuration", activeProfile ?: "remote"))
+  }
+
+  val setNpmShell by registering(NpmTask::class) {
+    args.set(listOf("config", "set", "script-shell", "/bin/bash"))
+  }
+
+  val startFrontend by registering(NpmTask::class) {
+    dependsOn(setNpmShell)
+    dependsOn(npmInstall)
+
+    val activeProfile = project.findProperty("activeProfile")?.toString()
+
+
+    var port = project.findProperty("frontendPort")?.toString()
+    if (port == null) {
+
+      val yaml = Yaml()
+      val yamlFileName = if (activeProfile != null) "application-$activeProfile.yml" else "application.yml"
+      val applicationYaml = file("$rootDir/backend/src/main/resources/$yamlFileName")
+      val config = yaml.load<Map<String, Any>>(applicationYaml.inputStream())
+
+      val backendPort = (config["server"] as? Map<*, *>)?.get("port") ?: "8080"
+      port = "420" + backendPort.toString().last()
+    }
+
+    args.set(listOf("start", "--", "--port", port, "--configuration", activeProfile ?: "remote"))
+  }
+
+  val npmFeTest by registering(NpmTask::class) {
     outputs.upToDateWhen { false }
-    dependsOn(npmInstalll)
-    args.set(listOf("run", "build", "--", "--configuration", project.findProperty("npmEnv") as String? ?: "consumer-dev"))
+    dependsOn(npmInstall)
+    args.set(listOf("run", "test", "--", "--no-watch", "--no-progress", "--browsers=ChromeHeadlessNoSandbox"))
+  }
+}
+
+// run npm test only with build task
+tasks.register("npmTestConditional") {
+  if(gradle.startParameter.getTaskNames().contains("build")) {
+    println("do npm tests")
+    dependsOn(tasks.getByName("npmFeTest"))
+  }
+  else {
+    println("skip npm tests")
+    dependsOn(tasks.getByName("npmBuild"))
   }
 }

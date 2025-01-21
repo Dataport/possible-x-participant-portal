@@ -14,9 +14,10 @@ import {StatusMessageComponent} from '../../common-views/status-message/status-m
 import {
   IAcceptOfferResponseTO,
   IOfferDetailsTO,
-  IParticipantDetailsTO,
   IPxExtendedServiceOfferingCredentialSubject
 } from '../../../services/mgmt/api/backend';
+
+import {NameMappingService} from "../../../services/mgmt/name-mapping.service";
 
 @Component({
   selector: 'app-accept-offer',
@@ -27,10 +28,7 @@ export class AcceptComponent implements OnChanges {
   @Input() offer?: IOfferDetailsTO = undefined;
   @Output() dismiss: EventEmitter<any> = new EventEmitter();
   @Output() negotiatedContract: EventEmitter<IAcceptOfferResponseTO> = new EventEmitter();
-  @Output() retrievedProviderDetails: EventEmitter<IParticipantDetailsTO> = new EventEmitter();
   @ViewChild('acceptOfferStatusMessage') acceptOfferStatusMessage!: StatusMessageComponent;
-  @ViewChild('retrieveConsumerDetailsMessage') retrieveConsumerDetailsMessage!: StatusMessageComponent;
-  @ViewChild('retrieveProviderDetailsMessage') retrieveProviderDetailsMessage!: StatusMessageComponent;
 
   @ViewChild('viewContainerRef', {read: ViewContainerRef, static: true}) viewContainerRef: ViewContainerRef;
   @ViewChild('accordion', {read: TemplateRef, static: true}) accordion: TemplateRef<any>;
@@ -38,17 +36,18 @@ export class AcceptComponent implements OnChanges {
   isConsumed = false;
   isPoliciesAccepted = false;
   isTnCAccepted = false;
-  consumerDetails?: IParticipantDetailsTO = undefined;
-  providerDetails?: IParticipantDetailsTO = undefined;
-  printTimestamp?: Date;
 
-  constructor(private apiService: ApiService) {
+  constructor(private apiService: ApiService, private readonly nameMappingService: NameMappingService) {
+  }
+
+  getNameIdStringById(id: string): string {
+    const name = this.nameMappingService.getNameById(id);
+    return `${name} (${id})`;
   }
 
   ngOnChanges(): void {
     if (this.offer) {
       this.viewContainerRef.createEmbeddedView(this.accordion);
-      this.getContractPartiesDetails();
     } else {
       this.viewContainerRef.clear();
     }
@@ -70,30 +69,8 @@ export class AcceptComponent implements OnChanges {
       this.negotiatedContract.emit(response);
       this.acceptOfferStatusMessage.showSuccessMessage("Contract Agreement ID: " + response.contractAgreementId);
     }).catch((e: HttpErrorResponse) => {
-      this.acceptOfferStatusMessage.showErrorMessage(e.error.detail || e.error || e.message);
+      this.acceptOfferStatusMessage.showErrorMessage(e?.error?.detail || e?.error || e?.message);
       this.isConsumed = false;
-    });
-  };
-
-  async getContractPartiesDetails() {
-    console.log("Retrieve Participant Details of Consumer and Provider");
-    this.retrieveConsumerDetailsMessage.hideAllMessages();
-    this.retrieveProviderDetailsMessage.hideAllMessages();
-
-    this.apiService.getParticipantDetails$GET$participant_details_participantId(this.offer.catalogOffering["gx:providedBy"].id)
-      .then(response => {
-        console.log(response);
-        this.retrievedProviderDetails.emit(response);
-        this.providerDetails = response;
-      }).catch((e: HttpErrorResponse) => {
-      this.retrieveProviderDetailsMessage.showErrorMessage(e.error.detail || e.error || e.message);
-    });
-
-    this.apiService.getParticipantDetails$GET$participant_details_me().then(response => {
-      console.log(response);
-      this.consumerDetails = response;
-    }).catch((e: HttpErrorResponse) => {
-      this.retrieveConsumerDetailsMessage.showErrorMessage(e.error.detail || e.error || e.message);
     });
   };
 
@@ -105,15 +82,11 @@ export class AcceptComponent implements OnChanges {
     return catalogOffering["gx:aggregationOf"][0]["gx:containsPII"];
   }
 
-  setTimestamp() {
-    this.printTimestamp = new Date();
-  }
-
   isHttpOrHttps(url: string): boolean {
     return url.startsWith('http://') || url.startsWith('https://');
   }
 
   isButtonDisabled(): boolean {
-    return !this.isPoliciesAccepted || !this.isTnCAccepted || this.isConsumed || !this.consumerDetails || !this.providerDetails;
+    return !this.isPoliciesAccepted || !this.isTnCAccepted || this.isConsumed;
   }
 }

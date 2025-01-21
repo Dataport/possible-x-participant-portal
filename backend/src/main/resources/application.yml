@@ -1,6 +1,10 @@
 spring:
   application:
     name: participant-portal
+  security:
+    admin:
+      username: admin
+      password: admin
 
 management:
   endpoints:
@@ -22,10 +26,10 @@ springdoc:
 fh:
   catalog:
     repo:
-      url: url
+      url: http://localhost:5081
     sparql:
-      url: url
-    secret-key: secret
+      url: http://localhost:8890/sparql/
+    secret-key: yourRepoApiKey
 
 sd-creation-wizard-api:
   base-url: http://localhost:8085
@@ -50,4 +54,4 @@ prefill-fields:
 
 version.no: "1.0.0"
 
-version.date: "01.01.1970"
+version.date: "2024-12-31"

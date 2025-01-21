@@ -2,9 +2,17 @@ package eu.possiblex.participantportal.business.control;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import eu.possiblex.participantportal.application.entity.policies.AgreementOffsetUnit;
+import eu.possiblex.participantportal.application.entity.policies.EndAgreementOffsetPolicy;
+import eu.possiblex.participantportal.application.entity.policies.EndDatePolicy;
 import eu.possiblex.participantportal.application.entity.policies.EnforcementPolicy;
 import eu.possiblex.participantportal.application.entity.policies.EverythingAllowedPolicy;
 import eu.possiblex.participantportal.application.entity.policies.ParticipantRestrictionPolicy;
+import eu.possiblex.participantportal.application.entity.policies.StartAgreementOffsetPolicy;
+import eu.possiblex.participantportal.application.entity.policies.StartDatePolicy;
+import eu.possiblex.participantportal.application.entity.policies.TimeAgreementOffsetPolicy;
+import eu.possiblex.participantportal.application.entity.policies.TimeDatePolicy;
 import eu.possiblex.participantportal.business.entity.*;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.edc.DataspaceErrorMessage;
@@ -17,6 +25,7 @@ import eu.possiblex.participantportal.business.entity.edc.negotiation.ContractOf
 import eu.possiblex.participantportal.business.entity.edc.negotiation.NegotiationInitiateRequest;
 import eu.possiblex.participantportal.business.entity.edc.negotiation.NegotiationState;
 import eu.possiblex.participantportal.business.entity.edc.policy.OdrlConstraint;
+import eu.possiblex.participantportal.business.entity.edc.policy.OdrlOperator;
 import eu.possiblex.participantportal.business.entity.edc.policy.OdrlPermission;
 import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import eu.possiblex.participantportal.business.entity.edc.transfer.IonosS3TransferProcess;
@@ -25,7 +34,9 @@ import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProce
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferRequest;
 import eu.possiblex.participantportal.business.entity.exception.NegotiationFailedException;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
+import eu.possiblex.participantportal.business.entity.exception.ParticipantNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
+import eu.possiblex.participantportal.business.entity.fh.ParticipantDetailsSparqlQueryResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,13 +44,12 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 @Service
 @Slf4j
@@ -65,10 +75,13 @@ public class ConsumerServiceImpl implements ConsumerService {
 
     private final String bucketTopLevelFolder;
 
+    private final ConsumerServiceMapper consumerServiceMapper;
+
     public ConsumerServiceImpl(@Autowired ObjectMapper objectMapper, @Autowired EdcClient edcClient,
         @Autowired FhCatalogClient fhCatalogClient, @Autowired TaskScheduler taskScheduler,
         @Value("${s3.bucket-storage-region}") String bucketStorageRegion, @Value("${s3.bucket-name}") String bucketName,
-        @Value("${s3.bucket-top-level-folder}") String bucketTopLevelFolder) {
+        @Value("${s3.bucket-top-level-folder}") String bucketTopLevelFolder,
+        @Autowired ConsumerServiceMapper consumerServiceMapper) {
 
         this.objectMapper = objectMapper;
         this.edcClient = edcClient;
@@ -77,16 +90,19 @@ public class ConsumerServiceImpl implements ConsumerService {
         this.bucketStorageRegion = bucketStorageRegion;
         this.bucketName = bucketName;
         this.bucketTopLevelFolder = bucketTopLevelFolder;
+        this.consumerServiceMapper = consumerServiceMapper;
     }
 
     @Override
-    public SelectOfferResponseBE selectContractOffer(SelectOfferRequestBE request) throws OfferNotFoundException {
+    public SelectOfferResponseBE selectContractOffer(SelectOfferRequestBE request) throws OfferNotFoundException,
+        ParticipantNotFoundException {
         // get offer from FH Catalog and parse the attributes needed to get the offer from EDC Catalog
-        PxExtendedServiceOfferingCredentialSubject fhCatalogOffer = fhCatalogClient.getFhCatalogOffer(
+        OfferRetrievalResponseBE offerRetrievalResponseBE = fhCatalogClient.getFhCatalogOffer(
             request.getFhCatalogOfferId());
+        PxExtendedServiceOfferingCredentialSubject fhCatalogOffer = offerRetrievalResponseBE.getCatalogOffering();
         boolean isDataOffering = !(fhCatalogOffer.getAggregationOf() == null || fhCatalogOffer.getAggregationOf()
             .isEmpty());
-        log.info("got fh catalog offer " + fhCatalogOffer);
+        log.info("got fh catalog offer {}", fhCatalogOffer);
 
         // get offer from EDC Catalog
         DcatCatalog edcCatalog = queryEdcCatalog(CatalogRequest.builder()
@@ -99,14 +115,28 @@ public class ConsumerServiceImpl implements ConsumerService {
                     .build()))
                 .build())
             .build());
-        log.info("got edc catalog: " + edcCatalog);
+        log.info("got edc catalog: {}", edcCatalog);
         DcatDataset edcCatalogOffer = getDatasetById(edcCatalog, fhCatalogOffer.getAssetId());
+
+        List<EnforcementPolicy> enforcementPolicies = getEnforcementPoliciesFromEdcPolicies(
+            edcCatalogOffer.getHasPolicy());
+
+        Map<String, ParticipantDetailsSparqlQueryResult> participantDetailsMap = fhCatalogClient.getParticipantDetailsByIds(
+            List.of(fhCatalogOffer.getProvidedBy().getId()));
+
+        ParticipantDetailsSparqlQueryResult providerDetails = participantDetailsMap.get(fhCatalogOffer.getProvidedBy().getId());
+
+        if (providerDetails == null) {
+            throw new ParticipantNotFoundException("Provider of offer with ID " + fhCatalogOffer.getId() + " not found in catalog.");
+        }
 
         SelectOfferResponseBE response = new SelectOfferResponseBE();
         response.setEdcOffer(edcCatalogOffer);
         response.setCatalogOffering(fhCatalogOffer);
         response.setDataOffering(isDataOffering);
-        response.setEnforcementPolicies(getEnforcementPoliciesFromEdcPolicies(edcCatalogOffer.getHasPolicy()));
+        response.setEnforcementPolicies(enforcementPolicies);
+        response.setProviderDetails(consumerServiceMapper.mapToParticipantWithMailBE(providerDetails));
+        response.setOfferRetrievalDate(offerRetrievalResponseBE.getOfferRetrievalDate());
 
         return response;
     }
@@ -293,11 +323,19 @@ public class ConsumerServiceImpl implements ConsumerService {
 
         Set<EnforcementPolicy> enforcementPolicies = new HashSet<>();
         for (OdrlConstraint constraint : constraints) {
-            if (constraint.getLeftOperand().equals("did")) {
-                enforcementPolicies.add(
-                    new ParticipantRestrictionPolicy(List.of(constraint.getRightOperand().split(","))));
+            EnforcementPolicy policy = switch (constraint.getLeftOperand()) {
+                case ParticipantRestrictionPolicy.EDC_OPERAND 
+                    -> parseParticipantRestrictionPolicy(constraint);
+                case TimeAgreementOffsetPolicy.EDC_OPERAND  // currently time agreement offset and time date have the same name in the edc, hence we need to handle both here
+                    -> parseTimedEnforcementPolicy(constraint); 
+                default 
+                    -> null;
+            };
+
+            if (policy != null) {
+                enforcementPolicies.add(policy);
             } else {
-                log.warn("Encountered unknown constraint: {}", constraint);
+                log.warn("Unknown enforcement policy: {}", constraint);
             }
         }
 
@@ -306,5 +344,53 @@ public class ConsumerServiceImpl implements ConsumerService {
         }
 
         return enforcementPolicies.stream().toList();
+    }
+
+    ParticipantRestrictionPolicy parseParticipantRestrictionPolicy(OdrlConstraint constraint) {
+        return new ParticipantRestrictionPolicy(List.of(constraint.getRightOperand().split(",")));
+    }
+
+    EnforcementPolicy parseTimedEnforcementPolicy(OdrlConstraint constraint) {
+        // check whether we have a start or end date policy
+        boolean endDate;
+        if (constraint.getOperator().equals(OdrlOperator.LEQ)) {
+            endDate = true;
+        } else if (constraint.getOperator().equals(OdrlOperator.GEQ)) {
+            endDate = false;
+        } else {
+            log.error("Failed to parse operator in timed policy {}", constraint);
+            return null;  // unknown type of time policy
+        }
+
+        // try to parse as time agreement offset policy
+        TimeAgreementOffsetPolicy policy = parseTimeAgreementOffsetPolicy(constraint, endDate);
+        if (policy != null) {
+            return policy;
+        }
+
+        // try to parse as time date policy
+        return parseTimeDatePolicy(constraint, endDate);
+    }
+
+    TimeAgreementOffsetPolicy parseTimeAgreementOffsetPolicy(OdrlConstraint constraint, boolean endDate) {
+        var matcher = Pattern.compile("(contract[A,a]greement)\\+(-?[0-9]+)(s|m|h|d)").matcher(constraint.getRightOperand());
+        if (matcher.matches()) {
+            int number = Integer.parseInt(matcher.group(2));
+            AgreementOffsetUnit unit = AgreementOffsetUnit.forValue(matcher.group(3));
+            return endDate ? EndAgreementOffsetPolicy.builder().offsetNumber(number).offsetUnit(unit).build()
+                : StartAgreementOffsetPolicy.builder().offsetNumber(number).offsetUnit(unit).build();
+        } 
+        return null;
+    }
+
+    TimeDatePolicy parseTimeDatePolicy(OdrlConstraint constraint, boolean endDate) {
+        try {
+            OffsetDateTime date = OffsetDateTime.parse(constraint.getRightOperand());
+            return endDate ? EndDatePolicy.builder().date(date).build() 
+                : StartDatePolicy.builder().date(date).build();
+        } catch (Exception e) {
+            log.error("Failed to parse timestamp in policy {}", constraint, e);
+            return null;
+        }
     }
 }

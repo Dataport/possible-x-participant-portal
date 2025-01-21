@@ -27,4 +27,7 @@ public class OfferingDetailsSparqlQueryResult {
 
     @JsonDeserialize(using = CatalogLiteralDeserializer.class)
     private String providerUrl;
+
+    @JsonDeserialize(using = CatalogLiteralDeserializer.class)
+    private String aggregationOf;
 }

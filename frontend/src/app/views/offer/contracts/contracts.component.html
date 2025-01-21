@@ -1,7 +1,7 @@
-<div class="flex items-center justify-center min-h-screen"> <!-- Full-page flex container -->
-  <div class="p-6 w-full"> <!-- Centered form container with fixed max width -->
+<div class="flex pt-16 justify-center min-h-content"> <!-- Full-page flex container -->
+  <div class="p-6 w-full xl:max-w-screen-xl"> <!-- Centered form container with fixed max width -->
     <div class="flex flex-col pb-14">
-      <div class="text-3xl font-bold text-brand-800">
+      <div class="flex flex-col items-center pb-20 text-3xl font-bold text-brand-800">
         Contract Agreements
       </div>
       <br/>
@@ -12,20 +12,24 @@
         <thead>
         <tr>
           <th class="w-10">Nr.</th>
-          <th class="w-40" mat-sort-header="contractsigned">Contract signed</th>
-          <th class="w-1/6" mat-sort-header="offer">Offer</th>
+          <th class="w-1/6" mat-sort-header="contractsigned">Contract signed</th>
+          <th class="w-1/6" mat-sort-header="offer">Offering</th>
           <th class="w-1/6" mat-sort-header="provider">Provider</th>
           <th class="w-1/6" mat-sort-header="consumer">Consumer</th>
           <th class="w-1/6" mat-sort-header="contractagreementid">Contract Agreement ID</th>
-          <th class="w-1/16"></th>
-          <th class="w-1/16"></th>
+          <th class="w-1/12" mat-sort-header="validity">Validity</th>
+          <th class="w-32"></th>
         </tr>
         </thead>
         <tbody>
-        <ng-container *ngFor="let item of sortedAgreements; let i = index">
+        <ng-container *ngFor="let item of pagedItems; let i = index">
           <tr>
-            <td class="overflow-clip text-nowrap text-ellipsis">{{ i + 1 }}</td>
-            <td class="overflow-clip text-nowrap text-ellipsis">{{ item.contractSigningDate | date:'medium' }}</td>
+            <td [cTooltip]="(i + 1).toString()"
+                class="overflow-clip text-nowrap text-ellipsis">{{ i + 1 }}
+            </td>
+            <td [cTooltip]="item.contractSigningDate | date:'medium'"
+                class="overflow-clip text-nowrap text-ellipsis">{{ item.contractSigningDate | date:'medium' }}
+            </td>
             <td [cTooltip]="item.assetDetails.name"
                 class="overflow-clip text-nowrap text-ellipsis">{{ item.assetDetails.name }}
             </td>
@@ -36,35 +40,65 @@
                 class="overflow-clip text-nowrap text-ellipsis">{{ item.consumerDetails.name }}
             </td>
             <td [cTooltip]="item.id" class="overflow-clip text-nowrap text-ellipsis">{{ item.id }}</td>
-            <td>
-              <button (click)="toggleAccordion(item.id)" cButton class="rounded-none">Details</button>
+            <td [cTooltip]="isAnyPolicyInvalid(item.enforcementPolicies) ? 'invalid' : 'valid'">
+              <ng-container *ngIf="isAnyPolicyInvalid(item.enforcementPolicies); else valid">
+                <span class="text-error">invalid</span>
+              </ng-container>
+              <ng-template #valid>
+                valid
+              </ng-template>
             </td>
-            <td>
-              <button *ngIf="isDataOffering(item)" (click)="transferAgain(item)" [disabled]=isTransferButtonDisabled cButton class="rounded-none">
-                Transfer
+            <td class="space-x-2">
+              <button (click)="toggleAccordion(item.id)" [cTooltip]="'Details'" cButton
+                      class="rounded-none">
+                <mat-icon>manage_search</mat-icon>
+              </button>
+              <button (click)="transferAgain(item)" *ngIf="isDataOffering(item) && !isProvider(item)"
+                      [cTooltip]="'Transfer'" [disabled]="shouldTransferButtonBeDisabled(item)" cButton
+                      class="rounded-none">
+                <mat-icon>swap_horiz</mat-icon>
               </button>
             </td>
           </tr>
           <tr *ngIf="item.id === expandedItemId">
             <td colspan="8">
+              <div class="mb-4">
+                <button (click)="retrieveAndSetOfferDetails(item.id)" [cModalToggle]="'modalInfoExportView'" cButton
+                        class="rounded-none">Export Related Information
+                </button>
+              </div>
               <span *ngIf="item.consumerDetails"><b>Consumer Name:</b> {{ item.consumerDetails.name }}<br></span>
               <span *ngIf="item.consumerDetails"><b>Consumer DID:</b> {{ item.consumerDetails.did }}<br></span>
-              <span *ngIf="item.consumerDetails"><b>Consumer DAPS ID:</b> {{ item.consumerDetails.dapsId }}<br><br></span>
+              <span *ngIf="item.consumerDetails"><b>Consumer DAPS ID:</b> {{ item.consumerDetails.dapsId }}
+                <br><br></span>
               <span *ngIf="item.providerDetails"><b>Provider Name:</b> {{ item.providerDetails.name }}<br></span>
               <span *ngIf="item.providerDetails"><b>Provider DID:</b> {{ item.providerDetails.did }}<br></span>
-              <span *ngIf="item.providerDetails"><b>Provider DAPS ID:</b> {{ item.providerDetails.dapsId }}<br><br></span>
+              <span *ngIf="item.providerDetails"><b>Provider DAPS ID:</b> {{ item.providerDetails.dapsId }}
+                <br><br></span>
               <span *ngIf="item.assetDetails"><b>Offering Name:</b> {{ item.assetDetails.name }}<br></span>
               <span *ngIf="item.assetDetails"><b>Offering Description:</b> {{ item.assetDetails.description }}
                 <br></span>
               <span *ngIf="item.assetDetails"><b>Offering Asset ID:</b> {{ item.assetDetails.assetId }}<br></span>
               <span *ngIf="item.assetDetails"><b>Offering Catalog ID:</b> {{ item.assetDetails.offeringId }}
                 <br><br></span>
-              <app-enforcement-policy-view [enforcementPolicies]="item.enforcementPolicies"/>
+              <app-enforcement-policy-accordion-view [enforcementPolicies]="item.enforcementPolicies"
+                                                     [showValidity]="true"/>
             </td>
           </tr>
         </ng-container>
         </tbody>
       </table>
+      <mat-paginator [length]="contractAgreements.length"
+                     [pageSize]="pageSize"
+                     [pageIndex]="pageIndex"
+                     [showFirstLastButtons]='true'
+                     [pageSizeOptions]="[5, 10, 20]"
+                     (page)="onPageChange($event)"
+                     class="custom-paginator">
+      </mat-paginator>
     </div>
   </div>
 </div>
+
+<app-contract-details-export-view #contractDetailsExportView
+                                  [contractDetails]="contractDetailsToExport"></app-contract-details-export-view>

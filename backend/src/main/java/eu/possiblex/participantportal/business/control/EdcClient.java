@@ -23,6 +23,7 @@ import eu.possiblex.participantportal.business.entity.edc.asset.AssetCreateReque
 import eu.possiblex.participantportal.business.entity.edc.asset.possible.PossibleAsset;
 import eu.possiblex.participantportal.business.entity.edc.catalog.CatalogRequest;
 import eu.possiblex.participantportal.business.entity.edc.catalog.DcatCatalog;
+import eu.possiblex.participantportal.business.entity.edc.catalog.QuerySpec;
 import eu.possiblex.participantportal.business.entity.edc.common.IdResponse;
 import eu.possiblex.participantportal.business.entity.edc.contractagreement.ContractAgreement;
 import eu.possiblex.participantportal.business.entity.edc.contractdefinition.ContractDefinitionCreateRequest;
@@ -30,6 +31,7 @@ import eu.possiblex.participantportal.business.entity.edc.negotiation.ContractNe
 import eu.possiblex.participantportal.business.entity.edc.negotiation.NegotiationInitiateRequest;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyCreateRequest;
 import eu.possiblex.participantportal.business.entity.edc.transfer.IonosS3TransferProcess;
+import eu.possiblex.participantportal.business.entity.edc.transfer.TerminateTransferRequest;
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferRequest;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -67,11 +69,17 @@ public interface EdcClient {
     @PostExchange("/v2/transferprocesses/{transferId}/deprovision")
     void deprovisionTransfer(@PathVariable String transferId);
 
+    @PostExchange("/v2/transferprocesses/{transferId}/terminate")
+    void terminateTransfer(@PathVariable String transferId, @RequestBody TerminateTransferRequest request);
+
     @DeleteExchange("/v2/contractdefinitions/{contractDefinitionId}")
     void revokeContractDefinition(@PathVariable String contractDefinitionId);
 
     @PostExchange("/v2/contractagreements/request")
-    List<ContractAgreement> queryContractAgreements();
+    List<ContractAgreement> queryContractAgreements(@RequestBody QuerySpec querySpec);
+
+    @GetExchange("/v2/contractagreements/{contractAgreementId}")
+    ContractAgreement getContractAgreementById(@PathVariable String contractAgreementId);
 
     @PostExchange("/v3/assets/request")
     List<PossibleAsset> queryPossibleAssets();

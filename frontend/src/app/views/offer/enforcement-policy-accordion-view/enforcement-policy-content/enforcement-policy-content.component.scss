@@ -1,0 +1,5 @@
+ul {
+  list-style-type: square;
+  padding-left: var(--ul-padding-left, 2em);
+  list-style-position: inside;
+}

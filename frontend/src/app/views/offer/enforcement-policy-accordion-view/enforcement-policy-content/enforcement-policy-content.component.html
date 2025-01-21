@@ -1,0 +1,21 @@
+<div *ngIf="enforcementPolicy">
+  <div *ngIf="isEverythingAllowedPolicy(enforcementPolicy)">
+    <b>Everything is allowed.</b><br/>
+  </div>
+  <div *ngIf="isParticipantRestrictionPolicy(enforcementPolicy)">
+    <b>Contracting is restricted to the following organizations:</b>
+    <ul *ngFor="let org of asParticipantRestrictionPolicy(enforcementPolicy).allowedParticipants">
+      <li>
+        {{ getNameIdStringById(org) }}
+      </li>
+    </ul>
+  </div>
+  <div *ngIf="isStartDatePolicy(enforcementPolicy)">
+    <b>Contract validity is restricted to the following start date:</b><br/>
+    {{ asStartDatePolicy(enforcementPolicy).date | date: 'full' }}<br/>
+  </div>
+  <div *ngIf="isEndDatePolicy(enforcementPolicy)">
+    <b>Contract validity is restricted to the following end date:</b><br/>
+    {{ asEndDatePolicy(enforcementPolicy).date | date: 'full' }}<br/>
+  </div>
+</div>

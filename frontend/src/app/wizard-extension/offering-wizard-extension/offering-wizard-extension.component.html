@@ -20,9 +20,10 @@
       <label class="form-label">Offering Type Selection</label>
       <select [(ngModel)]="offerType" class="form-select rounded-none w-full">
         <option value="service">Service Offering</option>
-        <option selected value="data">Data Offering</option>
+        <option selected value="data">Data Service Offering</option>
       </select>
-      <div class="flex justify-end pt-4">
+      <div class="py-4 text-sm">The "Data Service Offering" consists of both a "Service Offering" and a "Data Resource".</div>
+      <div class="flex justify-end">
         <button (click)="prefillWizardNewOffering()" cButton color="primary" matStepperNext shape="rounded-0"
                 type="submit">Next
         </button>
@@ -44,63 +45,7 @@
         <br/>
       </div>
       <app-base-wizard-extension #gxDataResourceWizard></app-base-wizard-extension>
-      <c-accordion [flush]="true">
-        <c-accordion-item #accordionItemDataOfferPolicyHints="cAccordionItem" [visible]="false">
-          <ng-template cTemplateId="accordionHeaderTemplate">
-              <button (click)="accordionItemDataOfferPolicyHints.toggleItem()" [collapsed]="!accordionItemDataOfferPolicyHints.visible" cAccordionButton>
-                For further guidance related to “Data Resource Policy”, click here
-              </button>
-          </ng-template>
-          <ng-template cTemplateId="accordionBodyTemplate">
-            <div class="bg-brand-50 accordion-body">
-              You must define machine readable policies for the data resource as expected by Gaia-x and POSSIBLE-X.
-              <ul>
-                <li>
-                  Use under service offering “POSSIBLE-X enforced policy” to restrict booking of this data product by a consumer organisation in the POSSIBLE-X Dataspace.
-                </li>
-                <li>
-                  The policies for data resources are not technically enforced in the POSSIBLE-X Dataspace.
-                </li>
-                <li>
-                  A consumer organisation booking the data product shall comply to those policies.
-                </li>
-                <li>
-                  Tip : Add those policies in human readable form under the T&Cs.
-                </li>
-                <li>
-                  Compatible IT systems could automatically technically enforce them.
-                </li>
-              </ul>
-              <br>
-              You may define 3 types of policies: prohibitions, permissions, obligations for the data resource.
-              <br><br>
-              The policies related to the service providing the data resource (e.g. the use of an Eclipse Dataspace Connector) shall be defined in the next section.
-              <br><br>
-              For each policy type, you may take the following dimensions into account:
-              <ul>
-                <li>
-                  <b>Access control</b>: Who is allowed to access this data resource? (e.g. only certain departments or roles)
-                </li>
-                <li>
-                  <b>Usage control</b>: How may the data resource be used? (e.g. only for internal analyses, not to be passed on to third parties, pre-requisites to be fullfilled to use the data)
-                </li>
-              </ul>
-              See as well IDS standard:
-                <a href="https://docs.internationaldataspaces.org/ids-knowledgebase/open-dei-building-blocks-catalog/access_and_usage_control">
-                  https://docs.internationaldataspaces.org/ids-knowledgebase/open-dei-building-blocks-catalog/access_and_usage_control
-                </a>
-              <ul>
-                <li>
-                  <b>Security</b>: What security precautions need to be taken? (e.g. encryption, regular security checks)
-                </li>
-                <li>
-                  <b>Data retention</b>: How long should the data be retained and when should it be deleted? (e.g. retention for 5 years, then secure deletion)
-                </li>
-              </ul>
-            </div>
-          </ng-template>
-          </c-accordion-item>
-      </c-accordion>
+      <app-data-resource-policy-hints></app-data-resource-policy-hints>
       <div class="flex justify-between pt-4">
         <button (click)="prepareStepBeforeDataResource()" cButton color="secondary" matStepperPrevious shape="rounded-0">Back</button>
         <button (click)="prepareStepAfterDataResource()" [disabled]="!isDataResourceValid()" cButton
@@ -135,140 +80,31 @@
       <ng-template matStepLabel>Define Service Offering</ng-template>
       <app-base-wizard-extension #gxServiceOfferingWizard></app-base-wizard-extension>
       <br/>
-      <c-accordion [flush]="true">
-        <c-accordion-item *ngIf="isOfferingDataOffering()" #accordionItemServiceOfferFreePolicyHints="cAccordionItem" [visible]="false">
-          <ng-template cTemplateId="accordionHeaderTemplate">
-            <button (click)="accordionItemServiceOfferFreePolicyHints.toggleItem()" [collapsed]="!accordionItemServiceOfferFreePolicyHints.visible" cAccordionButton>
-              For further guidance related to “Service Offering Policy”, click here
-            </button>
-          </ng-template>
-          <ng-template cTemplateId="accordionBodyTemplate">
-            <div class="bg-brand-50 accordion-body">
-              You must define machine readable policies for the service offering as expected by Gaia-x and POSSIBLE-X.
-              <ul>
-                <li>
-                  Use under service offering “POSSIBLE-X enforced policy” to restrict booking of this data product by a consumer organisation in the POSSIBLE-X Dataspace.
-                </li>
-                <li>
-                  Other policies for service offerings are not technically enforced in the POSSIBLE-X Dataspace
-                </li>
-                <li>
-                  A consumer organisation booking the data product or service shall comply to those policies.
-                </li>
-                <li>
-                  Tip : Add all service offering policies in human readable form under the T&Cs.
-                </li>
-                <li>
-                  Compatible IT systems could automatically technically enforce them.
-                </li>
-              </ul>
-              <br>
-              You may define 3 types of policies: prohibitions, permissions, obligations for the service offering.
-              <br><br>
-              For each of them, you may take the following dimensions into account:
-              <ul>
-                <li>
-                  <b>Access control</b>: Who is allowed to interact with the service or a specific functions? (e.g. only certain organisation, departments or roles to use a function, book the service, etc..)
-                  <ul>
-                    <li>
-                      Please note that the policy list in the Data product / Service offer description will automatically includes the “POSSIBLE-X enforced policy”  if you select and configure it in the next section.
-                    </li>
-                  </ul>
-                </li>
-                <li>
-                  <b>Terms of use / Usage control</b>: Under what conditions may the service be used? (e.g. only or not for specific purposes, if a pre-condition/a obligation is (not) met, with a defined frequency, at specific time windows etc.. )
-                </li>
-                <li>
-                  <b>Security</b>: What security precautions need to be taken? (e.g. use of VPNs, two-factor authentication)
-                </li>
-                <li>
-                  <b>Logging and monitoring</b>: How is the use of the service logged and monitored? (e.g. regular review of transmission logs must be done)
-                </li>
-                <li>
-                  <b>Data integrity</b>: What obligations has the user to comply to ensure the integrity of the data input/output to/from the service? (e.g. maintain integrity proofs of data input like checksums, error correction procedures, protect data output received from the service)
-                </li>
-              </ul>
-            </div>
-          </ng-template>
-        </c-accordion-item>
-        <c-accordion-item *ngIf="!isOfferingDataOffering()" #accordionItemServiceOfferFreePolicyHints="cAccordionItem" [visible]="false">
-          <ng-template cTemplateId="accordionHeaderTemplate">
-            <button (click)="accordionItemServiceOfferFreePolicyHints.toggleItem()" [collapsed]="!accordionItemServiceOfferFreePolicyHints.visible" cAccordionButton>
-              For further guidance related to “Service Offering Policy”, click here
-            </button>
-          </ng-template>
-          <ng-template cTemplateId="accordionBodyTemplate">
-            <div class="bg-brand-50 accordion-body">
-              You must define machine readable policies for the service offering as expected by Gaia-x and POSSIBLE-X.
-              <ul>
-                <li>
-                  Use under service offering “POSSIBLE-X enforced policy” to restrict booking of this service by a consumer organisation in the POSSIBLE-X Dataspace.
-                </li>
-                <li>
-                  Other policies for service offerings are not technically enforced in the POSSIBLE-X Dataspace
-                </li>
-                <li>
-                  A consumer organisation booking the data product or service shall comply to those policies.
-                </li>
-                <li>
-                  Tip : Add all service offering policies in human readable form under the T&Cs.
-                </li>
-                <li>
-                  Compatible IT systems could automatically technically enforce them.
-                </li>
-              </ul>
-              <br>
-              You may define 3 types of policies: prohibitions, permissions, obligations for the service offering.
-              <br><br>
-              For each of them, you may take the following dimensions into account:
-              <ul>
-                <li>
-                  <b>Access control</b>: Who is allowed to interact with the service or a specific functions? (e.g. only certain organisation, departments or roles to use a function, book the service, etc..)
-                  <ul>
-                    <li>
-                      Please note that the policy list in the Service offer description will automatically includes the “POSSIBLE-X enforced policy”  if you select and configure it in the next section.
-                    </li>
-                  </ul>
-                </li>
-                <li>
-                  <b>Terms of use / Usage control</b>: Under what conditions may the service be used? (e.g. only or not for specific purposes, if a pre-condition/a obligation is (not) met, with a defined frequency, at specific time windows etc.. )
-                </li>
-                <li>
-                  <b>Security</b>: What security precautions need to be taken? (e.g. use of VPNs, two-factor authentication)
-                </li>
-                <li>
-                  <b>Logging and monitoring</b>: How is the use of the service logged and monitored? (e.g. regular review of transmission logs must be done)
-                </li>
-                <li>
-                  <b>Data integrity</b>: What obligations has the user to comply to ensure the integrity of the data input/output to/from the service? (e.g. maintain integrity proofs of data input like checksums, error correction procedures, protect data output received from the service)
-                </li>
-              </ul>
-            </div>
-          </ng-template>
-        </c-accordion-item>
-      </c-accordion>
+      <app-service-offering-policy-hints [isOfferingDataOffering]="isOfferingDataOffering()"></app-service-offering-policy-hints>
       <br/>
       <label class="form-label">POSSIBLE-X enforced policy</label>
       <div cFormText>
-        Please define POSSIBLE-X enforced policies based on POSSIBLE predefined policy classes for the provided service offer. <span *ngIf="!isPolicyChecked" class="font-bold">Currently, everything is allowed.</span>
+        Please define POSSIBLE-X enforced policies based on POSSIBLE predefined policy classes for the provided Service Offering.<br><br>
+        <span *ngIf="!isAnyPolicyChecked" class="font-bold">Currently, everything is allowed.</span><br>
       </div>
       <c-accordion [flush]="true">
-          <c-accordion-item #accordionItem="cAccordionItem" [visible]="false">
+          <c-accordion-item #accordionItem1="cAccordionItem" [visible]="false">
             <ng-template cTemplateId="accordionHeaderTemplate">
-            <div class="accordion-header">
+            <div class="accordion-header" (click)="accordionItem1.toggleItem()">
               <label> Restrict the contractual booking to organization(s)</label>
-              <mat-checkbox (click)="accordionItem.toggleItem()" [(ngModel)]="isPolicyChecked"></mat-checkbox>
+              <mat-checkbox [(ngModel)]="isContractBookingPolicyChecked" (click)="handleCheckboxClick($event, 'isContractBookingPolicyChecked', accordionItem1)"></mat-checkbox>
             </div>
           </ng-template>
           <ng-template cTemplateId="accordionBody">
             <div class="accordion-body">
               <div cFormText style="color: #7f7f7f;">
-                Please enter organizationID
+                Please select the organization(s).
               </div>
-              <div *ngFor="let id of dapsIDs; let i = index; trackBy:customTrackBy" class="flex flex-col space-y-2">
+              <div *ngFor="let id of contractBookingPolicyIds; let i = index; trackBy:customTrackBy" class="flex flex-col space-y-2">
                 <div class="flex items-center space-x-2">
-                  <input #input="ngModel" [(ngModel)]="dapsIDs[i]" class="form-control rounded-none w-full"
-                         name="dapsID{{i}}" placeholder="did:web:example-organization.eu" type="text"/>
+                  <select [(ngModel)]="contractBookingPolicyIds[i]" required class="form-select">
+                    <option *ngFor="let id of sortedIds" [value]="id">{{ getNameIdStringById(id) }}</option>
+                  </select>
                   <button (click)="addInput()" *ngIf="i === 0" cButton color="primary" size="sm" variant="ghost">
                     <svg cIcon class="" name="cib-addthis" size="xl"></svg>
                   </button>
@@ -276,76 +112,98 @@
                     <svg cIcon class="" name="cil-trash" size="xl"></svg>
                   </button>
                 </div>
-                <div *ngIf="input.touched && !isFieldFilled(dapsIDs[i])" style="color: red">
+                <div *ngIf="!isFieldFilled(contractBookingPolicyIds[i])" style="color: red">
                   <small>
-                    Please enter organizationID.
+                    Please select an organization.
                   </small>
                 </div>
               </div>
             </div>
           </ng-template>
         </c-accordion-item>
+        <c-accordion-item #accordionItem2="cAccordionItem" [visible]="false">
+          <ng-template cTemplateId="accordionHeaderTemplate">
+            <div class="accordion-header"  (click)="accordionItem2.toggleItem()">
+              <label> Restrict contract validity - start of contract</label>
+              <mat-checkbox [(ngModel)]="isContractValidityStartPolicyChecked" (click)="handleCheckboxClick($event, 'isContractValidityStartPolicyChecked', accordionItem2)"></mat-checkbox>
+            </div>
+          </ng-template>
+          <ng-template cTemplateId="accordionBody">
+            <div class="accordion-body">
+              <div cFormText style="color: #7f7f7f;">
+                Please select the start date of the contract.
+              </div>
+              <div class="flex flex-col space-y-2">
+                <mat-form-field>
+                  <mat-label>Select the date</mat-label>
+                  <input [ngxMatDatetimePicker]="picker" matInput [(ngModel)]="contractValidityStartDate">
+                  <mat-hint>DD/MM/YYYY, HH:MM:SS</mat-hint>
+                  <mat-datepicker-toggle [for]="$any(picker)" matIconSuffix></mat-datepicker-toggle>
+                  <ngx-mat-datetime-picker [showSeconds]="true" #picker>
+                    <ngx-mat-datepicker-actions>
+                      <button ngxMatDatepickerApply>
+                        <mat-icon>done</mat-icon>
+                      </button>
+                  </ngx-mat-datepicker-actions>
+                  </ngx-mat-datetime-picker>
+                </mat-form-field>
+                <div *ngIf="!isValidDate(contractValidityStartDate)" style="color: red">
+                  <small>
+                    Please select a start date.
+                  </small>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </c-accordion-item>
+        <c-accordion-item #accordionItem3="cAccordionItem" [visible]="false">
+          <ng-template cTemplateId="accordionHeaderTemplate">
+          <div class="accordion-header"  (click)="accordionItem3.toggleItem()">
+            <label> Restrict contract validity - end of contract</label>
+            <mat-checkbox [(ngModel)]="isContractValidityEndPolicyChecked" (click)="handleCheckboxClick($event, 'isContractValidityEndPolicyChecked', accordionItem3)"></mat-checkbox>
+          </div>
+        </ng-template>
+        <ng-template cTemplateId="accordionBody">
+          <div class="accordion-body">
+            <div cFormText style="color: #7f7f7f;">
+              Please select the end date of the contract.
+            </div>
+            <div class="flex flex-col space-y-2">
+              <mat-form-field>
+                <mat-label>Select the date</mat-label>
+                <input [ngxMatDatetimePicker]="picker" matInput [(ngModel)]="contractValidityEndDate">
+                <mat-hint>DD/MM/YYYY, HH:MM:SS</mat-hint>
+                <mat-datepicker-toggle [for]="$any(picker)" matIconSuffix></mat-datepicker-toggle>
+                <ngx-mat-datetime-picker [showSeconds]="true" #picker>
+                  <ngx-mat-datepicker-actions>
+                    <button ngxMatDatepickerApply>
+                      <mat-icon>done</mat-icon>
+                    </button>
+                </ngx-mat-datepicker-actions>
+                </ngx-mat-datetime-picker>
+              </mat-form-field>
+              <div *ngIf="!isValidDate(contractValidityEndDate)" style="color: red">
+                <small>
+                  Please select an end date.
+                </small>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+        </c-accordion-item>
       </c-accordion>
+      <div *ngIf="this.isInvalidContractBookingPolicy || this.isInvalidContractValidityStartPolicy || this.isInvalidContractValidityEndPolicy" style="color: red">
+        <small>
+          Please check the selected POSSIBLE-X enforced policies.
+        </small>
+      </div>
       <br>
-      <c-accordion [flush]="true">
-        <c-accordion-item *ngIf="isOfferingDataOffering()" #accordionItemServiceOfferPossibleXPolicyHints="cAccordionItem" [visible]="false">
-          <ng-template cTemplateId="accordionHeaderTemplate">
-            <button (click)="accordionItemServiceOfferPossibleXPolicyHints.toggleItem()" [collapsed]="!accordionItemServiceOfferPossibleXPolicyHints.visible" cAccordionButton>
-              For further guidance related to “POSSIBLE-X enforced policy”, click here
-            </button>
-          </ng-template>
-          <ng-template cTemplateId="accordionBodyTemplate">
-            <div class="bg-brand-50 accordion-body">
-              You may define "POSSIBLE-X enforced policy" by configuring a predefined policy class for the use and management of this service/data product.
-              <br><br>
-              “Restrict the contractual booking to organization(s)” allows to restrict which organization(s) of your choice will be able to proceed with a contractual booking based on their legal participant did:web declared in the POSSIBLE-X Catalog credentials.
-              <br><br>
-              Please define "POSSIBLE-X enforced policy" based on POSSIBLE predefined ODRL policy classes for the provided service / data product.
-              <br><br>
-              Note:
-              <ul>
-                <li>
-                  The policy will be technically enforced in the POSSIBLE-X Dataspace.
-                </li>
-                <li>
-                  The Service Offering policy list entered above will be extended automatically with the generated “POSSIBLE-X enforced policy” upon submission if you have selected and configured it below
-                </li>
-              </ul>
-            </div>
-          </ng-template>
-        </c-accordion-item>
-        <c-accordion-item *ngIf="!isOfferingDataOffering()" #accordionItemServiceOfferPossibleXPolicyHints="cAccordionItem" [visible]="false">
-          <ng-template cTemplateId="accordionHeaderTemplate">
-            <button (click)="accordionItemServiceOfferPossibleXPolicyHints.toggleItem()" [collapsed]="!accordionItemServiceOfferPossibleXPolicyHints.visible" cAccordionButton>
-              For further guidance related to “POSSIBLE-X enforced policy”, click here
-            </button>
-          </ng-template>
-          <ng-template cTemplateId="accordionBodyTemplate">
-            <div class="bg-brand-50 accordion-body">
-              You may defined POSSIBLE-X enforced policy by configuring a predefined policy class for the use and management of this service.
-              <br><br>
-              “Restrict the contractual booking to organization(s)” allows to restrict which organization(s) of your choice will be able to proceed with a contractual booking based on their legal participant did:web declared in the POSSIBLE-X Catalog credentials.
-              <br><br>
-              Please define POSSIBLE-X enforced policy based on POSSIBLE predefined ODRL policy classes for the provided service.
-              <br><br>
-              Note:
-              <ul>
-                <li>
-                  The policy will be technically enforced in the POSSIBLE-X Dataspace.
-                </li>
-                <li>
-                  The Service Offering policy list entered above will be extended automatically with the generated “POSSIBLE-X enforced policy” upon submission if you have selected and configured it below
-                </li>
-              </ul>
-            </div>
-          </ng-template>
-        </c-accordion-item>
-      </c-accordion>
+      <app-possible-x-enforced-policy-hints [isOfferingDataOffering]="isOfferingDataOffering()"></app-possible-x-enforced-policy-hints>
       <div class="flex justify-between pt-4">
         <button cButton color="secondary" matStepperPrevious shape="rounded-0">Back</button>
         <button (click)="createOffer()" [disabled]="!isServiceOfferingValid()" cButton color="primary" matStepperNext
                 shape="rounded-0" type="submit">
-          Create Offer
+          Create and Publish Offering
         </button>
       </div>
     </mat-step>
@@ -355,9 +213,9 @@
       <div class="min-h-16">
         <app-status-message
           #offerCreationStatusMessage
-          [errorMessage]="'Offer creation failed.'"
-          [infoMessage]="'Offer creation ongoing.'"
-          [successMessage]="'Offer creation successful.'">
+          [errorMessage]="'Offering creation failed.'"
+          [infoMessage]="'Offering creation ongoing.'"
+          [successMessage]="'Offering creation completed. Your (Data) Service Offering was successfully verified by a Gaia-X clearing house and published in the catalogue.'">
         </app-status-message>
       </div>
       <div class="flex justify-end pt-4">

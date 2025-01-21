@@ -2,6 +2,7 @@
 /* eslint-disable */
 
 export interface ICommonPortalRestApi {
+    nameMapping: { [index: string]: string };
     version: IVersionTO;
 }
 
@@ -12,22 +13,17 @@ export interface IContractRestApi {
     contractAgreements: IContractAgreementTO[];
 }
 
-export interface IParticipantRestApi {
-    participantId: IParticipantIdTO;
-    participantDetails: IParticipantDetailsTO;
-}
-
 export interface IProviderRestApi {
     prefillFields: IPrefillFieldsTO;
 }
 
 export interface IResourceShapeRestApi {
-    gxInstantiatedVirtualResourceShape: string;
-    gxDataResourceShape: string;
     gxPhysicalResourceShape: string;
     gxSoftwareResourceShape: string;
     gxVirtualResourceShape: string;
     gxLegitimateInterestShape: string;
+    gxInstantiatedVirtualResourceShape: string;
+    gxDataResourceShape: string;
 }
 
 export interface IServiceOfferingShapeRestApi {
@@ -72,9 +68,26 @@ export interface IContractAgreementTO {
     consumerDetails: IContractParticipantDetailsTO;
     providerDetails: IContractParticipantDetailsTO;
     dataOffering: boolean;
+    provider: boolean;
 }
 
 export interface IContractAgreementTOBuilder {
+}
+
+export interface IContractDetailsTO {
+    id: string;
+    assetId: string;
+    catalogOffering: IPxExtendedServiceOfferingCredentialSubject;
+    offerRetrievalDate: Date;
+    policy: IPolicy;
+    enforcementPolicies: IEnforcementPolicyUnion[];
+    contractSigningDate: Date;
+    consumerDetails: IContractParticipantDetailsTO;
+    providerDetails: IContractParticipantDetailsTO;
+    dataOffering: boolean;
+}
+
+export interface IContractDetailsTOBuilder {
 }
 
 export interface IContractParticipantDetailsTO {
@@ -130,25 +143,40 @@ export interface IOfferDetailsTO {
     catalogOffering: IPxExtendedServiceOfferingCredentialSubject;
     dataOffering: boolean;
     enforcementPolicies: IEnforcementPolicyUnion[];
+    providerDetails: IParticipantDetailsTO;
+    offerRetrievalDate: Date;
 }
 
 export interface IOfferDetailsTOBuilder {
 }
 
-export interface IParticipantDetailsTO {
-    participantId: string;
-    participantName: string;
+export interface IOfferWithTimestampTO {
+    catalogOffering: IPxExtendedServiceOfferingCredentialSubject;
+    offerRetrievalDate: Date;
+}
+
+export interface IOfferWithTimestampTOBuilder {
+}
+
+export interface IParticipantDetailsTO extends IParticipantNameTO {
     participantEmail: string;
 }
 
-export interface IParticipantDetailsTOBuilder {
+export interface IParticipantDetailsTOBuilder<C, B> extends IParticipantNameTOBuilder<C, B> {
 }
 
-export interface IParticipantIdTO {
+export interface IParticipantDetailsTOBuilderImpl extends IParticipantDetailsTOBuilder<IParticipantDetailsTO, IParticipantDetailsTOBuilderImpl> {
+}
+
+export interface IParticipantNameTO {
     participantId: string;
+    participantName: string;
 }
 
-export interface IParticipantIdTOBuilder {
+export interface IParticipantNameTOBuilder<C, B> {
+}
+
+export interface IParticipantNameTOBuilderImpl extends IParticipantNameTOBuilder<IParticipantNameTO, IParticipantNameTOBuilderImpl> {
 }
 
 export interface IPrefillFieldsTO {
@@ -308,8 +336,29 @@ export interface IGxServiceOfferingCredentialSubjectBuilderImpl extends IGxServi
 export interface IOfferingComplianceException extends IException {
 }
 
+export interface IEndAgreementOffsetPolicy extends ITimeAgreementOffsetPolicy {
+    "@type": "EndAgreementOffsetPolicy";
+}
+
+export interface IEndAgreementOffsetPolicyBuilder<C, B> extends ITimeAgreementOffsetPolicyBuilder<C, B> {
+}
+
+export interface IEndAgreementOffsetPolicyBuilderImpl extends IEndAgreementOffsetPolicyBuilder<IEndAgreementOffsetPolicy, IEndAgreementOffsetPolicyBuilderImpl> {
+}
+
+export interface IEndDatePolicy extends ITimeDatePolicy {
+    "@type": "EndDatePolicy";
+}
+
+export interface IEndDatePolicyBuilder<C, B> extends ITimeDatePolicyBuilder<C, B> {
+}
+
+export interface IEndDatePolicyBuilderImpl extends IEndDatePolicyBuilder<IEndDatePolicy, IEndDatePolicyBuilderImpl> {
+}
+
 export interface IEnforcementPolicy {
-    "@type": "EverythingAllowedPolicy" | "ParticipantRestrictionPolicy";
+    "@type": "EverythingAllowedPolicy" | "ParticipantRestrictionPolicy" | "EndAgreementOffsetPolicy" | "StartAgreementOffsetPolicy" | "EndDatePolicy" | "StartDatePolicy";
+    valid: boolean;
 }
 
 export interface IEnforcementPolicyBuilder<C, B> {
@@ -334,6 +383,43 @@ export interface IParticipantRestrictionPolicyBuilder<C, B> extends IEnforcement
 }
 
 export interface IParticipantRestrictionPolicyBuilderImpl extends IParticipantRestrictionPolicyBuilder<IParticipantRestrictionPolicy, IParticipantRestrictionPolicyBuilderImpl> {
+}
+
+export interface IStartAgreementOffsetPolicy extends ITimeAgreementOffsetPolicy {
+    "@type": "StartAgreementOffsetPolicy";
+}
+
+export interface IStartAgreementOffsetPolicyBuilder<C, B> extends ITimeAgreementOffsetPolicyBuilder<C, B> {
+}
+
+export interface IStartAgreementOffsetPolicyBuilderImpl extends IStartAgreementOffsetPolicyBuilder<IStartAgreementOffsetPolicy, IStartAgreementOffsetPolicyBuilderImpl> {
+}
+
+export interface IStartDatePolicy extends ITimeDatePolicy {
+    "@type": "StartDatePolicy";
+}
+
+export interface IStartDatePolicyBuilder<C, B> extends ITimeDatePolicyBuilder<C, B> {
+}
+
+export interface IStartDatePolicyBuilderImpl extends IStartDatePolicyBuilder<IStartDatePolicy, IStartDatePolicyBuilderImpl> {
+}
+
+export interface ITimeAgreementOffsetPolicy extends IEnforcementPolicy {
+    "@type": "EndAgreementOffsetPolicy" | "StartAgreementOffsetPolicy";
+    offsetNumber: number;
+    offsetUnit: IAgreementOffsetUnit;
+}
+
+export interface ITimeAgreementOffsetPolicyBuilder<C, B> extends IEnforcementPolicyBuilder<C, B> {
+}
+
+export interface ITimeDatePolicy extends IEnforcementPolicy {
+    "@type": "EndDatePolicy" | "StartDatePolicy";
+    date: Date;
+}
+
+export interface ITimeDatePolicyBuilder<C, B> extends IEnforcementPolicyBuilder<C, B> {
 }
 
 export interface IPolicy {
@@ -430,6 +516,14 @@ export class RestApplicationClient {
     }
 
     /**
+     * HTTP GET /common/participant/name-mapping
+     * Java method: eu.possiblex.participantportal.application.boundary.CommonPortalRestApiImpl.getNameMapping
+     */
+    getNameMapping(): RestResponse<{ [index: string]: string }> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`common/participant/name-mapping` });
+    }
+
+    /**
      * HTTP GET /common/version
      * Java method: eu.possiblex.participantportal.application.boundary.CommonPortalRestApiImpl.getVersion
      */
@@ -470,35 +564,27 @@ export class RestApplicationClient {
     }
 
     /**
+     * HTTP GET /contract/details/{contractAgreementId}
+     * Java method: eu.possiblex.participantportal.application.boundary.ContractRestApiImpl.getContractDetailsByContractAgreementId
+     */
+    getContractDetailsByContractAgreementId(contractAgreementId: string): RestResponse<IContractDetailsTO> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`contract/details/${contractAgreementId}` });
+    }
+
+    /**
+     * HTTP GET /contract/details/{contractAgreementId}/offer
+     * Java method: eu.possiblex.participantportal.application.boundary.ContractRestApiImpl.getOfferWithTimestampByContractAgreementId
+     */
+    getOfferWithTimestampByContractAgreementId(contractAgreementId: string): RestResponse<IOfferWithTimestampTO> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`contract/details/${contractAgreementId}/offer` });
+    }
+
+    /**
      * HTTP POST /contract/transfer
      * Java method: eu.possiblex.participantportal.application.boundary.ContractRestApiImpl.transferDataOfferAgain
      */
     transferDataOfferAgain(request: ITransferOfferRequestTO): RestResponse<ITransferOfferResponseTO> {
         return this.httpClient.request({ method: "POST", url: uriEncoding`contract/transfer`, data: request });
-    }
-
-    /**
-     * HTTP GET /participant/details/me
-     * Java method: eu.possiblex.participantportal.application.boundary.ParticipantRestApiImpl.getParticipantDetails
-     */
-    getParticipantDetails$GET$participant_details_me(): RestResponse<IParticipantDetailsTO> {
-        return this.httpClient.request({ method: "GET", url: uriEncoding`participant/details/me` });
-    }
-
-    /**
-     * HTTP GET /participant/details/{participantId}
-     * Java method: eu.possiblex.participantportal.application.boundary.ParticipantRestApiImpl.getParticipantDetails
-     */
-    getParticipantDetails$GET$participant_details_participantId(participantId: string): RestResponse<IParticipantDetailsTO> {
-        return this.httpClient.request({ method: "GET", url: uriEncoding`participant/details/${participantId}` });
-    }
-
-    /**
-     * HTTP GET /participant/id/me
-     * Java method: eu.possiblex.participantportal.application.boundary.ParticipantRestApiImpl.getParticipantId
-     */
-    getParticipantId(): RestResponse<IParticipantIdTO> {
-        return this.httpClient.request({ method: "GET", url: uriEncoding`participant/id/me` });
     }
 
     /**
@@ -584,17 +670,19 @@ export class RestApplicationClient {
 
 export type RestResponse<R> = Promise<R>;
 
+export type IAgreementOffsetUnit = "s" | "m" | "h" | "d";
+
 export type INegotiationState = "INITIAL" | "REQUESTING" | "REQUESTED" | "OFFERING" | "OFFERED" | "ACCEPTING" | "ACCEPTED" | "AGREEING" | "AGREED" | "VERIFYING" | "VERIFIED" | "FINALIZING" | "FINALIZED" | "TERMINATING" | "TERMINATED";
 
 export type ITransferProcessState = "INITIAL" | "PROVISIONING" | "PROVISIONING_REQUESTED" | "PROVISIONED" | "REQUESTING" | "REQUESTED" | "STARTING" | "STARTED" | "SUSPENDING" | "SUSPENDED" | "COMPLETING" | "COMPLETED" | "TERMINATING" | "TERMINATED" | "DEPROVISIONING" | "DEPROVISIONING_REQUESTED" | "DEPROVISIONED";
 
-export type IOdrlAction = "use" | "transfer";
+export type IOdrlAction = "http://www.w3.org/ns/odrl/2/use" | "http://www.w3.org/ns/odrl/2/transfer";
 
-export type IOdrlOperator = "odrl:eq" | "odrl:neq" | "odrl:isPartOf" | "odrl:isAnyOf";
+export type IOdrlOperator = "odrl:eq" | "odrl:gteq" | "odrl:lteq" | "odrl:neq" | "odrl:isPartOf" | "odrl:isAnyOf";
 
 export type IPojoCredentialSubjectUnion = IGxDataResourceCredentialSubject | IGxServiceOfferingCredentialSubject;
 
-export type IEnforcementPolicyUnion = IEverythingAllowedPolicy | IParticipantRestrictionPolicy;
+export type IEnforcementPolicyUnion = IEverythingAllowedPolicy | IParticipantRestrictionPolicy | IStartDatePolicy | IEndDatePolicy;
 
 function uriEncoding(template: TemplateStringsArray, ...substitutions: any[]): string {
     let result = "";

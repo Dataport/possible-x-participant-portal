@@ -2,9 +2,7 @@ package eu.possiblex.participantportal.application.boundary;
 
 import eu.possiblex.participantportal.application.control.ConsumerApiMapper;
 import eu.possiblex.participantportal.application.control.ContractApiMapper;
-import eu.possiblex.participantportal.application.entity.ContractAgreementTO;
-import eu.possiblex.participantportal.application.entity.TransferOfferRequestTO;
-import eu.possiblex.participantportal.application.entity.TransferOfferResponseTO;
+import eu.possiblex.participantportal.application.entity.*;
 import eu.possiblex.participantportal.business.control.ContractService;
 import eu.possiblex.participantportal.business.entity.TransferOfferRequestBE;
 import eu.possiblex.participantportal.business.entity.TransferOfferResponseBE;
@@ -14,7 +12,6 @@ import eu.possiblex.participantportal.utilities.PossibleXException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,7 +21,6 @@ import java.util.List;
  * REST controller for managing contract-related operations.
  */
 @RestController
-@CrossOrigin("*") // TODO replace this with proper CORS configuration
 @Slf4j
 public class ContractRestApiImpl implements ContractRestApi {
     private final ContractService contractService;
@@ -56,6 +52,29 @@ public class ContractRestApiImpl implements ContractRestApi {
                 HttpStatus.NOT_FOUND);
         }
 
+    }
+
+    @Override
+    public ContractDetailsTO getContractDetailsByContractAgreementId(String contractAgreementId) {
+        try {
+            return contractApiMapper.contractDetailsBEToTO(contractService.getContractDetailsByContractAgreementId(
+                contractAgreementId));
+        } catch (OfferNotFoundException e) {
+            throw new PossibleXException("" + e,
+                HttpStatus.NOT_FOUND);
+        }
+
+    }
+
+    @Override
+    public OfferWithTimestampTO getOfferWithTimestampByContractAgreementId(String contractAgreementId) {
+       try {
+           return contractApiMapper.offerRetrievalResponseBEToOfferWithTimestampTO(
+               contractService.getOfferDetailsByContractAgreementId(contractAgreementId));
+       } catch (OfferNotFoundException e) {
+           throw new PossibleXException("" + e,
+               HttpStatus.NOT_FOUND);
+       }
     }
 
     @Override

@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Data
@@ -28,5 +29,18 @@ public class SelectOfferResponseBE {
      */
     private boolean dataOffering;
 
+    /**
+     * The enforcement policies for this offer.
+     */
     private List<EnforcementPolicy> enforcementPolicies;
+
+    /**
+     * The provider details.
+     */
+    private ParticipantWithMailBE providerDetails;
+
+    /**
+     * The timestamp when the offer was retrieved from the catalog.
+     */
+    private OffsetDateTime offerRetrievalDate;
 }

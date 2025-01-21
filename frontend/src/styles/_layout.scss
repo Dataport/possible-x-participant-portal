@@ -1,9 +1,10 @@
 .page-container {
   @apply flex flex-col;
+  min-height: 75vh;
 }
 
 .content {
-  @apply flex-1 mx-auto h-auto lg:max-w-screen-xl;
+  @apply flex-1 mx-auto h-auto;
 }
 
 .mat-expansion-panel {
