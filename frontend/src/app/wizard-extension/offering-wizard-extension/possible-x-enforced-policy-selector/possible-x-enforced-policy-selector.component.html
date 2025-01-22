@@ -7,7 +7,7 @@
   <c-accordion-item #accordionItem1="cAccordionItem" [visible]="false">
     <ng-template cTemplateId="accordionHeaderTemplate">
       <div class="accordion-header" (click)="accordionItem1.toggleItem()">
-        <label> Restrict the contractual booking to organization(s)</label>
+        <label>Restrict the contractual booking to organization(s)</label>
         <mat-checkbox [(ngModel)]="isParticipantRestrictionPolicyChecked" (click)="handleCheckboxClick($event, 'isParticipantRestrictionPolicyChecked', accordionItem1)"></mat-checkbox>
       </div>
     </ng-template>
@@ -37,17 +37,17 @@
       </div>
     </ng-template>
   </c-accordion-item>
-  <c-accordion-item #accordionItem2="cAccordionItem" [visible]="false">
+  <c-accordion-item #accordionItem2="cAccordionItem" [visible]="false" [ngClass]="{'disabled-accordion-item': isStartDatePolicyDisabled}">
     <ng-template cTemplateId="accordionHeaderTemplate">
-      <div class="accordion-header"  (click)="accordionItem2.toggleItem()">
-        <label> Restrict contract validity - start of contract</label>
-        <mat-checkbox [disabled]="true" [(ngModel)]="isStartDatePolicyChecked" (click)="handleCheckboxClick($event, 'isStartDatePolicyChecked', accordionItem2)"></mat-checkbox>
+      <div class="accordion-header" (click)="accordionItem2.toggleItem()">
+        <label>Restrict transfer time - set start date</label>
+        <mat-checkbox [disabled]="isStartDatePolicyDisabled" [(ngModel)]="isStartDatePolicyChecked" (click)="handleCheckboxClick($event, 'isStartDatePolicyChecked', accordionItem2)"></mat-checkbox>
       </div>
     </ng-template>
     <ng-template cTemplateId="accordionBody">
       <div class="accordion-body">
         <div cFormText style="color: #7f7f7f;">
-          Please select the start date of the contract.
+          Please select the start date.
         </div>
         <div class="flex flex-col space-y-2">
           <mat-form-field>
@@ -72,11 +72,46 @@
       </div>
     </ng-template>
   </c-accordion-item>
-  <c-accordion-item #accordionItem3="cAccordionItem" [visible]="false">
+  <c-accordion-item #accordionItem3="cAccordionItem" [visible]="false" [ngClass]="{'disabled-accordion-item': isEndDatePolicyDisabled}">
     <ng-template cTemplateId="accordionHeaderTemplate">
-      <div class="accordion-header"  (click)="accordionItem3.toggleItem()">
-        <label> Restrict contract validity - end of contract</label>
-        <mat-checkbox [(ngModel)]="isEndDatePolicyChecked" (click)="handleCheckboxClick($event, 'isEndDatePolicyChecked', accordionItem3)"></mat-checkbox>
+      <div class="accordion-header" (click)="accordionItem3.toggleItem()">
+        <label>Restrict transfer time - set end date</label>
+        <mat-checkbox [disabled]="isEndDatePolicyDisabled" [(ngModel)]="isEndDatePolicyChecked" (click)="handleCheckboxClick($event, 'isEndDatePolicyChecked', accordionItem3)"></mat-checkbox>
+      </div>
+    </ng-template>
+    <ng-template cTemplateId="accordionBody">
+      <div class="accordion-body">
+        <div cFormText style="color: #7f7f7f;">
+          Please select the end date.
+        </div>
+        <div class="flex flex-col space-y-2">
+          <mat-form-field>
+            <mat-label>Select the date</mat-label>
+            <input [ngxMatDatetimePicker]="picker" matInput [(ngModel)]="endDate">
+            <mat-hint>DD/MM/YYYY, HH:MM:SS</mat-hint>
+            <mat-datepicker-toggle [for]="$any(picker)" matIconSuffix></mat-datepicker-toggle>
+            <ngx-mat-datetime-picker [showSeconds]="true" #picker>
+              <ngx-mat-datepicker-actions>
+                <button ngxMatDatepickerApply>
+                  <mat-icon>done</mat-icon>
+                </button>
+              </ngx-mat-datepicker-actions>
+            </ngx-mat-datetime-picker>
+          </mat-form-field>
+          <div *ngIf="!isValidDate(endDate)" style="color: red">
+            <small>
+              Please select an end date.
+            </small>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </c-accordion-item>
+  <c-accordion-item #accordionItem4="cAccordionItem" [visible]="false" [ngClass]="{'disabled-accordion-item': isEndAgreementOffsetPolicyDisabled}">
+    <ng-template cTemplateId="accordionHeaderTemplate">
+      <div class="accordion-header" (click)="accordionItem4.toggleItem()">
+        <label>Restrict transfer time - set transfer period</label>
+        <mat-checkbox [disabled]="isEndAgreementOffsetPolicyDisabled" [(ngModel)]="isEndAgreementOffsetPolicyChecked" (click)="handleCheckboxClick($event, 'isEndAgreementOffsetPolicyChecked', accordionItem4)"></mat-checkbox>
       </div>
     </ng-template>
     <ng-template cTemplateId="accordionBody">
@@ -108,7 +143,7 @@
     </ng-template>
   </c-accordion-item>
 </c-accordion>
-<div *ngIf="this.isInvalidParticipantRestrictionPolicy || this.isInvalidStartDatePolicy || this.isInvalidEndDatePolicy" style="color: red">
+<div *ngIf="this.isAnyPolicyInvalid" style="color: red">
   <small>
     Please check the selected POSSIBLE-X enforced policies.
   </small>

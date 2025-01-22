@@ -13,3 +13,8 @@
   grid-template-columns: 1fr;
   gap: 5px;
 }
+
+.disabled-accordion-item {
+  @apply bg-brand-100;
+  @apply bg-opacity-10;
+}
