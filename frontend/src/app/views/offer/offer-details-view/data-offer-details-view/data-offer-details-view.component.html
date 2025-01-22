@@ -12,11 +12,7 @@
 <br/><br/>
 <div>3. Copyright Owner:<br/>
   <ul *ngFor="let owner of catalogOffering['gx:aggregationOf']?.[0]['gx:copyrightOwnedBy']">
-      <ul>
-        <li>{{ getNameIdStringById(owner.id) }}</li>
-        <li>{{ owner.id || "-" }}</li>
-      </ul>
-    <br>
+    <li>{{ getNameIdStringById(owner.id) }}</li>
   </ul>
 </div>
 <br/><br/>
