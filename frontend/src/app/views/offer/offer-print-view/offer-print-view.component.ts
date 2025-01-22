@@ -1,7 +1,7 @@
 import {Component, Input} from '@angular/core';
 
 import {
-  IOfferDetailsTO, IPxExtendedServiceOfferingCredentialSubject
+  IOfferDetailsTO
 } from "../../../services/mgmt/api/backend";
 import {DatePipe} from "@angular/common";
 
