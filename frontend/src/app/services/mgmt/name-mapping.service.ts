@@ -1,5 +1,4 @@
 import {Injectable} from '@angular/core';
-import {HttpErrorResponse} from '@angular/common/http';
 import {ApiService} from "./api/api.service";
 
 @Injectable({
@@ -16,8 +15,8 @@ export class NameMappingService {
     return this.apiService.getNameMapping().then(response => {
       console.log(response);
       this.idNameMap = response;
-    }).catch((e: HttpErrorResponse) => {
-      console.log(e?.error?.detail || e?.error || e?.message);
+    }).catch(e => {
+      console.log(e);
     });
   }
 

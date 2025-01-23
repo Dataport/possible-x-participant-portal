@@ -17,6 +17,7 @@ export class OfferPrintViewComponent {
 
   constructor(private datePipe: DatePipe) {}
 
+
   getUrnUuid(id: string): string {
     const match = RegExp(/(urn:uuid:.*)/).exec(id);
 

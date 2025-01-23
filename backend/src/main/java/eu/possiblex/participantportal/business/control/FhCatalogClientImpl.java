@@ -35,23 +35,25 @@ import java.util.function.UnaryOperator;
 @Slf4j
 public class FhCatalogClientImpl implements FhCatalogClient {
 
-    private static final String PARTICIPANT_URI_PREFIX = "https://piveau.io/set/resource/legal-participant/";
-
     private final TechnicalFhCatalogClient technicalFhCatalogClient;
 
     private final SparqlFhCatalogClient sparqlFhCatalogClient;
 
     private final ObjectMapper objectMapper;
 
+    private final String participantUriPrefix;
+
     @Value("${participant-id}")
     private String participantId;
 
     public FhCatalogClientImpl(@Autowired TechnicalFhCatalogClient technicalFhCatalogClient,
-                               @Autowired SparqlFhCatalogClient sparqlFhCatalogClient, @Autowired ObjectMapper objectMapper) {
+        @Autowired SparqlFhCatalogClient sparqlFhCatalogClient, @Autowired ObjectMapper objectMapper,
+        @Value("${fh.catalog.uri-resource-base}") String fhCatalogUriResourceBase) {
 
         this.technicalFhCatalogClient = technicalFhCatalogClient;
         this.objectMapper = objectMapper;
         this.sparqlFhCatalogClient = sparqlFhCatalogClient;
+        this.participantUriPrefix = fhCatalogUriResourceBase + "legal-participant/";
     }
 
     private static JsonDocument getFrameByType(List<String> type, Map<String, String> context) {
@@ -63,13 +65,13 @@ public class FhCatalogClientImpl implements FhCatalogClient {
         type.forEach(typeArrayBuilder::add);
 
         return JsonDocument.of(
-                Json.createObjectBuilder().add("@context", contextBuilder.build()).add("@type", typeArrayBuilder.build())
-                        .build());
+            Json.createObjectBuilder().add("@context", contextBuilder.build()).add("@type", typeArrayBuilder.build())
+                .build());
     }
 
     @Override
     public FhCatalogIdResponse addServiceOfferingToFhCatalog(
-            PxExtendedServiceOfferingCredentialSubject serviceOfferingCredentialSubject, boolean doesContainData) {
+        PxExtendedServiceOfferingCredentialSubject serviceOfferingCredentialSubject, boolean doesContainData) {
 
         log.info("sending to catalog");
 
@@ -78,11 +80,11 @@ public class FhCatalogClientImpl implements FhCatalogClient {
         String verMethod = participantId + "#JWK2020-PossibleLetsEncrypt";
         try {
             if (doesContainData) {
-                catalogOfferId = technicalFhCatalogClient.addServiceOfferingWithDataToFhCatalog(serviceOfferingCredentialSubject,
-                        offerId, verMethod);
+                catalogOfferId = technicalFhCatalogClient.addServiceOfferingWithDataToFhCatalog(
+                    serviceOfferingCredentialSubject, offerId, verMethod);
             } else {
-                catalogOfferId = technicalFhCatalogClient.addServiceOfferingToFhCatalog(serviceOfferingCredentialSubject,
-                        offerId, verMethod);
+                catalogOfferId = technicalFhCatalogClient.addServiceOfferingToFhCatalog(
+                    serviceOfferingCredentialSubject, offerId, verMethod);
             }
         } catch (Exception e) {
             log.error("error when trying to send offer to catalog!", e);
@@ -105,12 +107,13 @@ public class FhCatalogClientImpl implements FhCatalogClient {
     }
 
     @Override
-    public Map<String, ParticipantDetailsSparqlQueryResult> getParticipantDetailsByIds(Collection<String> participantDids) {
+    public Map<String, ParticipantDetailsSparqlQueryResult> getParticipantDetailsByIds(
+        Collection<String> participantDids) {
 
         boolean participantIdsAvailable = participantDids != null && !participantDids.isEmpty();
 
         String conditionalFilterClause = participantIdsAvailable ? "FILTER(?uri IN (" + String.join(",",
-            participantDids.stream().map(id -> "<" + PARTICIPANT_URI_PREFIX + id + ">").toList()) + "))" : "";
+            participantDids.stream().map(id -> "<" + participantUriPrefix + id + ">").toList()) + "))" : "";
 
         String query = """
             PREFIX gx: <https://w3id.org/gaia-x/development#>
@@ -136,12 +139,13 @@ public class FhCatalogClientImpl implements FhCatalogClient {
         }
 
         return result.getResults().getBindings().stream()
-                .collect(HashMap::new, (map, p) -> map.put(p.getUri().replace(PARTICIPANT_URI_PREFIX, ""), p),
-                        HashMap::putAll);
+            .collect(HashMap::new, (map, p) -> map.put(p.getUri().replace(participantUriPrefix, ""), p),
+                HashMap::putAll);
     }
 
     @Override
     public Map<String, ParticipantDetailsSparqlQueryResult> getParticipantDetails() {
+
         return getParticipantDetailsByIds(null);
     }
 
@@ -161,7 +165,7 @@ public class FhCatalogClientImpl implements FhCatalogClient {
               OPTIONAL { ?uri schema:description ?description } .
               OPTIONAL { ?uri gx:aggregationOf ?aggregationOf } .
               FILTER(?assetId IN (""" + String.join(",", assetIds.stream().map(id -> "\"" + id + "\"").toList()) + "))"
-                + """
+            + """
             }
             """;
 
@@ -176,7 +180,7 @@ public class FhCatalogClientImpl implements FhCatalogClient {
         }
 
         return result.getResults().getBindings().stream()
-                .collect(HashMap::new, (map, p) -> map.put(p.getAssetId(), p), HashMap::putAll);
+            .collect(HashMap::new, (map, p) -> map.put(p.getAssetId(), p), HashMap::putAll);
     }
 
     private String getFhCatalogContent(String id, UnaryOperator<String> fetchFunction) {
@@ -194,8 +198,7 @@ public class FhCatalogClientImpl implements FhCatalogClient {
     }
 
     @Override
-    public OfferRetrievalResponseBE getFhCatalogOffer(String offeringId)
-            throws OfferNotFoundException {
+    public OfferRetrievalResponseBE getFhCatalogOffer(String offeringId) {
 
         try {
             String jsonContent;
@@ -222,33 +225,30 @@ public class FhCatalogClientImpl implements FhCatalogClient {
         }
     }
 
-    private PxExtendedServiceOfferingCredentialSubject getOfferingCredentialSubjectFromJsonString(
-        String jsonContent) {
+    private PxExtendedServiceOfferingCredentialSubject getOfferingCredentialSubjectFromJsonString(String jsonContent) {
 
         try {
             JsonObject parsedCatalogOffer = parseCatalogContent(jsonContent,
-                    PxExtendedServiceOfferingCredentialSubject.TYPE,
-                    PxExtendedServiceOfferingCredentialSubject.CONTEXT);
+                PxExtendedServiceOfferingCredentialSubject.TYPE, PxExtendedServiceOfferingCredentialSubject.CONTEXT);
             return objectMapper.readValue(parsedCatalogOffer.toString(),
-                    PxExtendedServiceOfferingCredentialSubject.class);
+                PxExtendedServiceOfferingCredentialSubject.class);
         } catch (JsonProcessingException e) {
             throw new JsonException("failed to parse fh catalog offer json: " + jsonContent, e);
         }
     }
 
     @Override
-    public PxExtendedLegalParticipantCredentialSubjectSubset getFhCatalogParticipant(String participantId)
-            throws ParticipantNotFoundException {
+    public PxExtendedLegalParticipantCredentialSubjectSubset getFhCatalogParticipant(String participantId) {
 
         try {
             String jsonContent = getFhCatalogContent(participantId,
-                    this.technicalFhCatalogClient::getFhCatalogParticipant);
+                this.technicalFhCatalogClient::getFhCatalogParticipant);
             try {
                 JsonObject parsedCatalogParticipant = parseCatalogContent(jsonContent,
-                        PxExtendedLegalParticipantCredentialSubjectSubset.TYPE,
-                        PxExtendedLegalParticipantCredentialSubjectSubset.CONTEXT);
+                    PxExtendedLegalParticipantCredentialSubjectSubset.TYPE,
+                    PxExtendedLegalParticipantCredentialSubjectSubset.CONTEXT);
                 return objectMapper.readValue(parsedCatalogParticipant.toString(),
-                        PxExtendedLegalParticipantCredentialSubjectSubset.class);
+                    PxExtendedLegalParticipantCredentialSubjectSubset.class);
             } catch (JsonProcessingException e) {
                 throw new JsonException("failed to parse fh catalog participant json: " + jsonContent, e);
             }

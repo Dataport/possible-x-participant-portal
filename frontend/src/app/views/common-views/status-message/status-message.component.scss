@@ -12,19 +12,22 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
-* 
+*
  * Modifications:
  * - Dataport (part of the POSSIBLE project) - 19 August, 2024 - Adjust colors
  */
 
 .info-message {
-    @apply text-black;
+  @apply text-black;
+  white-space: pre-wrap;
 }
 
 .error-message {
-    @apply text-error;
+  @apply text-error;
+  white-space: pre-wrap;
 }
 
 .success-message {
-    @apply text-success;
+  @apply text-success;
+  white-space: pre-wrap;
 }

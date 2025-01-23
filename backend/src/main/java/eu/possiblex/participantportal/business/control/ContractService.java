@@ -1,8 +1,6 @@
 package eu.possiblex.participantportal.business.control;
 
 import eu.possiblex.participantportal.business.entity.*;
-import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
-import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
 
 import java.util.List;
 
@@ -13,7 +11,7 @@ public interface ContractService {
      *
      * @return List of contract agreements.
      */
-    List<ContractAgreementBE> getContractAgreements() throws OfferNotFoundException;
+    List<ContractAgreementBE> getContractAgreements();
 
     /**
      * Get contract details by id.
@@ -21,7 +19,7 @@ public interface ContractService {
      * @param contractAgreementId Contract agreement id.
      * @return Contract details.
      */
-    ContractDetailsBE getContractDetailsByContractAgreementId(String contractAgreementId) throws OfferNotFoundException;
+    ContractDetailsBE getContractDetailsByContractAgreementId(String contractAgreementId);
 
     /**
      * Get the referenced offer with timestamp by contract agreement id.
@@ -29,8 +27,13 @@ public interface ContractService {
      * @param contractAgreementId Contract agreement id.
      * @return Referenced offer with timestamp.
      */
-    OfferRetrievalResponseBE getOfferDetailsByContractAgreementId(String contractAgreementId) throws OfferNotFoundException;
+    OfferRetrievalResponseBE getOfferDetailsByContractAgreementId(String contractAgreementId);
 
-    TransferOfferResponseBE transferDataOfferAgain(TransferOfferRequestBE request) throws OfferNotFoundException,
-        TransferFailedException;
+    /**
+     * Repeat the transfer for a given EDC contract.
+     *
+     * @param request request referencing existing EDC contract.
+     * @return transfer result.
+     */
+    TransferOfferResponseBE transferDataOfferAgain(TransferOfferRequestBE request);
 }

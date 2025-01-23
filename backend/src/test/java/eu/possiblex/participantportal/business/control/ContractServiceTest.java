@@ -1,7 +1,6 @@
 package eu.possiblex.participantportal.business.control;
 
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
-import eu.possiblex.participantportal.application.entity.policies.*;
 import eu.possiblex.participantportal.business.entity.*;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.daps.OmejdnConnectorDetailsBE;
@@ -14,8 +13,6 @@ import eu.possiblex.participantportal.business.entity.edc.contractagreement.Cont
 import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyTarget;
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcessState;
-import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
-import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
 import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsSparqlQueryResult;
 import eu.possiblex.participantportal.business.entity.fh.ParticipantDetailsSparqlQueryResult;
 import org.junit.jupiter.api.Test;
@@ -28,17 +25,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ContextConfiguration;
 
 import java.math.BigInteger;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
@@ -66,7 +58,7 @@ class ContractServiceTest {
     private String participantId;
 
     @Test
-    void testGetContractAgreementsWhenParticipantIsProvider() throws OfferNotFoundException {
+    void testGetContractAgreementsWhenParticipantIsProvider() {
 
         resetMocks();
 
@@ -99,7 +91,7 @@ class ContractServiceTest {
     }
 
     @Test
-    void testGetContractAgreementsWhenParticipantIsNotProvider() throws OfferNotFoundException {
+    void testGetContractAgreementsWhenParticipantIsNotProvider() {
 
         resetMocks();
 
@@ -127,7 +119,7 @@ class ContractServiceTest {
     }
 
     @Test
-    void testGetContractAgreementsWhenDapsIdNotKnown() throws OfferNotFoundException {
+    void testGetContractAgreementsWhenDapsIdNotKnown() {
 
         resetMocks();
 
@@ -156,7 +148,7 @@ class ContractServiceTest {
     }
 
     @Test
-    void testGetContractDetailsByContractAgreementId() throws OfferNotFoundException {
+    void testGetContractDetailsByContractAgreementId() {
 
         resetMocks();
 
@@ -193,7 +185,7 @@ class ContractServiceTest {
     }
 
     @Test
-    void testGetOfferDetailsByContractAgreementId() throws OfferNotFoundException {
+    void testGetOfferDetailsByContractAgreementId() {
 
         resetMocks();
 
@@ -222,99 +214,7 @@ class ContractServiceTest {
     }
 
     @Test
-    void policyValidityAllValid() throws OfferNotFoundException {
-
-        resetMocks();
-
-        PxExtendedServiceOfferingCredentialSubject pxExtendedServiceOfferingCredentialSubject = PxExtendedServiceOfferingCredentialSubject.builder()
-            .aggregationOf(List.of()).name("test name").description("test description").assetId(EdcClientFake.FAKE_ID)
-            .build();
-        OffsetDateTime offerRetrievalDate = OffsetDateTime.now();
-        Mockito.when(fhCatalogClient.getFhCatalogOffer(any()))
-            .thenReturn(new OfferRetrievalResponseBE(pxExtendedServiceOfferingCredentialSubject, offerRetrievalDate));
-
-        Mockito.when(fhCatalogClient.getOfferingDetailsByAssetIds(any())).thenReturn(Map.of(EdcClientFake.FAKE_ID,
-            OfferingDetailsSparqlQueryResult.builder().assetId(EdcClientFake.FAKE_ID).uri("some uri").build()));
-
-        ContractAgreement contractAgreement = getContractAgreement();
-        OffsetDateTime now = OffsetDateTime.now();
-        OffsetDateTime signingDate = now.minusDays(7);
-        Timestamp signingDateTimestamp = Timestamp.valueOf(
-            LocalDateTime.ofInstant(signingDate.toInstant(), ZoneOffset.UTC));
-        contractAgreement.setContractSigningDate(BigInteger.valueOf(signingDateTimestamp.getTime()));
-
-        ParticipantRestrictionPolicy participantRestrictionPolicy = ParticipantRestrictionPolicy.builder()
-            .allowedParticipants(List.of("did:web:123", "did:web:456", participantId)).build();
-        StartAgreementOffsetPolicy startAgreementOffsetPolicy = StartAgreementOffsetPolicy.builder().offsetNumber(5)
-            .offsetUnit(AgreementOffsetUnit.DAYS).build();
-        EndAgreementOffsetPolicy endAgreementOffsetPolicy = EndAgreementOffsetPolicy.builder().offsetNumber(10)
-            .offsetUnit(AgreementOffsetUnit.DAYS).build();
-        StartDatePolicy startDatePolicy = StartDatePolicy.builder().date(now.minusDays(3)).build();
-        EndDatePolicy endDatePolicy = EndDatePolicy.builder().date(now.plusDays(3)).build();
-
-        List<EnforcementPolicy> policies = List.of(participantRestrictionPolicy, startAgreementOffsetPolicy,
-            endAgreementOffsetPolicy, startDatePolicy, endDatePolicy);
-
-        Mockito.when(edcClient.getContractAgreementById(any())).thenReturn(contractAgreement);
-        Mockito.when(consumerService.getEnforcementPoliciesFromEdcPolicies(any())).thenReturn(policies);
-
-        ContractDetailsBE actual = contractService.getContractDetailsByContractAgreementId("some id");
-
-        List<EnforcementPolicy> validatedPolicies = actual.getEnforcementPolicies();
-
-        for (EnforcementPolicy p : validatedPolicies) {
-            assertTrue(p.isValid());
-        }
-    }
-
-    @Test
-    void policyValidityAllInvalid() throws OfferNotFoundException {
-
-        resetMocks();
-
-        PxExtendedServiceOfferingCredentialSubject pxExtendedServiceOfferingCredentialSubject = PxExtendedServiceOfferingCredentialSubject.builder()
-            .aggregationOf(List.of()).name("test name").description("test description").assetId(EdcClientFake.FAKE_ID)
-            .build();
-        OffsetDateTime offerRetrievalDate = OffsetDateTime.now();
-        Mockito.when(fhCatalogClient.getFhCatalogOffer(any()))
-            .thenReturn(new OfferRetrievalResponseBE(pxExtendedServiceOfferingCredentialSubject, offerRetrievalDate));
-
-        Mockito.when(fhCatalogClient.getOfferingDetailsByAssetIds(any())).thenReturn(Map.of(EdcClientFake.FAKE_ID,
-            OfferingDetailsSparqlQueryResult.builder().assetId(EdcClientFake.FAKE_ID).uri("some uri").build()));
-
-        ContractAgreement contractAgreement = getContractAgreement();
-        OffsetDateTime now = OffsetDateTime.now();
-        OffsetDateTime signingDate = now.minusDays(7);
-        Timestamp signingDateTimestamp = Timestamp.valueOf(
-            LocalDateTime.ofInstant(signingDate.toInstant(), ZoneOffset.UTC));
-        contractAgreement.setContractSigningDate(BigInteger.valueOf(signingDateTimestamp.getTime()));
-
-        ParticipantRestrictionPolicy participantRestrictionPolicy = ParticipantRestrictionPolicy.builder()
-            .allowedParticipants(List.of("garbage")).build();
-        StartAgreementOffsetPolicy startAgreementOffsetPolicy = StartAgreementOffsetPolicy.builder().offsetNumber(10)
-            .offsetUnit(AgreementOffsetUnit.DAYS).build();
-        EndAgreementOffsetPolicy endAgreementOffsetPolicy = EndAgreementOffsetPolicy.builder().offsetNumber(5)
-            .offsetUnit(AgreementOffsetUnit.DAYS).build();
-        StartDatePolicy startDatePolicy = StartDatePolicy.builder().date(now.plusDays(3)).build();
-        EndDatePolicy endDatePolicy = EndDatePolicy.builder().date(now.minusDays(3)).build();
-
-        List<EnforcementPolicy> policies = List.of(participantRestrictionPolicy, startAgreementOffsetPolicy,
-            endAgreementOffsetPolicy, startDatePolicy, endDatePolicy);
-
-        Mockito.when(edcClient.getContractAgreementById(any())).thenReturn(contractAgreement);
-        Mockito.when(consumerService.getEnforcementPoliciesFromEdcPolicies(any())).thenReturn(policies);
-
-        ContractDetailsBE actual = contractService.getContractDetailsByContractAgreementId("some id");
-
-        List<EnforcementPolicy> validatedPolicies = actual.getEnforcementPolicies();
-
-        for (EnforcementPolicy p : validatedPolicies) {
-            assertFalse(p.isValid());
-        }
-    }
-
-    @Test
-    void transferDataOfferAgain() throws OfferNotFoundException, TransferFailedException {
+    void transferDataOfferAgain() {
         //GIVEN
         reset(fhCatalogClient);
         reset(consumerService);
@@ -363,7 +263,7 @@ class ContractServiceTest {
         PossibleAssetProperties properties = PossibleAssetProperties.builder().termsAndConditions(List.of(assetTnC))
             .producedBy(new NodeKindIRITypeId(EdcClientFake.FAKE_ID))
             .providedBy(new NodeKindIRITypeId(EdcClientFake.FAKE_ID)).license(List.of("MIT"))
-            .copyrightOwnedBy(new NodeKindIRITypeId(EdcClientFake.FAKE_ID))
+            .copyrightOwnedBy(List.of(new NodeKindIRITypeId(EdcClientFake.FAKE_ID)))
             .exposedThrough(new NodeKindIRITypeId(EdcClientFake.FAKE_ID)).offerId(EdcClientFake.FAKE_ID).name("name")
             .description("description").dataAccountExport(List.of(dataAccountExport)).build();
 
@@ -405,6 +305,12 @@ class ContractServiceTest {
         public EdcClient edcClient() {
 
             return Mockito.spy(new EdcClientFake());
+        }
+
+        @Bean
+        public EnforcementPolicyParserService enforcementPolicyParserService() {
+
+            return Mockito.spy(new EnforcementPolicyParserServiceFake());
         }
 
         @Bean

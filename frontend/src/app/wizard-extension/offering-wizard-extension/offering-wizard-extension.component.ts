@@ -21,7 +21,8 @@ import {isDataResourceCs, isGxServiceOfferingCs} from '../../utils/credential-ut
 import {ApiService} from '../../services/mgmt/api/api.service';
 import {
   IEnforcementPolicyUnion,
-  IGxDataResourceCredentialSubject, IGxLegitimateInterest,
+  IGxDataResourceCredentialSubject,
+  IGxLegitimateInterest,
   IGxServiceOfferingCredentialSubject,
   INodeKindIRITypeId,
   IPojoCredentialSubject, IPrefillFieldsTO
@@ -33,6 +34,7 @@ import {NameMappingService} from "../../services/mgmt/name-mapping.service";
 import {
   PossibleXEnforcedPolicySelectorComponent
 } from "./possible-x-enforced-policy-selector/possible-x-enforced-policy-selector.component";
+import {commonMessages} from "../../../environments/common-messages";
 
 @Component({
   selector: 'app-offering-wizard-extension',
@@ -145,17 +147,23 @@ export class OfferingWizardExtensionComponent implements AfterViewInit, OnDestro
     let trimmedCreateOfferTo = this.trimStringsInDataStructure(createOfferTo);
     console.log(trimmedCreateOfferTo);
 
-     createOfferMethod(trimmedCreateOfferTo).then(response => {
-       console.log(response);
-       this.waitingForResponse = false;
-       this.offerCreationStatusMessage.showSuccessMessage("");
-     }).catch((e: HttpErrorResponse) => {
-       this.waitingForResponse = false;
-       this.offerCreationStatusMessage.showErrorMessage(e.error.detail || e.error || e.message);
-     }).catch(_ => {
-       this.waitingForResponse = false;
-       this.offerCreationStatusMessage.showErrorMessage("Unknown error.");
-     });
+    createOfferMethod(trimmedCreateOfferTo).then(response => {
+      console.log(response);
+      this.waitingForResponse = false;
+      this.offerCreationStatusMessage.showSuccessMessage("");
+    }).catch((e: HttpErrorResponse) => {
+      console.log(e);
+      this.waitingForResponse = false;
+      if (e.status === 500) {
+        this.offerCreationStatusMessage.showErrorMessage(commonMessages.general_error);
+      } else {
+        this.offerCreationStatusMessage.showErrorMessage(e.error.details);
+      }
+    }).catch(e => {
+      console.log(e);
+      this.waitingForResponse = false;
+      this.offerCreationStatusMessage.showErrorMessage(commonMessages.general_error);
+    });
 
   }
 

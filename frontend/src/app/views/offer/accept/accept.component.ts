@@ -18,6 +18,7 @@ import {
 } from '../../../services/mgmt/api/backend';
 
 import {NameMappingService} from "../../../services/mgmt/name-mapping.service";
+import {commonMessages} from "../../../../environments/common-messages";
 
 @Component({
   selector: 'app-accept-offer',
@@ -69,7 +70,16 @@ export class AcceptComponent implements OnChanges {
       this.negotiatedContract.emit(response);
       this.acceptOfferStatusMessage.showSuccessMessage("Contract Agreement ID: " + response.contractAgreementId);
     }).catch((e: HttpErrorResponse) => {
-      this.acceptOfferStatusMessage.showErrorMessage(e?.error?.detail || e?.error || e?.message);
+      console.log(e);
+      if (e.status === 500) {
+        this.acceptOfferStatusMessage.showErrorMessage(commonMessages.general_error);
+      } else {
+        this.acceptOfferStatusMessage.showErrorMessage(e.error.details);
+      }
+      this.isConsumed = false;
+    }).catch(e => {
+      console.log(e);
+      this.acceptOfferStatusMessage.showErrorMessage(commonMessages.general_error);
       this.isConsumed = false;
     });
   };

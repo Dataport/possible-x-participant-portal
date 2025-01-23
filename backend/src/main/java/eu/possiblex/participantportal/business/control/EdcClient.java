@@ -31,6 +31,7 @@ import eu.possiblex.participantportal.business.entity.edc.negotiation.ContractNe
 import eu.possiblex.participantportal.business.entity.edc.negotiation.NegotiationInitiateRequest;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyCreateRequest;
 import eu.possiblex.participantportal.business.entity.edc.transfer.IonosS3TransferProcess;
+import eu.possiblex.participantportal.business.entity.edc.transfer.TerminateTransferRequest;
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferRequest;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -67,6 +68,9 @@ public interface EdcClient {
 
     @PostExchange("/v2/transferprocesses/{transferId}/deprovision")
     void deprovisionTransfer(@PathVariable String transferId);
+
+    @PostExchange("/v2/transferprocesses/{transferId}/terminate")
+    void terminateTransfer(@PathVariable String transferId, @RequestBody TerminateTransferRequest request);
 
     @DeleteExchange("/v2/contractdefinitions/{contractDefinitionId}")
     void revokeContractDefinition(@PathVariable String contractDefinitionId);

@@ -138,6 +138,12 @@ export interface IDataProductPrefillFieldsTO {
 export interface IDataProductPrefillFieldsTOBuilder {
 }
 
+export interface IErrorResponseTO {
+    timestamp: Date;
+    message: string;
+    details: string;
+}
+
 export interface IOfferDetailsTO {
     edcOfferId: string;
     catalogOffering: IPxExtendedServiceOfferingCredentialSubject;
@@ -264,7 +270,7 @@ export interface INodeKindIRITypeId {
 
 export interface IGxDataResourceCredentialSubject extends IPojoCredentialSubject {
     "@type": "gx:DataResource";
-    "gx:copyrightOwnedBy": INodeKindIRITypeId;
+    "gx:copyrightOwnedBy": INodeKindIRITypeId[];
     "gx:producedBy": INodeKindIRITypeId;
     "gx:exposedThrough": INodeKindIRITypeId;
     "gx:policy": string[];
@@ -280,7 +286,7 @@ export interface IGxDataResourceCredentialSubjectBuilder<C, B> extends IPojoCred
 }
 
 export interface IGxDataResourceCredentialSubjectBuilderImpl extends IGxDataResourceCredentialSubjectBuilder<IGxDataResourceCredentialSubject, IGxDataResourceCredentialSubjectBuilderImpl> {
-    "gx:copyrightOwnedBy": INodeKindIRITypeId;
+    "gx:copyrightOwnedBy": INodeKindIRITypeId[];
     "gx:producedBy": INodeKindIRITypeId;
     "gx:exposedThrough": INodeKindIRITypeId;
     "gx:policy": string[];
@@ -331,9 +337,6 @@ export interface IGxServiceOfferingCredentialSubjectBuilderImpl extends IGxServi
     "gx:dataAccountExport": IGxDataAccountExport[];
     "schema:name": string;
     "schema:description": string;
-}
-
-export interface IOfferingComplianceException extends IException {
 }
 
 export interface IEndAgreementOffsetPolicy extends ITimeAgreementOffsetPolicy {
@@ -448,28 +451,6 @@ export interface IPxExtendedServiceOfferingCredentialSubject {
     "@type": string[];
 }
 
-export interface IThrowable extends ISerializable {
-    cause: IThrowable;
-    stackTrace: IStackTraceElement[];
-    message: string;
-    suppressed: IThrowable[];
-    localizedMessage: string;
-}
-
-export interface IStackTraceElement extends ISerializable {
-    classLoaderName: string;
-    moduleName: string;
-    moduleVersion: string;
-    methodName: string;
-    fileName: string;
-    lineNumber: number;
-    nativeMethod: boolean;
-    className: string;
-}
-
-export interface IException extends IThrowable {
-}
-
 export interface IOdrlPermission {
     "odrl:target": string;
     "odrl:action": IOdrlAction;
@@ -482,7 +463,7 @@ export interface IPolicyTarget {
 
 export interface IPxExtendedDataResourceCredentialSubject {
     id: string;
-    "gx:copyrightOwnedBy": INodeKindIRITypeId;
+    "gx:copyrightOwnedBy": INodeKindIRITypeId[];
     "gx:producedBy": INodeKindIRITypeId;
     "gx:exposedThrough": INodeKindIRITypeId;
     "gx:policy": string[];
@@ -493,9 +474,6 @@ export interface IPxExtendedDataResourceCredentialSubject {
     "schema:description": string;
     "@context": { [index: string]: string };
     "@type": string[];
-}
-
-export interface ISerializable {
 }
 
 export interface IOdrlConstraint {

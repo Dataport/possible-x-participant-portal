@@ -4,13 +4,8 @@ import eu.possiblex.participantportal.application.control.ConsumerApiMapper;
 import eu.possiblex.participantportal.application.entity.*;
 import eu.possiblex.participantportal.business.control.ConsumerService;
 import eu.possiblex.participantportal.business.entity.*;
-import eu.possiblex.participantportal.business.entity.exception.NegotiationFailedException;
-import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
-import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
-import eu.possiblex.participantportal.utilities.PossibleXException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,17 +29,7 @@ public class ConsumerRestApiImpl implements ConsumerRestApi {
 
         log.info("selecting contract with {}", request);
         SelectOfferRequestBE be = consumerApiMapper.selectOfferRequestTOToBE(request);
-        SelectOfferResponseBE response;
-        try {
-            response = consumerService.selectContractOffer(be);
-        } catch (OfferNotFoundException e) {
-            throw new PossibleXException(
-                "Failed to select offer with offerId" + request.getFhCatalogOfferId() + ". OfferNotFoundException: "
-                    + e, HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            throw new PossibleXException(
-                "Failed to select offer with offerId" + request.getFhCatalogOfferId() + ". Other Exception: " + e);
-        }
+        SelectOfferResponseBE response = consumerService.selectContractOffer(be);
 
         log.info("returning for selecting contract: {}", response);
         return consumerApiMapper.selectOfferResponseBEToOfferDetailsTO(response);
@@ -56,20 +41,7 @@ public class ConsumerRestApiImpl implements ConsumerRestApi {
         log.info("accepting contract with {}", request);
         ConsumeOfferRequestBE be = consumerApiMapper.consumeOfferRequestTOToBE(request);
 
-        AcceptOfferResponseBE acceptOffer;
-        try {
-            acceptOffer = consumerService.acceptContractOffer(be);
-        } catch (OfferNotFoundException e) {
-            throw new PossibleXException(
-                "Failed to select offer with offerId" + request.getEdcOfferId() + ". OfferNotFoundException: " + e,
-                HttpStatus.NOT_FOUND);
-        } catch (NegotiationFailedException e) {
-            throw new PossibleXException(
-                "Failed to select offer with offerId" + request.getEdcOfferId() + ". NegotiationFailedException: " + e);
-        } catch (Exception e) {
-            throw new PossibleXException(
-                "Failed to select offer with offerId" + request.getEdcOfferId() + ". Other Exception: " + e);
-        }
+        AcceptOfferResponseBE acceptOffer = consumerService.acceptContractOffer(be);
 
         if (acceptOffer.isDataOffering()) {
             log.info("DataResource found: Transfer has been initiated");
@@ -87,20 +59,7 @@ public class ConsumerRestApiImpl implements ConsumerRestApi {
         log.info("transferring data from contract with {}", request);
         TransferOfferRequestBE be = consumerApiMapper.transferOfferRequestTOToBE(request);
 
-        TransferOfferResponseBE transferOfferResponseBE;
-        try {
-            transferOfferResponseBE = consumerService.transferDataOffer(be);
-        } catch (OfferNotFoundException e) {
-            throw new PossibleXException(
-                "Failed to select offer with offerId" + request.getEdcOfferId() + ". OfferNotFoundException: " + e,
-                HttpStatus.NOT_FOUND);
-        } catch (TransferFailedException e) {
-            throw new PossibleXException(
-                "Failed to select offer with offerId" + request.getEdcOfferId() + ". TransferFailedException: " + e);
-        } catch (Exception e) {
-            throw new PossibleXException(
-                "Failed to select offer with offerId" + request.getEdcOfferId() + ". Other Exception: " + e);
-        }
+        TransferOfferResponseBE transferOfferResponseBE = consumerService.transferDataOffer(be);
 
         TransferOfferResponseTO response = consumerApiMapper.transferOfferResponseBEToTransferOfferResponseTO(
             transferOfferResponseBE);

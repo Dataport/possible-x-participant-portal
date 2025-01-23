@@ -1,6 +1,5 @@
 package eu.possiblex.participantportal.business.control;
 
-import eu.possiblex.participantportal.application.entity.policies.EnforcementPolicy;
 import eu.possiblex.participantportal.business.entity.*;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.edc.catalog.DcatDataset;
@@ -36,7 +35,7 @@ public class ConsumerServiceFake implements ConsumerService {
     public static final String FAKE_EMAIL_ADDRESS = "example@mail.com";
 
     @Override
-    public SelectOfferResponseBE selectContractOffer(SelectOfferRequestBE request) throws OfferNotFoundException {
+    public SelectOfferResponseBE selectContractOffer(SelectOfferRequestBE request) {
 
         if (request.getFhCatalogOfferId().equals(MISSING_OFFER_ID)) {
             throw new OfferNotFoundException("not found");
@@ -52,19 +51,20 @@ public class ConsumerServiceFake implements ConsumerService {
         PxExtendedServiceOfferingCredentialSubject cs = new PxExtendedServiceOfferingCredentialSubject();
         cs.setProviderUrl(VALID_COUNTER_PARTY_ADDRESS);
         response.setCatalogOffering(cs);
-        response.setProviderDetails(ParticipantWithMailBE.builder().did(FAKE_DID).mailAddress(FAKE_EMAIL_ADDRESS).build());
+        response.setProviderDetails(
+            ParticipantWithMailBE.builder().did(FAKE_DID).mailAddress(FAKE_EMAIL_ADDRESS).build());
         response.setOfferRetrievalDate(OffsetDateTime.now());
 
         return response;
     }
 
     @Override
-    public AcceptOfferResponseBE acceptContractOffer(ConsumeOfferRequestBE request)
-        throws OfferNotFoundException, NegotiationFailedException {
+    public AcceptOfferResponseBE acceptContractOffer(ConsumeOfferRequestBE request) {
 
         return switch (request.getEdcOfferId()) {
             case MISSING_OFFER_ID -> throw new OfferNotFoundException("not found");
-            case BAD_EDC_OFFER_ID -> throw new NegotiationFailedException("negotiation failed");
+            case BAD_EDC_OFFER_ID ->
+                throw new NegotiationFailedException("negotiation failed", Collections.emptyList());
             default ->
                 AcceptOfferResponseBE.builder().negotiationState(NegotiationState.FINALIZED).dataOffering(true).build();
         };
@@ -72,19 +72,12 @@ public class ConsumerServiceFake implements ConsumerService {
     }
 
     @Override
-    public TransferOfferResponseBE transferDataOffer(TransferOfferRequestBE request)
-        throws OfferNotFoundException, TransferFailedException {
+    public TransferOfferResponseBE transferDataOffer(TransferOfferRequestBE request) {
 
         return switch (request.getEdcOfferId()) {
             case MISSING_OFFER_ID -> throw new OfferNotFoundException("not found");
-            case BAD_TRANSFER_OFFER_ID -> throw new TransferFailedException("transfer failed");
+            case BAD_TRANSFER_OFFER_ID -> throw new TransferFailedException("transfer failed", Collections.emptyList());
             default -> TransferOfferResponseBE.builder().transferProcessState(TransferProcessState.COMPLETED).build();
         };
-    }
-
-    @Override
-    public List<EnforcementPolicy> getEnforcementPoliciesFromEdcPolicies(List<Policy> policies) {
-
-        return List.of();
     }
 }

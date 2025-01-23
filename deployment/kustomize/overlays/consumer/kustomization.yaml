@@ -18,8 +18,8 @@ configMapGenerator:
       - DIDWEBSERVICE_BASEURL=http://did-web-service:8080
       - DIDWEBSERVICE_IGNORESSL=false
       - FH_CATALOG_SPARQL_URL=https://catalog.dev.possible-x.de/ld/sparql/
-      - FH_CATALOG_REPO_URL=https://hub.catalog.dev.possible-x.de
-      - FH_CATALOG_URL=https://hub.catalog.dev.possible-x.de/
+      - FH_CATALOG_REPO_URL=https://hub.catalog.dev.possible-x.de/
+      - FH_CATALOG_URIRESOURCEBASE=https://hub.catalog.dev.possible-x.de/resources/
       - SDCREATIONWIZARDAPI_BASEURL=https://sd-creation-wizard.dev.possible-x.de
       - SPRING_PROFILES_ACTIVE=dev
       - S3_BUCKETSTORAGEREGION=eu-central-3

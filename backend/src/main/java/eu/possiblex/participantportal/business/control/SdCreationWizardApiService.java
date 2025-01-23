@@ -10,7 +10,7 @@ public interface SdCreationWizardApiService {
      * @param ecosystem ecosystem to filter for
      * @return map of filenames as described above
      */
-    public Map<String, List<String>> getShapesByEcosystem(String ecosystem);
+    Map<String, List<String>> getShapesByEcosystem(String ecosystem);
 
     /**
      * Return a list of service offering shape files for the given ecosystem.
@@ -18,7 +18,7 @@ public interface SdCreationWizardApiService {
      * @param ecosystem ecosystem to filter for
      * @return list of service offering shape JSON files
      */
-    public List<String> getServiceOfferingShapesByEcosystem(String ecosystem);
+    List<String> getServiceOfferingShapesByEcosystem(String ecosystem);
 
     /**
      * Return a list of participant shape files for the given ecosystem.
@@ -26,7 +26,7 @@ public interface SdCreationWizardApiService {
      * @param ecosystem ecosystem to filter for
      * @return list of resource shape JSON files
      */
-    public List<String> getResourceShapesByEcosystem(String ecosystem);
+    List<String> getResourceShapesByEcosystem(String ecosystem);
 
     /**
      * Given a JSON file name, return the corresponding JSON shape file
@@ -35,5 +35,5 @@ public interface SdCreationWizardApiService {
      * @param jsonName JSON file name
      * @return JSON file
      */
-    public String getShapeByName(String ecosystem, String jsonName);
+    String getShapeByName(String ecosystem, String jsonName);
 }

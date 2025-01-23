@@ -40,10 +40,7 @@ import eu.possiblex.participantportal.business.entity.edc.negotiation.Negotiatio
 import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyCreateRequest;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyTarget;
-import eu.possiblex.participantportal.business.entity.edc.transfer.DataRequest;
-import eu.possiblex.participantportal.business.entity.edc.transfer.IonosS3TransferProcess;
-import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcessState;
-import eu.possiblex.participantportal.business.entity.edc.transfer.TransferRequest;
+import eu.possiblex.participantportal.business.entity.edc.transfer.*;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.math.BigInteger;
@@ -167,6 +164,11 @@ public class EdcClientFake implements EdcClient {
     }
 
     @Override
+    public void terminateTransfer(String transferId, TerminateTransferRequest request) {
+
+    }
+
+    @Override
     public void revokeContractDefinition(String contractDefinitionId) {
 
     }
@@ -200,7 +202,7 @@ public class EdcClientFake implements EdcClient {
 
         PossibleAssetProperties properties = PossibleAssetProperties.builder().termsAndConditions(List.of(assetTnC))
             .producedBy(new NodeKindIRITypeId(FAKE_ID)).providedBy(new NodeKindIRITypeId(FAKE_ID))
-            .license(List.of("MIT")).copyrightOwnedBy(new NodeKindIRITypeId(FAKE_ID))
+            .license(List.of("MIT")).copyrightOwnedBy(List.of(new NodeKindIRITypeId(FAKE_ID)))
             .exposedThrough(new NodeKindIRITypeId(FAKE_ID)).offerId(FAKE_ID).name("name").description("description")
             .dataAccountExport(List.of(dataAccountExport)).build();
 

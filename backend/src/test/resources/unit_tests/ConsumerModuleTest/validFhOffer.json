@@ -48,9 +48,11 @@
       "@type": "gx:DataResource",
       "gx:policy": "{\n  \"@type\": \"odrl:Set\",\n  \"odrl:permission\": [\n    {\n      \"odrl:action\": {\n        \"odrl:type\": \"http://www.w3.org/ns/odrl/2/use\"\n      }\n    },\n    {\n      \"odrl:action\": {\n        \"odrl:type\": \"http://www.w3.org/ns/odrl/2/transfer\"\n      }\n    }\n  ],\n  \"odrl:prohibition\": [],\n  \"odrl:obligation\": []\n}",
       "gx:license": "AGPL-1.0-only",
-      "gx:copyrightOwnedBy": {
+      "gx:copyrightOwnedBy": [
+        {
         "@id": "did:web:portal.dev.possible-x.de:participant:df15587a-0760-32b5-9c42-bb7be66e8076"
-      },
+        }
+      ],
       "gx:name": "Test Dataset",
       "gx:description": "This is the data resource description.",
       "gx:containsPII": {

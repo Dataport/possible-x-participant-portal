@@ -13,6 +13,7 @@ import {
 import {StatusMessageComponent} from "../../common-views/status-message/status-message.component";
 import {ApiService} from "../../../services/mgmt/api/api.service";
 import {IOfferDetailsTO} from "../../../services/mgmt/api/backend";
+import {commonMessages} from "../../../../environments/common-messages";
 
 interface SelectionFormModel {
   offerId: FormControl<string>;
@@ -53,7 +54,17 @@ export class SelectComponent implements ControlValueAccessor {
       this.queryCatalogStatusMessage.showSuccessMessage("Check console for details.");
       this.selectedOffer.emit(response);
     }).catch((e: HttpErrorResponse) => {
-      this.queryCatalogStatusMessage.showErrorMessage(e.error.detail || e.error || e.message);
+      console.log(e);
+      if (e.status === 500) {
+        this.queryCatalogStatusMessage.showErrorMessage(commonMessages.general_error);
+      } else if (e.status == 404) {
+        this.queryCatalogStatusMessage.showErrorMessage(commonMessages.offer_not_found);
+      } else {
+        this.queryCatalogStatusMessage.showErrorMessage(e.error.details);
+      }
+    }).catch(e => {
+      console.log(e);
+      this.queryCatalogStatusMessage.showErrorMessage(commonMessages.general_error);
     });
   }
 

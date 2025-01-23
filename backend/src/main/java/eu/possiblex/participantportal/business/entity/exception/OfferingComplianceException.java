@@ -1,6 +1,6 @@
-package eu.possiblex.participantportal.application.entity.exception;
+package eu.possiblex.participantportal.business.entity.exception;
 
-public class OfferingComplianceException extends Exception {
+public class OfferingComplianceException extends RuntimeException {
     public OfferingComplianceException(String message) {
 
         super(message);

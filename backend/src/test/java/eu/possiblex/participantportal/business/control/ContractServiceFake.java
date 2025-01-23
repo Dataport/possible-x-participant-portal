@@ -5,7 +5,6 @@ import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedS
 import eu.possiblex.participantportal.business.entity.edc.contractagreement.ContractAgreement;
 import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyTarget;
-import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 
 import java.math.BigInteger;
 import java.time.Instant;
@@ -51,18 +50,17 @@ public class ContractServiceFake implements ContractService {
     }
 
     @Override
-    public ContractDetailsBE getContractDetailsByContractAgreementId(String contractAgreementId)
-        throws OfferNotFoundException {
+    public ContractDetailsBE getContractDetailsByContractAgreementId(String contractAgreementId) {
 
         return getContractDetailsBE();
     }
 
     @Override
-    public OfferRetrievalResponseBE getOfferDetailsByContractAgreementId(String contractAgreementId)
-        throws OfferNotFoundException {
+    public OfferRetrievalResponseBE getOfferDetailsByContractAgreementId(String contractAgreementId) {
 
-        return new OfferRetrievalResponseBE(PxExtendedServiceOfferingCredentialSubject.builder().name(NAME)
-            .description(DESCRIPTION).id(FAKE_ID_OFFERING).assetId(FAKE_ID_ASSET).build(), getDateAsOffsetDateTime());
+        return new OfferRetrievalResponseBE(
+            PxExtendedServiceOfferingCredentialSubject.builder().name(NAME).description(DESCRIPTION)
+                .id(FAKE_ID_OFFERING).assetId(FAKE_ID_ASSET).build(), getDateAsOffsetDateTime());
     }
 
     private List<ContractAgreementBE> getContractAgreementBEs() {
@@ -75,8 +73,7 @@ public class ContractServiceFake implements ContractService {
         ContractAgreementBE contractAgreementBE = ContractAgreementBE.builder().contractAgreement(contractAgreement)
             .isProvider(false).isDataOffering(false)
             .offeringDetails(new OfferingDetailsBE(NAME, DESCRIPTION, FAKE_ID_ASSET, FAKE_ID_OFFERING))
-            .providerDetails(new ParticipantWithDapsBE())
-            .consumerDetails(new ParticipantWithDapsBE()).build();
+            .providerDetails(new ParticipantWithDapsBE()).consumerDetails(new ParticipantWithDapsBE()).build();
 
         return List.of(contractAgreementBE);
     }
@@ -88,11 +85,11 @@ public class ContractServiceFake implements ContractService {
             .providerId(FAKE_ID_PROVIDER)
             .policy(Policy.builder().target(PolicyTarget.builder().id(FAKE_ID_ASSET).build()).build()).build();
 
-        return ContractDetailsBE.builder().contractAgreement(contractAgreement)
-            .offeringDetails(new OfferRetrievalResponseBE(PxExtendedServiceOfferingCredentialSubject.builder().name(NAME)
-                .description(DESCRIPTION).id(FAKE_ID_OFFERING).assetId(FAKE_ID_ASSET).build(), getDateAsOffsetDateTime()))
-            .providerDetails(new ParticipantWithDapsBE())
-            .consumerDetails(new ParticipantWithDapsBE()).build();
+        return ContractDetailsBE.builder().contractAgreement(contractAgreement).offeringDetails(
+                new OfferRetrievalResponseBE(
+                    PxExtendedServiceOfferingCredentialSubject.builder().name(NAME).description(DESCRIPTION)
+                        .id(FAKE_ID_OFFERING).assetId(FAKE_ID_ASSET).build(), getDateAsOffsetDateTime()))
+            .providerDetails(new ParticipantWithDapsBE()).consumerDetails(new ParticipantWithDapsBE()).build();
     }
 
     @Override

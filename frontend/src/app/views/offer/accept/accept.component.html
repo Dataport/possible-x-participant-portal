@@ -59,8 +59,12 @@
             <li>{{ l }}</li>
           </ul>
           <b>Copyright owned
-            by:</b> {{ getNameIdStringById(offer.catalogOffering["gx:aggregationOf"][0]["gx:copyrightOwnedBy"].id) }}
-          <br/>
+            by:</b> <br/>
+          <ul *ngFor="let owner of offer.catalogOffering['gx:aggregationOf'][0]['gx:copyrightOwnedBy']">
+            <li>
+              {{ getNameIdStringById(owner.id) }}
+            </li>
+          </ul>
           <b>Produced
             by:</b> {{ getNameIdStringById(offer.catalogOffering["gx:aggregationOf"][0]["gx:producedBy"].id) }} <br/>
           <b>Exposed through:</b> {{ offer.catalogOffering["gx:aggregationOf"][0]["gx:exposedThrough"].id }} <br/>

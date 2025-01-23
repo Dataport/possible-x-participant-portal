@@ -1,5 +1,6 @@
 package eu.possiblex.participantportal.application.boundary;
 
+import eu.possiblex.participantportal.application.configuration.BoundaryExceptionHandler;
 import eu.possiblex.participantportal.application.control.ConsumerApiMapper;
 import eu.possiblex.participantportal.application.entity.ConsumeOfferRequestTO;
 import eu.possiblex.participantportal.application.entity.SelectOfferRequestTO;
@@ -9,7 +10,6 @@ import eu.possiblex.participantportal.business.control.ConsumerServiceFake;
 import eu.possiblex.participantportal.business.entity.ConsumeOfferRequestBE;
 import eu.possiblex.participantportal.business.entity.SelectOfferRequestBE;
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcessState;
-import eu.possiblex.participantportal.utilities.ExceptionHandlingFilter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
@@ -47,7 +47,7 @@ class ConsumerRestApiTest {
 
         this.mockMvc = MockMvcBuilders.standaloneSetup(
                 new ConsumerRestApiImpl(consumerService, Mappers.getMapper(ConsumerApiMapper.class)))
-            .addFilters(new ExceptionHandlingFilter()).build();
+            .setControllerAdvice(new BoundaryExceptionHandler()).build();
     }
 
     @Test
@@ -107,7 +107,7 @@ class ConsumerRestApiTest {
 
         this.mockMvc.perform(post("/consumer/offer/accept").content(RestApiHelper.asJsonString(
                 ConsumeOfferRequestTO.builder().edcOfferId(ConsumerServiceFake.BAD_EDC_OFFER_ID).build()))
-            .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isInternalServerError());
+            .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isUnprocessableEntity());
     }
 
     @Test
@@ -115,7 +115,7 @@ class ConsumerRestApiTest {
 
         this.mockMvc.perform(post("/consumer/offer/transfer").content(RestApiHelper.asJsonString(
                 TransferOfferRequestTO.builder().edcOfferId(ConsumerServiceFake.BAD_TRANSFER_OFFER_ID).build()))
-            .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isInternalServerError());
+            .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isUnprocessableEntity());
     }
 
     @Test

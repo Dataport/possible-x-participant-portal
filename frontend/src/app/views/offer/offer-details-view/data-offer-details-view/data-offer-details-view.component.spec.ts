@@ -23,7 +23,7 @@ describe('DataOfferDetailsViewComponent', () => {
         "gx:dataProtectionRegime": [],
         "gx:aggregationOf": [
           {
-            "gx:copyrightOwnedBy": {id: "participantId"},
+            "gx:copyrightOwnedBy": [{id: "participantId"}],
             "gx:producedBy": {id: "participantId"},
             "gx:containsPII": true,
             "gx:legitimateInterest": {"gx:dataProtectionContact": "contact",

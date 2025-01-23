@@ -14,6 +14,7 @@ fh:
       url: url
     sparql:
       url: url
+    uri-resource-base: https://example.com/
     secret-key: secret
 
 sd-creation-wizard-api:

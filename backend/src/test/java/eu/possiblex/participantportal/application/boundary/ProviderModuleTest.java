@@ -5,6 +5,7 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import eu.possiblex.participantportal.application.configuration.BoundaryExceptionHandler;
 import eu.possiblex.participantportal.application.control.ProviderApiMapper;
 import eu.possiblex.participantportal.application.entity.CreateDataOfferingRequestTO;
 import eu.possiblex.participantportal.application.entity.CreateServiceOfferingRequestTO;
@@ -42,7 +43,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @WebMvcTest(ProviderRestApiImpl.class)
 @ContextConfiguration(classes = { ProviderModuleTest.TestConfig.class, ProviderRestApiImpl.class,
-        ProviderServiceImpl.class, FhCatalogClientImpl.class })
+    ProviderServiceImpl.class, FhCatalogClientImpl.class, EnforcementPolicyParserServiceImpl.class,
+    BoundaryExceptionHandler.class })
 class ProviderModuleTest extends ProviderTestParent {
 
     private static String TEST_FILES_PATH = "unit_tests/ProviderModuleTest/";
@@ -51,7 +53,7 @@ class ProviderModuleTest extends ProviderTestParent {
 
     @RegisterExtension
     private static WireMockExtension wmExt = WireMockExtension.newInstance()
-            .options(WireMockConfiguration.wireMockConfig().port(WIREMOCK_PORT)).build();
+        .options(WireMockConfiguration.wireMockConfig().port(WIREMOCK_PORT)).build();
 
     private static String FH_CATALOG_SERVICE_PATH = "fhcatalog";
 
@@ -81,7 +83,7 @@ class ProviderModuleTest extends ProviderTestParent {
         // GIVEN
 
         CreateServiceOfferingRequestTO request = objectMapper.readValue(getCreateServiceOfferingTOJsonString(),
-                CreateServiceOfferingRequestTO.class);
+            CreateServiceOfferingRequestTO.class);
 
         mockFhCatalogCreateServiceOffering("someId");
         mockEdcCreateAsset();
@@ -91,7 +93,7 @@ class ProviderModuleTest extends ProviderTestParent {
         // WHEN/THEN
 
         this.mockMvc.perform(post("/provider/offer/service").content(RestApiHelper.asJsonString(request))
-                .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk());
+            .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk());
     }
 
     @Test
@@ -101,7 +103,7 @@ class ProviderModuleTest extends ProviderTestParent {
         // GIVEN
 
         CreateDataOfferingRequestTO request = objectMapper.readValue(getCreateServiceOfferingWithDataTOJsonString(),
-                CreateDataOfferingRequestTO.class);
+            CreateDataOfferingRequestTO.class);
 
         mockFhCatalogCreateServiceOfferingWithData("someID");
         mockEdcCreateAsset();
@@ -111,7 +113,7 @@ class ProviderModuleTest extends ProviderTestParent {
         // WHEN/THEN
 
         this.mockMvc.perform(post("/provider/offer/data").content(RestApiHelper.asJsonString(request))
-                .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk());
+            .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk());
     }
 
     @Test
@@ -121,7 +123,7 @@ class ProviderModuleTest extends ProviderTestParent {
         // GIVEN
 
         CreateServiceOfferingRequestTO request = objectMapper.readValue(getCreateServiceOfferingTOJsonString(),
-                CreateServiceOfferingRequestTO.class);
+            CreateServiceOfferingRequestTO.class);
 
         String id = "someID";
         mockFhCatalogCreateServiceOffering(id);
@@ -133,7 +135,7 @@ class ProviderModuleTest extends ProviderTestParent {
         Exception e = null;
         try {
             this.mockMvc.perform(post("/provider/offer/service").content(RestApiHelper.asJsonString(request))
-                    .contentType(MediaType.APPLICATION_JSON));
+                .contentType(MediaType.APPLICATION_JSON));
         } catch (Exception ex) {
             e = ex;
         }
@@ -151,7 +153,7 @@ class ProviderModuleTest extends ProviderTestParent {
         // GIVEN
 
         CreateDataOfferingRequestTO request = objectMapper.readValue(getCreateServiceOfferingWithDataTOJsonString(),
-                CreateDataOfferingRequestTO.class);
+            CreateDataOfferingRequestTO.class);
 
         String id = "someID";
         mockFhCatalogCreateServiceOfferingWithData(id);
@@ -163,7 +165,7 @@ class ProviderModuleTest extends ProviderTestParent {
         Exception e = null;
         try {
             this.mockMvc.perform(post("/provider/offer/data").content(RestApiHelper.asJsonString(request))
-                    .contentType(MediaType.APPLICATION_JSON));
+                .contentType(MediaType.APPLICATION_JSON));
         } catch (Exception ex) {
             e = ex;
         }
@@ -178,38 +180,38 @@ class ProviderModuleTest extends ProviderTestParent {
 
         WireMockRuntimeInfo wm1RuntimeInfo = wmExt.getRuntimeInfo();
         wmExt.stubFor(
-                WireMock.delete(WireMock.urlPathMatching("/" + FH_CATALOG_SERVICE_PATH + "/resources/data-product" + ".*"))
-                        .willReturn(WireMock.aResponse().withStatus(200)));
+            WireMock.delete(WireMock.urlPathMatching("/" + FH_CATALOG_SERVICE_PATH + "/resources/data-product" + ".*"))
+                .willReturn(WireMock.aResponse().withStatus(200)));
     }
 
     private void mockFhCatalogDeleteServiceOfferWithoutData() {
 
         WireMockRuntimeInfo wm1RuntimeInfo = wmExt.getRuntimeInfo();
         wmExt.stubFor(WireMock.delete(
-                        WireMock.urlPathMatching("/" + FH_CATALOG_SERVICE_PATH + "/resources/service-offering" + ".*"))
-                .willReturn(WireMock.aResponse().withStatus(200)));
+                WireMock.urlPathMatching("/" + FH_CATALOG_SERVICE_PATH + "/resources/service-offering" + ".*"))
+            .willReturn(WireMock.aResponse().withStatus(200)));
     }
 
     private void mockFhCatalogCreateServiceOfferingWithData(String id) {
 
         WireMockRuntimeInfo wm1RuntimeInfo = wmExt.getRuntimeInfo();
-        wmExt.stubFor(WireMock.put(WireMock.urlPathMatching("/" + FH_CATALOG_SERVICE_PATH + "/trust/data-product"
-                        + ".*"))
+        wmExt.stubFor(
+            WireMock.put(WireMock.urlPathMatching("/" + FH_CATALOG_SERVICE_PATH + "/trust/data-product" + ".*"))
                 .withQueryParam("id", WireMock.matching(".*"))
                 .withQueryParam("verificationMethod", WireMock.equalTo("did:web:test.eu#JWK2020-PossibleLetsEncrypt"))
-                        .willReturn(WireMock.aResponse().withStatus(200).withHeader("Content-Type", "application/json")
-                                .withBody("{ \"id\":\"" + id + "\" }")));
+                .willReturn(WireMock.aResponse().withStatus(200).withHeader("Content-Type", "application/json")
+                    .withBody("{ \"id\":\"" + id + "\" }")));
     }
 
     private void mockFhCatalogCreateServiceOffering(String id) {
 
         WireMockRuntimeInfo wm1RuntimeInfo = wmExt.getRuntimeInfo();
-        wmExt.stubFor(WireMock.put(WireMock.urlPathMatching("/" + FH_CATALOG_SERVICE_PATH + "/trust/service-offering"
-                        + ".*"))
+        wmExt.stubFor(
+            WireMock.put(WireMock.urlPathMatching("/" + FH_CATALOG_SERVICE_PATH + "/trust/service-offering" + ".*"))
                 .withQueryParam("id", WireMock.matching(".*"))
                 .withQueryParam("verificationMethod", WireMock.equalTo("did:web:test.eu#JWK2020-PossibleLetsEncrypt"))
-                        .willReturn(WireMock.aResponse().withStatus(200).withHeader("Content-Type", "application/json")
-                                .withBody("{ \"id\":\"" + id + "\" }")));
+                .willReturn(WireMock.aResponse().withStatus(200).withHeader("Content-Type", "application/json")
+                    .withBody("{ \"id\":\"" + id + "\" }")));
     }
 
     private void mockEdcCreateAssetFailing() {
@@ -217,7 +219,7 @@ class ProviderModuleTest extends ProviderTestParent {
         String edcResponseBody = TestUtils.loadTextFile(TEST_FILES_PATH + "edc_create_asset_response.json");
         WireMockRuntimeInfo wm1RuntimeInfo = wmExt.getRuntimeInfo();
         wmExt.stubFor(
-                WireMock.post("/" + EDC_SERVICE_PATH + "/v3/assets").willReturn(WireMock.aResponse().withStatus(500)));
+            WireMock.post("/" + EDC_SERVICE_PATH + "/v3/assets").willReturn(WireMock.aResponse().withStatus(500)));
     }
 
     private void mockEdcCreateAsset() {
@@ -225,8 +227,8 @@ class ProviderModuleTest extends ProviderTestParent {
         String edcResponseBody = TestUtils.loadTextFile(TEST_FILES_PATH + "edc_create_asset_response.json");
         WireMockRuntimeInfo wm1RuntimeInfo = wmExt.getRuntimeInfo();
         wmExt.stubFor(WireMock.post("/" + EDC_SERVICE_PATH + "/v3/assets").willReturn(
-                WireMock.aResponse().withStatus(200).withHeader("Content-Type", "application/json")
-                        .withBody(edcResponseBody)));
+            WireMock.aResponse().withStatus(200).withHeader("Content-Type", "application/json")
+                .withBody(edcResponseBody)));
     }
 
     private void mockEdcCreatePolicy() {
@@ -234,18 +236,18 @@ class ProviderModuleTest extends ProviderTestParent {
         String edcResponseBody = TestUtils.loadTextFile(TEST_FILES_PATH + "edc_create_policy_response.json");
         WireMockRuntimeInfo wm1RuntimeInfo = wmExt.getRuntimeInfo();
         wmExt.stubFor(WireMock.post("/" + EDC_SERVICE_PATH + "/v2/policydefinitions").willReturn(
-                WireMock.aResponse().withStatus(200).withHeader("Content-Type", "application/json")
-                        .withBody(edcResponseBody)));
+            WireMock.aResponse().withStatus(200).withHeader("Content-Type", "application/json")
+                .withBody(edcResponseBody)));
     }
 
     private void mockEdcCreateContractDefinition() {
 
         String edcResponseBody = TestUtils.loadTextFile(
-                TEST_FILES_PATH + "edc_create_contract_definition_response.json");
+            TEST_FILES_PATH + "edc_create_contract_definition_response.json");
         WireMockRuntimeInfo wm1RuntimeInfo = wmExt.getRuntimeInfo();
         wmExt.stubFor(WireMock.post("/" + EDC_SERVICE_PATH + "/v2/contractdefinitions").willReturn(
-                WireMock.aResponse().withStatus(200).withHeader("Content-Type", "application/json")
-                        .withBody(edcResponseBody)));
+            WireMock.aResponse().withStatus(200).withHeader("Content-Type", "application/json")
+                .withBody(edcResponseBody)));
     }
 
     @TestConfiguration
@@ -256,22 +258,24 @@ class ProviderModuleTest extends ProviderTestParent {
 
             String baseUrl = "http://localhost:" + String.valueOf(WIREMOCK_PORT) + "/" + FH_CATALOG_SERVICE_PATH;
             WebClient webClient = WebClient.builder().clientConnector(LogUtils.createHttpClient()).baseUrl(baseUrl)
-                    .defaultHeaders(httpHeaders -> {
-                        httpHeaders.set("Content-Type", "application/json");
-                    }).build();
+                .defaultHeaders(httpHeaders -> {
+                    httpHeaders.set("Content-Type", "application/json");
+                }).build();
             HttpServiceProxyFactory httpServiceProxyFactory = HttpServiceProxyFactory.builder()
-                    .exchangeAdapter(WebClientAdapter.create(webClient)).build();
+                .exchangeAdapter(WebClientAdapter.create(webClient)).build();
             return httpServiceProxyFactory.createClient(TechnicalFhCatalogClient.class);
         }
 
         @Bean
         public SparqlFhCatalogClient sparqlFhCatalogClient() {
+
             String baseUrl = "http://localhost:" + String.valueOf(WIREMOCK_PORT) + "/" + FH_CATALOG_SPARQL_PATH;
-            WebClient webClient = WebClient.builder().clientConnector(LogUtils.createHttpClient()).baseUrl(baseUrl).defaultHeaders(httpHeaders -> {
-                httpHeaders.set("Content-Type", "application/json");
-            }).build();
+            WebClient webClient = WebClient.builder().clientConnector(LogUtils.createHttpClient()).baseUrl(baseUrl)
+                .defaultHeaders(httpHeaders -> {
+                    httpHeaders.set("Content-Type", "application/json");
+                }).build();
             HttpServiceProxyFactory httpServiceProxyFactory = HttpServiceProxyFactory.builder()
-                    .exchangeAdapter(WebClientAdapter.create(webClient)).build();
+                .exchangeAdapter(WebClientAdapter.create(webClient)).build();
             return httpServiceProxyFactory.createClient(SparqlFhCatalogClient.class);
         }
 
@@ -280,9 +284,9 @@ class ProviderModuleTest extends ProviderTestParent {
 
             String baseUrl = "http://localhost:" + String.valueOf(WIREMOCK_PORT) + "/" + EDC_SERVICE_PATH;
             WebClient webClient = WebClient.builder().clientConnector(LogUtils.createHttpClient()).baseUrl(baseUrl)
-                    .build();
+                .build();
             HttpServiceProxyFactory httpServiceProxyFactory = HttpServiceProxyFactory.builder()
-                    .exchangeAdapter(WebClientAdapter.create(webClient)).build();
+                .exchangeAdapter(WebClientAdapter.create(webClient)).build();
             return httpServiceProxyFactory.createClient(EdcClient.class);
         }
 
