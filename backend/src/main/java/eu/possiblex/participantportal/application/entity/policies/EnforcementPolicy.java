@@ -18,6 +18,7 @@ import lombok.experimental.SuperBuilder;
     @JsonSubTypes.Type(value = ParticipantRestrictionPolicy.class, name = "ParticipantRestrictionPolicy"),
     @JsonSubTypes.Type(value = StartDatePolicy.class, name = "StartDatePolicy"),
     @JsonSubTypes.Type(value = EndDatePolicy.class, name = "EndDatePolicy"),
+    @JsonSubTypes.Type(value = EndAgreementOffsetPolicy.class, name = "EndAgreementOffsetPolicy"),
 })
 @EqualsAndHashCode
 public abstract class EnforcementPolicy {

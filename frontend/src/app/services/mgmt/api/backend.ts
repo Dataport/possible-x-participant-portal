@@ -18,12 +18,12 @@ export interface IProviderRestApi {
 }
 
 export interface IResourceShapeRestApi {
+    gxInstantiatedVirtualResourceShape: string;
+    gxDataResourceShape: string;
     gxPhysicalResourceShape: string;
     gxSoftwareResourceShape: string;
     gxVirtualResourceShape: string;
     gxLegitimateInterestShape: string;
-    gxInstantiatedVirtualResourceShape: string;
-    gxDataResourceShape: string;
 }
 
 export interface IServiceOfferingShapeRestApi {
@@ -682,7 +682,7 @@ export type IOdrlOperator = "odrl:eq" | "odrl:gteq" | "odrl:lteq" | "odrl:neq" |
 
 export type IPojoCredentialSubjectUnion = IGxDataResourceCredentialSubject | IGxServiceOfferingCredentialSubject;
 
-export type IEnforcementPolicyUnion = IEverythingAllowedPolicy | IParticipantRestrictionPolicy | IStartDatePolicy | IEndDatePolicy;
+export type IEnforcementPolicyUnion = IEverythingAllowedPolicy | IParticipantRestrictionPolicy | IStartDatePolicy | IEndDatePolicy | IEndAgreementOffsetPolicy;
 
 function uriEncoding(template: TemplateStringsArray, ...substitutions: any[]): string {
     let result = "";
