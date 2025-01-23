@@ -1,9 +1,11 @@
 import {Component, Input} from '@angular/core';
-import {IEnforcementPolicy} from "../../../../services/mgmt/api/backend";
+import {IAgreementOffsetUnit, IEnforcementPolicy} from "../../../../services/mgmt/api/backend";
 import {
   asEndDatePolicy,
   asParticipantRestrictionPolicy,
   asStartDatePolicy,
+  asEndAgreementOffsetPolicy,
+  isEndAgreementOffsetPolicy,
   isEndDatePolicy,
   isEverythingAllowedPolicy,
   isParticipantRestrictionPolicy,
@@ -27,6 +29,8 @@ export class EnforcementPolicyContentComponent {
   protected readonly isEverythingAllowedPolicy = isEverythingAllowedPolicy;
   protected readonly isEndDatePolicy = isEndDatePolicy;
   protected readonly asParticipantRestrictionPolicy = asParticipantRestrictionPolicy;
+  protected readonly isEndAgreementOffsetPolicy = isEndAgreementOffsetPolicy;
+  protected readonly asEndAgreementOffsetPolicy = asEndAgreementOffsetPolicy;
 
   constructor(private readonly nameMappingService: NameMappingService) {
   }
@@ -34,5 +38,21 @@ export class EnforcementPolicyContentComponent {
   getNameIdStringById(id: string): string {
     const name = this.nameMappingService.getNameById(id);
     return `${name} (${id})`;
+  }
+
+  getTimeUnitString(timeUnit: IAgreementOffsetUnit): string {
+    const timeUnitString = timeUnit as string;
+    switch (timeUnitString) {
+      case "s":
+        return "second(s)";
+      case "m":
+        return "minute(s)";
+      case "h":
+        return "hour(s)";
+      case "d":
+        return "day(s)";
+      default:
+        return timeUnitString;
+    }
   }
 }

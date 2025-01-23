@@ -1,9 +1,9 @@
-import {AfterViewInit, ChangeDetectorRef, Component, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, Input, ViewChild} from '@angular/core';
 import {AccordionItemComponent} from "@coreui/angular";
 import {NameMappingService} from "../../../services/mgmt/name-mapping.service";
 import moment from "moment";
 import {
-  IAgreementOffsetUnit,
+  IAgreementOffsetUnit, IEndAgreementOffsetPolicy,
   IEnforcementPolicyUnion,
   IEverythingAllowedPolicy,
   IParticipantRestrictionPolicy
@@ -19,20 +19,21 @@ export class PossibleXEnforcedPolicySelectorComponent implements AfterViewInit {
   sortedIds: string[] = [];
   isParticipantRestrictionPolicyChecked: boolean = false;
   participantRestrictionPolicyIds: string[] = [''];
-  isStartDatePolicyDisabled: boolean = false;
   isStartDatePolicyChecked: boolean = false;
   startDate: Date = undefined;
-  isEndDatePolicyDisabled: boolean = false;
   isEndDatePolicyChecked: boolean = false;
   endDate: Date = undefined;
-  isEndAgreementOffsetPolicyDisabled: boolean = false;
   isEndAgreementOffsetPolicyChecked: boolean = false;
   endAgreementOffset: number = undefined;
   endAgreementOffsetUnit: IAgreementOffsetUnit = undefined;
-  @ViewChild('accordionItem1') accordionItem1!: AccordionItemComponent;
-  @ViewChild('accordionItem2') accordionItem2!: AccordionItemComponent;
-  @ViewChild('accordionItem3') accordionItem3!: AccordionItemComponent;
-  @ViewChild('accordionItem4') accordionItem4!: AccordionItemComponent;
+  isStartDatePolicyDisabled: boolean = false;
+  isEndDatePolicyDisabled: boolean = false;
+  isEndAgreementOffsetPolicyDisabled: boolean = false;
+  @ViewChild('participantRestrictionPolicy') participantRestrictionPolicyAccordionItem!: AccordionItemComponent;
+  @ViewChild('startDatePolicy') startDatePolicyAccordionItem!: AccordionItemComponent;
+  @ViewChild('endDatePolicy') endDatePolicyAccordionItem!: AccordionItemComponent;
+  @ViewChild('endAgreementOffsetPolicy') endAgreementOffsetPolicyAccordionItem!: AccordionItemComponent;
+  @Input() isOfferingDataOffering?: boolean = undefined;
 
   constructor(
     private readonly nameMappingService: NameMappingService, private readonly cdr: ChangeDetectorRef
@@ -125,7 +126,10 @@ export class PossibleXEnforcedPolicySelectorComponent implements AfterViewInit {
 
   protected handleCheckboxClick(event: Event, policyChecked: string, accordionItem: any) {
     event.stopPropagation();
-    this.setTimePolicyDisabledFlags(policyChecked);
+
+    if (this.isOfferingDataOffering) {
+      this.setTimePolicyDisabledFlags(policyChecked);
+    }
 
     if (this[policyChecked]) {
       if (accordionItem.visible === false) {
@@ -195,18 +199,26 @@ export class PossibleXEnforcedPolicySelectorComponent implements AfterViewInit {
         } as IParticipantRestrictionPolicy);
       }
 
-      if (this.isStartDatePolicyChecked) {
+      if (this.isStartDatePolicyChecked && !this.isStartDatePolicyDisabled) {
         policies.push({
           "@type": "StartDatePolicy",
           date: this.startDate.toISOString()
         } as any);
       }
 
-      if (this.isEndDatePolicyChecked) {
+      if (this.isEndDatePolicyChecked && !this.isEndDatePolicyDisabled) {
         policies.push({
           "@type": "EndDatePolicy",
           date: this.endDate.toISOString()
         } as any);
+      }
+
+      if (this.isEndAgreementOffsetPolicyChecked && !this.isEndAgreementOffsetPolicyDisabled) {
+        policies.push({
+          "@type": "EndAgreementOffsetPolicy",
+          offsetNumber: this.endAgreementOffset,
+          offsetUnit: this.endAgreementOffsetUnit
+        } as IEndAgreementOffsetPolicy);
       }
     }
 
@@ -214,10 +226,10 @@ export class PossibleXEnforcedPolicySelectorComponent implements AfterViewInit {
   }
 
   private resetAccordion() {
-    this.accordionItem1.visible = false;
-    this.accordionItem2.visible = false;
-    this.accordionItem3.visible = false;
-    this.accordionItem4.visible = false;
+    this.participantRestrictionPolicyAccordionItem.visible = false;
+    this.startDatePolicyAccordionItem.visible = false;
+    this.endDatePolicyAccordionItem.visible = false;
+    this.endAgreementOffsetPolicyAccordionItem.visible = false;
   }
 
   private resetDisabledFlags() {

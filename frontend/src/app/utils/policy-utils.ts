@@ -1,4 +1,10 @@
-import {IEndDatePolicy, IEnforcementPolicy, IParticipantRestrictionPolicy, IStartDatePolicy} from "../services/mgmt/api/backend";
+import {
+  IEndAgreementOffsetPolicy,
+  IEndDatePolicy,
+  IEnforcementPolicy,
+  IParticipantRestrictionPolicy,
+  IStartDatePolicy
+} from "../services/mgmt/api/backend";
 
 export const isEverythingAllowedPolicy: (policy: IEnforcementPolicy) => boolean
   = policy => (policy['@type'] === 'EverythingAllowedPolicy');
@@ -20,3 +26,9 @@ export const isEndDatePolicy: (policy: IEnforcementPolicy) => boolean
 
 export const asEndDatePolicy: (policy: IEnforcementPolicy) => IEndDatePolicy
   = policy => (policy as IEndDatePolicy);
+
+export const isEndAgreementOffsetPolicy: (policy: IEnforcementPolicy) => boolean
+  = policy => (policy['@type'] === 'EndAgreementOffsetPolicy');
+
+export const asEndAgreementOffsetPolicy: (policy: IEnforcementPolicy) => IEndAgreementOffsetPolicy
+  = policy => (policy as IEndAgreementOffsetPolicy);
