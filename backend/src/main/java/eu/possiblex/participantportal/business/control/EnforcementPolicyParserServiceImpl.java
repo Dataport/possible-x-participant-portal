@@ -7,10 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -134,10 +131,17 @@ public class EnforcementPolicyParserServiceImpl implements EnforcementPolicyPars
         BigInteger contractSigningDate, String providerDid) {
 
         List<EnforcementPolicy> enforcementPolicies = getEnforcementPoliciesFromEdcPolicies(edcPolicies);
-        computePolicyValidities(enforcementPolicies, contractSigningDate == null
-                ? null
-                : OffsetDateTime.ofInstant(Instant.ofEpochMilli(contractSigningDate.longValue()), ZoneId.systemDefault()),
-            providerDid);
+
+        OffsetDateTime contractSigningDateAsOffsetDateTime;
+        if (contractSigningDate == null) {
+            contractSigningDateAsOffsetDateTime = null;
+        } else {
+            Instant instant = Instant.ofEpochSecond(contractSigningDate.longValueExact());
+            ZonedDateTime zonedDateTime = ZonedDateTime.ofInstant(instant, ZoneId.systemDefault());
+            contractSigningDateAsOffsetDateTime = zonedDateTime.toOffsetDateTime();
+        }
+
+        computePolicyValidities(enforcementPolicies, contractSigningDateAsOffsetDateTime, providerDid);
         return enforcementPolicies;
     }
 

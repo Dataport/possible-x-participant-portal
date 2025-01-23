@@ -229,7 +229,10 @@ export class PossibleXEnforcedPolicySelectorComponent implements AfterViewInit {
     this.participantRestrictionPolicyAccordionItem.visible = false;
     this.startDatePolicyAccordionItem.visible = false;
     this.endDatePolicyAccordionItem.visible = false;
-    this.endAgreementOffsetPolicyAccordionItem.visible = false;
+
+    if (this.endAgreementOffsetPolicyAccordionItem){
+      this.endAgreementOffsetPolicyAccordionItem.visible = false;
+    }
   }
 
   private resetDisabledFlags() {

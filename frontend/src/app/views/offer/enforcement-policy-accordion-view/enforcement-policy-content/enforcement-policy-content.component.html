@@ -19,7 +19,7 @@
     {{ asEndDatePolicy(enforcementPolicy).date | date: 'full' }}<br/>
   </div>
   <div *ngIf="isEndAgreementOffsetPolicy(enforcementPolicy)">
-    <b>Transfer is restricted to the following period, starting from the contract signing date:</b><br/>
+    <b>Transfer is restricted to the following period starting from the contract signing date:</b><br/>
     {{ asEndAgreementOffsetPolicy(enforcementPolicy).offsetNumber }} {{ getTimeUnitString(asEndAgreementOffsetPolicy(enforcementPolicy).offsetUnit) }}<br/>
   </div>
 </div>

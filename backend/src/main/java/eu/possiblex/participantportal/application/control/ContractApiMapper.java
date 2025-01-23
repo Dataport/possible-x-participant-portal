@@ -30,7 +30,7 @@ public interface ContractApiMapper {
     default OffsetDateTime secondsToOffsetDateTime(BigInteger seconds) {
 
         Instant instant = Instant.ofEpochSecond(seconds.longValueExact());
-        ZonedDateTime zonedDateTime = ZonedDateTime.ofInstant(instant, ZoneId.of("CET"));
+        ZonedDateTime zonedDateTime = ZonedDateTime.ofInstant(instant, ZoneId.systemDefault());
         return zonedDateTime.toOffsetDateTime();
     }
 
