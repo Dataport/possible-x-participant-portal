@@ -3,6 +3,7 @@ import {AccordionModule} from "@coreui/angular";
 import {provideAnimations} from "@angular/platform-browser/animations";
 import { PossibleXEnforcedPolicySelectorComponent } from './possible-x-enforced-policy-selector.component';
 import {NameMappingService} from "../../../services/mgmt/name-mapping.service";
+import {IEverythingAllowedPolicy} from "../../../services/mgmt/api/backend";
 
 describe('PossibleXEnforcedPolicySelectorComponent', () => {
   let component: PossibleXEnforcedPolicySelectorComponent;
@@ -33,6 +34,19 @@ describe('PossibleXEnforcedPolicySelectorComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should return the correct policies based on the checked policies - none', () => {
+    component.isParticipantRestrictionPolicyChecked = false;
+    component.isStartDatePolicyChecked = false;
+    component.isEndDatePolicyChecked = false;
+    component.isEndAgreementOffsetPolicyChecked = false;
+
+    const policies = component.getPolicies();
+
+    expect(policies).toEqual([
+      { "@type": "EverythingAllowedPolicy" } as IEverythingAllowedPolicy
+    ]);
   });
 
   it('should return the correct policies based on the checked policies - participant restriction, start and end date policy', () => {
