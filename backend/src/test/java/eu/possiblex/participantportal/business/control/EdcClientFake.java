@@ -202,7 +202,7 @@ public class EdcClientFake implements EdcClient {
 
         PossibleAssetProperties properties = PossibleAssetProperties.builder().termsAndConditions(List.of(assetTnC))
             .producedBy(new NodeKindIRITypeId(FAKE_ID)).providedBy(new NodeKindIRITypeId(FAKE_ID))
-            .license(List.of("MIT")).copyrightOwnedBy(List.of(new NodeKindIRITypeId(FAKE_ID)))
+            .license(List.of("MIT")).copyrightOwnedBy(List.of(FAKE_ID))
             .exposedThrough(new NodeKindIRITypeId(FAKE_ID)).offerId(FAKE_ID).name("name").description("description")
             .dataAccountExport(List.of(dataAccountExport)).build();
 

@@ -49,9 +49,7 @@
       "gx:producedBy": {
         "@id": "_:b5"
       },
-      "gx:copyrightOwnedBy": {
-        "@id": "_:b6"
-      },
+      "gx:copyrightOwnedBy": "Copyright Owner",
       "schema:name": "Test Dataset"
     }
   ],
