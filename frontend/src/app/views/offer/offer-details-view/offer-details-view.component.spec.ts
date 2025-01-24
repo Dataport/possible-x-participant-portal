@@ -21,7 +21,7 @@ describe('OfferDetailsViewComponent', () => {
       "gx:dataProtectionRegime": [],
       "gx:aggregationOf": [
         {
-          "gx:copyrightOwnedBy": [{id: "participantId"}],
+          "gx:copyrightOwnedBy": ["participantId"],
           "gx:producedBy": {id: "participantId"},
           "gx:containsPII": true,
           "gx:legitimateInterest": {"gx:dataProtectionContact": "contact",
