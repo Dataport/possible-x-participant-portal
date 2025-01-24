@@ -132,16 +132,10 @@ public class EnforcementPolicyParserServiceImpl implements EnforcementPolicyPars
 
         List<EnforcementPolicy> enforcementPolicies = getEnforcementPoliciesFromEdcPolicies(edcPolicies);
 
-        OffsetDateTime contractSigningDateAsOffsetDateTime;
-        if (contractSigningDate == null) {
-            contractSigningDateAsOffsetDateTime = null;
-        } else {
-            Instant instant = Instant.ofEpochSecond(contractSigningDate.longValueExact());
-            ZonedDateTime zonedDateTime = ZonedDateTime.ofInstant(instant, ZoneId.systemDefault());
-            contractSigningDateAsOffsetDateTime = zonedDateTime.toOffsetDateTime();
-        }
-
-        computePolicyValidities(enforcementPolicies, contractSigningDateAsOffsetDateTime, providerDid);
+        computePolicyValidities(enforcementPolicies, contractSigningDate == null
+                ? null
+                : OffsetDateTime.ofInstant(Instant.ofEpochSecond(contractSigningDate.longValue()), ZoneId.systemDefault()),
+            providerDid);
         return enforcementPolicies;
     }
 

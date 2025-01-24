@@ -119,7 +119,7 @@ export class PossibleXEnforcedPolicySelectorComponent implements AfterViewInit {
     });
   }
 
-  protected getNameIdStringById(id: string): string {
+  public getNameIdStringById(id: string): string {
     const name = this.nameMappingService.getNameById(id);
     return `${name} (${id})`;
   }

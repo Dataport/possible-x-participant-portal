@@ -29,7 +29,9 @@ import {FormsModule} from "@angular/forms";
 import { ServiceOfferingPolicyHintsComponent } from './service-offering-policy-hints/service-offering-policy-hints.component';
 import { DataResourcePolicyHintsComponent } from './data-resource-policy-hints/data-resource-policy-hints.component';
 import { PossibleXEnforcedPolicyHintsComponent } from './possible-x-enforced-policy-hints/possible-x-enforced-policy-hints.component';
-import {NameMappingService} from "../../services/mgmt/name-mapping.service";
+import {
+  PossibleXEnforcedPolicySelectorComponent
+} from "./possible-x-enforced-policy-selector/possible-x-enforced-policy-selector.component";
 
 @Component({
   selector: 'app-status-message',
@@ -60,7 +62,6 @@ describe('OfferingWizardExtensionComponent', () => {
   let component: OfferingWizardExtensionComponent;
   let fixture: ComponentFixture<OfferingWizardExtensionComponent>;
   let apiService: jasmine.SpyObj<ApiService>;
-  let nameMappingService: jasmine.SpyObj<NameMappingService>;
 
   const offerCreationResponse = {
     edcResponseId: 'dummy',
@@ -70,17 +71,18 @@ describe('OfferingWizardExtensionComponent', () => {
   beforeEach(async () => {
     const apiServiceSpy = jasmine.createSpyObj('ApiService',
       ['createServiceOffering', 'getGxServiceOfferingShape', 'getGxDataResourceShape', 'createDataOffering', 'getPrefillFields']);
-    const nameMappingServiceSpy = jasmine.createSpyObj('NameMappingService', ['getNameById', 'getNameMapping']);
-
-    // Mock return values for nameMappingServiceSpy methods
-    nameMappingServiceSpy.getNameById.and.returnValue('Test Name');
-    nameMappingServiceSpy.getNameMapping.and.returnValue({ '123': 'Test Name' });
 
     await TestBed.configureTestingModule({
-      declarations: [OfferingWizardExtensionComponent, MockWizardExtension, MockStatusMessageComponent, ServiceOfferingPolicyHintsComponent, DataResourcePolicyHintsComponent, PossibleXEnforcedPolicyHintsComponent],
+      declarations: [
+        OfferingWizardExtensionComponent,
+        MockWizardExtension,
+        MockStatusMessageComponent,
+        ServiceOfferingPolicyHintsComponent,
+        DataResourcePolicyHintsComponent,
+        PossibleXEnforcedPolicyHintsComponent,
+        PossibleXEnforcedPolicySelectorComponent],
       providers: [
         { provide: ApiService, useValue: apiServiceSpy },
-        { provide: NameMappingService, useValue: nameMappingServiceSpy },
         provideAnimations()
       ],
       imports: [AccordionModule, MatStepperModule, FormsModule]
@@ -90,7 +92,6 @@ describe('OfferingWizardExtensionComponent', () => {
     fixture = TestBed.createComponent(OfferingWizardExtensionComponent);
     component = fixture.componentInstance;
     apiService = TestBed.inject(ApiService) as jasmine.SpyObj<ApiService>;
-    nameMappingService = TestBed.inject(NameMappingService) as jasmine.SpyObj<NameMappingService>;
     fixture.detectChanges();
   });
 
@@ -153,14 +154,5 @@ describe('OfferingWizardExtensionComponent', () => {
     component.retrieveAndSetPrefillFields().then(() => {
       expect(apiService.getPrefillFields).toHaveBeenCalled();
     });
-  });
-
-  it('should return name and ID string', () => {
-    const id = '123';
-    const name = 'Test Name';
-    nameMappingService.getNameById.and.returnValue(name);
-
-    const result = component.getNameIdStringById(id);
-    expect(result).toBe(`${name} (${id})`);
   });
 });

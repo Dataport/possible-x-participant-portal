@@ -93,8 +93,7 @@ class EnforcementPolicyParserServiceTest {
         // given\
         OffsetDateTime now = OffsetDateTime.now();
         OffsetDateTime signingDate = now.minusDays(7);
-        Timestamp signingDateTimestamp = Timestamp.valueOf(
-            LocalDateTime.ofInstant(signingDate.toInstant(), ZoneOffset.UTC));
+        BigInteger signingDateEpochSeconds = BigInteger.valueOf(signingDate.toEpochSecond());
 
         ParticipantRestrictionPolicy participantRestrictionPolicy = ParticipantRestrictionPolicy.builder()
             .allowedParticipants(List.of("garbage")).build();
@@ -113,7 +112,7 @@ class EnforcementPolicyParserServiceTest {
         // when
 
         List<EnforcementPolicy> validatedPolicies = sut.getEnforcementPoliciesWithValidity(edcPolicies,
-            BigInteger.valueOf(signingDateTimestamp.getTime()), "did:web:123");
+            signingDateEpochSeconds, "did:web:123");
 
         // then
         for (EnforcementPolicy p : validatedPolicies) {
@@ -127,8 +126,7 @@ class EnforcementPolicyParserServiceTest {
         // given\
         OffsetDateTime now = OffsetDateTime.now();
         OffsetDateTime signingDate = now.minusDays(7);
-        Timestamp signingDateTimestamp = Timestamp.valueOf(
-            LocalDateTime.ofInstant(signingDate.toInstant(), ZoneOffset.UTC));
+        BigInteger signingDateEpochSeconds = BigInteger.valueOf(signingDate.toEpochSecond());
 
         ParticipantRestrictionPolicy participantRestrictionPolicy = ParticipantRestrictionPolicy.builder()
             .allowedParticipants(List.of("did:web:123", "did:web:456", "did:web:test.eu")).build();
@@ -147,7 +145,7 @@ class EnforcementPolicyParserServiceTest {
         // when
 
         List<EnforcementPolicy> validatedPolicies = sut.getEnforcementPoliciesWithValidity(edcPolicies,
-            BigInteger.valueOf(signingDateTimestamp.getTime()), "did:web:123");
+            signingDateEpochSeconds, "did:web:123");
 
         // then
         for (EnforcementPolicy p : validatedPolicies) {
