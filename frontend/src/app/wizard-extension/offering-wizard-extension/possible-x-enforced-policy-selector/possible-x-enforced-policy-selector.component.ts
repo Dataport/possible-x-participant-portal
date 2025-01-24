@@ -131,15 +131,8 @@ export class PossibleXEnforcedPolicySelectorComponent implements AfterViewInit {
       this.setTimePolicyDisabledFlags(policyChecked);
     }
 
-    if (this[policyChecked]) {
-      if (accordionItem.visible === false) {
-        accordionItem.toggleItem();
-      }
-    } else {
-      if (accordionItem.visible === true) {
-        accordionItem.toggleItem();
-      }
-    }
+    // Open accordion item if policy is checked, close it otherwise
+    accordionItem.visible = this[policyChecked];
   }
 
   private setFlagsWhenStartDatePolicyIsChecked(){
