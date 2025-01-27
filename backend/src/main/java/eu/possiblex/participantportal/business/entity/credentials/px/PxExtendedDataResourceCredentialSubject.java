@@ -42,6 +42,8 @@ public class PxExtendedDataResourceCredentialSubject {
     @JsonProperty("gx:copyrightOwnedBy")
     @NotNull
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+    @JsonSerialize(contentUsing = StringSerializer.class)
+    @JsonDeserialize(contentUsing = StringDeserializer.class)
     private List<String> copyrightOwnedBy;
 
     @JsonProperty("gx:producedBy")

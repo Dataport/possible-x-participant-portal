@@ -44,6 +44,8 @@ public class GxDataResourceCredentialSubject extends PojoCredentialSubject {
         "http://www.w3.org/2001/XMLSchema#", "schema", "https://schema.org/");
 
     @JsonProperty("gx:copyrightOwnedBy")
+    @JsonSerialize(contentUsing = StringSerializer.class)
+    @JsonDeserialize(contentUsing = StringDeserializer.class)
     @NotNull
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     private List<String> copyrightOwnedBy;
