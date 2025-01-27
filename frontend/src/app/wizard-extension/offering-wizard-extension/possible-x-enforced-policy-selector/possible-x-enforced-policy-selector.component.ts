@@ -8,6 +8,7 @@ import {
   IEverythingAllowedPolicy,
   IParticipantRestrictionPolicy
 } from "../../../services/mgmt/api/backend";
+import {FormGroup, FormBuilder} from "@angular/forms";
 
 @Component({
   selector: 'app-possible-x-enforced-policy-selector',
@@ -17,27 +18,39 @@ import {
 export class PossibleXEnforcedPolicySelectorComponent implements AfterViewInit {
   nameMapping: { [key: string]: string } = {};
   sortedIds: string[] = [];
-  isParticipantRestrictionPolicyChecked: boolean = false;
+  @ViewChild('participantRestrictionPolicyAccItem') participantRestrictionPolicyAccordionItem!: AccordionItemComponent;
+  @ViewChild('startDatePolicyAccItem') startDatePolicyAccordionItem!: AccordionItemComponent;
+  @ViewChild('endDatePolicyAccItem') endDatePolicyAccordionItem!: AccordionItemComponent;
+  @ViewChild('endAgreementOffsetPolicyAccItem') endAgreementOffsetPolicyAccordionItem!: AccordionItemComponent;
+  @Input() isOfferingDataOffering?: boolean = undefined;
+  checkboxFormGroup: FormGroup;
+  participantRestrictionPolicyCB = 'participantRestrictionPolicyCB';
   participantRestrictionPolicyIds: string[] = [''];
-  isStartDatePolicyChecked: boolean = false;
+  startDatePolicyCB = 'startDatePolicyCB';
   startDate: Date = undefined;
-  isEndDatePolicyChecked: boolean = false;
+  endDatePolicyCB = 'endDatePolicyCB';
   endDate: Date = undefined;
-  isEndAgreementOffsetPolicyChecked: boolean = false;
+  endAgreementOffsetPolicyCB = 'endAgreementOffsetPolicyCB';
   endAgreementOffset: number = undefined;
   endAgreementOffsetUnit: IAgreementOffsetUnit = undefined;
-  isStartDatePolicyDisabled: boolean = false;
-  isEndDatePolicyDisabled: boolean = false;
-  isEndAgreementOffsetPolicyDisabled: boolean = false;
-  @ViewChild('participantRestrictionPolicy') participantRestrictionPolicyAccordionItem!: AccordionItemComponent;
-  @ViewChild('startDatePolicy') startDatePolicyAccordionItem!: AccordionItemComponent;
-  @ViewChild('endDatePolicy') endDatePolicyAccordionItem!: AccordionItemComponent;
-  @ViewChild('endAgreementOffsetPolicy') endAgreementOffsetPolicyAccordionItem!: AccordionItemComponent;
-  @Input() isOfferingDataOffering?: boolean = undefined;
+
+  // Matrix for enabling/disabling policy checkboxes
+  disableMatrix: { [key: string]: string[] } = {
+    [this.startDatePolicyCB]: [this.endAgreementOffsetPolicyCB],
+    [this.endDatePolicyCB]: [this.endAgreementOffsetPolicyCB],
+    [this.endAgreementOffsetPolicyCB]: [this.startDatePolicyCB, this.endDatePolicyCB],
+    [this.participantRestrictionPolicyCB]: []
+  };
 
   constructor(
-    private readonly nameMappingService: NameMappingService, private readonly cdr: ChangeDetectorRef
+    private readonly nameMappingService: NameMappingService, private readonly cdr: ChangeDetectorRef, private readonly fb: FormBuilder
   ) {
+    this.checkboxFormGroup = this.fb.group({
+      [this.startDatePolicyCB]: [false],
+      [this.endDatePolicyCB]: [false],
+      [this.endAgreementOffsetPolicyCB]: [false],
+      [this.participantRestrictionPolicyCB]: [false]
+    });
   }
 
   ngAfterViewInit(): void {
@@ -50,20 +63,38 @@ export class PossibleXEnforcedPolicySelectorComponent implements AfterViewInit {
     this.cdr.detectChanges();
   }
 
+  protected get isStartDatePolicyDisabled(): boolean {
+    return this.checkboxFormGroup.get(this.startDatePolicyCB)?.disabled;
+  }
+
+  protected get isEndDatePolicyDisabled(): boolean {
+      return this.checkboxFormGroup.get(this.endDatePolicyCB)?.disabled;
+  }
+
+  protected get isEndAgreementOffsetPolicyDisabled(): boolean {
+      return this.checkboxFormGroup.get(this.endAgreementOffsetPolicyCB)?.disabled;
+  }
+
+  protected get isParticipantRestrictionPolicyDisabled(): boolean {
+      return this.checkboxFormGroup.get(this.participantRestrictionPolicyCB)?.disabled;
+  }
+
   protected get isInvalidParticipantRestrictionPolicy(): boolean {
-    return this.isParticipantRestrictionPolicyChecked && this.participantRestrictionPolicyIds.some(id => !this.isFieldFilled(id));
+    return this.checkboxFormGroup.get(this.participantRestrictionPolicyCB)?.value
+      && this.participantRestrictionPolicyIds.some(id => !this.isFieldFilled(id));
   }
 
   protected get isInvalidStartDatePolicy(): boolean {
-    return this.isStartDatePolicyChecked && !this.isValidDate(this.startDate);
+    return this.checkboxFormGroup.get(this.startDatePolicyCB)?.value && !this.isValidDate(this.startDate);
   }
 
   protected get isInvalidEndDatePolicy(): boolean {
-    return this.isEndDatePolicyChecked && !this.isValidDate(this.endDate);
+    return this.checkboxFormGroup.get(this.endDatePolicyCB)?.value && !this.isValidDate(this.endDate);
   }
 
   protected get isInvalidEndAgreementOffsetPolicy(): boolean {
-    return this.isEndAgreementOffsetPolicyChecked && (!this.isValidOffset(this.endAgreementOffset) || !this.isValidOffsetUnit(this.endAgreementOffsetUnit));
+    return this.checkboxFormGroup.get(this.endAgreementOffsetPolicyCB)?.value
+      && (!this.isValidOffset(this.endAgreementOffset) || !this.isValidOffsetUnit(this.endAgreementOffsetUnit));
   }
 
   public get isAnyPolicyInvalid(): boolean {
@@ -95,8 +126,10 @@ export class PossibleXEnforcedPolicySelectorComponent implements AfterViewInit {
   }
 
   protected get isAnyPolicyChecked(): boolean {
-    return this.isParticipantRestrictionPolicyChecked || this.isStartDatePolicyChecked || this.isEndDatePolicyChecked
-      || this.isEndAgreementOffsetPolicyChecked;
+    return this.checkboxFormGroup.get(this.startDatePolicyCB)?.value
+      || this.checkboxFormGroup.get(this.endDatePolicyCB)?.value
+      || this.checkboxFormGroup.get(this.endAgreementOffsetPolicyCB)?.value
+      || this.checkboxFormGroup.get(this.participantRestrictionPolicyCB)?.value;
   }
 
   protected addInput(): void {
@@ -124,57 +157,20 @@ export class PossibleXEnforcedPolicySelectorComponent implements AfterViewInit {
     return `${name} (${id})`;
   }
 
-  protected handleCheckboxClick(event: Event, policyChecked: string, accordionItem: any) {
-    event.stopPropagation();
-
-    if (this.isOfferingDataOffering) {
-      this.setTimePolicyDisabledFlags(policyChecked);
-    }
-
+  protected handleCheckboxChange(policyChecked: string, accordionItem: any) {
     // Open accordion item if policy is checked, close it otherwise
-    accordionItem.visible = this[policyChecked];
-  }
+    accordionItem.visible = this.checkboxFormGroup.get(this[policyChecked])?.value;
 
-  private setFlagsWhenStartDatePolicyIsChecked(){
-    this.isEndAgreementOffsetPolicyDisabled = true;
-  }
+    const formControls = this.checkboxFormGroup.controls;
+    const selectedCheckboxes = Object.keys(formControls).filter(key => formControls[key].value);
 
-  private setFlagsWhenEndDatePolicyIsChecked(){
-    this.isEndAgreementOffsetPolicyDisabled = true;
-  }
+    // Enable all checkboxes initially
+    Object.keys(formControls).forEach(key => formControls[key].enable());
 
-  private setFlagsWhenEndAgreementOffsetPolicyIsChecked(){
-    this.isStartDatePolicyDisabled = true;
-    this.isEndDatePolicyDisabled = true;
-  }
-
-  protected setTimePolicyDisabledFlags(policyChecked: string) {
-    if (this[policyChecked]) {
-      switch (policyChecked) {
-        case "isStartDatePolicyChecked":
-          this.setFlagsWhenStartDatePolicyIsChecked();
-          break;
-        case "isEndDatePolicyChecked":
-          this.setFlagsWhenEndDatePolicyIsChecked();
-          break;
-        case "isEndAgreementOffsetPolicyChecked":
-          this.setFlagsWhenEndAgreementOffsetPolicyIsChecked();
-          break;
-      }
-    } else {
-      this.resetDisabledFlags();
-
-      // Apply the flag settings according to the checked time policies
-      if (this.isEndDatePolicyChecked) {
-        this.setFlagsWhenEndDatePolicyIsChecked();
-      }
-      if (this.isStartDatePolicyChecked) {
-        this.setFlagsWhenStartDatePolicyIsChecked();
-      }
-      if (this.isEndAgreementOffsetPolicyChecked) {
-        this.setFlagsWhenEndAgreementOffsetPolicyIsChecked();
-      }
-    }
+    // Apply the disable matrix
+    selectedCheckboxes.forEach(selectedKey => {
+      this.disableMatrix[selectedKey].forEach(key => formControls[key].disable());
+    });
   }
 
   public getPolicies(): IEnforcementPolicyUnion[] {
@@ -185,28 +181,32 @@ export class PossibleXEnforcedPolicySelectorComponent implements AfterViewInit {
         "@type": "EverythingAllowedPolicy"
       } as IEverythingAllowedPolicy);
     } else {
-      if (this.isParticipantRestrictionPolicyChecked) {
+      let participantRestrictionPolicyCBControl = this.checkboxFormGroup.get(this.participantRestrictionPolicyCB);
+      if (participantRestrictionPolicyCBControl?.value && participantRestrictionPolicyCBControl?.disabled === false) {
         policies.push({
           "@type": "ParticipantRestrictionPolicy",
           allowedParticipants: Array.from(new Set(this.participantRestrictionPolicyIds))
         } as IParticipantRestrictionPolicy);
       }
 
-      if (this.isStartDatePolicyChecked && !this.isStartDatePolicyDisabled) {
+      let startDatePolicyCBControl = this.checkboxFormGroup.get(this.startDatePolicyCB);
+      if (startDatePolicyCBControl?.value && startDatePolicyCBControl?.disabled === false) {
         policies.push({
           "@type": "StartDatePolicy",
           date: this.startDate.toISOString()
         } as any);
       }
 
-      if (this.isEndDatePolicyChecked && !this.isEndDatePolicyDisabled) {
+      let endDatePolicyCBControl = this.checkboxFormGroup.get(this.endDatePolicyCB);
+      if (endDatePolicyCBControl?.value && endDatePolicyCBControl?.disabled === false) {
         policies.push({
           "@type": "EndDatePolicy",
           date: this.endDate.toISOString()
         } as any);
       }
 
-      if (this.isEndAgreementOffsetPolicyChecked && !this.isEndAgreementOffsetPolicyDisabled) {
+      let endAgreementOffsetPolicyCBControl = this.checkboxFormGroup.get(this.endAgreementOffsetPolicyCB);
+      if (endAgreementOffsetPolicyCBControl?.value && endAgreementOffsetPolicyCBControl?.disabled === false) {
         policies.push({
           "@type": "EndAgreementOffsetPolicy",
           offsetNumber: this.endAgreementOffset,
@@ -228,23 +228,27 @@ export class PossibleXEnforcedPolicySelectorComponent implements AfterViewInit {
     }
   }
 
-  private resetDisabledFlags() {
-    this.isStartDatePolicyDisabled = false;
-    this.isEndDatePolicyDisabled = false;
-    this.isEndAgreementOffsetPolicyDisabled = false;
+  private resetCheckboxes() {
+    this.checkboxFormGroup.reset({
+      [this.startDatePolicyCB]: false,
+      [this.endDatePolicyCB]: false,
+      [this.endAgreementOffsetPolicyCB]: false,
+      [this.participantRestrictionPolicyCB]: false
+    });
+
+    // Enable all checkboxes
+    Object.keys(this.checkboxFormGroup.controls).forEach(key => {
+      this.checkboxFormGroup.get(key).enable();
+    });
   }
 
   public resetEnforcementPolicyForm() {
-    this.isParticipantRestrictionPolicyChecked = false;
     this.participantRestrictionPolicyIds = [''];
-    this.isStartDatePolicyChecked = false;
     this.startDate = undefined;
-    this.isEndDatePolicyChecked = false;
     this.endDate = undefined;
-    this.isEndAgreementOffsetPolicyChecked = false;
     this.endAgreementOffset = undefined;
     this.endAgreementOffsetUnit = undefined;
-    this.resetDisabledFlags()
+    this.resetCheckboxes();
     this.resetAccordion();
   }
 }

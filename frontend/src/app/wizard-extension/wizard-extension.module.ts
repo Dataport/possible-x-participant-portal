@@ -29,7 +29,7 @@ import {
   ModalModule,
   TemplateIdDirective
 } from '@coreui/angular';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {OfferingWizardExtensionComponent} from './offering-wizard-extension/offering-wizard-extension.component';
 import {BaseWizardExtensionComponent} from './base-wizard-extension/base-wizard-extension.component';
@@ -94,7 +94,8 @@ const CUSTOM_MOMENT_FORMATS: NgxMatDateFormats = {
     AccordionButtonDirective,
     MatFormFieldModule, MatInputModule, MatDatepickerModule, MatNativeDateModule,
     NgxMatDatetimePickerModule,
-    NgxMatMomentModule
+    NgxMatMomentModule,
+    ReactiveFormsModule
   ],
   providers: [
     { provide: NGX_MAT_DATE_FORMATS, useValue: CUSTOM_MOMENT_FORMATS }
