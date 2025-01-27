@@ -9,7 +9,7 @@
       <div class="accordion-header" (click)="participantRestrictionPolicyAccItem.toggleItem()">
         <label>Restrict the contractual booking to organization(s)</label>
         <form [formGroup]="checkboxFormGroup">
-          <mat-checkbox formControlName="participantRestrictionPolicyCB"
+          <mat-checkbox [formControlName]="participantRestrictionPolicyCB"
                         (change)="handleCheckboxChange(participantRestrictionPolicyCB, participantRestrictionPolicyAccItem)"
                         (click)="$event.stopPropagation()">
           </mat-checkbox>
@@ -47,7 +47,7 @@
       <div class="accordion-header" (click)="startDatePolicyAccItem.toggleItem()">
         <label>Restrict contract duration - set start date</label>
         <form [formGroup]="checkboxFormGroup">
-          <mat-checkbox formControlName="startDatePolicyCB"
+          <mat-checkbox [formControlName]="startDatePolicyCB"
                         (change)="handleCheckboxChange(startDatePolicyCB, startDatePolicyAccItem)"
                         (click)="$event.stopPropagation()">
           </mat-checkbox>
@@ -87,7 +87,7 @@
       <div class="accordion-header" (click)="endDatePolicyAccItem.toggleItem()">
         <label>Restrict contract duration - set end date</label>
         <form [formGroup]="checkboxFormGroup">
-          <mat-checkbox formControlName="endDatePolicyCB"
+          <mat-checkbox [formControlName]="endDatePolicyCB"
                         (change)="handleCheckboxChange(endDatePolicyCB, endDatePolicyAccItem)"
                         (click)="$event.stopPropagation()">
           </mat-checkbox>
@@ -127,7 +127,7 @@
       <div class="accordion-header" (click)="endAgreementOffsetPolicyAccItem.toggleItem()">
         <label>Restrict transfer period</label>
         <form [formGroup]="checkboxFormGroup">
-          <mat-checkbox formControlName="endAgreementOffsetPolicyCB"
+          <mat-checkbox [formControlName]="endAgreementOffsetPolicyCB"
                         (change)="handleCheckboxChange(endAgreementOffsetPolicyCB, endAgreementOffsetPolicyAccItem)"
                         (click)="$event.stopPropagation()">
           </mat-checkbox>
