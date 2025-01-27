@@ -46,6 +46,17 @@ export class AcceptComponent implements OnChanges {
     return `${name} (${id})`;
   }
 
+  getCopyrightOwnerString(copyrightOwner: string) {
+    const copyrightOwnerId = copyrightOwner.replace(/\s+/g, ""); // remove whitespaces
+    const didRegex = /^did:web:[a-zA-Z0-9.-]+(:[a-zA-Z0-9.-]+)*$/;
+
+    if (didRegex.test(copyrightOwnerId)) {
+      return this.getNameIdStringById(copyrightOwnerId);
+    } else {
+      return copyrightOwner.trim();
+    }
+  }
+
   ngOnChanges(): void {
     if (this.offer) {
       this.viewContainerRef.createEmbeddedView(this.accordion);

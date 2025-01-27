@@ -84,9 +84,7 @@
       "@type": "xsd:string"
     },
     "gx:copyrightOwnedBy": [
-      {
-      "@id": "did:web:didwebservice.dev.possible-x.de:participant:901e847f-bded-32d5-8301-c0e2dfa8439f"
-      }
+      "did:web:didwebservice.dev.possible-x.de:participant:901e847f-bded-32d5-8301-c0e2dfa8439f"
     ],
     "gx:license": {
       "@value": "ADSL",

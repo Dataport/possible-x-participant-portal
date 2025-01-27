@@ -21,16 +21,7 @@ describe('ServiceOfferDetailsViewComponent', () => {
     component.catalogOffering = {
       "gx:providedBy": {id: "participantId"},
       "gx:dataProtectionRegime": [],
-      "gx:aggregationOf": [
-        {
-          "gx:copyrightOwnedBy": [{id: "participantId"}],
-          "gx:producedBy": {id: "participantId"},
-          "gx:containsPII": true,
-          "gx:legitimateInterest": {"gx:dataProtectionContact": "contact",
-            "gx:legalBasis": "legalBasis",}
-
-        } as any
-      ]
+      "gx:aggregationOf": []
     } as any;
     nameMappingService = TestBed.inject(NameMappingService) as jasmine.SpyObj<NameMappingService>;
     fixture.detectChanges();

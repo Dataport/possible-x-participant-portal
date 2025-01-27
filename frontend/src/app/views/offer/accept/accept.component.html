@@ -62,7 +62,7 @@
             by:</b> <br/>
           <ul *ngFor="let owner of offer.catalogOffering['gx:aggregationOf'][0]['gx:copyrightOwnedBy']">
             <li>
-              {{ getNameIdStringById(owner.id) }}
+              {{ getCopyrightOwnerString(owner) }}
             </li>
           </ul>
           <b>Produced

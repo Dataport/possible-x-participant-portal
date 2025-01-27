@@ -23,7 +23,7 @@ describe('DataOfferDetailsViewComponent', () => {
         "gx:dataProtectionRegime": [],
         "gx:aggregationOf": [
           {
-            "gx:copyrightOwnedBy": [{id: "participantId"}],
+            "gx:copyrightOwnedBy": ["participantId"],
             "gx:producedBy": {id: "participantId"},
             "gx:containsPII": true,
             "gx:legitimateInterest": {"gx:dataProtectionContact": "contact",
@@ -46,5 +46,30 @@ describe('DataOfferDetailsViewComponent', () => {
 
     const result = component.getNameById("any id");
     expect(result).toBe(name);
+  });
+
+  it('should return name and ID string', () => {
+    const id = '123';
+    const name = 'Test Name';
+    nameMappingService.getNameById.and.returnValue(name);
+
+    const result = component.getNameIdStringById(id);
+    expect(result).toBe(`${name} (${id})`);
+  });
+
+  it('should return copyright owner - did:web', () => {
+    const copyrightOwner = ' did:web:didwebservice .dev.possible-x.de:participant:901e847f-  bded-32d5-8301-c0e2dfa8439f ';
+    const name = 'Provider Org';
+    nameMappingService.getNameById.and.returnValue(name);
+
+    const result = component.getCopyrightOwnerString(copyrightOwner);
+    expect(result).toBe(`${name} (${copyrightOwner.replace(/\s+/g, '')})`);
+  });
+
+  it('should return copyright owner - string', () => {
+    const copyrightOwner = 'Provider Org';
+
+    const result = component.getCopyrightOwnerString(copyrightOwner);
+    expect(result).toBe(copyrightOwner);
   });
 });

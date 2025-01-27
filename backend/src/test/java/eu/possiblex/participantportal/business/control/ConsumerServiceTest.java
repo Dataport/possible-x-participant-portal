@@ -159,7 +159,7 @@ class ConsumerServiceTest {
 
         if (isDataOffering) {
             PxExtendedDataResourceCredentialSubject dataResource = new PxExtendedDataResourceCredentialSubject();
-            dataResource.setCopyrightOwnedBy(List.of(new NodeKindIRITypeId(FhCatalogClientFake.FAKE_DID)));
+            dataResource.setCopyrightOwnedBy(List.of(FhCatalogClientFake.FAKE_DID));
             dataResource.setProducedBy(new NodeKindIRITypeId(FhCatalogClientFake.FAKE_PROVIDER_ID));
             fhCatalogOffer.setAggregationOf(List.of(dataResource));
         }

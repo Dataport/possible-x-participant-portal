@@ -263,7 +263,7 @@ class ContractServiceTest {
         PossibleAssetProperties properties = PossibleAssetProperties.builder().termsAndConditions(List.of(assetTnC))
             .producedBy(new NodeKindIRITypeId(EdcClientFake.FAKE_ID))
             .providedBy(new NodeKindIRITypeId(EdcClientFake.FAKE_ID)).license(List.of("MIT"))
-            .copyrightOwnedBy(List.of(new NodeKindIRITypeId(EdcClientFake.FAKE_ID)))
+            .copyrightOwnedBy(List.of(EdcClientFake.FAKE_ID))
             .exposedThrough(new NodeKindIRITypeId(EdcClientFake.FAKE_ID)).offerId(EdcClientFake.FAKE_ID).name("name")
             .description("description").dataAccountExport(List.of(dataAccountExport)).build();
 

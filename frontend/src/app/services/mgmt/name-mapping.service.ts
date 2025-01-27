@@ -6,8 +6,10 @@ import {ApiService} from "./api/api.service";
 })
 export class NameMappingService {
   private idNameMap: { [key: string]: string } = {};
+  static readonly UNKNOWN = 'Unknown';
+  static readonly EMPTY = '-';
 
-  constructor(private apiService: ApiService) {
+  constructor(private readonly apiService: ApiService) {
   }
 
   retrieveNameMapping(): Promise<void> {
@@ -22,9 +24,9 @@ export class NameMappingService {
 
   getNameById(id: string): string {
     if (!id) {
-      return '-';
+      return NameMappingService.EMPTY;
     }
-    return this.idNameMap[id] || "Unknown";
+    return this.idNameMap[id] || NameMappingService.UNKNOWN;
   }
 
   getNameMapping(): { [key: string]: string } {
