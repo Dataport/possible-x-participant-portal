@@ -65,19 +65,19 @@ export class PossibleXEnforcedPolicySelectorComponent implements AfterViewInit {
     this.cdr.detectChanges();
   }
 
-  protected get isStartDatePolicyDisabled(): boolean {
+  get isStartDatePolicyDisabled(): boolean {
     return this.checkboxFormGroup.get(this.startDatePolicyCB)?.disabled;
   }
 
-  protected get isEndDatePolicyDisabled(): boolean {
+  get isEndDatePolicyDisabled(): boolean {
       return this.checkboxFormGroup.get(this.endDatePolicyCB)?.disabled;
   }
 
-  protected get isEndAgreementOffsetPolicyDisabled(): boolean {
+  get isEndAgreementOffsetPolicyDisabled(): boolean {
       return this.checkboxFormGroup.get(this.endAgreementOffsetPolicyCB)?.disabled;
   }
 
-  protected get isParticipantRestrictionPolicyDisabled(): boolean {
+  get isParticipantRestrictionPolicyDisabled(): boolean {
       return this.checkboxFormGroup.get(this.participantRestrictionPolicyCB)?.disabled;
   }
 
@@ -127,19 +127,19 @@ export class PossibleXEnforcedPolicySelectorComponent implements AfterViewInit {
     return str && str.trim().length > 0;
   }
 
-  protected get isStartDatePolicyChecked(): boolean {
+  get isStartDatePolicyChecked(): boolean {
     return this.checkboxFormGroup.get(this.startDatePolicyCB)?.value
   }
 
-  protected get isEndDatePolicyChecked(): boolean {
+  get isEndDatePolicyChecked(): boolean {
       return this.checkboxFormGroup.get(this.endDatePolicyCB)?.value
   }
 
-  protected get isEndAgreementOffsetPolicyChecked(): boolean {
+  get isEndAgreementOffsetPolicyChecked(): boolean {
       return this.checkboxFormGroup.get(this.endAgreementOffsetPolicyCB)?.value
   }
 
-  protected get isParticipantRestrictionPolicyChecked(): boolean {
+  get isParticipantRestrictionPolicyChecked(): boolean {
       return this.checkboxFormGroup.get(this.participantRestrictionPolicyCB)?.value
   }
 

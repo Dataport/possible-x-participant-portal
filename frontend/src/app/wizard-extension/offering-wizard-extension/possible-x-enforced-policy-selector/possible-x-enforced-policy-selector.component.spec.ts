@@ -37,10 +37,10 @@ describe('PossibleXEnforcedPolicySelectorComponent', () => {
   });
 
   it('should return the correct policies based on the checked policies - none', () => {
-    component.isParticipantRestrictionPolicyChecked = false;
-    component.isStartDatePolicyChecked = false;
-    component.isEndDatePolicyChecked = false;
-    component.isEndAgreementOffsetPolicyChecked = false;
+    component.checkboxFormGroup.get(component.startDatePolicyCB).setValue(false);
+    component.checkboxFormGroup.get(component.endDatePolicyCB).setValue(false);
+    component.checkboxFormGroup.get(component.endAgreementOffsetPolicyCB).setValue(false);
+    component.checkboxFormGroup.get(component.participantRestrictionPolicyCB).setValue(false);
 
     const policies = component.getPolicies();
 
@@ -50,13 +50,13 @@ describe('PossibleXEnforcedPolicySelectorComponent', () => {
   });
 
   it('should return the correct policies based on the checked policies - participant restriction, start and end date policy', () => {
-    component.isParticipantRestrictionPolicyChecked = true;
+    component.checkboxFormGroup.get(component.participantRestrictionPolicyCB).setValue(true);
     component.participantRestrictionPolicyIds = ['validId'];
-    component.isStartDatePolicyChecked = true;
+    component.checkboxFormGroup.get(component.startDatePolicyCB).setValue(true);
     component.startDate = new Date('2024-01-01T00:00:00Z');
-    component.isEndDatePolicyChecked = true;
+    component.checkboxFormGroup.get(component.endDatePolicyCB).setValue(true);
     component.endDate = new Date('2024-12-31T23:59:59Z');
-    component.isEndAgreementOffsetPolicyChecked = false;
+    component.checkboxFormGroup.get(component.endAgreementOffsetPolicyCB).setValue(false);
     component.endAgreementOffset = 10;
     component.endAgreementOffsetUnit = 'd';
 
@@ -70,13 +70,13 @@ describe('PossibleXEnforcedPolicySelectorComponent', () => {
   });
 
   it('should return the correct policies based on the checked policies - participant restriction and transfer period policy', () => {
-    component.isParticipantRestrictionPolicyChecked = true;
+    component.checkboxFormGroup.get(component.participantRestrictionPolicyCB).setValue(true);
     component.participantRestrictionPolicyIds = ['validId'];
-    component.isStartDatePolicyChecked = false;
+    component.checkboxFormGroup.get(component.startDatePolicyCB).setValue(false);
     component.startDate = new Date('2024-01-01T00:00:00Z');
-    component.isEndDatePolicyChecked = false;
+    component.checkboxFormGroup.get(component.endDatePolicyCB).setValue(false);
     component.endDate = new Date('2024-12-31T23:59:59Z');
-    component.isEndAgreementOffsetPolicyChecked = true;
+    component.checkboxFormGroup.get(component.endAgreementOffsetPolicyCB).setValue(true);
     component.endAgreementOffset = 10;
     component.endAgreementOffsetUnit = 'd';
 
@@ -89,67 +89,67 @@ describe('PossibleXEnforcedPolicySelectorComponent', () => {
   });
 
   it('should return true if any policy is invalid', () => {
-      component.isParticipantRestrictionPolicyChecked = true;
-      component.participantRestrictionPolicyIds = [''];
-      expect(component.isAnyPolicyInvalid).toBeTrue();
+    component.checkboxFormGroup.get(component.participantRestrictionPolicyCB).setValue(true);
+    component.participantRestrictionPolicyIds = [''];
+    expect(component.isAnyPolicyInvalid).toBeTrue();
 
-      component.isParticipantRestrictionPolicyChecked = false;
-      component.isStartDatePolicyChecked = true;
-      component.startDate = new Date('invalid date');
-      expect(component.isAnyPolicyInvalid).toBeTrue();
+    component.checkboxFormGroup.get(component.participantRestrictionPolicyCB).setValue(false);
+    component.checkboxFormGroup.get(component.startDatePolicyCB).setValue(true);
+    component.startDate = new Date('invalid date');
+    expect(component.isAnyPolicyInvalid).toBeTrue();
 
-      component.isStartDatePolicyChecked = false;
-      component.isEndDatePolicyChecked = true;
-      component.endDate = new Date('invalid date');
-      expect(component.isAnyPolicyInvalid).toBeTrue();
+    component.checkboxFormGroup.get(component.startDatePolicyCB).setValue(false);
+    component.checkboxFormGroup.get(component.endDatePolicyCB).setValue(true);
+    component.endDate = new Date('invalid date');
+    expect(component.isAnyPolicyInvalid).toBeTrue();
 
-      component.isEndDatePolicyChecked = false;
-      component.isEndAgreementOffsetPolicyChecked = true;
-      component.endAgreementOffset = -1;
-      component.endAgreementOffsetUnit = 'd';
-      expect(component.isAnyPolicyInvalid).toBeTrue();
+    component.checkboxFormGroup.get(component.endDatePolicyCB).setValue(false);
+    component.checkboxFormGroup.get(component.endAgreementOffsetPolicyCB).setValue(true);
+    component.endAgreementOffset = -1;
+    component.endAgreementOffsetUnit = 'd';
+    expect(component.isAnyPolicyInvalid).toBeTrue();
 
-      component.isParticipantRestrictionPolicyChecked = true;
-      component.isStartDatePolicyChecked = true;
-      component.isEndDatePolicyChecked = true;
-      expect(component.isAnyPolicyInvalid).toBeTrue();
-    });
+    component.checkboxFormGroup.get(component.participantRestrictionPolicyCB).setValue(true);
+    component.checkboxFormGroup.get(component.startDatePolicyCB).setValue(true);
+    component.checkboxFormGroup.get(component.endDatePolicyCB).setValue(true);
+    expect(component.isAnyPolicyInvalid).toBeTrue();
+  });
 
   it('should return false if no policy is invalid', () => {
-    component.isParticipantRestrictionPolicyChecked = true;
+    component.checkboxFormGroup.get(component.participantRestrictionPolicyCB).setValue(true);
     component.participantRestrictionPolicyIds = ['validId'];
     expect(component.isAnyPolicyInvalid).toBeFalse();
 
-    component.isParticipantRestrictionPolicyChecked = false;
-    component.isStartDatePolicyChecked = true;
+    component.checkboxFormGroup.get(component.participantRestrictionPolicyCB).setValue(false);
+    component.checkboxFormGroup.get(component.startDatePolicyCB).setValue(true);
     component.startDate = new Date();
     expect(component.isAnyPolicyInvalid).toBeFalse();
 
-    component.isStartDatePolicyChecked = false;
-    component.isEndDatePolicyChecked = true;
+    component.checkboxFormGroup.get(component.startDatePolicyCB).setValue(false);
+    component.checkboxFormGroup.get(component.endDatePolicyCB).setValue(true);
     component.endDate = new Date();
     expect(component.isAnyPolicyInvalid).toBeFalse();
 
-    component.isEndDatePolicyChecked = false;
-    component.isEndAgreementOffsetPolicyChecked = true;
+    component.checkboxFormGroup.get(component.endDatePolicyCB).setValue(false);
+    component.checkboxFormGroup.get(component.endAgreementOffsetPolicyCB).setValue(true);
     component.endAgreementOffset = 1;
     component.endAgreementOffsetUnit = 'd';
     expect(component.isAnyPolicyInvalid).toBeFalse();
 
-    component.isParticipantRestrictionPolicyChecked = true;
-    component.isStartDatePolicyChecked = true;
-    component.isEndDatePolicyChecked = true;
+    component.checkboxFormGroup.get(component.participantRestrictionPolicyCB).setValue(true);
+    component.checkboxFormGroup.get(component.startDatePolicyCB).setValue(true);
+    component.checkboxFormGroup.get(component.endDatePolicyCB).setValue(true);
     expect(component.isAnyPolicyInvalid).toBeFalse();
   });
 
   it('should return true if some policies are valid and some are not', () => {
-    component.isParticipantRestrictionPolicyChecked = true;
+    component.checkboxFormGroup.get(component.participantRestrictionPolicyCB).setValue(true);
     component.participantRestrictionPolicyIds = ['validId', ''];
-    component.isStartDatePolicyChecked = true;
+    component.checkboxFormGroup.get(component.startDatePolicyCB).setValue(true);
     component.startDate = new Date();
-    component.isEndDatePolicyChecked = true;
+    component.checkboxFormGroup.get(component.endDatePolicyCB).setValue(true);
     component.endDate = new Date('invalid date');
-    component.isEndAgreementOffsetPolicyChecked = true;
+    component.checkboxFormGroup.get(component.endAgreementOffsetPolicyCB).setValue(true);
     component.endAgreementOffset = 10;
     component.endAgreementOffsetUnit = 'd';
 
@@ -159,13 +159,13 @@ describe('PossibleXEnforcedPolicySelectorComponent', () => {
   it('should reset the enforcement policy form - service offering', () => {
     component.isOfferingDataOffering = false;
     fixture.detectChanges();
-    component.isParticipantRestrictionPolicyChecked = true;
+    component.checkboxFormGroup.get(component.participantRestrictionPolicyCB).setValue(true);
     component.participantRestrictionPolicyIds = ['validId'];
-    component.isStartDatePolicyChecked = true;
+    component.checkboxFormGroup.get(component.startDatePolicyCB).setValue(true);
     component.startDate = new Date('2024-01-01T00:00:00Z');
-    component.isEndDatePolicyChecked = true;
+    component.checkboxFormGroup.get(component.endDatePolicyCB).setValue(true);
     component.endDate = new Date('2024-12-31T23:59:59Z');
-    component.isEndAgreementOffsetPolicyChecked = true;
+    component.checkboxFormGroup.get(component.endAgreementOffsetPolicyCB).setValue(true);
     component.endAgreementOffset = 10;
     component.endAgreementOffsetUnit = 'd';
 
@@ -191,13 +191,13 @@ describe('PossibleXEnforcedPolicySelectorComponent', () => {
   it('should reset the enforcement policy form - data service offering', () => {
     component.isOfferingDataOffering = true;
     fixture.detectChanges();
-    component.isParticipantRestrictionPolicyChecked = true;
+    component.checkboxFormGroup.get(component.participantRestrictionPolicyCB).setValue(true);
     component.participantRestrictionPolicyIds = ['validId'];
-    component.isStartDatePolicyChecked = true;
+    component.checkboxFormGroup.get(component.startDatePolicyCB).setValue(true);
     component.startDate = new Date('2024-01-01T00:00:00Z');
-    component.isEndDatePolicyChecked = true;
+    component.checkboxFormGroup.get(component.endDatePolicyCB).setValue(true);
     component.endDate = new Date('2024-12-31T23:59:59Z');
-    component.isEndAgreementOffsetPolicyChecked = true;
+    component.checkboxFormGroup.get(component.endAgreementOffsetPolicyCB).setValue(true);
     component.endAgreementOffset = 10;
     component.endAgreementOffsetUnit = 'd';
 
