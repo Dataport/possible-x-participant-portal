@@ -200,28 +200,28 @@ export class PossibleXEnforcedPolicySelectorComponent implements AfterViewInit {
         "@type": "EverythingAllowedPolicy"
       } as IEverythingAllowedPolicy);
     } else {
-      if (this.isParticipantRestrictionPolicyChecked && this.isParticipantRestrictionPolicyDisabled === false) {
+      if (this.isParticipantRestrictionPolicyChecked && !this.isParticipantRestrictionPolicyDisabled) {
         policies.push({
           "@type": "ParticipantRestrictionPolicy",
           allowedParticipants: Array.from(new Set(this.participantRestrictionPolicyIds))
         } as IParticipantRestrictionPolicy);
       }
 
-      if (this.isStartDatePolicyChecked && this.isStartDatePolicyDisabled === false) {
+      if (this.isStartDatePolicyChecked && !this.isStartDatePolicyDisabled) {
         policies.push({
           "@type": "StartDatePolicy",
           date: this.startDate.toISOString()
         } as any);
       }
 
-      if (this.isEndDatePolicyChecked && this.isEndDatePolicyDisabled === false) {
+      if (this.isEndDatePolicyChecked && !this.isEndDatePolicyDisabled) {
         policies.push({
           "@type": "EndDatePolicy",
           date: this.endDate.toISOString()
         } as any);
       }
 
-      if (this.isEndAgreementOffsetPolicyChecked && this.isEndAgreementOffsetPolicyDisabled === false) {
+      if (this.isEndAgreementOffsetPolicyChecked && !this.isEndAgreementOffsetPolicyDisabled) {
         policies.push({
           "@type": "EndAgreementOffsetPolicy",
           offsetNumber: this.endAgreementOffset,
