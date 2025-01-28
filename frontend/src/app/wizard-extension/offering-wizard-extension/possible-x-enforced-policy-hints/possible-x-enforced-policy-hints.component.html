@@ -7,11 +7,25 @@
       </ng-template>
       <ng-template cTemplateId="accordionBodyTemplate">
         <div class="bg-brand-50 accordion-body">
-          You may define "POSSIBLE-X enforced policy" by configuring a predefined policy class for the use and management of this (Data) Service Offering.
+          You may define "POSSIBLE-X enforced policy" by configuring a list of predefined policy classes for the use and management of this (Data) Service Offering:
+          <br>
+          <ul>
+            <li>
+              “Restrict the contractual booking to organization(s)” allows to restrict which organization(s) of your choice will be able to proceed with a contractual booking based on their legal participant did:web declared in the POSSIBLE-X Catalogue credentials.
+            </li>
+            <li>
+              “Restrict contract duration - set start date” allows to restrict the start date of the contract. Contractual booking will be possible only after the start date.*
+            </li>
+            <li>
+              “Restrict contract duration - set end date” allows to restrict the end date of the contract. Contractual booking will be possible only before the end date.*
+            </li>
+            <li>
+              “Restrict transfer period” allows to restrict the transfer period starting from the contract signing date. After the period expires, transfers are not allowed anymore.*
+            </li>
+          </ul>
+          *If either “Restrict contract duration - set start date” or “Restrict contract duration - set end date” (or both) are selected, then “Restrict transfer period” cannot be selected, and vice versa.
           <br><br>
-          “Restrict the contractual booking to organization(s)” allows to restrict which organization(s) of your choice will be able to proceed with a contractual booking based on their legal participant did:web declared in the POSSIBLE-X Catalogue credentials.
-          <br><br>
-          Please define "POSSIBLE-X enforced policy" based on POSSIBLE predefined ODRL policy classes for the provided Data Resource / Service Offering.
+          Please define POSSIBLE-X enforced policy based on POSSIBLE predefined ODRL policy classes for the provided Data Resource / Service Offering.
           <br><br>
           Note:
           <ul>
@@ -33,10 +47,20 @@
       </ng-template>
       <ng-template cTemplateId="accordionBodyTemplate">
         <div class="bg-brand-50 accordion-body">
-          You may define "POSSIBLE-X enforced policy" by configuring a predefined policy class for the use and management of this Service Offering.
-          <br><br>
-          “Restrict the contractual booking to organization(s)” allows to restrict which organization(s) of your choice will be able to proceed with a contractual booking based on their legal participant did:web declared in the POSSIBLE-X Catalogue credentials.
-          <br><br>
+          You may define "POSSIBLE-X enforced policy" by configuring a list of predefined policy classes for the use and management of this Service Offering:
+          <br>
+          <ul>
+            <li>
+              “Restrict the contractual booking to organization(s)” allows to restrict which organization(s) of your choice will be able to proceed with a contractual booking based on their legal participant did:web declared in the POSSIBLE-X Catalogue credentials.
+            </li>
+            <li>
+              “Restrict contract duration - set start date” allows to restrict the start date of the contract. Contractual booking will be possible only after the start date.
+            </li>
+            <li>
+              “Restrict contract duration - set end date” allows to restrict the end date of the contract. Contractual booking will be possible only before the end date.
+            </li>
+          </ul>
+          <br>
           Please define POSSIBLE-X enforced policy based on POSSIBLE predefined ODRL policy classes for the provided Service Offering.
           <br><br>
           Note:
