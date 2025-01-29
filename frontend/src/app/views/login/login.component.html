@@ -8,13 +8,13 @@
   </div>
     <div class="input">
       <label for="username" class="text">Username:</label>
-      <input type="text" id="username" [(ngModel)]="username">
+      <input class="form-control rounded-none" type="text" id="username" [(ngModel)]="username">
     </div>
     <div class="input">
       <label for="password" class="text">Password:</label>
-      <input type="password" id="password" [(ngModel)]="password">
+      <input class="form-control rounded-none" type="password" id="password" [(ngModel)]="password">
     </div>
-  <a (click)="login(username, password)" class="custom-button">
+  <button shape="rounded-0" (click)="login(username, password)" cButton class="custom-button">
     Login
-  </a>
+  </button>
 </div>

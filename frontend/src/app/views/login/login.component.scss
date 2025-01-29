@@ -8,7 +8,7 @@
 }
 
 .custom-button {
-  @apply text-brand-800 border-2 border-brand-800 p-2;
+  @apply text-brand-50 border-2 border-brand-800 p-2;
   width: 60px;
   display: flex;
   justify-self: center;
@@ -23,13 +23,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
-
+  @apply font-acumin-pro;
   label {
     margin-right: 0.5rem;
   }
 
   input {
     width: 300px;
-    font-family: 'Arial', sans-serif;
+    height: 32px;
   }
 }
