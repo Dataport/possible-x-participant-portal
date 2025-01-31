@@ -42,7 +42,7 @@ a[cNavLink]::before {
 .footerWrapper {
   @apply overflow-hidden bg-brand-700;
   @apply w-full;
-  height: 17vh;
+  min-height: 17vh;
 }
 
 .footer {
@@ -50,19 +50,19 @@ a[cNavLink]::before {
     @apply mx-auto max-w-screen-4xl px-8 py-10 xl:px-20;
     @apply bg-brand-700 text-white;
 
-    .circleVisual {
-        @apply absolute;
-        @apply rounded-full border border-white;
-        @apply h-[435px] w-[436px];
-        @apply -left-[264px] -top-[60px];
-    }
+  .circleVisual {
+      @apply absolute;
+      @apply rounded-full border border-white;
+      @apply h-[435px] w-[436px];
+      @apply -left-[264px] -top-[60px];
+  }
 
-    .logo {
-        @apply relative flex-shrink-0 self-end;
-    }
+  .logo {
+      @apply relative flex-shrink-0 self-end;
+  }
 
-    a {
-      @apply no-underline text-white;
+  a {
+    @apply no-underline text-white;
   }
 }
 

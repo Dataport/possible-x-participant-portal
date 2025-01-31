@@ -16,12 +16,12 @@ import {
 } from '@coreui/angular';
 import { IconModule } from '@coreui/icons-angular';
 
-import { HomeRoutingModule } from './home-routing.module';
-import { HomeComponent } from './home.component';
+import { AttributionDocumentRoutingModule } from './attribution-document-routing.module';
+import { AttributionDocumentComponent } from './attribution-document.component';
 
 @NgModule({
   imports: [
-    HomeRoutingModule,
+    AttributionDocumentRoutingModule,
     CardModule,
     NavModule,
     IconModule,
@@ -37,6 +37,6 @@ import { HomeComponent } from './home.component';
     AvatarModule,
     TableModule,
   ],
-  declarations: [HomeComponent],
+  declarations: [AttributionDocumentComponent],
 })
-export class HomeModule {}
+export class AttributionDocumentModule {}

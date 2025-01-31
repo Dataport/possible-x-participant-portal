@@ -1,0 +1,46 @@
+table {
+  width:auto;
+}
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+th, td {
+  padding: 10px;
+  text-align: left;
+}
+tr:nth-child(even) {
+  @apply bg-white;
+}
+tr:nth-child(odd) {
+  @apply bg-brand-100;
+  @apply bg-opacity-10;
+}
+th {
+  @apply bg-brand-200;
+  @apply bg-opacity-70;
+  @apply text-black;
+}
+div {
+  margin-top: 1em;
+  margin-bottom: 1em;
+  line-height: 1.5;
+}
+ul {
+  list-style-type: square;
+  padding-left: 2em;
+}
+.link-like {
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.license-text {
+  border: 1px solid black;
+  border-collapse: collapse;
+  white-space: nowrap;
+  text-align: left;
+  display: inline-block;
+  padding: 10px;
+  @apply bg-white;
+}
