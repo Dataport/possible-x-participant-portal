@@ -11,7 +11,7 @@ export class DefaultLayoutComponent implements OnInit {
   versionNumber: string = '';
   versionDate: string = '';
 
-  constructor(private apiService: ApiService, protected auth: AuthService) {
+  constructor(private readonly apiService: ApiService, protected auth: AuthService) {
   }
 
   ngOnInit() {
