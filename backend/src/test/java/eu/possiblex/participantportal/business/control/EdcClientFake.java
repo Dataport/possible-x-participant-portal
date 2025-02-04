@@ -54,6 +54,8 @@ public class EdcClientFake implements EdcClient {
 
     public static final String BAD_NEGOTIATION_ID = "badNegotiation";
 
+    public static final String TIMED_OUT_NEGOTIATION_ID = "timedOutNegotiation";
+
     public static final String VALID_AGREEMENT_ID = "validAgreement";
 
     public static final String VALID_COUNTER_PARTY_ADDRESS = "validCounterPartyAddress";
@@ -127,6 +129,8 @@ public class EdcClientFake implements EdcClient {
         negotiation.setContractAgreementId(FAKE_ID + ":" + FAKE_ID + ":" + FAKE_ID);
         if (negotiationId.equals(BAD_NEGOTIATION_ID)) {
             negotiation.setState(NegotiationState.TERMINATED);
+        } else if (negotiationId.equals(TIMED_OUT_NEGOTIATION_ID)) {
+            negotiation.setState(NegotiationState.INITIAL);
         } else {
             negotiation.setState(NegotiationState.FINALIZED);
         }

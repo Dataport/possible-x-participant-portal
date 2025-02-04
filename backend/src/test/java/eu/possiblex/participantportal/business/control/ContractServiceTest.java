@@ -253,30 +253,6 @@ class ContractServiceTest {
         return List.of(contractAgreementBE);
     }
 
-    private PossibleAsset getPossibleAsset(String assetId) {
-
-        PossibleAssetDataAccountExport dataAccountExport = PossibleAssetDataAccountExport.builder()
-            .accessType("digital").requestType("API").formatType("application/json").build();
-
-        PossibleAssetTnC assetTnC = PossibleAssetTnC.builder().url("https://example.com").hash("hash1234").build();
-
-        PossibleAssetProperties properties = PossibleAssetProperties.builder().termsAndConditions(List.of(assetTnC))
-            .producedBy(new NodeKindIRITypeId(EdcClientFake.FAKE_ID))
-            .providedBy(new NodeKindIRITypeId(EdcClientFake.FAKE_ID)).license(List.of("MIT"))
-            .copyrightOwnedBy(List.of(EdcClientFake.FAKE_ID))
-            .exposedThrough(new NodeKindIRITypeId(EdcClientFake.FAKE_ID)).offerId(EdcClientFake.FAKE_ID).name("name")
-            .description("description").dataAccountExport(List.of(dataAccountExport)).build();
-
-        Map<String, String> context = Map.of("edc", "https://w3id.org/edc/v0.0.1/ns/", "odrl",
-            "http://www.w3.org/ns/odrl/2/", "@vocab", "https://w3id.org/edc/v0.0.1/ns/");
-
-        IonosS3DataSource dataAddress = IonosS3DataSource.builder().bucketName("bucket").blobName("name")
-            .keyName("name").region("storage").build();
-
-        return PossibleAsset.builder().id(assetId).type("Asset").properties(properties).context(context)
-            .dataAddress(dataAddress).build();
-    }
-
     private ContractAgreement getContractAgreement() {
 
         return ContractAgreement.builder().contractSigningDate(BigInteger.valueOf(1728549145)).id(EdcClientFake.FAKE_ID)
