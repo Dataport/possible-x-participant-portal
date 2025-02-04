@@ -1,5 +1,6 @@
 package eu.possiblex.participantportal.application.entity;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,9 +11,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TransferOfferRequestTO {
+    @NotBlank(message = "Contract agreement ID is required")
     private String contractAgreementId;
 
+    @NotBlank(message = "Counter party address is required")
     private String counterPartyAddress;
-    
+
+    @NotBlank(message = "EDC offer ID is required")
     private String edcOfferId;
 }

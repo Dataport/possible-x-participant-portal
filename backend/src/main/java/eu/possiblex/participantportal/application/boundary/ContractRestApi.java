@@ -1,6 +1,7 @@
 package eu.possiblex.participantportal.application.boundary;
 
 import eu.possiblex.participantportal.application.entity.*;
+import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,5 +40,5 @@ public interface ContractRestApi {
      * @return the response containing the status of the transfer process
      */
     @PostMapping(value = "/transfer", produces = MediaType.APPLICATION_JSON_VALUE)
-    TransferOfferResponseTO transferDataOfferAgain(@RequestBody TransferOfferRequestTO request);
+    TransferOfferResponseTO transferDataOfferAgain(@Valid @RequestBody TransferOfferRequestTO request);
 }

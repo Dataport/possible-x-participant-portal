@@ -23,7 +23,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import eu.possiblex.participantportal.business.entity.serialization.StringDeserializer;
 import eu.possiblex.participantportal.business.entity.serialization.StringSerializer;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 @Getter
@@ -39,18 +41,19 @@ public class GxDataAccountExport {
     @JsonProperty("gx:requestType")
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)
-    @NotNull
+    @NotBlank(message = "Request type is required")
     private String requestType;
 
     @JsonProperty("gx:accessType")
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)
-    @NotNull
+    @NotBlank(message = "Access type is required")
     private String accessType;
 
     @JsonProperty("gx:formatType")
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)
-    @NotNull
+    @NotBlank(message = "Format type is required")
+    @Pattern(regexp = "^\\w+/[-+.\\w]+$", message = "An IANA media type (also known as MIME type) is expected.")
     private String formatType;
 }

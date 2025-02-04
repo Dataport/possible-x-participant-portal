@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import eu.possiblex.participantportal.business.entity.serialization.StringDeserializer;
 import eu.possiblex.participantportal.business.entity.serialization.StringSerializer;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -38,19 +38,19 @@ public class GxLegitimateInterest {
     @JsonProperty("@type")
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)
-    @NotNull
+    @NotBlank
     @Builder.Default
     private String type = "gx:LegitimateInterest";
 
     @JsonProperty("gx:dataProtectionContact")
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)
-    @NotNull
+    @NotBlank(message = "Data protection contact is required")
     private String dataProtectionContact;
 
     @JsonProperty("gx:legalBasis")
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)
-    @NotNull
+    @NotBlank(message = "Legal basis is required")
     private String legalBasis;
 }

@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import eu.possiblex.participantportal.business.entity.serialization.StringDeserializer;
 import eu.possiblex.participantportal.business.entity.serialization.StringSerializer;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -39,13 +40,13 @@ import java.util.Objects;
 public class GxSOTermsAndConditions {
 
     @JsonProperty("gx:URL")
-    @NotNull
+    @NotBlank(message = "URL is required")
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)
     private String url;
 
     @JsonProperty("gx:hash")
-    @NotNull
+    @NotBlank(message = "Hash is required")
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)
     private String hash;

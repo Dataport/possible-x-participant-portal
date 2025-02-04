@@ -1,6 +1,7 @@
 package eu.possiblex.participantportal.application.boundary;
 
 import eu.possiblex.participantportal.application.entity.*;
+import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,7 +15,7 @@ public interface ConsumerRestApi {
      * @return details of the selected offer
      */
     @PostMapping(value = "/offer/select", produces = MediaType.APPLICATION_JSON_VALUE)
-    OfferDetailsTO selectContractOffer(@RequestBody SelectOfferRequestTO request);
+    OfferDetailsTO selectContractOffer(@Valid @RequestBody SelectOfferRequestTO request);
 
     /**
      * POST endpoint to accept a contract offer
@@ -22,7 +23,7 @@ public interface ConsumerRestApi {
      * @return finalized transfer details
      */
     @PostMapping(value = "/offer/accept", produces = MediaType.APPLICATION_JSON_VALUE)
-    AcceptOfferResponseTO acceptContractOffer(@RequestBody ConsumeOfferRequestTO request);
+    AcceptOfferResponseTO acceptContractOffer(@Valid @RequestBody ConsumeOfferRequestTO request);
 
     /**
      * POST endpoint to trigger a transfer for a contract offer
@@ -30,5 +31,5 @@ public interface ConsumerRestApi {
      * @return finalized transfer details
      */
     @PostMapping(value = "/offer/transfer", produces = MediaType.APPLICATION_JSON_VALUE)
-    TransferOfferResponseTO transferDataOffer(@RequestBody TransferOfferRequestTO request);
+    TransferOfferResponseTO transferDataOffer(@Valid @RequestBody TransferOfferRequestTO request);
 }

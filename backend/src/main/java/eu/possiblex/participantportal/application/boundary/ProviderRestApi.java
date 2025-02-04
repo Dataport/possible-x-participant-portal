@@ -1,6 +1,7 @@
 package eu.possiblex.participantportal.application.boundary;
 
 import eu.possiblex.participantportal.application.entity.*;
+import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,7 +17,7 @@ public interface ProviderRestApi {
      */
     @PostMapping(value = "/offer/service", produces = MediaType.APPLICATION_JSON_VALUE)
     CreateOfferResponseTO createServiceOffering(
-        @RequestBody CreateServiceOfferingRequestTO createServiceOfferingRequestTO);
+        @Valid @RequestBody CreateServiceOfferingRequestTO createServiceOfferingRequestTO);
 
     /**
      * POST endpoint to create a data offering
@@ -24,7 +25,7 @@ public interface ProviderRestApi {
      * @return create offer response object
      */
     @PostMapping(value = "/offer/data", produces = MediaType.APPLICATION_JSON_VALUE)
-    CreateOfferResponseTO createDataOffering(@RequestBody CreateDataOfferingRequestTO createDataOfferingRequestTO);
+    CreateOfferResponseTO createDataOffering(@Valid @RequestBody CreateDataOfferingRequestTO createDataOfferingRequestTO);
 
     /**
      * GET endpoint to retrieve the prefill fields for providing offers.

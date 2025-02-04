@@ -1,5 +1,6 @@
 package eu.possiblex.participantportal.application.entity;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,19 +11,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ConsumeOfferRequestTO {
-    /**
-     * @see eu.possiblex.participantportal.application.entity.OfferDetailsTO#counterPartyAddress
-     */
+    @NotBlank(message = "Counter party address is required")
     private String counterPartyAddress;
 
-    /**
-     * @see eu.possiblex.participantportal.application.entity.OfferDetailsTO#edcOfferId
-     */
+    @NotBlank(message = "EDC offer ID is required")
     private String edcOfferId;
 
-    /**
-     * Does this offer contain Data Resources.
-     */
     private boolean dataOffering;
 
 }
