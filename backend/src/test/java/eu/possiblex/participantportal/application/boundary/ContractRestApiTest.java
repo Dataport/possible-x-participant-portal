@@ -3,6 +3,7 @@ package eu.possiblex.participantportal.application.boundary;
 import eu.possiblex.participantportal.application.configuration.AppConfigurer;
 import eu.possiblex.participantportal.application.control.ConsumerApiMapper;
 import eu.possiblex.participantportal.application.control.ContractApiMapper;
+import eu.possiblex.participantportal.application.entity.TransferOfferRequestTO;
 import eu.possiblex.participantportal.business.control.*;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
@@ -11,11 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -89,6 +92,21 @@ class ContractRestApiTest {
             .andExpect(jsonPath("$.catalogOffering['schema:name']").value(ContractServiceFake.NAME))
             .andExpect(jsonPath("$.catalogOffering['schema:description']").value(ContractServiceFake.DESCRIPTION))
             .andExpect(jsonPath("$.offerRetrievalDate").exists());
+    }
+
+    @Test
+    @WithMockUser(username = "admin")
+    void shouldReturnMessageOnTransferDataOfferAgain() throws Exception {
+        //when
+
+        TransferOfferRequestTO request = TransferOfferRequestTO.builder().contractAgreementId("anyId")
+            .counterPartyAddress("anyAddress").edcOfferId("anyOfferId").build();
+
+        //then
+
+        this.mockMvc.perform(post("/contract/transfer").content(RestApiHelper.asJsonString(request))
+            .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
+            .andExpect(jsonPath("$.transferProcessState").value(ContractServiceFake.TRANSFER_PROCESS_STATE.name()));
     }
 
     @TestConfiguration

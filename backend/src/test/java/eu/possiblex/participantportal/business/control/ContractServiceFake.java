@@ -5,6 +5,7 @@ import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedS
 import eu.possiblex.participantportal.business.entity.edc.contractagreement.ContractAgreement;
 import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyTarget;
+import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcessState;
 
 import java.math.BigInteger;
 import java.time.Instant;
@@ -30,6 +31,8 @@ public class ContractServiceFake implements ContractService {
     public static final String NAME = "NAME";
 
     public static final String DESCRIPTION = "DESCRIPTION";
+
+    public static final TransferProcessState TRANSFER_PROCESS_STATE = TransferProcessState.COMPLETED;
 
     public static OffsetDateTime getDateAsOffsetDateTime() {
 
@@ -95,6 +98,6 @@ public class ContractServiceFake implements ContractService {
     @Override
     public TransferOfferResponseBE transferDataOfferAgain(TransferOfferRequestBE request) {
 
-        return null;
+        return TransferOfferResponseBE.builder().transferProcessState(TRANSFER_PROCESS_STATE).build();
     }
 }

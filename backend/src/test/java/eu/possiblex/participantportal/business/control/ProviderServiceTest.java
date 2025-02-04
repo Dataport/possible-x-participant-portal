@@ -20,6 +20,7 @@ import eu.possiblex.participantportal.business.entity.edc.contractdefinition.Con
 import eu.possiblex.participantportal.business.entity.edc.policy.OdrlPermission;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyCreateRequest;
 import eu.possiblex.participantportal.business.entity.exception.EdcOfferCreationException;
+import eu.possiblex.participantportal.business.entity.exception.OfferingComplianceException;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import org.mockito.ArgumentCaptor;
@@ -263,6 +264,26 @@ class ProviderServiceTest {
         //when
         assertThrows(EdcOfferCreationException.class, () -> providerService.createOffering(be));
         verify(fhCatalogClient).deleteServiceOfferingFromFhCatalog(any(), Mockito.anyBoolean());
+    }
+
+    @Test
+    void testCreateServiceOfferingComplianceError() {
+
+        reset(fhCatalogClient);
+        reset(edcClient);
+
+        //given
+        GxServiceOfferingCredentialSubject offeringCs = getGxServiceOfferingCredentialSubject();
+
+        CreateServiceOfferingRequestBE be = CreateServiceOfferingRequestBE.builder()
+            .enforcementPolicies(List.of(new EverythingAllowedPolicy())).providedBy(offeringCs.getProvidedBy())
+            .name(FhCatalogClientFake.INVALID_OFFERING).description(offeringCs.getDescription())
+            .termsAndConditions(offeringCs.getTermsAndConditions()).dataAccountExport(offeringCs.getDataAccountExport())
+            .policy(offeringCs.getPolicy()).dataProtectionRegime(offeringCs.getDataProtectionRegime()).build();
+
+        //when
+        assertThrows(OfferingComplianceException.class, () -> providerService.createOffering(be));
+        verifyNoInteractions(edcClient);
     }
 
     @Test
