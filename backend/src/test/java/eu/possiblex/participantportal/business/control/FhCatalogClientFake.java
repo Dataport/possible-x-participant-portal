@@ -17,6 +17,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.function.Function;
 
+import static org.mockito.ArgumentMatchers.any;
+
 public class FhCatalogClientFake implements FhCatalogClient {
     public static final String FAKE_PROVIDER_ID = "providerId";
 
@@ -45,8 +47,8 @@ public class FhCatalogClientFake implements FhCatalogClient {
                 }
             };
 
-            WebClientResponseException e = new WebClientResponseException(500, "Some Error", headers,
-                responseBody, StandardCharsets.UTF_8);
+            WebClientResponseException e = new WebClientResponseException(500, "Some Error", headers, responseBody,
+                StandardCharsets.UTF_8);
             e.setBodyDecodeFunction(decoderFunction); // Set with custom decoder function
 
             throw e;
@@ -64,10 +66,10 @@ public class FhCatalogClientFake implements FhCatalogClient {
     @Override
     public Map<String, ParticipantDetailsSparqlQueryResult> getParticipantDetailsByIds(Collection<String> dids) {
 
-        return Map.of(FAKE_DID,
+        return Map.of(OmejdnConnectorApiClientFake.PARTICIPANT_ID,
             ParticipantDetailsSparqlQueryResult.builder().name(OmejdnConnectorApiClientFake.PARTICIPANT_NAME)
-                .uri("https://piveau.io/set/resource/legal-participant/" + FAKE_DID).mailAddress(FAKE_EMAIL_ADDRESS)
-                .build());
+                .uri("https://example.com/legal-participant/" + OmejdnConnectorApiClientFake.PARTICIPANT_ID)
+                .mailAddress(FAKE_EMAIL_ADDRESS).build());
     }
 
     @Override
@@ -81,7 +83,8 @@ public class FhCatalogClientFake implements FhCatalogClient {
 
         return Map.of(EdcClientFake.FAKE_ID,
             OfferingDetailsSparqlQueryResult.builder().name("name").description("description")
-                .uri("https://piveau.io/set/resource/service-offering/" + EdcClientFake.FAKE_ID).build());
+                .uri("https://example.com/service-offering/" + EdcClientFake.FAKE_ID).assetId(EdcClientFake.FAKE_ID)
+                .build());
 
     }
 

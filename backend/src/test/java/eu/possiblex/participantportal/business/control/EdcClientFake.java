@@ -184,7 +184,7 @@ public class EdcClientFake implements EdcClient {
 
         ContractAgreement contractAgreement = ContractAgreement.builder()
             .contractSigningDate(BigInteger.valueOf(1728549145)).id(FAKE_ID).assetId(FAKE_ID)
-            .consumerId(OmejdnConnectorApiClientFake.PARTICIPANT_ID)
+            .consumerId(OmejdnConnectorApiClientFake.OTHER_PARTICIPANT_ID)
             .providerId(OmejdnConnectorApiClientFake.PARTICIPANT_ID).policy(policy).build();
 
         return List.of(contractAgreement);

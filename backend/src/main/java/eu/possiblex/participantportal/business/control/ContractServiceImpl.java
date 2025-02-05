@@ -1,6 +1,5 @@
 package eu.possiblex.participantportal.business.control;
 
-import eu.possiblex.participantportal.application.entity.policies.*;
 import eu.possiblex.participantportal.business.entity.*;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.daps.OmejdnConnectorDetailsBE;
@@ -13,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.time.OffsetDateTime;
 import java.util.*;
@@ -21,6 +22,9 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class ContractServiceImpl implements ContractService {
+
+    public static final String UNKNOWN = "Unknown";
+
     private final EdcClient edcClient;
 
     private final ConsumerService consumerService;
@@ -85,16 +89,15 @@ public class ContractServiceImpl implements ContractService {
         Map<String, OfferingDetailsSparqlQueryResult> offeringDetails = fhCatalogClient.getOfferingDetailsByAssetIds(
             referencedAssetIds);
         // prepare for if the did or asset ID is not found
-        String unknown = "Unknown";
         ParticipantDetailsSparqlQueryResult unknownParticipant = ParticipantDetailsSparqlQueryResult.builder()
-            .name(unknown).build();
-        OfferingDetailsSparqlQueryResult unknownOffering = OfferingDetailsSparqlQueryResult.builder().name(unknown)
-            .description(unknown).uri(unknown).build();
+            .name(UNKNOWN).build();
+        OfferingDetailsSparqlQueryResult unknownOffering = OfferingDetailsSparqlQueryResult.builder().name(UNKNOWN)
+            .description(UNKNOWN).uri(UNKNOWN).build();
 
         // convert contract agreements to contract agreement BEs
         contractAgreements.forEach(c -> contractAgreementBEs.add(ContractAgreementBE.builder().contractAgreement(c)
-            .isProvider(participantId.equals(participantDidMap.getOrDefault(c.getProviderId(), "")))
-            .isDataOffering(offeringDetails.getOrDefault(c.getAssetId(), unknownOffering).getAggregationOf() != null)
+            .isProvider(participantId.equals(participantDidMap.getOrDefault(c.getProviderId(), ""))).isDataOffering(
+                StringUtils.hasText(offeringDetails.getOrDefault(c.getAssetId(), unknownOffering).getAggregationOf()))
             .enforcementPolicies(
                 enforcementPolicyParserService.getEnforcementPoliciesWithValidity(List.of(c.getPolicy()),
                     c.getContractSigningDate(), participantDidMap.getOrDefault(c.getProviderId(), ""))).offeringDetails(
@@ -131,12 +134,11 @@ public class ContractServiceImpl implements ContractService {
         OfferRetrievalResponseBE offerRetrievalResponseBE = getOfferRetrievalResponseBE(contractAgreement);
 
         // prepare for if the did is not found in the map
-        String unknown = "Unknown";
         ParticipantDetailsSparqlQueryResult unknownParticipant = ParticipantDetailsSparqlQueryResult.builder()
-            .name(unknown).build();
+            .name(UNKNOWN).build();
 
         return ContractDetailsBE.builder().contractAgreement(contractAgreement)
-            .isDataOffering(offerRetrievalResponseBE.getCatalogOffering().getAggregationOf() != null)
+            .isDataOffering(!CollectionUtils.isEmpty(offerRetrievalResponseBE.getCatalogOffering().getAggregationOf()))
             .enforcementPolicies(enforcementPolicyParserService.getEnforcementPoliciesWithValidity(
                 List.of(contractAgreement.getPolicy()), contractAgreement.getContractSigningDate(),
                 participantDidMap.getOrDefault(contractAgreement.getProviderId(), "")))
@@ -166,7 +168,7 @@ public class ContractServiceImpl implements ContractService {
 
         OfferRetrievalResponseBE offerRetrievalResponseBE;
         PxExtendedServiceOfferingCredentialSubject unknownCatalogOffering = PxExtendedServiceOfferingCredentialSubject.builder()
-            .id("Unknown").name("Unknown").description("Unknown").build();
+            .id(UNKNOWN).name(UNKNOWN).description(UNKNOWN).build();
 
         if (!offeringDetails.containsKey(contractAgreement.getAssetId())) {
             log.warn("No offer found in catalog with referenced assetId: {}", contractAgreement.getAssetId());

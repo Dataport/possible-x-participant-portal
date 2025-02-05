@@ -36,8 +36,8 @@ class CommonPortalServiceTest {
 
         assertNotNull(response);
         assertEquals(1, response.size());
-        assertNotNull(response.get(FhCatalogClientFake.FAKE_DID));
-        assertEquals(OmejdnConnectorApiClientFake.PARTICIPANT_NAME, response.get(FhCatalogClientFake.FAKE_DID));
+        assertNotNull(response.get(OmejdnConnectorApiClientFake.PARTICIPANT_ID));
+        assertEquals(OmejdnConnectorApiClientFake.PARTICIPANT_NAME, response.get(OmejdnConnectorApiClientFake.PARTICIPANT_ID));
     }
 
     // Test-specific configuration to provide mocks
