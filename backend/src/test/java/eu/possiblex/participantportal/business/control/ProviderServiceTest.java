@@ -10,7 +10,6 @@ import eu.possiblex.participantportal.application.entity.credentials.gx.serviceo
 import eu.possiblex.participantportal.application.entity.policies.EverythingAllowedPolicy;
 import eu.possiblex.participantportal.business.entity.CreateDataOfferingRequestBE;
 import eu.possiblex.participantportal.business.entity.CreateServiceOfferingRequestBE;
-import eu.possiblex.participantportal.business.entity.PrefillFieldsBE;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedDataResourceCredentialSubject;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.edc.asset.AssetCreateRequest;
@@ -52,9 +51,6 @@ class ProviderServiceTest {
 
     @Autowired
     FhCatalogClient fhCatalogClient;
-
-    @Autowired
-    ObjectMapper objectMapper;
 
     @Test
     void testCreateServiceOffering() {
@@ -263,7 +259,7 @@ class ProviderServiceTest {
 
         //when
         assertThrows(EdcOfferCreationException.class, () -> providerService.createOffering(be));
-        verify(fhCatalogClient).deleteServiceOfferingFromFhCatalog(any(), Mockito.anyBoolean());
+        verify(fhCatalogClient).deleteServiceOfferingFromFhCatalog(any(), anyBoolean());
     }
 
     @Test
@@ -287,18 +283,23 @@ class ProviderServiceTest {
     }
 
     @Test
-    void testGetPrefillFields() {
-        //when
-        PrefillFieldsBE prefillFields = providerService.getPrefillFields();
+    void testCreateServiceOfferingUnknownError() {
 
-        //then
-        String expectedId = "did:web:test.eu";
-        String expectedServiceOfferingName = "Data Product Service for Data Resource <Data resource name>";
-        String expectedServiceOfferingDescription = "Data Product Service provides data (<Data resource name>).";
-        assertEquals(expectedId, prefillFields.getParticipantId());
-        assertEquals(expectedServiceOfferingName, prefillFields.getDataProductPrefillFields().getServiceOfferingName());
-        assertEquals(expectedServiceOfferingDescription,
-            prefillFields.getDataProductPrefillFields().getServiceOfferingDescription());
+        reset(fhCatalogClient);
+        reset(edcClient);
+
+        //given
+        GxServiceOfferingCredentialSubject offeringCs = getGxServiceOfferingCredentialSubject();
+
+        CreateServiceOfferingRequestBE be = CreateServiceOfferingRequestBE.builder()
+            .enforcementPolicies(List.of(new EverythingAllowedPolicy())).providedBy(offeringCs.getProvidedBy())
+            .name(FhCatalogClientFake.UNPROCESSABLE_OFFERING).description(offeringCs.getDescription())
+            .termsAndConditions(offeringCs.getTermsAndConditions()).dataAccountExport(offeringCs.getDataAccountExport())
+            .policy(offeringCs.getPolicy()).dataProtectionRegime(offeringCs.getDataProtectionRegime()).build();
+
+        //when
+        assertThrows(OfferingComplianceException.class, () -> providerService.createOffering(be));
+        verifyNoInteractions(edcClient);
     }
 
     GxServiceOfferingCredentialSubject getGxServiceOfferingCredentialSubject() {
@@ -323,7 +324,7 @@ class ProviderServiceTest {
             .id("urn:uuid:GENERATED_DATA_RESOURCE_ID").build();
     }
 
-    // Test-specific configuration to provide a fake implementation of EdcClient and FhCatalogClient
+    // Test-specific configuration to provide mocks
     @TestConfiguration
     static class TestConfig {
         @Bean

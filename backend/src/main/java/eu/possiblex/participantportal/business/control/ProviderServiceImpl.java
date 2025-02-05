@@ -238,9 +238,7 @@ public class ProviderServiceImpl implements ProviderService {
      */
     private boolean isServiceOfferWithData(PxExtendedServiceOfferingCredentialSubject serviceOfferPayload) {
 
-        boolean serviceOfferContainsData = !serviceOfferPayload.getAggregationOf().isEmpty();
-
-        return serviceOfferContainsData;
+        return !serviceOfferPayload.getAggregationOf().isEmpty();
     }
 
     private OfferingComplianceException buildComplianceException(WebClientResponseException e) {

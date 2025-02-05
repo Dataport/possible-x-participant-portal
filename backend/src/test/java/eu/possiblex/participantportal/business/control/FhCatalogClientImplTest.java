@@ -22,6 +22,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 
@@ -169,6 +170,55 @@ class FhCatalogClientImplTest {
         Assertions.assertEquals(participantId, queryResult.getUri());
         Assertions.assertEquals("EXPECTED_NAME_VALUE", queryResult.getName());
         Assertions.assertEquals("EXPECTED_MAIL_ADDRESS_VALUE", queryResult.getMailAddress());
+    }
+
+    @Test
+    void deleteDataServiceOfferingFromFhCatalog() {
+
+        reset(technicalFhCatalogClient);
+        reset(sparqlFhCatalogClient);
+
+        // WHEN an offer is deleted
+
+        fhCatalogClient.deleteServiceOfferingFromFhCatalog("some ID", false);
+
+        // THEN the technical client should be called with the correct parameters
+
+        verify(technicalFhCatalogClient).deleteServiceOfferingFromFhCatalog("some ID");
+    }
+
+    @Test
+    void deleteServiceOfferingWithDataFromFhCatalog() {
+
+        reset(technicalFhCatalogClient);
+        reset(sparqlFhCatalogClient);
+
+        // WHEN an offer is deleted
+
+        fhCatalogClient.deleteServiceOfferingFromFhCatalog("some ID", true);
+
+        // THEN the technical client should be called with the correct parameters
+
+        verify(technicalFhCatalogClient).deleteServiceOfferingWithDataFromFhCatalog("some ID");
+    }
+
+    @Test
+    void deleteServiceOfferingFromFhCatalogOfferingNotFound() {
+
+        reset(technicalFhCatalogClient);
+        reset(sparqlFhCatalogClient);
+
+        // set up mock to throw exception when deleting an offer
+        Mockito.doThrow(new WebClientResponseException(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.getReasonPhrase(), null, null, null))
+            .when(technicalFhCatalogClient).deleteServiceOfferingFromFhCatalog(any());
+
+        // WHEN an offer is deleted
+
+        fhCatalogClient.deleteServiceOfferingFromFhCatalog("some ID", false);
+
+        // THEN the technical client should be called with the correct parameters
+
+        verify(technicalFhCatalogClient).deleteServiceOfferingFromFhCatalog("some ID");
     }
 
     @TestConfiguration

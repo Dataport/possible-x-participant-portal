@@ -17,8 +17,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.function.Function;
 
-import static org.mockito.ArgumentMatchers.any;
-
 public class FhCatalogClientFake implements FhCatalogClient {
     public static final String FAKE_PROVIDER_ID = "providerId";
 
@@ -28,29 +26,41 @@ public class FhCatalogClientFake implements FhCatalogClient {
 
     public static final String INVALID_OFFERING = "invalid";
 
+    public static final String UNPROCESSABLE_OFFERING = "unprocessable";
+
     @Override
     public FhCatalogIdResponse addServiceOfferingToFhCatalog(
         PxExtendedServiceOfferingCredentialSubject serviceOfferingCredentialSubject, boolean doesContainData) {
 
-        if (serviceOfferingCredentialSubject.getName().equals(INVALID_OFFERING)) {
-            byte[] responseBody = "{\"error\":\"Some Error\"}".getBytes(StandardCharsets.UTF_8);
+        if (serviceOfferingCredentialSubject.getName().equals(INVALID_OFFERING)
+            || serviceOfferingCredentialSubject.getName().equals(UNPROCESSABLE_OFFERING)) {
+            byte[] responseBody;
             HttpHeaders headers = new HttpHeaders();
             headers.add("Content-Type", "application/json");
 
+            WebClientResponseException e;
+
             // Custom decoder function
-            Function<ResolvableType, JsonNode> decoderFunction = resolvableType -> {
+            Function<ResolvableType, JsonNode> decoderFunction;
+
+            if (serviceOfferingCredentialSubject.getName().equals(INVALID_OFFERING)) {
+                responseBody = "{\"error\":\"\"}".getBytes(StandardCharsets.UTF_8);
+            } else {
+                responseBody = "{}".getBytes(StandardCharsets.UTF_8);
+            }
+
+            // set custom decoder function
+            decoderFunction = resolvableType -> {
                 try {
                     ObjectMapper objectMapper = new ObjectMapper();
                     return objectMapper.readValue(responseBody, JsonNode.class);
-                } catch (Exception e) {
-                    throw new RuntimeException("Failed to decode response body", e);
+                } catch (Exception ex) {
+                    throw new RuntimeException("Failed to decode response body", ex);
                 }
             };
 
-            WebClientResponseException e = new WebClientResponseException(500, "Some Error", headers, responseBody,
-                StandardCharsets.UTF_8);
+            e = new WebClientResponseException(500, "Error", headers, responseBody, StandardCharsets.UTF_8);
             e.setBodyDecodeFunction(decoderFunction); // Set with custom decoder function
-
             throw e;
         }
 
