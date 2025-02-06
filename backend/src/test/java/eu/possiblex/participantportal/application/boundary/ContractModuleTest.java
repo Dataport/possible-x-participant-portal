@@ -1,4 +1,11 @@
 package eu.possiblex.participantportal.application.boundary;
 
-public class ContractModuleTest {
+import org.junit.jupiter.api.Test;
+
+class ContractModuleTest extends GeneralModuleTest {
+
+    @Test
+    void test() {
+
+    }
 }

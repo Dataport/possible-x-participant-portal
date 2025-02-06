@@ -45,7 +45,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(ProviderRestApiImpl.class)
 @ContextConfiguration(classes = { ProviderRestApiTest.TestConfig.class, ProviderRestApiImpl.class,
     AppConfigurer.class })
-class ProviderRestApiTest extends ProviderTestParent {
+class ProviderRestApiTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -165,8 +165,8 @@ class ProviderRestApiTest extends ProviderTestParent {
         GxServiceOfferingCredentialSubject expectedServiceOfferingCS = getGxServiceOfferingCredentialSubject();
         GxDataResourceCredentialSubject expectedDataResourceCS = getGxDataResourceCredentialSubject();
         expectedDataResourceCS.setContainsPII(true);
-        GxLegitimateInterest expectedLegitimateInterest = GxLegitimateInterest.builder().dataProtectionContact("contact")
-            .legalBasis("basis").build();
+        GxLegitimateInterest expectedLegitimateInterest = GxLegitimateInterest.builder()
+            .dataProtectionContact("contact").legalBasis("basis").build();
 
         // WHEN/THEN
 
@@ -216,7 +216,6 @@ class ProviderRestApiTest extends ProviderTestParent {
                 ProviderServiceFake.SERVICE_OFFERING_DESCRIPTION));
     }
 
-    @Override
     GxServiceOfferingCredentialSubject getGxServiceOfferingCredentialSubject() {
 
         return GxServiceOfferingCredentialSubject.builder()
@@ -229,7 +228,6 @@ class ProviderRestApiTest extends ProviderTestParent {
             .id("urn:uuid:GENERATED_SERVICE_OFFERING_ID").build();
     }
 
-    @Override
     GxDataResourceCredentialSubject getGxDataResourceCredentialSubject() {
 
         return GxDataResourceCredentialSubject.builder().policy(List.of("dummyDataResourcePolicy")).name("Test Dataset")
@@ -240,7 +238,6 @@ class ProviderRestApiTest extends ProviderTestParent {
             .id("urn:uuid:GENERATED_DATA_RESOURCE_ID").build();
     }
 
-    @Override
     String getCreateServiceOfferingTOJsonString() {
 
         return """
@@ -304,7 +301,6 @@ class ProviderRestApiTest extends ProviderTestParent {
             }""";
     }
 
-    @Override
     String getCreateDataOfferingTOJsonString() {
 
         return """

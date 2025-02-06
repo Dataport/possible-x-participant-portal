@@ -2,22 +2,13 @@ package eu.possiblex.participantportal.application.boundary;
 
 import eu.possiblex.participantportal.application.entity.ConsumeOfferRequestTO;
 import eu.possiblex.participantportal.application.entity.SelectOfferRequestTO;
-import eu.possiblex.participantportal.business.control.*;
-import org.junit.jupiter.api.BeforeEach;
+import eu.possiblex.participantportal.business.control.EdcClientFake;
+import eu.possiblex.participantportal.business.control.TechnicalFhCatalogClientFake;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
 
-import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -28,30 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * This is an integration test that tests as much of the backend as possible. Here, all real components are used from
  * all layers. Only the interface components which connect to other systems are mocked.
  */
-@SpringBootTest
-@ContextConfiguration(classes = { ConsumerModuleTest.TestConfig.class })
-@AutoConfigureMockMvc
-class ConsumerModuleTest {
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private EdcClient edcClient;
-
-    @Autowired
-    private TechnicalFhCatalogClient technicalFhCatalogClient;
-
-    @Autowired
-    private SparqlFhCatalogClient sparqlFhCatalogClient;
-
-    @BeforeEach
-    void setup() {
-
-        reset(technicalFhCatalogClient);
-        reset(edcClient);
-        reset(sparqlFhCatalogClient);
-    }
+class ConsumerModuleTest extends GeneralModuleTest {
 
     @Test
     @WithMockUser(username = "admin")
@@ -105,32 +73,6 @@ class ConsumerModuleTest {
             TechnicalFhCatalogClientFake.VALID_FH_SERVICE_OFFER_ID);
         verify(technicalFhCatalogClient, Mockito.times(1)).getFhCatalogOffer(
             TechnicalFhCatalogClientFake.VALID_FH_SERVICE_OFFER_ID);
-    }
-
-    @TestConfiguration
-    static class TestConfig {
-
-        @Bean
-        @Primary
-        public EdcClient edcClient() {
-
-            return Mockito.spy(new EdcClientFake());
-        }
-
-        @Bean
-        @Primary
-        public TechnicalFhCatalogClient technicalFhCatalogClient() {
-
-            return Mockito.spy(new TechnicalFhCatalogClientFake());
-        }
-
-        @Bean
-        @Primary
-        public SparqlFhCatalogClient sparqlFhCatalogClient() {
-
-            return Mockito.spy(new SparqlFhCatalogClientFake());
-        }
-
     }
 
 }
