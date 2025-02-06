@@ -111,7 +111,8 @@ public class EdcClientFake implements EdcClient {
             datasets.add(dataset);
         }
 
-        if (catalogRequest.getQuerySpec().getFilterExpression() != null && !catalogRequest.getQuerySpec()
+        if (catalogRequest != null && catalogRequest.getQuerySpec() != null
+            && catalogRequest.getQuerySpec().getFilterExpression() != null && !catalogRequest.getQuerySpec()
             .getFilterExpression().isEmpty()) {
             datasets.removeIf(dataset -> !dataset.getAssetId()
                 .equals(catalogRequest.getQuerySpec().getFilterExpression().get(0).getOperandRight()));

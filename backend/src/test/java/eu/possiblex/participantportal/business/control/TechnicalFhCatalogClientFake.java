@@ -26,14 +26,14 @@ public class TechnicalFhCatalogClientFake implements TechnicalFhCatalogClient {
     public FhCatalogIdResponse addServiceOfferingToFhCatalog(
         PxExtendedServiceOfferingCredentialSubject serviceOfferingCs, String id, String verificationMethod) {
 
-        return null;
+        return new FhCatalogIdResponse(id);
     }
 
     @Override
     public FhCatalogIdResponse addServiceOfferingWithDataToFhCatalog(
         PxExtendedServiceOfferingCredentialSubject serviceOfferingCs, String id, String verificationMethod) {
 
-        return null;
+        return new FhCatalogIdResponse(id);
     }
 
     @Override
