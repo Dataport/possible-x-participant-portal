@@ -222,10 +222,7 @@ public class ContractServiceImpl implements ContractService {
 
         Map<String, OfferingDetailsSparqlQueryResult> offeringDetailsMap = fhCatalogClient.getOfferingDetailsByAssetIds(
             List.of(be.getEdcOfferId()));
-        if (offeringDetailsMap.size() > 1) {
-            throw new OfferNotFoundException(
-                "Multiple offers found in Sparql query result for assetId: " + be.getEdcOfferId());
-        }
+        
         String providerUrl;
         OfferingDetailsSparqlQueryResult offeringDetails = offeringDetailsMap.get(be.getEdcOfferId());
         if (offeringDetails == null) {

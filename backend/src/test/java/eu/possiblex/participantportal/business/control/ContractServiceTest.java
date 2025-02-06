@@ -311,31 +311,6 @@ class ContractServiceTest {
     }
 
     @Test
-    void transferDataOfferAgainMultipleOfferings() {
-
-        reset(fhCatalogClient);
-        reset(consumerService);
-
-        //GIVEN
-
-        TransferOfferRequestBE request = TransferOfferRequestBE.builder().edcOfferId(EdcClientFake.FAKE_ID)
-            .contractAgreementId(EdcClientFake.VALID_CONTRACT_AGREEEMENT_ID).build();
-
-        // set up mock to return multiple offering details from the catalog
-        OfferingDetailsSparqlQueryResult queryResult = new OfferingDetailsSparqlQueryResult();
-        queryResult.setAssetId(EdcClientFake.FAKE_ID);
-        queryResult.setProviderUrl(EdcClientFake.VALID_COUNTER_PARTY_ADDRESS);
-        Mockito.when(fhCatalogClient.getOfferingDetailsByAssetIds(any()))
-            .thenReturn(Map.of(EdcClientFake.FAKE_ID, queryResult, "otherId", new OfferingDetailsSparqlQueryResult()));
-
-        //WHEN / THEN
-        assertThrows(OfferNotFoundException.class, () -> contractService.transferDataOfferAgain(request));
-
-        verify(fhCatalogClient).getOfferingDetailsByAssetIds(List.of(EdcClientFake.FAKE_ID));
-        verifyNoInteractions(consumerService);
-    }
-
-    @Test
     void transferDataOfferAgainOfferingNotFound() {
 
         reset(fhCatalogClient);
