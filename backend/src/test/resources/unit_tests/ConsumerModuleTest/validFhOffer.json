@@ -35,7 +35,7 @@
       "gx:providedBy": {
         "@id": "did:web:portal.dev.possible-x.de:participant:df15587a-0760-32b5-9c42-bb7be66e8076"
       },
-      "http://w3id.org/gaia-x/possible-x#assetId": "EXPECTED_ASSET_ID_VALUE"
+      "http://w3id.org/gaia-x/possible-x#assetId": "myId"
     },
     {
       "@id": "urn:uuid:0364b5ad-96bc-4b86-9281-f2c8bd3d0cba",

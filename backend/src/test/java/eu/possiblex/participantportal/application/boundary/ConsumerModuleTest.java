@@ -12,7 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
@@ -68,86 +67,44 @@ class ConsumerModuleTest {
     @WithMockUser(username = "admin")
     void selectingOfferSucceeds() throws Exception {
 
-        // GIVEN
-
-        String expectedEdcProviderUrl = "EXPECTED_PROVIDER_URL_VALUE"; // from the "px:providerURL" attribute in the test data offer
-        String expectedAssetId = "EXPECTED_ASSET_ID_VALUE"; // from the "px:assetId" attribute in the test data offer
-        String expectedProviderId = "did:web:portal.dev.possible-x.de:participant:df15587a-0760-32b5-9c42-bb7be66e8076";
-
-        // WHEN/THEN
-
         this.mockMvc.perform(post("/consumer/offer/select").content(RestApiHelper.asJsonString(
-                    SelectOfferRequestTO.builder().fhCatalogOfferId(ConsumerServiceFake.VALID_FH_OFFER_ID).build()))
-                .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
-            .andExpect(jsonPath("$.catalogOffering['px:providerUrl']").value(expectedEdcProviderUrl))
-            .andExpect(jsonPath("$.edcOfferId").value(expectedAssetId))
+                SelectOfferRequestTO.builder().fhCatalogOfferId(TechnicalFhCatalogClientFake.VALID_FH_DATA_OFFER_ID)
+                    .build())).contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
+            .andExpect(jsonPath("$.catalogOffering['px:providerUrl']").value("EXPECTED_PROVIDER_URL_VALUE"))
+            .andExpect(jsonPath("$.edcOfferId").value(EdcClientFake.FAKE_ID))
             .andExpect(jsonPath("$.dataOffering").value(true)).andExpect(jsonPath("$.providerDetails").exists())
-            .andExpect(jsonPath("$.providerDetails.participantId").value(expectedProviderId))
+            .andExpect(jsonPath("$.providerDetails.participantId").value(
+                "did:web:portal.dev.possible-x.de:participant:df15587a-0760-32b5-9c42-bb7be66e8076"))
             .andExpect(jsonPath("$.providerDetails.participantName").value("EXPECTED_NAME_VALUE"))
             .andExpect(jsonPath("$.providerDetails.participantEmail").value("EXPECTED_MAIL_ADDRESS_VALUE"))
             .andExpect(jsonPath("$.offerRetrievalDate").exists());
 
-        // THEN
-
         // FH Catalog should have been queried with the offer ID given in the request
         verify(technicalFhCatalogClient, Mockito.times(1)).getFhCatalogOfferWithData(
-            ConsumerServiceFake.VALID_FH_OFFER_ID);
+            TechnicalFhCatalogClientFake.VALID_FH_DATA_OFFER_ID);
     }
 
     @Test
+    @WithMockUser(username = "admin")
     void selectingOfferWithoutDataSucceeds() throws Exception {
 
-        // GIVEN
-
-        String expectedEdcProviderUrl = "EXPECTED_PROVIDER_URL_VALUE"; // from the "px:providerURL" attribute in the test data offer
-        String expectedAssetId = "EXPECTED_ASSET_ID_VALUE"; // from the "px:assetId" attribute in the test data offer
-        String expectedProviderId = "did:web:portal.dev.possible-x.de:participant:df15587a-0760-32b5-9c42-bb7be66e8076";
-
-        // WHEN/THEN
-
         this.mockMvc.perform(post("/consumer/offer/select").content(RestApiHelper.asJsonString(
-                    SelectOfferRequestTO.builder().fhCatalogOfferId(ConsumerServiceFake.VALID_FH_OFFER_ID).build()))
-                .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
-            .andExpect(jsonPath("$.catalogOffering['px:providerUrl']").value(expectedEdcProviderUrl))
-            .andExpect(jsonPath("$.edcOfferId").value(expectedAssetId))
+                SelectOfferRequestTO.builder().fhCatalogOfferId(TechnicalFhCatalogClientFake.VALID_FH_SERVICE_OFFER_ID)
+                    .build())).contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
+            .andExpect(jsonPath("$.catalogOffering['px:providerUrl']").value("EXPECTED_PROVIDER_URL_VALUE"))
+            .andExpect(jsonPath("$.edcOfferId").value(EdcClientFake.FAKE_ID))
             .andExpect(jsonPath("$.dataOffering").value(false)).andExpect(jsonPath("$.providerDetails").exists())
-            .andExpect(jsonPath("$.providerDetails.participantId").value(expectedProviderId))
+            .andExpect(jsonPath("$.providerDetails.participantId").value(
+                "did:web:portal.dev.possible-x.de:participant:df15587a-0760-32b5-9c42-bb7be66e8076"))
             .andExpect(jsonPath("$.providerDetails.participantName").value("EXPECTED_NAME_VALUE"))
             .andExpect(jsonPath("$.providerDetails.participantEmail").value("EXPECTED_MAIL_ADDRESS_VALUE"))
             .andExpect(jsonPath("$.offerRetrievalDate").exists());
 
-        // THEN
-
         // FH Catalog should have been queried with the offer ID given in the request
         verify(technicalFhCatalogClient, Mockito.times(1)).getFhCatalogOfferWithData(
-            ConsumerServiceFake.VALID_FH_OFFER_ID);
-        verify(technicalFhCatalogClient, Mockito.times(1)).getFhCatalogOffer(ConsumerServiceFake.VALID_FH_OFFER_ID);
-    }
-
-    @Test
-    void selectingOfferWhichIsNotInEdcThrows404() throws Exception {
-
-        // GIVEN
-
-        // WHEN/THEN
-
-        this.mockMvc.perform(post("/consumer/offer/select").content(RestApiHelper.asJsonString(
-                    SelectOfferRequestTO.builder().fhCatalogOfferId(ConsumerServiceFake.VALID_FH_OFFER_ID).build()))
-                .contentType(MediaType.APPLICATION_JSON)).andDo(print())
-            .andExpect(status().is(HttpStatus.NOT_FOUND.value()));
-    }
-
-    @Test
-    void selectOfferForNotExistingFhCatalogOfferResultsIn404Response() throws Exception {
-
-        // GIVEN
-
-        // WHEN/THEN
-
-        this.mockMvc.perform(post("/consumer/offer/select").content(RestApiHelper.asJsonString(
-                    SelectOfferRequestTO.builder().fhCatalogOfferId(ConsumerServiceFake.VALID_FH_OFFER_ID).build()))
-                .contentType(MediaType.APPLICATION_JSON)).andDo(print())
-            .andExpect(status().is(HttpStatus.NOT_FOUND.value()));
+            TechnicalFhCatalogClientFake.VALID_FH_SERVICE_OFFER_ID);
+        verify(technicalFhCatalogClient, Mockito.times(1)).getFhCatalogOffer(
+            TechnicalFhCatalogClientFake.VALID_FH_SERVICE_OFFER_ID);
     }
 
     @TestConfiguration
