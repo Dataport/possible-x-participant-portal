@@ -15,13 +15,17 @@ management:
     health:
       enabled: true
 
+logging:
+  level:
+    reactor.netty.http.client: DEBUG
+
+springdoc:
+  show-actuator: true
+
 edc:
   x-api-key: password
   mgmt-base-url: http://localhost:19193/management
   protocol-base-url: http://localhost:19194/protocol
-
-springdoc:
-  show-actuator: true
 
 fh:
   catalog:
@@ -44,10 +48,6 @@ s3:
   bucket-storage-region: "eu-central-3"
   bucket-top-level-folder: "possiblex_data_transfers"
   bucket-name: "dev-provider-edc-bucket-possible-31952746"
-
-logging:
-  level:
-    reactor.netty.http.client: DEBUG
 
 prefill-fields:
   data-product:

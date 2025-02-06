@@ -110,6 +110,13 @@ public class EdcClientFake implements EdcClient {
             dataset.setHasPolicy(List.of(Policy.builder().id(id).build()));
             datasets.add(dataset);
         }
+
+        if (catalogRequest.getQuerySpec().getFilterExpression() != null && !catalogRequest.getQuerySpec()
+            .getFilterExpression().isEmpty()) {
+            datasets.removeIf(dataset -> !dataset.getAssetId()
+                .equals(catalogRequest.getQuerySpec().getFilterExpression().get(0).getOperandRight()));
+        }
+
         catalog.setDataset(datasets);
         return catalog;
     }
@@ -206,9 +213,9 @@ public class EdcClientFake implements EdcClient {
 
         PossibleAssetProperties properties = PossibleAssetProperties.builder().termsAndConditions(List.of(assetTnC))
             .producedBy(new NodeKindIRITypeId(FAKE_ID)).providedBy(new NodeKindIRITypeId(FAKE_ID))
-            .license(List.of("MIT")).copyrightOwnedBy(List.of(FAKE_ID))
-            .exposedThrough(new NodeKindIRITypeId(FAKE_ID)).offerId(FAKE_ID).name("name").description("description")
-            .dataAccountExport(List.of(dataAccountExport)).build();
+            .license(List.of("MIT")).copyrightOwnedBy(List.of(FAKE_ID)).exposedThrough(new NodeKindIRITypeId(FAKE_ID))
+            .offerId(FAKE_ID).name("name").description("description").dataAccountExport(List.of(dataAccountExport))
+            .build();
 
         Map<String, String> context = Map.of("edc", "https://w3id.org/edc/v0.0.1/ns/", "odrl",
             "http://www.w3.org/ns/odrl/2/", "@vocab", "https://w3id.org/edc/v0.0.1/ns/");

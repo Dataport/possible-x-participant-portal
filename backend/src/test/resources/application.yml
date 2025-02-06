@@ -1,8 +1,11 @@
 spring:
+  main:
+    allow-bean-definition-overriding: true
   security:
     admin:
       username: admin
       password: admin
+
 edc:
   x-api-key: test
   mgmt-base-url: test
@@ -29,10 +32,6 @@ s3:
   bucket-storage-region: "something"
   bucket-name: "something"
   bucket-top-level-folder: "something/"
-
-logging:
-  level:
-    reactor.netty.http.client: DEBUG
 
 prefill-fields:
   data-product:
