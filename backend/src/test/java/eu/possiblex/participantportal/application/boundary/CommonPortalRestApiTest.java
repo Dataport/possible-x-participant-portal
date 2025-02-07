@@ -5,6 +5,8 @@ import eu.possiblex.participantportal.application.configuration.BoundaryExceptio
 import eu.possiblex.participantportal.business.control.CommonPortalService;
 import eu.possiblex.participantportal.business.control.CommonPortalServiceFake;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -16,6 +18,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.junit.jupiter.api.Test;
 
+
 import static org.mockito.Mockito.reset;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -24,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(CommonPortalRestApiImpl.class)
 @ContextConfiguration(classes = { CommonPortalRestApiTest.TestConfig.class, CommonPortalRestApiImpl.class,
-    AppConfigurer.class, BoundaryExceptionHandler.class })
+    BoundaryExceptionHandler.class, AppConfigurer.class })
 class CommonPortalRestApiTest {
     @Autowired
     private MockMvc mockMvc;
@@ -32,13 +35,16 @@ class CommonPortalRestApiTest {
     @Autowired
     private CommonPortalService commonPortalService;
 
+    @BeforeEach
+    void setUp() {
+
+        reset(commonPortalService);
+    }
+
     @Test
     @WithMockUser(username = "admin")
     void shouldReturnMessageOnGetNameMapping() throws Exception {
 
-        reset(commonPortalService);
-
-        // WHEN/THEN
         this.mockMvc.perform(get("/common/participant/name-mapping")).andDo(print()).andExpect(status().isOk())
             .andExpect(jsonPath("$.size()").value(1)).andExpect(jsonPath("$",
                 Matchers.hasEntry(CommonPortalServiceFake.PARTICIPANT_DID, CommonPortalServiceFake.PARTICIPANT_NAME)));

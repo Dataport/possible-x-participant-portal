@@ -1,5 +1,6 @@
 package eu.possiblex.participantportal.application.boundary;
 
+import eu.possiblex.participantportal.application.configuration.AppConfigurer;
 import eu.possiblex.participantportal.application.configuration.BoundaryExceptionHandler;
 import eu.possiblex.participantportal.application.control.ConsumerApiMapper;
 import eu.possiblex.participantportal.application.entity.ConsumeOfferRequestTO;
@@ -20,9 +21,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.reset;
@@ -34,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(ConsumerRestApiImpl.class)
 @ContextConfiguration(classes = { ConsumerRestApiTest.TestConfig.class, ConsumerRestApiImpl.class,
-    BoundaryExceptionHandler.class })
+    BoundaryExceptionHandler.class, AppConfigurer.class })
 class ConsumerRestApiTest {
 
     @Autowired
@@ -46,15 +47,13 @@ class ConsumerRestApiTest {
     @BeforeEach
     void setup() {
 
-        this.mockMvc = MockMvcBuilders.standaloneSetup(
-                new ConsumerRestApiImpl(consumerService, Mappers.getMapper(ConsumerApiMapper.class)))
-            .setControllerAdvice(new BoundaryExceptionHandler()).build();
+        reset(consumerService);
     }
 
     @Test
+    @WithMockUser(username = "admin")
     void shouldSelectOfferValid() throws Exception {
 
-        reset(consumerService);
         this.mockMvc.perform(post("/consumer/offer/select").content(RestApiHelper.asJsonString(
                     SelectOfferRequestTO.builder().fhCatalogOfferId(ConsumerServiceFake.VALID_FH_OFFER_ID).build()))
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk()).andExpect(
@@ -73,6 +72,7 @@ class ConsumerRestApiTest {
     }
 
     @Test
+    @WithMockUser(username = "admin")
     void shouldSelectOfferMissing() throws Exception {
 
         this.mockMvc.perform(post("/consumer/offer/select").content(RestApiHelper.asJsonString(
@@ -81,9 +81,8 @@ class ConsumerRestApiTest {
     }
 
     @Test
+    @WithMockUser(username = "admin")
     void shouldAcceptOfferValid() throws Exception {
-
-        reset(consumerService);
 
         ConsumeOfferRequestTO request = getValidConsumeOfferRequestTO();
 
@@ -98,9 +97,8 @@ class ConsumerRestApiTest {
     }
 
     @Test
+    @WithMockUser(username = "admin")
     void shouldAcceptOfferMissing() throws Exception {
-
-        reset(consumerService);
 
         ConsumeOfferRequestTO request = getValidConsumeOfferRequestTO();
         request.setEdcOfferId(ConsumerServiceFake.MISSING_OFFER_ID);
@@ -110,9 +108,8 @@ class ConsumerRestApiTest {
     }
 
     @Test
+    @WithMockUser(username = "admin")
     void shouldAcceptOfferBadNegotiation() throws Exception {
-
-        reset(consumerService);
 
         ConsumeOfferRequestTO request = getValidConsumeOfferRequestTO();
         request.setEdcOfferId(ConsumerServiceFake.BAD_EDC_OFFER_ID);
@@ -122,6 +119,7 @@ class ConsumerRestApiTest {
     }
 
     @Test
+    @WithMockUser(username = "admin")
     void shouldNotTransferOffer() throws Exception {
 
         TransferOfferRequestTO request = getValidTransferOfferRequestTO();
@@ -132,6 +130,7 @@ class ConsumerRestApiTest {
     }
 
     @Test
+    @WithMockUser(username = "admin")
     void shouldTransferOffer() throws Exception {
 
         TransferOfferRequestTO request = getValidTransferOfferRequestTO();
@@ -142,6 +141,7 @@ class ConsumerRestApiTest {
     }
 
     @Test
+    @WithMockUser(username = "admin")
     void shouldTransferOfferMissing() throws Exception {
 
         TransferOfferRequestTO request = getValidTransferOfferRequestTO();

@@ -5,7 +5,9 @@ import eu.possiblex.participantportal.application.configuration.BoundaryExceptio
 import eu.possiblex.participantportal.application.control.ConsumerApiMapper;
 import eu.possiblex.participantportal.application.control.ContractApiMapper;
 import eu.possiblex.participantportal.application.entity.TransferOfferRequestTO;
-import eu.possiblex.participantportal.business.control.*;
+import eu.possiblex.participantportal.business.control.ContractService;
+import eu.possiblex.participantportal.business.control.ContractServiceFake;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import org.mockito.Mockito;
@@ -18,6 +20,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.mockito.Mockito.reset;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -25,8 +28,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ContractRestApiImpl.class)
-@ContextConfiguration(classes = { ContractRestApiTest.TestConfig.class, ContractRestApiImpl.class, AppConfigurer.class,
-    BoundaryExceptionHandler.class })
+@ContextConfiguration(classes = { ContractRestApiTest.TestConfig.class, ContractRestApiImpl.class,
+    BoundaryExceptionHandler.class, AppConfigurer.class })
 class ContractRestApiTest {
     @Autowired
     private MockMvc mockMvc;
@@ -34,17 +37,15 @@ class ContractRestApiTest {
     @Autowired
     private ContractService contractService;
 
-    @Autowired
-    private ContractApiMapper contractApiMapper;
+    @BeforeEach
+    void setUp() {
 
-    @Autowired
-    private ConsumerApiMapper consumerApiMapper;
+        reset(contractService);
+    }
 
     @Test
     @WithMockUser(username = "admin")
     void shouldReturnMessageOnGetContractAgreements() throws Exception {
-        //when
-        //then
 
         this.mockMvc.perform(get("/contract/agreement")).andDo(print()).andExpect(status().isOk())
             .andExpect(jsonPath("$.length()").value(1))
@@ -64,8 +65,6 @@ class ContractRestApiTest {
     @Test
     @WithMockUser(username = "admin")
     void shouldReturnMessageOnGetContractDetailsByContractAgreementId() throws Exception {
-        //when
-        //then
 
         this.mockMvc.perform(get("/contract/details/anyId")).andDo(print()).andExpect(status().isOk())
             .andExpect(jsonPath("$.id").value(ContractServiceFake.FAKE_ID_CONTRACT_AGREEMENT)).andExpect(
@@ -84,8 +83,6 @@ class ContractRestApiTest {
     @Test
     @WithMockUser(username = "admin")
     void shouldReturnMessageOnGetOfferWithTimestampByContractAgreementId() throws Exception {
-        //when
-        //then
 
         this.mockMvc.perform(get("/contract/details/anyId/offer")).andDo(print()).andExpect(status().isOk())
             .andExpect(jsonPath("$.catalogOffering['schema:name']").value(ContractServiceFake.NAME))
@@ -96,12 +93,9 @@ class ContractRestApiTest {
     @Test
     @WithMockUser(username = "admin")
     void shouldReturnMessageOnTransferDataOfferAgain() throws Exception {
-        //when
 
         TransferOfferRequestTO request = TransferOfferRequestTO.builder().contractAgreementId("anyId")
             .counterPartyAddress("anyAddress").edcOfferId("anyOfferId").build();
-
-        //then
 
         this.mockMvc.perform(post("/contract/transfer").content(RestApiHelper.asJsonString(request))
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())

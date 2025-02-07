@@ -20,6 +20,7 @@ import eu.possiblex.participantportal.business.control.ProviderService;
 import eu.possiblex.participantportal.business.control.ProviderServiceFake;
 import eu.possiblex.participantportal.business.entity.CreateDataOfferingRequestBE;
 import eu.possiblex.participantportal.business.entity.CreateServiceOfferingRequestBE;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import org.mockito.ArgumentCaptor;
@@ -47,8 +48,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ProviderRestApiImpl.class)
-@ContextConfiguration(classes = { ProviderRestApiTest.TestConfig.class, ProviderRestApiImpl.class, AppConfigurer.class,
-    BoundaryExceptionHandler.class })
+@ContextConfiguration(classes = { ProviderRestApiTest.TestConfig.class, ProviderRestApiImpl.class,
+    BoundaryExceptionHandler.class, AppConfigurer.class })
 class ProviderRestApiTest {
 
     @Autowired
@@ -60,13 +61,17 @@ class ProviderRestApiTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @BeforeEach
+    void setUp() {
+
+        reset(providerService);
+    }
+
     @Test
     @WithMockUser(username = "admin")
     void shouldReturnMessageOnCreateServiceOffering() throws Exception {
 
         // GIVEN
-
-        reset(providerService);
 
         CreateServiceOfferingRequestTO request = objectMapper.readValue(getCreateServiceOfferingTOJsonString(),
             CreateServiceOfferingRequestTO.class);
@@ -110,8 +115,6 @@ class ProviderRestApiTest {
 
         // GIVEN
 
-        reset(providerService);
-
         CreateServiceOfferingRequestTO request = objectMapper.readValue(getCreateServiceOfferingTOJsonString(),
             CreateServiceOfferingRequestTO.class);
         request.getServiceOfferingCredentialSubject().setName(null);
@@ -133,8 +136,6 @@ class ProviderRestApiTest {
     void shouldReturnMessageOnCreateDataOffering() throws Exception {
 
         // GIVEN
-
-        reset(providerService);
 
         CreateDataOfferingRequestTO request = objectMapper.readValue(getCreateDataOfferingTOJsonString(),
             CreateDataOfferingRequestTO.class);
@@ -181,8 +182,6 @@ class ProviderRestApiTest {
     void shouldReturnMessageOnCreateDataOfferingContainingPII() throws Exception {
 
         // GIVEN
-
-        reset(providerService);
 
         CreateDataOfferingRequestTO request = objectMapper.readValue(getCreateDataOfferingTOJsonString(),
             CreateDataOfferingRequestTO.class);
@@ -238,8 +237,6 @@ class ProviderRestApiTest {
     void shouldReturnMessageOnCreateDataOfferingContainingPIIMissingLegitimateInterest() throws Exception {
 
         // GIVEN
-
-        reset(providerService);
 
         CreateDataOfferingRequestTO request = objectMapper.readValue(getCreateDataOfferingTOJsonString(),
             CreateDataOfferingRequestTO.class);
