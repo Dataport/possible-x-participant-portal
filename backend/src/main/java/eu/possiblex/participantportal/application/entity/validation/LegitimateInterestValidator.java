@@ -9,6 +9,12 @@ public class LegitimateInterestValidator  implements
 
     @Override
     public boolean isValid(CreateDataOfferingRequestTO request, ConstraintValidatorContext context) {
+
+        // request must be non-null
+        if (request == null) {
+            return false;
+        }
+
         if (request.getDataResourceCredentialSubject() != null && request.getDataResourceCredentialSubject().isContainsPII()) {
             return request.getLegitimateInterest() != null;
         }
