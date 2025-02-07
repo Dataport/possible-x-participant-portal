@@ -1,6 +1,7 @@
 package eu.possiblex.participantportal.application.boundary;
 
 import eu.possiblex.participantportal.application.configuration.AppConfigurer;
+import eu.possiblex.participantportal.application.configuration.BoundaryExceptionHandler;
 import eu.possiblex.participantportal.application.control.ConsumerApiMapper;
 import eu.possiblex.participantportal.application.control.ContractApiMapper;
 import eu.possiblex.participantportal.application.entity.TransferOfferRequestTO;
@@ -24,7 +25,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ContractRestApiImpl.class)
-@ContextConfiguration(classes = { ContractRestApiTest.TestConfig.class, ContractRestApiImpl.class, AppConfigurer.class })
+@ContextConfiguration(classes = { ContractRestApiTest.TestConfig.class, ContractRestApiImpl.class, AppConfigurer.class,
+    BoundaryExceptionHandler.class })
 class ContractRestApiTest {
     @Autowired
     private MockMvc mockMvc;
@@ -46,12 +48,10 @@ class ContractRestApiTest {
 
         this.mockMvc.perform(get("/contract/agreement")).andDo(print()).andExpect(status().isOk())
             .andExpect(jsonPath("$.length()").value(1))
-            .andExpect(jsonPath("$[0].id").value(ContractServiceFake.FAKE_ID_CONTRACT_AGREEMENT))
-            .andExpect(jsonPath("$[0].contractSigningDate").value(ContractServiceFake.getDateAsOffsetDateTime().toString()))
-            .andExpect(jsonPath("$[0].providerDetails").exists())
-            .andExpect(jsonPath("$[0].consumerDetails").exists())
-            .andExpect(jsonPath("$[0].provider").value(false))
-            .andExpect(jsonPath("$[0].dataOffering").value(false))
+            .andExpect(jsonPath("$[0].id").value(ContractServiceFake.FAKE_ID_CONTRACT_AGREEMENT)).andExpect(
+                jsonPath("$[0].contractSigningDate").value(ContractServiceFake.getDateAsOffsetDateTime().toString()))
+            .andExpect(jsonPath("$[0].providerDetails").exists()).andExpect(jsonPath("$[0].consumerDetails").exists())
+            .andExpect(jsonPath("$[0].provider").value(false)).andExpect(jsonPath("$[0].dataOffering").value(false))
             .andExpect(jsonPath("$[0].assetId").value(ContractServiceFake.FAKE_ID_ASSET))
             .andExpect(jsonPath("$[0].assetDetails.name").value(ContractServiceFake.NAME))
             .andExpect(jsonPath("$[0].assetDetails.description").value(ContractServiceFake.DESCRIPTION))
@@ -68,10 +68,9 @@ class ContractRestApiTest {
         //then
 
         this.mockMvc.perform(get("/contract/details/anyId")).andDo(print()).andExpect(status().isOk())
-            .andExpect(jsonPath("$.id").value(ContractServiceFake.FAKE_ID_CONTRACT_AGREEMENT))
-            .andExpect(jsonPath("$.contractSigningDate").value(ContractServiceFake.getDateAsOffsetDateTime().toString()))
-            .andExpect(jsonPath("$.providerDetails").exists())
-            .andExpect(jsonPath("$.consumerDetails").exists())
+            .andExpect(jsonPath("$.id").value(ContractServiceFake.FAKE_ID_CONTRACT_AGREEMENT)).andExpect(
+                jsonPath("$.contractSigningDate").value(ContractServiceFake.getDateAsOffsetDateTime().toString()))
+            .andExpect(jsonPath("$.providerDetails").exists()).andExpect(jsonPath("$.consumerDetails").exists())
             .andExpect(jsonPath("$.assetId").value(ContractServiceFake.FAKE_ID_ASSET))
             .andExpect(jsonPath("$.catalogOffering['schema:name']").value(ContractServiceFake.NAME))
             .andExpect(jsonPath("$.catalogOffering['schema:description']").value(ContractServiceFake.DESCRIPTION))
@@ -105,7 +104,7 @@ class ContractRestApiTest {
         //then
 
         this.mockMvc.perform(post("/contract/transfer").content(RestApiHelper.asJsonString(request))
-            .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
+                .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
             .andExpect(jsonPath("$.transferProcessState").value(ContractServiceFake.TRANSFER_PROCESS_STATE.name()));
     }
 

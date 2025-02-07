@@ -4,8 +4,16 @@ import eu.possiblex.participantportal.application.entity.CreateDataOfferingReque
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class LegitimateInterestValidator  implements
-    ConstraintValidator<ValidLegitimateInterestForPII, CreateDataOfferingRequestTO> {
+public class LegitimateInterestValidator
+    implements ConstraintValidator<ValidLegitimateInterestForPII, CreateDataOfferingRequestTO> {
+
+    private String message;
+
+    @Override
+    public void initialize(ValidLegitimateInterestForPII constraintAnnotation) {
+
+        this.message = constraintAnnotation.message();
+    }
 
     @Override
     public boolean isValid(CreateDataOfferingRequestTO request, ConstraintValidatorContext context) {
@@ -15,8 +23,12 @@ public class LegitimateInterestValidator  implements
             return false;
         }
 
-        if (request.getDataResourceCredentialSubject() != null && request.getDataResourceCredentialSubject().isContainsPII()) {
-            return request.getLegitimateInterest() != null;
+        if (request.getDataResourceCredentialSubject() != null && request.getDataResourceCredentialSubject()
+            .isContainsPII() && request.getLegitimateInterest() == null) {
+            context.disableDefaultConstraintViolation();
+            context.buildConstraintViolationWithTemplate(this.message).addPropertyNode("legitimateInterest")
+                .addConstraintViolation();
+            return false;
         }
         return true;
     }

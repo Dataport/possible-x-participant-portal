@@ -1,7 +1,10 @@
 package eu.possiblex.participantportal.application.boundary;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import eu.possiblex.participantportal.application.configuration.AppConfigurer;
+import eu.possiblex.participantportal.application.configuration.BoundaryExceptionHandler;
 import eu.possiblex.participantportal.application.control.ProviderApiMapper;
 import eu.possiblex.participantportal.application.entity.CreateDataOfferingRequestTO;
 import eu.possiblex.participantportal.application.entity.CreateServiceOfferingRequestTO;
@@ -29,13 +32,14 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.verify;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -43,8 +47,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ProviderRestApiImpl.class)
-@ContextConfiguration(classes = { ProviderRestApiTest.TestConfig.class, ProviderRestApiImpl.class,
-    AppConfigurer.class })
+@ContextConfiguration(classes = { ProviderRestApiTest.TestConfig.class, ProviderRestApiImpl.class, AppConfigurer.class,
+    BoundaryExceptionHandler.class })
 class ProviderRestApiTest {
 
     @Autowired
@@ -98,6 +102,30 @@ class ProviderRestApiTest {
         assertEquals(expectedServiceOfferingCS.getName(), createServiceOfferingBE.getName());
         assertEquals(expectedServiceOfferingCS.getDescription(), createServiceOfferingBE.getDescription());
         assertEquals("dummyServiceOfferingPolicy", createServiceOfferingBE.getPolicy().get(0));
+    }
+
+    @Test
+    @WithMockUser(username = "admin")
+    void shouldReturnMessageOnCreateServiceOfferingMissingName() throws Exception {
+
+        // GIVEN
+
+        reset(providerService);
+
+        CreateServiceOfferingRequestTO request = objectMapper.readValue(getCreateServiceOfferingTOJsonString(),
+            CreateServiceOfferingRequestTO.class);
+        request.getServiceOfferingCredentialSubject().setName(null);
+
+        // WHEN/THEN
+
+        MvcResult result = this.mockMvc.perform(post("/provider/offer/service").content(RestApiHelper.asJsonString(request))
+                .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isBadRequest()).andReturn();
+
+        verifyNoInteractions(providerService);
+
+        String content = result.getResponse().getContentAsString();
+        assertTrue(content.contains("name"));
+
     }
 
     @Test
@@ -203,6 +231,54 @@ class ProviderRestApiTest {
 
         assertThat(expectedLegitimateInterest).usingRecursiveComparison()
             .isEqualTo(createDataOfferingRequestBE.getLegitimateInterest());
+    }
+
+    @Test
+    @WithMockUser(username = "admin")
+    void shouldReturnMessageOnCreateDataOfferingContainingPIIMissingLegitimateInterest() throws Exception {
+
+        // GIVEN
+
+        reset(providerService);
+
+        CreateDataOfferingRequestTO request = objectMapper.readValue(getCreateDataOfferingTOJsonString(),
+            CreateDataOfferingRequestTO.class);
+        request.getDataResourceCredentialSubject().setContainsPII(true);
+
+        // WHEN/THEN
+
+        MvcResult result = this.mockMvc.perform(
+            post("/provider/offer/data").content(RestApiHelper.asJsonString(request))
+                .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isBadRequest()).andReturn();
+
+        verifyNoInteractions(providerService);
+
+        String content = result.getResponse().getContentAsString();
+        assertTrue(content.contains("legitimateInterest"));
+    }
+
+    @Test
+    @WithMockUser(username = "admin")
+    void shouldReturnMessageOnCreateDataOfferingMissingName() throws Exception {
+
+        // GIVEN
+
+        reset(providerService);
+
+        CreateDataOfferingRequestTO request = objectMapper.readValue(getCreateDataOfferingTOJsonString(),
+            CreateDataOfferingRequestTO.class);
+        request.getDataResourceCredentialSubject().setName(null);
+
+        // WHEN/THEN
+
+        MvcResult result = this.mockMvc.perform(
+            post("/provider/offer/data").content(RestApiHelper.asJsonString(request))
+                .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isBadRequest()).andReturn();
+
+        verifyNoInteractions(providerService);
+
+        String content = result.getResponse().getContentAsString();
+        assertTrue(content.contains("name"));
     }
 
     @Test
@@ -422,8 +498,10 @@ class ProviderRestApiTest {
         @Bean
         public ObjectMapper objectMapper() {
 
-            return new ObjectMapper();
-            // Customize the ObjectMapper if needed
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
+            objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+            return objectMapper;
         }
     }
 }
