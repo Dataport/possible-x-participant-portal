@@ -4,17 +4,34 @@ import eu.possiblex.participantportal.utils.TestUtils;
 
 public class SparqlFhCatalogClientFake implements SparqlFhCatalogClient {
 
-    private final String sparqlQueryResultString;
+    private final String sparqlQueryParticipantResultString;
+
+    private final String sparqlQueryOfferResultString;
 
     public SparqlFhCatalogClientFake() {
 
-        this.sparqlQueryResultString = TestUtils.loadTextFile(
+        this.sparqlQueryParticipantResultString = TestUtils.loadTextFile(
             "unit_tests/ConsumerModuleTest/validSparqlResultParticipant.json");
+
+        this.sparqlQueryOfferResultString = TestUtils.loadTextFile(
+            "unit_tests/ContractModuleTest/validSparqlResultOffer.json");
     }
 
     @Override
     public String queryCatalog(String query, String format) {
 
-        return sparqlQueryResultString;
+        if (query.contains("LegalParticipant")) {
+            return sparqlQueryParticipantResultString;
+        } else if (query.contains("Offer")) {
+            return sparqlQueryOfferResultString;
+        }
+
+        return """
+            {
+                "results": {
+                    "bindings": []
+                }
+            }
+            """;
     }
 }

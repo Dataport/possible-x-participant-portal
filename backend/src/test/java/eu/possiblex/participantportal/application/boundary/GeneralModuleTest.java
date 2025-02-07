@@ -31,16 +31,27 @@ abstract class GeneralModuleTest {
     @Autowired
     protected EdcClient edcClient;
 
+    @Autowired
+    protected OmejdnConnectorApiClient omejdnConnectorApiClient;
+
+    @Autowired
+    protected SdCreationWizardApiClient sdCreationWizardApiClient;
+
+    // reset spy beans before each test
     @BeforeEach
     void setUp() {
 
         reset(technicalFhCatalogClient);
         reset(sparqlFhCatalogClient);
         reset(edcClient);
+        reset(omejdnConnectorApiClient);
+        reset(sdCreationWizardApiClient);
     }
 
+    // Configure all interfaces to external services, leave the rest as the actual implementations
     @TestConfiguration
     static class TestConfig {
+
         @Bean
         @Primary
         public TechnicalFhCatalogClient technicalFhCatalogClient() {
@@ -60,6 +71,20 @@ abstract class GeneralModuleTest {
         public EdcClient edcClient() {
 
             return Mockito.spy(new EdcClientFake());
+        }
+
+        @Bean
+        @Primary
+        public OmejdnConnectorApiClient omejdnConnectorApiClient() {
+
+            return Mockito.spy(new OmejdnConnectorApiClientFake());
+        }
+
+        @Bean
+        @Primary
+        public SdCreationWizardApiClient sdCreationWizardApiClient() {
+
+            return Mockito.spy(new SdCreationWizardApiClientFake());
         }
     }
 }
