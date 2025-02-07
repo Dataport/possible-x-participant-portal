@@ -1,7 +1,11 @@
 package eu.possiblex.participantportal.application.control;
 
-import eu.possiblex.participantportal.application.entity.*;
-import eu.possiblex.participantportal.business.entity.*;
+import eu.possiblex.participantportal.application.entity.ContractAgreementTO;
+import eu.possiblex.participantportal.application.entity.ContractDetailsTO;
+import eu.possiblex.participantportal.application.entity.OfferWithTimestampTO;
+import eu.possiblex.participantportal.business.entity.ContractAgreementBE;
+import eu.possiblex.participantportal.business.entity.ContractDetailsBE;
+import eu.possiblex.participantportal.business.entity.OfferRetrievalResponseBE;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -34,10 +38,6 @@ public interface ContractApiMapper {
         return zonedDateTime.toOffsetDateTime();
     }
 
-    AssetDetailsTO offeringDetailsBeToTO(OfferingDetailsBE offeringDetailsBE);
-
-    ContractParticipantDetailsTO participantDetailsBEToTO(ParticipantWithDapsBE possibleParticipant);
-
     @Mapping(target = "id", source = "be.contractAgreement.id")
     @Mapping(target = "assetId", source = "be.contractAgreement.assetId")
     @Mapping(target = "catalogOffering", source = "be.offeringDetails.catalogOffering")
@@ -50,5 +50,6 @@ public interface ContractApiMapper {
     @Mapping(target = "enforcementPolicies", source = "be.enforcementPolicies")
     ContractDetailsTO contractDetailsBEToTO(ContractDetailsBE be);
 
-    OfferWithTimestampTO offerRetrievalResponseBEToOfferWithTimestampTO(OfferRetrievalResponseBE offerRetrievalResponseBE);
+    OfferWithTimestampTO offerRetrievalResponseBEToOfferWithTimestampTO(
+        OfferRetrievalResponseBE offerRetrievalResponseBE);
 }
