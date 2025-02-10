@@ -45,7 +45,7 @@ class ContractRestApiTest {
 
     @Test
     @WithMockUser(username = "admin")
-    void shouldReturnMessageOnGetContractAgreements() throws Exception {
+    void getContractAgreements() throws Exception {
 
         this.mockMvc.perform(get("/contract/agreement")).andDo(print()).andExpect(status().isOk())
             .andExpect(jsonPath("$.length()").value(1))
@@ -64,7 +64,7 @@ class ContractRestApiTest {
 
     @Test
     @WithMockUser(username = "admin")
-    void shouldReturnMessageOnGetContractDetailsByContractAgreementId() throws Exception {
+    void getContractDetailsByContractAgreementIdSuccess() throws Exception {
 
         this.mockMvc.perform(get("/contract/details/anyId")).andDo(print()).andExpect(status().isOk())
             .andExpect(jsonPath("$.id").value(ContractServiceFake.FAKE_ID_CONTRACT_AGREEMENT)).andExpect(
@@ -82,7 +82,7 @@ class ContractRestApiTest {
 
     @Test
     @WithMockUser(username = "admin")
-    void shouldReturnMessageOnGetOfferWithTimestampByContractAgreementId() throws Exception {
+    void getOfferWithTimestampByContractAgreementIdSuccess() throws Exception {
 
         this.mockMvc.perform(get("/contract/details/anyId/offer")).andDo(print()).andExpect(status().isOk())
             .andExpect(jsonPath("$.catalogOffering['schema:name']").value(ContractServiceFake.NAME))
@@ -92,7 +92,7 @@ class ContractRestApiTest {
 
     @Test
     @WithMockUser(username = "admin")
-    void shouldReturnMessageOnTransferDataOfferAgain() throws Exception {
+    void transferDataOfferAgainSuccess() throws Exception {
 
         TransferOfferRequestTO request = TransferOfferRequestTO.builder().contractAgreementId("anyId")
             .counterPartyAddress("anyAddress").edcOfferId("anyOfferId").build();

@@ -89,7 +89,7 @@ public class BoundaryExceptionHandler extends ResponseEntityExceptionHandler {
      * Handle exceptions that occur when an offer creation on the catalog fails.
      */
     @ExceptionHandler
-    public ResponseEntity<ErrorResponseTO> handleException(FhOfferCreationException e) {
+    public ResponseEntity<ErrorResponseTO> handleException(CatalogOfferCreationException e) {
 
         logError(e);
         return new ResponseEntity<>(new ErrorResponseTO("Failed to create an offer on Piveau", e.getMessage()),

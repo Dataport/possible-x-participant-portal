@@ -16,7 +16,7 @@ import eu.possiblex.participantportal.business.entity.edc.contractdefinition.Con
 import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyCreateRequest;
 import eu.possiblex.participantportal.business.entity.exception.EdcOfferCreationException;
-import eu.possiblex.participantportal.business.entity.exception.FhOfferCreationException;
+import eu.possiblex.participantportal.business.entity.exception.CatalogOfferCreationException;
 import eu.possiblex.participantportal.business.entity.exception.OfferingComplianceException;
 import eu.possiblex.participantportal.business.entity.exception.PrefillFieldsProcessingException;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
@@ -227,7 +227,7 @@ public class ProviderServiceImpl implements ProviderService {
         } catch (WebClientResponseException e) {
             throw buildComplianceException(e);
         } catch (Exception e) {
-            throw new FhOfferCreationException("An error occurred during Fh offer creation: " + e.getMessage());
+            throw new CatalogOfferCreationException("An error occurred during Fh offer creation: " + e.getMessage());
         }
     }
 

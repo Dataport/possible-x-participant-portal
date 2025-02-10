@@ -52,7 +52,7 @@ class ConsumerRestApiTest {
 
     @Test
     @WithMockUser(username = "admin")
-    void shouldSelectOfferValid() throws Exception {
+    void selectOfferSuccess() throws Exception {
 
         this.mockMvc.perform(post("/consumer/offer/select").content(RestApiHelper.asJsonString(
                     SelectOfferRequestTO.builder().fhCatalogOfferId(ConsumerServiceFake.VALID_FH_OFFER_ID).build()))
@@ -73,7 +73,7 @@ class ConsumerRestApiTest {
 
     @Test
     @WithMockUser(username = "admin")
-    void shouldSelectOfferMissing() throws Exception {
+    void selectOfferNotFound() throws Exception {
 
         this.mockMvc.perform(post("/consumer/offer/select").content(RestApiHelper.asJsonString(
                 SelectOfferRequestTO.builder().fhCatalogOfferId(ConsumerServiceFake.MISSING_OFFER_ID).build()))
@@ -82,7 +82,7 @@ class ConsumerRestApiTest {
 
     @Test
     @WithMockUser(username = "admin")
-    void shouldAcceptOfferValid() throws Exception {
+    void acceptOfferSuccess() throws Exception {
 
         ConsumeOfferRequestTO request = getValidConsumeOfferRequestTO();
 
@@ -98,7 +98,7 @@ class ConsumerRestApiTest {
 
     @Test
     @WithMockUser(username = "admin")
-    void shouldAcceptOfferMissing() throws Exception {
+    void acceptOfferNotFound() throws Exception {
 
         ConsumeOfferRequestTO request = getValidConsumeOfferRequestTO();
         request.setEdcOfferId(ConsumerServiceFake.MISSING_OFFER_ID);
@@ -109,7 +109,7 @@ class ConsumerRestApiTest {
 
     @Test
     @WithMockUser(username = "admin")
-    void shouldAcceptOfferBadNegotiation() throws Exception {
+    void acceptOfferNegotiationFailed() throws Exception {
 
         ConsumeOfferRequestTO request = getValidConsumeOfferRequestTO();
         request.setEdcOfferId(ConsumerServiceFake.BAD_EDC_OFFER_ID);
@@ -120,7 +120,7 @@ class ConsumerRestApiTest {
 
     @Test
     @WithMockUser(username = "admin")
-    void shouldNotTransferOffer() throws Exception {
+    void transferOfferTransferFailed() throws Exception {
 
         TransferOfferRequestTO request = getValidTransferOfferRequestTO();
         request.setEdcOfferId(ConsumerServiceFake.BAD_TRANSFER_OFFER_ID);
@@ -131,7 +131,7 @@ class ConsumerRestApiTest {
 
     @Test
     @WithMockUser(username = "admin")
-    void shouldTransferOffer() throws Exception {
+    void transferOfferSuccess() throws Exception {
 
         TransferOfferRequestTO request = getValidTransferOfferRequestTO();
 
@@ -142,7 +142,7 @@ class ConsumerRestApiTest {
 
     @Test
     @WithMockUser(username = "admin")
-    void shouldTransferOfferMissing() throws Exception {
+    void transferOfferNotFound() throws Exception {
 
         TransferOfferRequestTO request = getValidTransferOfferRequestTO();
         request.setEdcOfferId(ConsumerServiceFake.MISSING_OFFER_ID);

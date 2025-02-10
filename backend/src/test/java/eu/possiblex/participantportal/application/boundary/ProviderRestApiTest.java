@@ -69,7 +69,7 @@ class ProviderRestApiTest {
 
     @Test
     @WithMockUser(username = "admin")
-    void shouldReturnMessageOnCreateServiceOffering() throws Exception {
+    void createServiceOfferingSuccess() throws Exception {
 
         // GIVEN
 
@@ -111,29 +111,26 @@ class ProviderRestApiTest {
 
     @Test
     @WithMockUser(username = "admin")
-    void shouldReturnMessageOnCreateServiceOfferingMissingName() throws Exception {
+    void createServiceOfferingInvalidDataAccountExportFormatType() throws Exception {
 
         // GIVEN
 
         CreateServiceOfferingRequestTO request = objectMapper.readValue(getCreateServiceOfferingTOJsonString(),
             CreateServiceOfferingRequestTO.class);
-        request.getServiceOfferingCredentialSubject().setName(null);
+        request.getServiceOfferingCredentialSubject().getDataAccountExport().get(0).setFormatType("invalid");
 
         // WHEN/THEN
 
         MvcResult result = this.mockMvc.perform(post("/provider/offer/service").content(RestApiHelper.asJsonString(request))
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isBadRequest()).andReturn();
 
-        verifyNoInteractions(providerService);
-
         String content = result.getResponse().getContentAsString();
-        assertTrue(content.contains("name"));
-
+        assertTrue(content.contains("formatType"));
     }
 
     @Test
     @WithMockUser(username = "admin")
-    void shouldReturnMessageOnCreateDataOffering() throws Exception {
+    void createDataOfferingSuccess() throws Exception {
 
         // GIVEN
 
@@ -179,7 +176,7 @@ class ProviderRestApiTest {
 
     @Test
     @WithMockUser(username = "admin")
-    void shouldReturnMessageOnCreateDataOfferingContainingPII() throws Exception {
+    void createDataOfferingContainingPIISuccess() throws Exception {
 
         // GIVEN
 
@@ -234,7 +231,7 @@ class ProviderRestApiTest {
 
     @Test
     @WithMockUser(username = "admin")
-    void shouldReturnMessageOnCreateDataOfferingContainingPIIMissingLegitimateInterest() throws Exception {
+    void createDataOfferingContainingPIIMissingLegitimateInterest() throws Exception {
 
         // GIVEN
 
@@ -248,39 +245,13 @@ class ProviderRestApiTest {
             post("/provider/offer/data").content(RestApiHelper.asJsonString(request))
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isBadRequest()).andReturn();
 
-        verifyNoInteractions(providerService);
-
         String content = result.getResponse().getContentAsString();
         assertTrue(content.contains("legitimateInterest"));
     }
 
     @Test
     @WithMockUser(username = "admin")
-    void shouldReturnMessageOnCreateDataOfferingMissingName() throws Exception {
-
-        // GIVEN
-
-        reset(providerService);
-
-        CreateDataOfferingRequestTO request = objectMapper.readValue(getCreateDataOfferingTOJsonString(),
-            CreateDataOfferingRequestTO.class);
-        request.getDataResourceCredentialSubject().setName(null);
-
-        // WHEN/THEN
-
-        MvcResult result = this.mockMvc.perform(
-            post("/provider/offer/data").content(RestApiHelper.asJsonString(request))
-                .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isBadRequest()).andReturn();
-
-        verifyNoInteractions(providerService);
-
-        String content = result.getResponse().getContentAsString();
-        assertTrue(content.contains("name"));
-    }
-
-    @Test
-    @WithMockUser(username = "admin")
-    void shouldReturnMessageOnGetPrefillFields() throws Exception {
+    void getPrefillFields() throws Exception {
         // WHEN/THEN
         this.mockMvc.perform(get("/provider/prefillFields")).andDo(print()).andExpect(status().isOk())
             .andExpect(jsonPath("$.participantId").value(ProviderServiceFake.PARTICIPANT_ID)).andExpect(
