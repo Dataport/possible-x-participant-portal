@@ -82,6 +82,15 @@ class ConsumerRestApiTest {
 
     @Test
     @WithMockUser(username = "admin")
+    void selectOfferParticipantNotFound() throws Exception {
+
+        this.mockMvc.perform(post("/consumer/offer/select").content(RestApiHelper.asJsonString(
+                SelectOfferRequestTO.builder().fhCatalogOfferId(ConsumerServiceFake.MISSING_PARTICIPANT_ID).build()))
+            .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(username = "admin")
     void acceptOfferSuccess() throws Exception {
 
         ConsumeOfferRequestTO request = getValidConsumeOfferRequestTO();

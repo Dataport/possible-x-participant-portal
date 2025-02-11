@@ -82,12 +82,28 @@ class ContractRestApiTest {
 
     @Test
     @WithMockUser(username = "admin")
+    void getContractDetailsByContractAgreementIdNotFound() throws Exception {
+
+        this.mockMvc.perform(get("/contract/details/" + ContractServiceFake.NOT_FOUND_ID)).andDo(print())
+            .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(username = "admin")
     void getOfferWithTimestampByContractAgreementIdSuccess() throws Exception {
 
         this.mockMvc.perform(get("/contract/details/anyId/offer")).andDo(print()).andExpect(status().isOk())
             .andExpect(jsonPath("$.catalogOffering['schema:name']").value(ContractServiceFake.NAME))
             .andExpect(jsonPath("$.catalogOffering['schema:description']").value(ContractServiceFake.DESCRIPTION))
             .andExpect(jsonPath("$.offerRetrievalDate").exists());
+    }
+
+    @Test
+    @WithMockUser(username = "admin")
+    void getOfferWithTimestampByContractAgreementIdNotFound() throws Exception {
+
+        this.mockMvc.perform(get("/contract/details/" + ContractServiceFake.NOT_FOUND_ID + "/offer")).andDo(print())
+            .andExpect(status().isNotFound());
     }
 
     @Test
@@ -100,6 +116,17 @@ class ContractRestApiTest {
         this.mockMvc.perform(post("/contract/transfer").content(RestApiHelper.asJsonString(request))
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
             .andExpect(jsonPath("$.transferProcessState").value(ContractServiceFake.TRANSFER_PROCESS_STATE.name()));
+    }
+
+    @Test
+    @WithMockUser(username = "admin")
+    void transferDataOfferAgainNotFound() throws Exception {
+
+        TransferOfferRequestTO request = TransferOfferRequestTO.builder().contractAgreementId("anyId")
+            .counterPartyAddress("anyAddress").edcOfferId(ContractServiceFake.NOT_FOUND_ID).build();
+
+        this.mockMvc.perform(post("/contract/transfer").content(RestApiHelper.asJsonString(request))
+                .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isNotFound());
     }
 
     @TestConfiguration

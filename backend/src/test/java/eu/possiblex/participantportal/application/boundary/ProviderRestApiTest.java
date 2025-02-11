@@ -130,6 +130,57 @@ class ProviderRestApiTest {
 
     @Test
     @WithMockUser(username = "admin")
+    void createServiceOfferingEdcOfferCreationFailed() throws Exception {
+
+        // GIVEN
+
+        CreateServiceOfferingRequestTO request = objectMapper.readValue(getCreateServiceOfferingTOJsonString(),
+            CreateServiceOfferingRequestTO.class);
+        request.getServiceOfferingCredentialSubject().setName(ProviderServiceFake.EDC_OFFER_CREATION_FAILED_NAME);
+
+        // WHEN/THEN
+
+        this.mockMvc.perform(post("/provider/offer/service").content(RestApiHelper.asJsonString(request))
+            .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isUnprocessableEntity());
+
+    }
+
+    @Test
+    @WithMockUser(username = "admin")
+    void createServiceOfferingCatalogOfferCreationFailed() throws Exception {
+
+        // GIVEN
+
+        CreateServiceOfferingRequestTO request = objectMapper.readValue(getCreateServiceOfferingTOJsonString(),
+            CreateServiceOfferingRequestTO.class);
+        request.getServiceOfferingCredentialSubject().setName(ProviderServiceFake.CATALOG_OFFER_CREATION_FAILED_NAME);
+
+        // WHEN/THEN
+
+        this.mockMvc.perform(post("/provider/offer/service").content(RestApiHelper.asJsonString(request))
+            .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isUnprocessableEntity());
+
+    }
+
+    @Test
+    @WithMockUser(username = "admin")
+    void createServiceOfferingNonCompliant() throws Exception {
+
+        // GIVEN
+
+        CreateServiceOfferingRequestTO request = objectMapper.readValue(getCreateServiceOfferingTOJsonString(),
+            CreateServiceOfferingRequestTO.class);
+        request.getServiceOfferingCredentialSubject().setName(ProviderServiceFake.COMPLIANCE_ERROR_NAME);
+
+        // WHEN/THEN
+
+        this.mockMvc.perform(post("/provider/offer/service").content(RestApiHelper.asJsonString(request))
+            .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isUnprocessableEntity());
+
+    }
+
+    @Test
+    @WithMockUser(username = "admin")
     void createDataOfferingSuccess() throws Exception {
 
         // GIVEN

@@ -8,6 +8,7 @@ import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcessState;
 import eu.possiblex.participantportal.business.entity.exception.NegotiationFailedException;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
+import eu.possiblex.participantportal.business.entity.exception.ParticipantNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
 
 import java.time.OffsetDateTime;
@@ -26,6 +27,8 @@ public class ConsumerServiceFake implements ConsumerService {
 
     public static final String MISSING_OFFER_ID = "missingOfferFhCatalogOfferId";
 
+    public static final String MISSING_PARTICIPANT_ID = "missingParticipantFhCatalogParticipantId";
+
     public static final String BAD_TRANSFER_OFFER_ID = "badTransfer";
 
     public static final String VALID_COUNTER_PARTY_ADDRESS = "some provider EDC URL";
@@ -37,8 +40,12 @@ public class ConsumerServiceFake implements ConsumerService {
     @Override
     public SelectOfferResponseBE selectContractOffer(SelectOfferRequestBE request) {
 
-        if (request.getFhCatalogOfferId().equals(MISSING_OFFER_ID)) {
-            throw new OfferNotFoundException("not found");
+        switch (request.getFhCatalogOfferId()) {
+            case MISSING_OFFER_ID -> throw new OfferNotFoundException("not found");
+            case MISSING_PARTICIPANT_ID -> throw new ParticipantNotFoundException("not found");
+            default -> {
+                // request worked
+            }
         }
 
         DcatDataset edcCatalogOfferMock = DcatDataset.builder().assetId(VALID_ASSET_ID).name("some name")
@@ -48,9 +55,8 @@ public class ConsumerServiceFake implements ConsumerService {
 
         SelectOfferResponseBE response = new SelectOfferResponseBE();
         response.setEdcOffer(edcCatalogOfferMock);
-        PxExtendedServiceOfferingCredentialSubject cs = new PxExtendedServiceOfferingCredentialSubject();
-        cs.setProviderUrl(VALID_COUNTER_PARTY_ADDRESS);
-        response.setCatalogOffering(cs);
+        response.setCatalogOffering(
+            PxExtendedServiceOfferingCredentialSubject.builder().providerUrl(VALID_COUNTER_PARTY_ADDRESS).build());
         response.setProviderDetails(
             ParticipantWithMailBE.builder().did(FAKE_DID).mailAddress(FAKE_EMAIL_ADDRESS).build());
         response.setOfferRetrievalDate(OffsetDateTime.now());

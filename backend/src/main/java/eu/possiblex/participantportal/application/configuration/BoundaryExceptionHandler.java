@@ -63,6 +63,17 @@ public class BoundaryExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     /**
+     * Handle exceptions that occur when a contract agreement is not found.
+     */
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponseTO> handleException(ContractAgreementNotFoundException e) {
+
+        logError(e);
+        return new ResponseEntity<>(new ErrorResponseTO("Contract agreement with this id was not found", e.getMessage()),
+            NOT_FOUND);
+    }
+
+    /**
      * Handle exceptions that occur when an offering being published is not compliant.
      */
     @ExceptionHandler
@@ -89,7 +100,7 @@ public class BoundaryExceptionHandler extends ResponseEntityExceptionHandler {
      * Handle exceptions that occur when an offer creation on the catalog fails.
      */
     @ExceptionHandler
-    public ResponseEntity<ErrorResponseTO> handleException(CatalogOfferCreationException e) {
+    public ResponseEntity<ErrorResponseTO> handleException(FhOfferCreationException e) {
 
         logError(e);
         return new ResponseEntity<>(new ErrorResponseTO("Failed to create an offer on Piveau", e.getMessage()),

@@ -5,6 +5,7 @@ import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedS
 import eu.possiblex.participantportal.business.entity.daps.OmejdnConnectorDetailsBE;
 import eu.possiblex.participantportal.business.entity.edc.catalog.QuerySpec;
 import eu.possiblex.participantportal.business.entity.edc.contractagreement.ContractAgreement;
+import eu.possiblex.participantportal.business.entity.exception.ContractAgreementNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsSparqlQueryResult;
 import eu.possiblex.participantportal.business.entity.fh.ParticipantDetailsSparqlQueryResult;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.time.OffsetDateTime;
 import java.util.*;
@@ -120,7 +122,7 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public ContractDetailsBE getContractDetailsByContractAgreementId(String contractAgreementId) {
 
-        ContractAgreement contractAgreement = edcClient.getContractAgreementById(contractAgreementId);
+        ContractAgreement contractAgreement = getContractAgreementById(contractAgreementId);
 
         // build a map of consumer and provider daps ids to dids
         Map<String, String> participantDidMap = getParticipantDids(
@@ -157,7 +159,7 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public OfferRetrievalResponseBE getOfferDetailsByContractAgreementId(String contractAgreementId) {
 
-        ContractAgreement contractAgreement = edcClient.getContractAgreementById(contractAgreementId);
+        ContractAgreement contractAgreement = getContractAgreementById(contractAgreementId);
         return getOfferRetrievalResponseBE(contractAgreement);
     }
 
@@ -192,6 +194,21 @@ public class ContractServiceImpl implements ContractService {
         return offerRetrievalResponseBE;
     }
 
+    private ContractAgreement getContractAgreementById(String contractAgreementId) {
+
+        ContractAgreement contractAgreement;
+        try {
+            contractAgreement = edcClient.getContractAgreementById(contractAgreementId);
+        } catch (WebClientResponseException.NotFound e) {
+            log.error("Contract agreement with ID {} not found", contractAgreementId);
+            throw new ContractAgreementNotFoundException("Contract agreement with ID " + contractAgreementId + " not found");
+        } catch (Exception exception) {
+            log.error("Error while fetching contract agreement with ID {}", contractAgreementId, exception);
+            throw exception;
+        }
+        return contractAgreement;
+    }
+
     private Map<String, String> getParticipantDids(Collection<String> participantDapsIds) {
 
         Map<String, OmejdnConnectorDetailsBE> connectorDetails = Collections.emptyMap();
@@ -222,7 +239,7 @@ public class ContractServiceImpl implements ContractService {
 
         Map<String, OfferingDetailsSparqlQueryResult> offeringDetailsMap = fhCatalogClient.getOfferingDetailsByAssetIds(
             List.of(be.getEdcOfferId()));
-        
+
         String providerUrl;
         OfferingDetailsSparqlQueryResult offeringDetails = offeringDetailsMap.get(be.getEdcOfferId());
         if (offeringDetails == null) {
