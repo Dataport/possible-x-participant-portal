@@ -99,8 +99,8 @@ public class FhCatalogClientImpl implements FhCatalogClient {
             JsonDocument input = JsonDocument.of(new StringReader(jsonContent));
             JsonDocument frame = getFrameByType(type, context);
             return JsonLd.frame(input, frame).get();
-        } catch (JsonLdError e) {
-            throw new CatalogContentParsingException("Failed to parse fh catalog content json: " + jsonContent, e);
+        } catch (Exception e) {
+            throw new CatalogParsingException("Failed to parse fh catalog content json: " + jsonContent, e);
         }
     }
 
@@ -200,8 +200,11 @@ public class FhCatalogClientImpl implements FhCatalogClient {
 
         try {
             return retrieveOfferWithTimestamp(offeringId);
-        } catch (RuntimeException e) {
+        } catch (CatalogContentNotFoundException e) {
             throw new OfferNotFoundException("Offer not found: " + e.getMessage());
+        } catch (Exception e) {
+            log.error("error when trying to fetch offer from catalog!", e);
+            throw e;
         }
     }
 
@@ -224,19 +227,19 @@ public class FhCatalogClientImpl implements FhCatalogClient {
             // retry to fetch offer as service offer
             jsonContent = getFhCatalogContent(offeringId, technicalFhCatalogClient::getFhCatalogOffer);
         }
-        PxExtendedServiceOfferingCredentialSubject offer = getOfferingCredentialSubjectFromJsonString(jsonContent);
+        PxExtendedServiceOfferingCredentialSubject offer = getOfferingCredentialSubjectFromJsonContentString(jsonContent);
         return new OfferRetrievalResponseBE(offer, currentDateTime);
     }
 
-    private PxExtendedServiceOfferingCredentialSubject getOfferingCredentialSubjectFromJsonString(String jsonContent) {
+    private PxExtendedServiceOfferingCredentialSubject getOfferingCredentialSubjectFromJsonContentString(String jsonContent) {
 
         try {
             JsonObject parsedCatalogOffer = parseCatalogContent(jsonContent,
                 PxExtendedServiceOfferingCredentialSubject.TYPE, PxExtendedServiceOfferingCredentialSubject.CONTEXT);
             return objectMapper.readValue(parsedCatalogOffer.toString(),
                 PxExtendedServiceOfferingCredentialSubject.class);
-        } catch (JsonProcessingException e) {
-            throw new JsonException("failed to parse fh catalog offer json: " + jsonContent, e);
+        } catch (Exception e) {
+            throw new CatalogParsingException("failed to parse fh catalog offer json: " + jsonContent, e);
         }
     }
 
@@ -247,8 +250,11 @@ public class FhCatalogClientImpl implements FhCatalogClient {
             String jsonContent = getFhCatalogContent(participantId,
                 this.technicalFhCatalogClient::getFhCatalogParticipant);
             return getPxExtendedLegalParticipantCSSubsetFromJsonContentString(jsonContent);
-        } catch (RuntimeException e) {
+        } catch (CatalogContentNotFoundException e) {
             throw new ParticipantNotFoundException("Participant not found: " + e.getMessage());
+        } catch (Exception e) {
+            log.error("error when trying to fetch participant from catalog!", e);
+            throw e;
         }
     }
 
@@ -261,8 +267,8 @@ public class FhCatalogClientImpl implements FhCatalogClient {
                 PxExtendedLegalParticipantCredentialSubjectSubset.CONTEXT);
             return objectMapper.readValue(parsedCatalogParticipant.toString(),
                 PxExtendedLegalParticipantCredentialSubjectSubset.class);
-        } catch (JsonProcessingException e) {
-            throw new JsonException("failed to parse fh catalog participant json: " + jsonContent, e);
+        } catch (Exception e) {
+            throw new CatalogParsingException("failed to parse fh catalog participant json: " + jsonContent, e);
         }
     }
 

@@ -67,7 +67,7 @@ public class ContractRestApiImpl implements ContractRestApi {
         TransferOfferResponseBE responseBE = contractService.transferDataOfferAgain(be);
         TransferOfferResponseTO responseTO = consumerApiMapper.transferOfferResponseBEToTransferOfferResponseTO(
             responseBE);
-        log.info("Returning for transferring data of contract again: " + responseTO);
+        log.info("Returning for transferring data of contract again: {}", responseTO);
         return responseTO;
     }
 }

@@ -9,17 +9,31 @@ public class TechnicalFhCatalogClientFake implements TechnicalFhCatalogClient {
 
     public static final String VALID_FH_DATA_OFFER_ID = "validFhCatalogDataOfferId";
 
+    public static final String MISSING_FH_DATA_OFFER_ID = "missingFhCatalogDataOfferId";
+
     public static final String VALID_FH_SERVICE_OFFER_ID = "validFhCatalogServiceOfferId";
+
+    public static final String MISSING_FH_SERVICE_OFFER_ID = "missingFhCatalogServiceOfferId";
+
+    public static final String VALID_FH_PARTICIPANT_ID = "validFhCatalogParticipantId";
+
+    public static final String MISSING_FH_PARTICIPANT_ID = "missingFhCatalogParticipantId";
+
+    public static final String BAD_PARSING_ID = "badParsingId";
 
     private final String fhCatalogDataOfferContent;
 
     private final String fhCatalogServiceOfferContent;
+
+    private final String fhCatalogParticipantContent;
 
     public TechnicalFhCatalogClientFake() {
 
         this.fhCatalogDataOfferContent = TestUtils.loadTextFile("unit_tests/ConsumerModuleTest/validFhOffer.json");
         this.fhCatalogServiceOfferContent = TestUtils.loadTextFile(
             "unit_tests/ConsumerModuleTest/validFhOfferWithoutData.json");
+        this.fhCatalogParticipantContent = TestUtils.loadTextFile(
+            "unit_tests/ConsumerModuleTest/validFhParticipant.json");
     }
 
     @Override
@@ -39,34 +53,46 @@ public class TechnicalFhCatalogClientFake implements TechnicalFhCatalogClient {
     @Override
     public String getFhCatalogOffer(String offeringId) {
 
-        if (offeringId.equals(VALID_FH_SERVICE_OFFER_ID)) {
-            return this.fhCatalogServiceOfferContent;
-        }
-        throw new WebClientResponseException(404, "not found", null, null, null);
+        return switch (offeringId) {
+            case VALID_FH_SERVICE_OFFER_ID -> this.fhCatalogServiceOfferContent;
+            case BAD_PARSING_ID -> "invalid json";
+            default -> throw new WebClientResponseException(404, "not found", null, null, null);
+        };
     }
 
     @Override
     public String getFhCatalogParticipant(String participantId) {
 
-        return "";
+        return switch (participantId) {
+            case VALID_FH_PARTICIPANT_ID -> this.fhCatalogParticipantContent;
+            case BAD_PARSING_ID -> "invalid json";
+            default -> throw new WebClientResponseException(404, "not found", null, null, null);
+        };
     }
 
     @Override
     public String getFhCatalogOfferWithData(String offeringId) {
 
-        if (offeringId.equals(VALID_FH_DATA_OFFER_ID)) {
-            return this.fhCatalogDataOfferContent;
-        }
-        throw new WebClientResponseException(404, "not found", null, null, null);
+        return switch (offeringId) {
+            case VALID_FH_DATA_OFFER_ID -> this.fhCatalogDataOfferContent;
+            case BAD_PARSING_ID -> "invalid json";
+            default -> throw new WebClientResponseException(404, "not found", null, null, null);
+        };
     }
 
     @Override
     public void deleteServiceOfferingFromFhCatalog(String offeringId) {
 
+        if (offeringId.equals(MISSING_FH_SERVICE_OFFER_ID)) {
+            throw WebClientResponseException.create(404, "Offer not found", null, null, null);
+        }
     }
 
     @Override
     public void deleteServiceOfferingWithDataFromFhCatalog(String offeringId) {
 
+        if (offeringId.equals(MISSING_FH_DATA_OFFER_ID)) {
+            throw WebClientResponseException.create(404, "Offer not found", null, null, null);
+        }
     }
 }
