@@ -20,12 +20,12 @@ import static org.junit.jupiter.api.Assertions.*;
     SdCreationWizardApiServiceImpl.class })
 class SdCreationWizardApiServiceTest {
     @Autowired
-    private SdCreationWizardApiService sdCreationWizardApiService;
+    private SdCreationWizardApiService sut;
 
     @Test
     void getShapesByExistingEcosystem() {
 
-        Map<String, List<String>> shapes = sdCreationWizardApiService.getShapesByEcosystem("ecosystem1");
+        Map<String, List<String>> shapes = sut.getShapesByEcosystem("ecosystem1");
         assertNotNull(shapes);
     }
 
@@ -33,14 +33,14 @@ class SdCreationWizardApiServiceTest {
     void getShapesByNonExistentEcosystem() {
 
         WebClientResponseException e = assertThrows(WebClientResponseException.class,
-            () -> sdCreationWizardApiService.getShapesByEcosystem("missing"));
+            () -> sut.getShapesByEcosystem("missing"));
         assertEquals(HttpStatus.NOT_FOUND, e.getStatusCode());
     }
 
     @Test
     void getOfferingShapesByExistingEcosystem() {
 
-        List<String> shapes = sdCreationWizardApiService.getServiceOfferingShapesByEcosystem("ecosystem1");
+        List<String> shapes = sut.getServiceOfferingShapesByEcosystem("ecosystem1");
         assertNotNull(shapes);
         assertEquals(2, shapes.size());
     }
@@ -49,14 +49,14 @@ class SdCreationWizardApiServiceTest {
     void getOfferingShapesByNonExistentEcosystem() {
 
         WebClientResponseException e = assertThrows(WebClientResponseException.class,
-            () -> sdCreationWizardApiService.getServiceOfferingShapesByEcosystem("missing"));
+            () -> sut.getServiceOfferingShapesByEcosystem("missing"));
         assertEquals(HttpStatus.NOT_FOUND, e.getStatusCode());
     }
 
     @Test
     void getResourceShapesByExistingEcosystem() {
 
-        List<String> shapes = sdCreationWizardApiService.getResourceShapesByEcosystem("ecosystem1");
+        List<String> shapes = sut.getResourceShapesByEcosystem("ecosystem1");
         assertNotNull(shapes);
         assertEquals(1, shapes.size());
     }
@@ -65,14 +65,14 @@ class SdCreationWizardApiServiceTest {
     void getParticipantShapesByNonExistentEcosystem() {
 
         WebClientResponseException e = assertThrows(WebClientResponseException.class,
-            () -> sdCreationWizardApiService.getResourceShapesByEcosystem("missing"));
+            () -> sut.getResourceShapesByEcosystem("missing"));
         assertEquals(HttpStatus.NOT_FOUND, e.getStatusCode());
     }
 
     @Test
     void getShapeFileExisting() {
 
-        String json = sdCreationWizardApiService.getShapeByName("ecosystem", "Resource1.json");
+        String json = sut.getShapeByName("ecosystem", "Resource1.json");
         assertNotNull(json);
     }
 
@@ -80,7 +80,7 @@ class SdCreationWizardApiServiceTest {
     void getShapeFileNonExistent() {
 
         WebClientResponseException e = assertThrows(WebClientResponseException.class,
-            () -> sdCreationWizardApiService.getShapeByName("ecosystem", "missing"));
+            () -> sut.getShapeByName("ecosystem", "missing"));
         assertEquals(HttpStatus.NOT_FOUND, e.getStatusCode());
     }
 

@@ -1,5 +1,6 @@
 package eu.possiblex.participantportal.business.control;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.GxDataAccountExport;
@@ -19,7 +20,9 @@ import eu.possiblex.participantportal.business.entity.edc.contractdefinition.Con
 import eu.possiblex.participantportal.business.entity.edc.policy.OdrlPermission;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyCreateRequest;
 import eu.possiblex.participantportal.business.entity.exception.EdcOfferCreationException;
+import eu.possiblex.participantportal.business.entity.exception.FhOfferCreationException;
 import eu.possiblex.participantportal.business.entity.exception.OfferingComplianceException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import org.mockito.ArgumentCaptor;
@@ -44,7 +47,7 @@ class ProviderServiceTest {
     private static final String FILE_NAME = "file.txt";
 
     @Autowired
-    ProviderService providerService;
+    ProviderService sut;
 
     @Autowired
     EdcClient edcClient;
@@ -52,11 +55,15 @@ class ProviderServiceTest {
     @Autowired
     FhCatalogClient fhCatalogClient;
 
-    @Test
-    void testCreateServiceOffering() {
+    @BeforeEach
+    void setUp() {
 
         reset(fhCatalogClient);
         reset(edcClient);
+    }
+
+    @Test
+    void testCreateServiceOffering() {
 
         //given
 
@@ -69,7 +76,7 @@ class ProviderServiceTest {
             .policy(offeringCs.getPolicy()).dataProtectionRegime(offeringCs.getDataProtectionRegime()).build();
 
         //when
-        var response = providerService.createOffering(be);
+        var response = sut.createOffering(be);
 
         //then
         ArgumentCaptor<AssetCreateRequest> assetCreateRequestCaptor = forClass(AssetCreateRequest.class);
@@ -143,9 +150,6 @@ class ProviderServiceTest {
     @Test
     void testCreateDataOffering() {
 
-        reset(fhCatalogClient);
-        reset(edcClient);
-
         //given
         GxServiceOfferingCredentialSubject offeringCs = getGxServiceOfferingCredentialSubject();
         GxDataResourceCredentialSubject resourceCs = getGxDataResourceCredentialSubject();
@@ -158,7 +162,7 @@ class ProviderServiceTest {
             .dataResource(resourceCs).build();
 
         //when
-        var response = providerService.createOffering(be);
+        var response = sut.createOffering(be);
 
         //then
         ArgumentCaptor<AssetCreateRequest> assetCreateRequestCaptor = forClass(AssetCreateRequest.class);
@@ -245,9 +249,6 @@ class ProviderServiceTest {
     @Test
     void testCreateServiceOfferingEdcError() {
 
-        reset(fhCatalogClient);
-        reset(edcClient);
-
         //given
         GxServiceOfferingCredentialSubject offeringCs = getGxServiceOfferingCredentialSubject();
 
@@ -258,15 +259,12 @@ class ProviderServiceTest {
             .policy(offeringCs.getPolicy()).dataProtectionRegime(offeringCs.getDataProtectionRegime()).build();
 
         //when
-        assertThrows(EdcOfferCreationException.class, () -> providerService.createOffering(be));
+        assertThrows(EdcOfferCreationException.class, () -> sut.createOffering(be));
         verify(fhCatalogClient).deleteServiceOfferingFromFhCatalog(any(), anyBoolean());
     }
 
     @Test
     void testCreateServiceOfferingComplianceError() {
-
-        reset(fhCatalogClient);
-        reset(edcClient);
 
         //given
         GxServiceOfferingCredentialSubject offeringCs = getGxServiceOfferingCredentialSubject();
@@ -278,15 +276,12 @@ class ProviderServiceTest {
             .policy(offeringCs.getPolicy()).dataProtectionRegime(offeringCs.getDataProtectionRegime()).build();
 
         //when
-        assertThrows(OfferingComplianceException.class, () -> providerService.createOffering(be));
+        assertThrows(OfferingComplianceException.class, () -> sut.createOffering(be));
         verifyNoInteractions(edcClient);
     }
 
     @Test
     void testCreateServiceOfferingUnknownError() {
-
-        reset(fhCatalogClient);
-        reset(edcClient);
 
         //given
         GxServiceOfferingCredentialSubject offeringCs = getGxServiceOfferingCredentialSubject();
@@ -298,7 +293,24 @@ class ProviderServiceTest {
             .policy(offeringCs.getPolicy()).dataProtectionRegime(offeringCs.getDataProtectionRegime()).build();
 
         //when
-        assertThrows(OfferingComplianceException.class, () -> providerService.createOffering(be));
+        assertThrows(OfferingComplianceException.class, () -> sut.createOffering(be));
+        verifyNoInteractions(edcClient);
+    }
+
+    @Test
+    void testCreateServiceOfferingError() {
+
+        //given
+        GxServiceOfferingCredentialSubject offeringCs = getGxServiceOfferingCredentialSubject();
+
+        CreateServiceOfferingRequestBE be = CreateServiceOfferingRequestBE.builder()
+            .enforcementPolicies(List.of(new EverythingAllowedPolicy())).providedBy(offeringCs.getProvidedBy())
+            .name(FhCatalogClientFake.ERROR).description(offeringCs.getDescription())
+            .termsAndConditions(offeringCs.getTermsAndConditions()).dataAccountExport(offeringCs.getDataAccountExport())
+            .policy(offeringCs.getPolicy()).dataProtectionRegime(offeringCs.getDataProtectionRegime()).build();
+
+        //when
+        assertThrows(FhOfferCreationException.class, () -> sut.createOffering(be));
         verifyNoInteractions(edcClient);
     }
 

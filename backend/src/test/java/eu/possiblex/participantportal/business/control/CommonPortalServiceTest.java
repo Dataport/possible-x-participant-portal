@@ -17,7 +17,7 @@ import static org.mockito.Mockito.reset;
 @ContextConfiguration(classes = {CommonPortalServiceTest.TestConfig.class, CommonPortalServiceImpl.class})
 class CommonPortalServiceTest {
     @Autowired
-    private CommonPortalService commonPortalService;
+    private CommonPortalService sut;
 
     @Autowired
     private FhCatalogClient fhCatalogClient;
@@ -28,7 +28,7 @@ class CommonPortalServiceTest {
 
         // WHEN
 
-        Map<String, String> response = commonPortalService.getNameMapping();
+        Map<String, String> response = sut.getNameMapping();
 
         // THEN
 

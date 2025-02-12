@@ -28,6 +28,8 @@ public class FhCatalogClientFake implements FhCatalogClient {
 
     public static final String UNPROCESSABLE_OFFERING = "unprocessable";
 
+    public static final String ERROR = "error";
+
     @Override
     public FhCatalogIdResponse addServiceOfferingToFhCatalog(
         PxExtendedServiceOfferingCredentialSubject serviceOfferingCredentialSubject, boolean doesContainData) {
@@ -62,6 +64,10 @@ public class FhCatalogClientFake implements FhCatalogClient {
             e = new WebClientResponseException(500, "Error", headers, responseBody, StandardCharsets.UTF_8);
             e.setBodyDecodeFunction(decoderFunction); // Set with custom decoder function
             throw e;
+        }
+
+        if (serviceOfferingCredentialSubject.getName().equals(ERROR)) {
+            throw new RuntimeException("Error");
         }
 
         return new FhCatalogIdResponse("id");
@@ -106,6 +112,6 @@ public class FhCatalogClientFake implements FhCatalogClient {
 
     @Override
     public void deleteServiceOfferingFromFhCatalog(String offeringId, boolean doesContainData) {
-
+        // request worked
     }
 }

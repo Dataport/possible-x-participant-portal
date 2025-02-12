@@ -58,13 +58,17 @@ public class EdcClientFake implements EdcClient {
 
     public static final String VALID_AGREEMENT_ID = "validAgreement";
 
+    public static final String NOT_FOUND_AGREEMENT_ID = "notFoundAgreement";
+
     public static final String VALID_COUNTER_PARTY_ADDRESS = "validCounterPartyAddress";
 
-    public static final String VALID_CONTRACT_AGREEEMENT_ID = "validContractAgreementId";
+    public static final String VALID_CONTRACT_AGREEMENT_ID = "validContractAgreementId";
 
     public static final String BAD_TRANSFER_ID = "badTransfer";
 
-    public static final String BAD_GATEWAY_ASSET_ID = "edcerror";
+    public static final String TIMED_OUT_TRANSFER_ID = "timedOutTransfer";
+
+    public static final String BAD_GATEWAY_ASSET_ID = "edcError";
 
     public static final long FAKE_TIMESTAMP = 1234L;
 
@@ -163,6 +167,8 @@ public class EdcClientFake implements EdcClient {
         process.setDataRequest(request);
         if (transferId.equals(BAD_TRANSFER_ID)) {
             process.setState(TransferProcessState.TERMINATED);
+        } else if (transferId.equals(TIMED_OUT_TRANSFER_ID)) {
+            process.setState(TransferProcessState.INITIAL);
         } else {
             process.setState(TransferProcessState.COMPLETED);
         }
@@ -200,6 +206,10 @@ public class EdcClientFake implements EdcClient {
 
     @Override
     public ContractAgreement getContractAgreementById(String contractAgreementId) {
+
+        if (contractAgreementId.equals(NOT_FOUND_AGREEMENT_ID)) {
+            throw new WebClientResponseException(404, "error", null, null, null);
+        }
 
         return queryContractAgreements(QuerySpec.builder().build()).get(0);
     }

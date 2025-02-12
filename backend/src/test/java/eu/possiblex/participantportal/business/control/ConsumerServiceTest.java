@@ -14,6 +14,7 @@ import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundExc
 import eu.possiblex.participantportal.business.entity.exception.ParticipantNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.TransferFailedException;
 import eu.possiblex.participantportal.business.entity.fh.ParticipantDetailsSparqlQueryResult;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import org.mockito.ArgumentCaptor;
@@ -49,13 +50,18 @@ class ConsumerServiceTest {
     @Autowired
     private FhCatalogClient fhCatalogClient;
 
+    @BeforeEach
+    void setUp() {
+
+        reset(edcClient);
+        reset(fhCatalogClient);
+    }
+
     @Test
     void selectContractOfferSucceedsDataOffering() {
 
         // GIVEN
 
-        reset(edcClient);
-        reset(fhCatalogClient);
         PxExtendedServiceOfferingCredentialSubject fhCatalogOffer = getPxExtendedServiceOfferingCredentialSubject(true);
         OffsetDateTime offerRetrievalDate = OffsetDateTime.now();
         Mockito.when(fhCatalogClient.getFhCatalogOffer(EdcClientFake.FAKE_ID))
@@ -104,8 +110,6 @@ class ConsumerServiceTest {
 
         // GIVEN
 
-        reset(edcClient);
-        reset(fhCatalogClient);
         PxExtendedServiceOfferingCredentialSubject fhCatalogOffer = getPxExtendedServiceOfferingCredentialSubject(
             false);
         OffsetDateTime offerRetrievalDate = OffsetDateTime.now();
@@ -153,8 +157,6 @@ class ConsumerServiceTest {
 
         // GIVEN
 
-        reset(edcClient);
-        reset(fhCatalogClient);
         PxExtendedServiceOfferingCredentialSubject fhCatalogOffer = getPxExtendedServiceOfferingCredentialSubject(
             false);
         OffsetDateTime offerRetrievalDate = OffsetDateTime.now();
@@ -172,11 +174,9 @@ class ConsumerServiceTest {
         Mockito.when(edcClient.queryCatalog(any())).thenReturn(catalog);
         Mockito.when(fhCatalogClient.getParticipantDetailsByIds(any())).thenReturn(new HashMap<>());
 
-        // WHEN
-
         SelectOfferRequestBE request = SelectOfferRequestBE.builder().fhCatalogOfferId(EdcClientFake.FAKE_ID).build();
 
-        // THEN
+        // WHEN / THEN
 
         assertThrows(ParticipantNotFoundException.class, () -> sut.selectContractOffer(request));
     }
@@ -186,8 +186,6 @@ class ConsumerServiceTest {
 
         // GIVEN
 
-        reset(edcClient);
-        reset(fhCatalogClient);
         PxExtendedLegalParticipantCredentialSubjectSubset fhCatalogParticipant = new PxExtendedLegalParticipantCredentialSubjectSubset();
         fhCatalogParticipant.setId(FhCatalogClientFake.FAKE_PROVIDER_ID);
         fhCatalogParticipant.setMailAddress(FhCatalogClientFake.FAKE_EMAIL_ADDRESS);
@@ -222,8 +220,6 @@ class ConsumerServiceTest {
 
         // GIVEN
 
-        reset(edcClient);
-        reset(fhCatalogClient);
         PxExtendedLegalParticipantCredentialSubjectSubset fhCatalogParticipant = new PxExtendedLegalParticipantCredentialSubjectSubset();
         fhCatalogParticipant.setId(FhCatalogClientFake.FAKE_PROVIDER_ID);
         fhCatalogParticipant.setMailAddress(FhCatalogClientFake.FAKE_EMAIL_ADDRESS);
@@ -239,6 +235,7 @@ class ConsumerServiceTest {
         dataset.setHasPolicy(List.of(new Policy()));
         catalog.setDataset(List.of(dataset));
         Mockito.when(edcClient.queryCatalog(any())).thenReturn(catalog);
+
         // WHEN
 
         AcceptOfferResponseBE response = sut.acceptContractOffer(
@@ -253,9 +250,7 @@ class ConsumerServiceTest {
     }
 
     @Test
-    void shouldAcceptContractOfferNotFound() {
-
-        reset(edcClient);
+    void acceptContractOfferNotFound() {
 
         ConsumeOfferRequestBE request = ConsumeOfferRequestBE.builder().counterPartyAddress("http://example.com")
             .edcOfferId("someUnknownId").build();
@@ -264,9 +259,10 @@ class ConsumerServiceTest {
     }
 
     @Test
-    void shouldAcceptContractOfferBadNegotiation() {
+    void acceptContractOfferBadNegotiation() {
 
-        reset(edcClient);
+        // GIVEN
+
         DcatCatalog catalog = new DcatCatalog();
         DcatDataset dataset = new DcatDataset();
         dataset.setId(EdcClientFake.BAD_NEGOTIATION_ID);
@@ -281,13 +277,16 @@ class ConsumerServiceTest {
         ConsumeOfferRequestBE request = ConsumeOfferRequestBE.builder().counterPartyAddress("http://example.com")
             .edcOfferId(EdcClientFake.BAD_NEGOTIATION_ID).build();
 
+        // WHEN / THEN
+
         assertThrows(NegotiationFailedException.class, () -> sut.acceptContractOffer(request));
     }
 
     @Test
-    void shouldAcceptContractOfferTimedOutNegotiation() {
+    void acceptContractOfferTimedOutNegotiation() {
 
-        reset(edcClient);
+        // GIVEN
+
         DcatCatalog catalog = new DcatCatalog();
         DcatDataset dataset = new DcatDataset();
         dataset.setId(EdcClientFake.TIMED_OUT_NEGOTIATION_ID);
@@ -302,13 +301,16 @@ class ConsumerServiceTest {
         ConsumeOfferRequestBE request = ConsumeOfferRequestBE.builder().counterPartyAddress("http://example.com")
             .edcOfferId(EdcClientFake.TIMED_OUT_NEGOTIATION_ID).build();
 
+
+        // WHEN / THEN
         assertThrows(NegotiationFailedException.class, () -> sut.acceptContractOffer(request));
     }
 
     @Test
-    void shouldNotTransfer() {
+    void transferDataOfferTransferFailed() {
 
-        reset(edcClient);
+        // GIVEN
+
         DcatCatalog catalog = new DcatCatalog();
         DcatDataset dataset = new DcatDataset();
         dataset.setId(EdcClientFake.BAD_TRANSFER_ID);
@@ -323,17 +325,40 @@ class ConsumerServiceTest {
         TransferOfferRequestBE request = TransferOfferRequestBE.builder().counterPartyAddress("http://example.com")
             .edcOfferId(EdcClientFake.BAD_TRANSFER_ID).contractAgreementId(EdcClientFake.VALID_AGREEMENT_ID).build();
 
+        // WHEN / THEN
+
         assertThrows(TransferFailedException.class, () -> sut.transferDataOffer(request));
     }
 
     @Test
-    void shouldTransfer() {
+    void transferDataOfferTimedOutTransfer() {
 
         // GIVEN
 
-        reset(edcClient);
+        DcatCatalog catalog = new DcatCatalog();
+        DcatDataset dataset = new DcatDataset();
+        dataset.setId(EdcClientFake.TIMED_OUT_TRANSFER_ID);
+        dataset.setAssetId(EdcClientFake.TIMED_OUT_TRANSFER_ID);
+        dataset.setName("correctName");
+        dataset.setContenttype("correctContentType");
+        dataset.setDescription("correctDescription");
+        dataset.setHasPolicy(Collections.emptyList());
+        catalog.setDataset(List.of(dataset));
+        Mockito.when(edcClient.queryCatalog(any())).thenReturn(catalog);
 
-        // WHEN
+        TransferOfferRequestBE request = TransferOfferRequestBE.builder().counterPartyAddress("http://example.com")
+            .edcOfferId(EdcClientFake.TIMED_OUT_TRANSFER_ID).contractAgreementId(EdcClientFake.VALID_AGREEMENT_ID).build();
+
+        // WHEN / THEN
+
+        assertThrows(TransferFailedException.class, () -> sut.transferDataOffer(request));
+    }
+
+    @Test
+    void transferDataOffer() {
+
+        // GIVEN
+
         DcatCatalog catalog = new DcatCatalog();
         DcatDataset dataset = new DcatDataset();
         dataset.setId(EdcClientFake.FAKE_ID);
@@ -344,6 +369,9 @@ class ConsumerServiceTest {
         dataset.setHasPolicy(Collections.emptyList());
         catalog.setDataset(List.of(dataset));
         Mockito.when(edcClient.queryCatalog(any())).thenReturn(catalog);
+
+        // WHEN
+
         TransferOfferResponseBE response = sut.transferDataOffer(
             TransferOfferRequestBE.builder().counterPartyAddress("http://example.com").edcOfferId(EdcClientFake.FAKE_ID)
                 .contractAgreementId(EdcClientFake.VALID_AGREEMENT_ID).build());

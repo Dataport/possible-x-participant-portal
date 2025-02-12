@@ -42,7 +42,6 @@ public class ConsumerRestApiImpl implements ConsumerRestApi {
         ConsumeOfferRequestBE be = consumerApiMapper.consumeOfferRequestTOToBE(request);
 
         AcceptOfferResponseBE acceptOffer = consumerService.acceptContractOffer(be);
-        
         AcceptOfferResponseTO response = consumerApiMapper.acceptOfferResponseBEToAcceptOfferResponseTO(acceptOffer);
         log.info("Returning for accepting contract: {}", response);
         return response;
