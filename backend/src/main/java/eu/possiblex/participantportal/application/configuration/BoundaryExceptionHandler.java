@@ -69,8 +69,8 @@ public class BoundaryExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ErrorResponseTO> handleException(ContractAgreementNotFoundException e) {
 
         logError(e);
-        return new ResponseEntity<>(new ErrorResponseTO("Contract agreement with this id was not found", e.getMessage()),
-            NOT_FOUND);
+        return new ResponseEntity<>(
+            new ErrorResponseTO("Contract agreement with this id was not found", e.getMessage()), NOT_FOUND);
     }
 
     /**
@@ -125,7 +125,7 @@ public class BoundaryExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ErrorResponseTO> handleException(Exception e) {
 
         logError(e);
-        return new ResponseEntity<>(new ErrorResponseTO("An unknown error occurred"), INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(new ErrorResponseTO("An unknown error occurred", ""), INTERNAL_SERVER_ERROR);
     }
 
     /**
