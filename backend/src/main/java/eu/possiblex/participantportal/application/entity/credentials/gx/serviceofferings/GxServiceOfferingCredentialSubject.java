@@ -67,8 +67,8 @@ public class GxServiceOfferingCredentialSubject extends PojoCredentialSubject {
     @NotNull
     private NodeKindIRITypeId providedBy;
 
-    @Valid
     @JsonProperty("gx:aggregationOf")
+    // no input validations as this will be set by the backend
     private List<NodeKindIRITypeId> aggregationOf;
 
     // dependsOn not yet mapped as it is optional

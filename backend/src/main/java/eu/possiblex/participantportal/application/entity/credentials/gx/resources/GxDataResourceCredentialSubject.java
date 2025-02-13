@@ -58,9 +58,8 @@ public class GxDataResourceCredentialSubject extends PojoCredentialSubject {
     @NotNull
     private NodeKindIRITypeId producedBy;
 
-    @Valid
     @JsonProperty("gx:exposedThrough")
-    //this will be set by the backend
+    // no input validations as this will be set by the backend
     private NodeKindIRITypeId exposedThrough;
 
     // aggregationOf not yet mapped as it is optional

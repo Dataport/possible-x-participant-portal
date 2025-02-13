@@ -208,7 +208,8 @@ public class EdcClientFake implements EdcClient {
     public ContractAgreement getContractAgreementById(String contractAgreementId) {
 
         if (contractAgreementId.equals(NOT_FOUND_AGREEMENT_ID)) {
-            throw new WebClientResponseException(404, "error", null, null, null);
+            throw WebClientResponseException.create(
+                404, "Not Found", null, null, null);
         }
 
         return queryContractAgreements(QuerySpec.builder().build()).get(0);

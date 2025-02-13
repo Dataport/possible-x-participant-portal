@@ -199,14 +199,10 @@ public class ContractServiceImpl implements ContractService {
         ContractAgreement contractAgreement;
         try {
             contractAgreement = edcClient.getContractAgreementById(contractAgreementId);
-        } catch (WebClientResponseException e) {
-            if (e.getStatusCode().value() == 404) {
-                log.error("Contract agreement with ID {} not found", contractAgreementId);
-                throw new ContractAgreementNotFoundException(
-                    "Contract agreement with ID " + contractAgreementId + " not found");
-            }
-            log.error("Error while fetching contract agreement with ID {}", contractAgreementId, e);
-            throw e;
+        } catch (WebClientResponseException.NotFound e) {
+            log.error("Contract agreement with ID {} not found", contractAgreementId);
+            throw new ContractAgreementNotFoundException(
+                "Contract agreement with ID " + contractAgreementId + " not found");
         } catch (Exception exception) {
             log.error("Error while fetching contract agreement with ID {}", contractAgreementId, exception);
             throw exception;
