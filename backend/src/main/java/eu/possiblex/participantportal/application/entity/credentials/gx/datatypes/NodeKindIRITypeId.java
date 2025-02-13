@@ -19,6 +19,8 @@ package eu.possiblex.participantportal.application.entity.credentials.gx.datatyp
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
@@ -31,6 +33,8 @@ import lombok.*;
 @ToString
 public class NodeKindIRITypeId {
 
+    @Schema(description = "Internationalized Resource Identifier (IRI) reference ID", examples = {
+        "urn:uuid:0107cfac-ba6c-4d1b-9b90-899aa4b56da1", "did:web:example.com:participant:someorgltd" })
     @NotBlank(message = "IRI ID reference is required")
     @JsonAlias("@id")
     private String id;

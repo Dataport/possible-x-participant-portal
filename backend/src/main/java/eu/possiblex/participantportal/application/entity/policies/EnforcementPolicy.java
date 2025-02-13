@@ -3,6 +3,7 @@ package eu.possiblex.participantportal.application.entity.policies;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,5 +23,6 @@ import lombok.experimental.SuperBuilder;
 })
 @EqualsAndHashCode
 public abstract class EnforcementPolicy {
+    @Schema(description = "Flag whether the policy is valid or not")
     private boolean isValid;
 }

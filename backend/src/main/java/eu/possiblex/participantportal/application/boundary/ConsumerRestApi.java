@@ -2,7 +2,6 @@ package eu.possiblex.participantportal.application.boundary;
 
 import eu.possiblex.participantportal.application.entity.*;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;

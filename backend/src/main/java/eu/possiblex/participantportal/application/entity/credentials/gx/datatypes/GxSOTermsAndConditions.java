@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import eu.possiblex.participantportal.business.entity.serialization.StringDeserializer;
 import eu.possiblex.participantportal.business.entity.serialization.StringSerializer;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
@@ -37,12 +38,14 @@ import lombok.*;
 @EqualsAndHashCode
 public class GxSOTermsAndConditions {
 
+    @Schema(description = "Resolvable link to the terms and conditions document", example = "https://someorg.com/terms-and-conditions")
     @JsonProperty("gx:URL")
     @NotBlank(message = "URL is required")
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)
     private String url;
 
+    @Schema(description = "SHA256 hash of the terms and conditions document", example = "f0e4c2f76c58916ec258f246851bea091d14d4247a2fc3e18694461b1816e13b")
     @JsonProperty("gx:hash")
     @NotBlank(message = "Hash is required")
     @JsonSerialize(using = StringSerializer.class)

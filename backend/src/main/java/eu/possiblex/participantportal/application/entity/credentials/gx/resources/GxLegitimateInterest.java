@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import eu.possiblex.participantportal.business.entity.serialization.StringDeserializer;
 import eu.possiblex.participantportal.business.entity.serialization.StringSerializer;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -46,12 +47,14 @@ public class GxLegitimateInterest {
     @Getter(AccessLevel.NONE)
     public static final String TYPE = TYPE_NAMESPACE + ":" + TYPE_CLASS;
 
+    @Schema(description = "An URL pointing to a contact form or an email address")
     @JsonProperty("gx:dataProtectionContact")
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)
     @NotBlank(message = "Data protection contact is required")
     private String dataProtectionContact;
 
+    @Schema(description = "Reasons to process PII as detailed in the data protection regime")
     @JsonProperty("gx:legalBasis")
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)
