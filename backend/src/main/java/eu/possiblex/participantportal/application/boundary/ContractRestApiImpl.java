@@ -1,14 +1,10 @@
 package eu.possiblex.participantportal.application.boundary;
 
-import eu.possiblex.participantportal.application.control.ConsumerApiMapper;
 import eu.possiblex.participantportal.application.control.ContractApiMapper;
 import eu.possiblex.participantportal.application.entity.*;
 import eu.possiblex.participantportal.business.control.ContractService;
-import eu.possiblex.participantportal.business.entity.TransferOfferRequestBE;
-import eu.possiblex.participantportal.business.entity.TransferOfferResponseBE;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -23,14 +19,11 @@ public class ContractRestApiImpl implements ContractRestApi {
 
     private final ContractApiMapper contractApiMapper;
 
-    private final ConsumerApiMapper consumerApiMapper;
-
     public ContractRestApiImpl(@Autowired ContractService contractService,
-        @Autowired ContractApiMapper contractApiMapper, ConsumerApiMapper consumerApiMapper) {
+        @Autowired ContractApiMapper contractApiMapper) {
 
         this.contractService = contractService;
         this.contractApiMapper = contractApiMapper;
-        this.consumerApiMapper = consumerApiMapper;
     }
 
     /**
@@ -58,16 +51,5 @@ public class ContractRestApiImpl implements ContractRestApi {
 
         return contractApiMapper.offerRetrievalResponseBEToOfferWithTimestampTO(
             contractService.getOfferDetailsByContractAgreementId(contractAgreementId));
-    }
-
-    @Override
-    public TransferOfferResponseTO transferDataOfferAgain(@RequestBody TransferOfferRequestTO request) {
-
-        TransferOfferRequestBE be = consumerApiMapper.transferOfferRequestTOToBE(request);
-        TransferOfferResponseBE responseBE = contractService.transferDataOfferAgain(be);
-        TransferOfferResponseTO responseTO = consumerApiMapper.transferOfferResponseBEToTransferOfferResponseTO(
-            responseBE);
-        log.info("Returning for transferring data of contract again: {}", responseTO);
-        return responseTO;
     }
 }

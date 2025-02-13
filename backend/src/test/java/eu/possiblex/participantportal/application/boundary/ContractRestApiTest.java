@@ -4,7 +4,6 @@ import eu.possiblex.participantportal.application.configuration.AppConfigurer;
 import eu.possiblex.participantportal.application.configuration.BoundaryExceptionHandler;
 import eu.possiblex.participantportal.application.control.ConsumerApiMapper;
 import eu.possiblex.participantportal.application.control.ContractApiMapper;
-import eu.possiblex.participantportal.application.entity.TransferOfferRequestTO;
 import eu.possiblex.participantportal.business.control.ContractService;
 import eu.possiblex.participantportal.business.control.ContractServiceFake;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,14 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.Mockito.reset;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -104,29 +101,6 @@ class ContractRestApiTest {
 
         this.mockMvc.perform(get("/contract/details/" + ContractServiceFake.NOT_FOUND_ID + "/offer")).andDo(print())
             .andExpect(status().isNotFound());
-    }
-
-    @Test
-    @WithMockUser(username = "admin")
-    void transferDataOfferAgainSuccess() throws Exception {
-
-        TransferOfferRequestTO request = TransferOfferRequestTO.builder().contractAgreementId("anyId")
-            .counterPartyAddress("anyAddress").edcOfferId("anyOfferId").build();
-
-        this.mockMvc.perform(post("/contract/transfer").content(RestApiHelper.asJsonString(request))
-                .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
-            .andExpect(jsonPath("$.transferProcessState").value(ContractServiceFake.TRANSFER_PROCESS_STATE.name()));
-    }
-
-    @Test
-    @WithMockUser(username = "admin")
-    void transferDataOfferAgainNotFound() throws Exception {
-
-        TransferOfferRequestTO request = TransferOfferRequestTO.builder().contractAgreementId("anyId")
-            .counterPartyAddress("anyAddress").edcOfferId(ContractServiceFake.NOT_FOUND_ID).build();
-
-        this.mockMvc.perform(post("/contract/transfer").content(RestApiHelper.asJsonString(request))
-                .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isNotFound());
     }
 
     @TestConfiguration

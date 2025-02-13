@@ -6,7 +6,6 @@ import eu.possiblex.participantportal.business.entity.daps.OmejdnConnectorDetail
 import eu.possiblex.participantportal.business.entity.edc.contractagreement.ContractAgreement;
 import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyTarget;
-import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcessState;
 import eu.possiblex.participantportal.business.entity.exception.ContractAgreementNotFoundException;
 import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsSparqlQueryResult;
 import eu.possiblex.participantportal.business.entity.fh.ParticipantDetailsSparqlQueryResult;
@@ -47,9 +46,6 @@ class ContractServiceTest {
 
     @Autowired
     private ContractService sut;
-
-    @Autowired
-    private ConsumerService consumerService;
 
     @Value("${participant-id}")
     private String participantId;
@@ -359,35 +355,9 @@ class ContractServiceTest {
         assertThat(actual.getCatalogOffering().getAssetId()).isNull();
     }
 
-    @Test
-    void transferDataOfferAgain() {
-
-        reset(consumerService);
-
-        //GIVEN
-
-        TransferOfferRequestBE request = TransferOfferRequestBE.builder().counterPartyAddress("http://example.com")
-            .edcOfferId(EdcClientFake.FAKE_ID).contractAgreementId(EdcClientFake.VALID_CONTRACT_AGREEMENT_ID).build();
-        TransferOfferResponseBE response = TransferOfferResponseBE.builder()
-            .transferProcessState(TransferProcessState.COMPLETED).build();
-
-        //WHEN
-        TransferOfferResponseBE actual = sut.transferDataOfferAgain(request);
-
-        //THEN
-        assertThat(actual.getTransferProcessState()).isEqualTo(response.getTransferProcessState());
-        verify(consumerService).transferDataOffer(any());
-    }
-
     // Test-specific configuration to provide mocks
     @TestConfiguration
     static class TestConfig {
-        @Bean
-        public ConsumerService consumerService() {
-
-            return Mockito.spy(new ConsumerServiceFake());
-        }
-
         @Bean
         public EdcClient edcClient() {
 

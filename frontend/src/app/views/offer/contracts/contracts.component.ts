@@ -89,7 +89,7 @@ export class ContractsComponent implements OnInit {
 
   async transferAgain(contractAgreement: IContractAgreementTO) {
     this.isTransferButtonDisabled = true;
-    this.apiService.transferDataOfferAgain({
+    this.apiService.transferDataOffer({
       contractAgreementId: contractAgreement.id,
       counterPartyAddress: contractAgreement.assetDetails.providerUrl,
       edcOfferId: contractAgreement.assetId,

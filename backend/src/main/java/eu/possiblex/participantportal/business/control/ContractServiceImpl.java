@@ -29,8 +29,6 @@ public class ContractServiceImpl implements ContractService {
 
     private final EdcClient edcClient;
 
-    private final ConsumerService consumerService;
-
     private final EnforcementPolicyParserService enforcementPolicyParserService;
 
     private final FhCatalogClient fhCatalogClient;
@@ -43,14 +41,13 @@ public class ContractServiceImpl implements ContractService {
     private String fhCatalogUriResourceBase;
 
     public ContractServiceImpl(@Autowired EdcClient edcClient, @Autowired FhCatalogClient fhCatalogClient,
-        @Autowired OmejdnConnectorApiClient omejdnConnectorApiClient, @Autowired ConsumerService consumerService,
+        @Autowired OmejdnConnectorApiClient omejdnConnectorApiClient,
         @Autowired EnforcementPolicyParserService enforcementPolicyParserService,
         @Value("${participant-id}") String participantId) {
 
         this.edcClient = edcClient;
         this.fhCatalogClient = fhCatalogClient;
         this.omejdnConnectorApiClient = omejdnConnectorApiClient;
-        this.consumerService = consumerService;
         this.enforcementPolicyParserService = enforcementPolicyParserService;
         this.participantId = participantId;
     }
@@ -228,17 +225,5 @@ public class ContractServiceImpl implements ContractService {
         }
 
         return participantDids;
-    }
-
-    /**
-     * Repeat the transfer for a given EDC contract.
-     *
-     * @param be request referencing existing EDC contract.
-     * @return transfer result.
-     */
-    @Override
-    public TransferOfferResponseBE transferDataOfferAgain(TransferOfferRequestBE be) {
-
-        return consumerService.transferDataOffer(be);
     }
 }

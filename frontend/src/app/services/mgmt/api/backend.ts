@@ -570,14 +570,6 @@ export class RestApplicationClient {
     }
 
     /**
-     * HTTP POST /contract/transfer
-     * Java method: eu.possiblex.participantportal.application.boundary.ContractRestApiImpl.transferDataOfferAgain
-     */
-    transferDataOfferAgain(request: ITransferOfferRequestTO): RestResponse<ITransferOfferResponseTO> {
-        return this.httpClient.request({ method: "POST", url: uriEncoding`contract/transfer`, data: request });
-    }
-
-    /**
      * HTTP POST /provider/offer/data
      * Java method: eu.possiblex.participantportal.application.boundary.ProviderRestApiImpl.createDataOffering
      */

@@ -1,7 +1,6 @@
 package eu.possiblex.participantportal.application.boundary;
 
 import eu.possiblex.participantportal.application.entity.*;
-import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,13 +31,4 @@ public interface ContractRestApi {
      */
     @GetMapping(value = "/details/{contractAgreementId}/offer", produces = MediaType.APPLICATION_JSON_VALUE)
     OfferWithTimestampTO getOfferWithTimestampByContractAgreementId(@PathVariable String contractAgreementId);
-
-    /**
-     * POST request for transferring a data product again from the contracts tab.
-     *
-     * @param request the request containing the assetID, the contract agreement id and the provider url
-     * @return the response containing the status of the transfer process
-     */
-    @PostMapping(value = "/transfer", produces = MediaType.APPLICATION_JSON_VALUE)
-    TransferOfferResponseTO transferDataOfferAgain(@Valid @RequestBody TransferOfferRequestTO request);
 }

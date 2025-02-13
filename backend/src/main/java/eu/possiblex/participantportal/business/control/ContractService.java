@@ -28,12 +28,4 @@ public interface ContractService {
      * @return Referenced offer with timestamp.
      */
     OfferRetrievalResponseBE getOfferDetailsByContractAgreementId(String contractAgreementId);
-
-    /**
-     * Repeat the transfer for a given EDC contract.
-     *
-     * @param request request referencing existing EDC contract.
-     * @return transfer result.
-     */
-    TransferOfferResponseBE transferDataOfferAgain(TransferOfferRequestBE request);
 }

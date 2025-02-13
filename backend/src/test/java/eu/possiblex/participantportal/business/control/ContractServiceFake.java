@@ -7,7 +7,6 @@ import eu.possiblex.participantportal.business.entity.edc.policy.Policy;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyTarget;
 import eu.possiblex.participantportal.business.entity.edc.transfer.TransferProcessState;
 import eu.possiblex.participantportal.business.entity.exception.ContractAgreementNotFoundException;
-import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 
 import java.math.BigInteger;
 import java.time.Instant;
@@ -107,15 +106,5 @@ public class ContractServiceFake implements ContractService {
                     PxExtendedServiceOfferingCredentialSubject.builder().name(NAME).description(DESCRIPTION)
                         .id(FAKE_ID_OFFERING).assetId(FAKE_ID_ASSET).build(), getDateAsOffsetDateTime()))
             .providerDetails(new ParticipantWithDapsBE()).consumerDetails(new ParticipantWithDapsBE()).build();
-    }
-
-    @Override
-    public TransferOfferResponseBE transferDataOfferAgain(TransferOfferRequestBE request) {
-
-        if (request.getEdcOfferId().equals(NOT_FOUND_ID)) {
-            throw new OfferNotFoundException("not found");
-        }
-
-        return TransferOfferResponseBE.builder().transferProcessState(TRANSFER_PROCESS_STATE).build();
     }
 }
