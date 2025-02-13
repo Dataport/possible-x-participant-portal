@@ -5,8 +5,6 @@ import eu.possiblex.participantportal.business.entity.daps.OmejdnConnectorDetail
 import java.util.Collection;
 import java.util.Map;
 
-import static org.mockito.ArgumentMatchers.any;
-
 public class OmejdnConnectorApiClientFake implements OmejdnConnectorApiClient {
 
     public static final String PARTICIPANT_ID = "participantId";

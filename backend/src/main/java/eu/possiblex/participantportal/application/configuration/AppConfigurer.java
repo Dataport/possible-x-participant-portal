@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.AuthenticationException;
@@ -124,12 +123,10 @@ public class AppConfigurer {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests((authorizeHttpRequests) ->
-                authorizeHttpRequests
-                    .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                    .requestMatchers("common/version").permitAll()
-                    .anyRequest().authenticated()
-            )
+
+        http.authorizeHttpRequests(
+                authorizeHttpRequests -> authorizeHttpRequests.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                    .requestMatchers("common/version").permitAll().anyRequest().authenticated())
             .httpBasic(basic -> basic.authenticationEntryPoint(new CustomAuthenticationEntryPoint()))
             .csrf(AbstractHttpConfigurer::disable);
         return http.build();
@@ -137,30 +134,28 @@ public class AppConfigurer {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        UserDetails admin =
-            User.builder()
-                .username(adminUsername)
-                .password(passwordEncoder().encode(adminPassword))
-                .roles("ADMIN")
-                .build();
+
+        UserDetails admin = User.builder().username(adminUsername).password(passwordEncoder().encode(adminPassword))
+            .roles("ADMIN").build();
 
         return new InMemoryUserDetailsManager(admin);
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
+
         return new BCryptPasswordEncoder();
     }
 
     @Bean
     public WebMvcConfigurer corsConfigurer() {
+
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
-                    .allowedOriginPatterns("*")
-                    .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                    .allowedHeaders("*")
+
+                registry.addMapping("/**").allowedOriginPatterns("*")
+                    .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS").allowedHeaders("*")
                     .allowCredentials(true);
             }
         };
@@ -168,9 +163,9 @@ public class AppConfigurer {
 
     private class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
         @Override
-        public void commence(
-            HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws
-            IOException {
+        public void commence(HttpServletRequest request, HttpServletResponse response,
+            AuthenticationException authException) throws IOException {
+
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setHeader("WWW-Authenticate", "");
             response.getWriter().write("Unauthorized");

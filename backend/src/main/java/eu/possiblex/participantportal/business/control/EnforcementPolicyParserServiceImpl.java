@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
-import java.time.*;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -95,7 +98,7 @@ public class EnforcementPolicyParserServiceImpl implements EnforcementPolicyPars
 
     private TimeAgreementOffsetPolicy parseTimeAgreementOffsetPolicy(OdrlConstraint constraint, boolean endDate) {
 
-        var matcher = Pattern.compile("(contract[A,a]greement)\\+(-?[0-9]+)(s|m|h|d)")
+        var matcher = Pattern.compile("(contract[A,a]greement)\\+(-?\\d+)([smhd])")
             .matcher(constraint.getRightOperand());
         if (matcher.matches()) {
             int number = Integer.parseInt(matcher.group(2));

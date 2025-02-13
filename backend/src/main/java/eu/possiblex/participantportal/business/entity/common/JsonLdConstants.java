@@ -23,13 +23,15 @@ package eu.possiblex.participantportal.business.entity.common;
 import java.util.Map;
 
 public class JsonLdConstants {
-    public static final Map<String, String> EDC_CONTEXT = Map.of("@vocab", "https://w3id.org/edc/v0.0.1/ns/", "edc",
-        "https://w3id.org/edc/v0.0.1/ns/", "odrl", "http://www.w3.org/ns/odrl/2/");
+
+    public static final String EDC_NAMESPACE = "https://w3id.org/edc/v0.0.1/ns/";
+
+    public static final Map<String, String> EDC_CONTEXT = Map.of("@vocab", EDC_NAMESPACE, "edc", EDC_NAMESPACE, "odrl",
+        "http://www.w3.org/ns/odrl/2/");
 
     public static final Map<String, String> FH_CONTEXT = Map.of("skos", "http://www.w3.org/2004/02/skos/core#", "dct",
         "http://purl.org/dc/terms/", "dcat", "http://www.w3.org/ns/dcat#", "rdf",
-        "http://www.w3.org/1999/02/22-rdf-syntax-ns#", "foaf", "http://xmlns.com/foaf/0.1/", "edc",
-        "https://w3id.org/edc/v0.0.1/ns/");
+        "http://www.w3.org/1999/02/22-rdf-syntax-ns#", "foaf", "http://xmlns.com/foaf/0.1/", "edc", EDC_NAMESPACE);
 
     public static final String POLICY_CONTEXT = "http://www.w3.org/ns/odrl.jsonld";
 

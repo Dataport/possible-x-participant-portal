@@ -1,6 +1,5 @@
 package eu.possiblex.participantportal.business.control;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.GxDataAccountExport;
@@ -90,16 +89,7 @@ class ProviderServiceTest {
         verify(fhCatalogClient).addServiceOfferingToFhCatalog(serviceOfferingCaptor.capture(), Mockito.anyBoolean());
 
         PxExtendedServiceOfferingCredentialSubject pxExtSoCs = serviceOfferingCaptor.getValue();
-        assertNotNull(pxExtSoCs);
-        assertTrue(pxExtSoCs.getId()
-            .matches("urn:uuid:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"));
-        String expectedProvidedBy = "did:web:test.eu";
-        assertEquals(expectedProvidedBy, pxExtSoCs.getProvidedBy().getId());
-        //check if assetId exists and provider url is set correctly
-        assertTrue(pxExtSoCs.getAssetId()
-            .matches("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"));
-        assertEquals("test", pxExtSoCs.getProviderUrl());
-        assertThat(pxExtSoCs.getPolicy()).hasSize(2).contains("dummyServiceOfferingPolicy");
+        validatePxExtendedServiceOfferingCredentialSubject(pxExtSoCs);
 
         verify(edcClient).createAsset(assetCreateRequestCaptor.capture());
         verify(edcClient, times(2)).createPolicy(policyCreateRequestCaptor.capture());
@@ -108,17 +98,9 @@ class ProviderServiceTest {
         AssetCreateRequest assetCreateRequest = assetCreateRequestCaptor.getValue();
         //validate asset properties
         PossibleAssetProperties properties = (PossibleAssetProperties) assetCreateRequest.getProperties();
-        assertEquals(offeringCs.getName(), properties.getName());
-        assertEquals(offeringCs.getDescription(), properties.getDescription());
-        assertEquals(expectedProvidedBy, properties.getProvidedBy().getId());
-        assertThat(offeringCs.getTermsAndConditions()).usingRecursiveComparison()
-            .isEqualTo(properties.getTermsAndConditions());
-        assertThat(offeringCs.getDataProtectionRegime()).containsExactlyInAnyOrderElementsOf(
-            properties.getDataProtectionRegime());
-        assertThat(offeringCs.getDataAccountExport()).usingRecursiveComparison()
-            .isEqualTo(properties.getDataAccountExport());
-        assertThat(properties.getOfferingPolicy()).hasSize(2).contains("dummyServiceOfferingPolicy");
+        validatePossibleAssetPropertiesServiceOffering(offeringCs, properties);
         assertThat(properties.getDataPolicy()).isNull();
+
         //check if file name is set correctly
         assertEquals("", assetCreateRequest.getDataAddress().getKeyName());
         assertEquals("", ((IonosS3DataSource) assetCreateRequest.getDataAddress()).getBlobName());
@@ -145,6 +127,37 @@ class ProviderServiceTest {
         assertNotNull(response);
         assertNotNull(response.getEdcResponseId());
         assertNotNull(response.getFhResponseId());
+    }
+
+    private void validatePxExtendedServiceOfferingCredentialSubject(
+        PxExtendedServiceOfferingCredentialSubject pxExtSoCs) {
+
+        assertNotNull(pxExtSoCs);
+        assertTrue(pxExtSoCs.getId()
+            .matches("urn:uuid:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"));
+        assertEquals("did:web:test.eu", pxExtSoCs.getProvidedBy().getId());
+        //check if assetId exists and provider url is set correctly
+        assertTrue(pxExtSoCs.getAssetId()
+            .matches("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"));
+        assertEquals("test", pxExtSoCs.getProviderUrl());
+        assertThat(pxExtSoCs.getPolicy()).hasSize(2).contains("dummyServiceOfferingPolicy");
+
+    }
+
+    private void validatePossibleAssetPropertiesServiceOffering(GxServiceOfferingCredentialSubject offeringCs,
+        PossibleAssetProperties properties) {
+
+        assertEquals(offeringCs.getName(), properties.getName());
+        assertEquals(offeringCs.getDescription(), properties.getDescription());
+        assertEquals("did:web:test.eu", properties.getProvidedBy().getId());
+        assertThat(offeringCs.getTermsAndConditions()).usingRecursiveComparison()
+            .isEqualTo(properties.getTermsAndConditions());
+        assertThat(offeringCs.getDataProtectionRegime()).containsExactlyInAnyOrderElementsOf(
+            properties.getDataProtectionRegime());
+        assertThat(offeringCs.getDataAccountExport()).usingRecursiveComparison()
+            .isEqualTo(properties.getDataAccountExport());
+        assertThat(properties.getOfferingPolicy()).hasSize(2).contains("dummyServiceOfferingPolicy");
+
     }
 
     @Test
@@ -187,10 +200,7 @@ class ProviderServiceTest {
         String expectedProvidedBy = "did:web:test.eu";
         assertEquals(expectedProvidedBy, pxExtSoCs.getProvidedBy().getId());
         //check if assetId exists and provider url is set correctly
-        assertTrue(pxExtSoCs.getAssetId()
-            .matches("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"));
-        assertEquals("test", pxExtSoCs.getProviderUrl());
-        assertThat(pxExtSoCs.getPolicy()).hasSize(2).contains("dummyServiceOfferingPolicy");
+        validatePxExtendedServiceOfferingCredentialSubject(pxExtSoCs);
         assertThat(pxExtSoCs.getAggregationOf()).hasSize(1);
         assertThat(pxExtSoCs.getAggregationOf().get(0).getPolicy()).contains("dummyDataResourcePolicy");
 
@@ -201,22 +211,9 @@ class ProviderServiceTest {
         AssetCreateRequest assetCreateRequest = assetCreateRequestCaptor.getValue();
         //validate asset properties
         PossibleAssetProperties properties = (PossibleAssetProperties) assetCreateRequest.getProperties();
-        assertEquals(offeringCs.getName(), properties.getName());
-        assertEquals(offeringCs.getDescription(), properties.getDescription());
-        assertEquals(expectedProvidedBy, properties.getProvidedBy().getId());
-        assertThat(offeringCs.getTermsAndConditions()).usingRecursiveComparison()
-            .isEqualTo(properties.getTermsAndConditions());
-        assertThat(offeringCs.getDataProtectionRegime()).containsExactlyInAnyOrderElementsOf(
-            properties.getDataProtectionRegime());
-        assertThat(offeringCs.getDataAccountExport()).usingRecursiveComparison()
-            .isEqualTo(properties.getDataAccountExport());
-        assertEquals(resourceCs.getCopyrightOwnedBy().get(0), properties.getCopyrightOwnedBy().get(0));
-        assertEquals(resourceCs.getProducedBy().getId(), properties.getProducedBy().getId());
-        assertEquals(resourceCs.getExposedThrough().getId(), properties.getExposedThrough().getId());
-        assertThat(resourceCs.getLicense()).containsExactlyInAnyOrderElementsOf(properties.getLicense());
-        assertEquals(resourceCs.isContainsPII(), properties.isContainsPII());
-        assertThat(properties.getOfferingPolicy()).hasSize(2).contains("dummyServiceOfferingPolicy");
-        assertThat(properties.getDataPolicy()).hasSize(1).contains("dummyDataResourcePolicy");
+        validatePossibleAssetPropertiesServiceOffering(offeringCs, properties);
+        validatePossibleAssetPropertiesDataOffering(resourceCs, properties);
+
         //check if file name is set correctly
         assertEquals(FILE_NAME, assetCreateRequest.getDataAddress().getKeyName());
         assertEquals(FILE_NAME, ((IonosS3DataSource) assetCreateRequest.getDataAddress()).getBlobName());
@@ -244,6 +241,18 @@ class ProviderServiceTest {
         assertNotNull(response);
         assertNotNull(response.getEdcResponseId());
         assertNotNull(response.getFhResponseId());
+    }
+
+    private void validatePossibleAssetPropertiesDataOffering(GxDataResourceCredentialSubject resourceCs,
+        PossibleAssetProperties properties) {
+
+        assertEquals(resourceCs.getCopyrightOwnedBy().get(0), properties.getCopyrightOwnedBy().get(0));
+        assertEquals(resourceCs.getProducedBy().getId(), properties.getProducedBy().getId());
+        assertEquals(resourceCs.getExposedThrough().getId(), properties.getExposedThrough().getId());
+        assertThat(resourceCs.getLicense()).containsExactlyInAnyOrderElementsOf(properties.getLicense());
+        assertEquals(resourceCs.isContainsPII(), properties.isContainsPII());
+        assertThat(properties.getOfferingPolicy()).hasSize(2).contains("dummyServiceOfferingPolicy");
+        assertThat(properties.getDataPolicy()).hasSize(1).contains("dummyDataResourcePolicy");
     }
 
     @Test

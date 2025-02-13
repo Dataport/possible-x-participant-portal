@@ -171,37 +171,9 @@ public class BoundaryExceptionHandler extends ResponseEntityExceptionHandler {
                 continue;
             }
 
-            // build string for a single policy violation
-            StringBuilder policyDetails = new StringBuilder();
-            // check policies relevant to negotiation
-            if (enforcementPolicy instanceof ParticipantRestrictionPolicy participantRestrictionPolicy) {
-                policyDetails.append("Participant is not in list of allowed organisations: [")
-                    .append(String.join(", ", participantRestrictionPolicy.getAllowedParticipants())).append("]");
-            } // check policies relevant to transfer as well
-            else if (enforcementPolicy instanceof StartDatePolicy startDatePolicy) {
-                policyDetails.append("Negotiation/Transfer is not allowed before: ").append(startDatePolicy.getDate());
-            } else if (enforcementPolicy instanceof EndDatePolicy endDatePolicy) {
-                policyDetails.append("Negotiation/Transfer is not allowed after: ").append(endDatePolicy.getDate());
-            } else if (enforcementPolicy instanceof StartAgreementOffsetPolicy startAgreementOffsetPolicy) {
-                if (isTransfer) {
-                    policyDetails.append("Transfer is not allowed before ")
-                        .append(startAgreementOffsetPolicy.getOffsetNumber())
-                        .append(startAgreementOffsetPolicy.getOffsetUnit().toValue()).append(" after agreement");
-                }
-            } else if (enforcementPolicy instanceof EndAgreementOffsetPolicy endAgreementOffsetPolicy) {
-                if (isTransfer) {
-                    policyDetails.append("Transfer is not allowed after ")
-                        .append(endAgreementOffsetPolicy.getOffsetNumber())
-                        .append(endAgreementOffsetPolicy.getOffsetUnit().toValue()).append(" after agreement");
-                }
-            } else {  // unhandled policy
-                policyDetails.append("Unknown enforcement policy violated: ")
-                    .append(enforcementPolicy.getClass().getName());
-            }
+            StringBuilder policyDetails = getSpecificPolicyViolationMessage(enforcementPolicy, isTransfer);
 
             if (!policyDetails.isEmpty()) {
-                policyDetails.insert(0, "\t- ");
-                policyDetails.append("\n");
                 // add single policy violation to full message
                 details.append(policyDetails);
             }
@@ -215,5 +187,42 @@ public class BoundaryExceptionHandler extends ResponseEntityExceptionHandler {
         }
 
         return details.toString();
+    }
+
+    private StringBuilder getSpecificPolicyViolationMessage(EnforcementPolicy enforcementPolicy, boolean isTransfer) {
+        // build string for a single policy violation
+        StringBuilder policyDetails = new StringBuilder();
+        // check policies relevant to negotiation
+        if (enforcementPolicy instanceof ParticipantRestrictionPolicy participantRestrictionPolicy) {
+            policyDetails.append("Participant is not in list of allowed organisations: [")
+                .append(String.join(", ", participantRestrictionPolicy.getAllowedParticipants())).append("]");
+        } // check policies relevant to transfer as well
+        else if (enforcementPolicy instanceof StartDatePolicy startDatePolicy) {
+            policyDetails.append("Negotiation/Transfer is not allowed before: ").append(startDatePolicy.getDate());
+        } else if (enforcementPolicy instanceof EndDatePolicy endDatePolicy) {
+            policyDetails.append("Negotiation/Transfer is not allowed after: ").append(endDatePolicy.getDate());
+        } else if (enforcementPolicy instanceof StartAgreementOffsetPolicy startAgreementOffsetPolicy) {
+            if (isTransfer) {
+                policyDetails.append("Transfer is not allowed before ")
+                    .append(startAgreementOffsetPolicy.getOffsetNumber())
+                    .append(startAgreementOffsetPolicy.getOffsetUnit().toValue()).append(" after agreement");
+            }
+        } else if (enforcementPolicy instanceof EndAgreementOffsetPolicy endAgreementOffsetPolicy) {
+            if (isTransfer) {
+                policyDetails.append("Transfer is not allowed after ")
+                    .append(endAgreementOffsetPolicy.getOffsetNumber())
+                    .append(endAgreementOffsetPolicy.getOffsetUnit().toValue()).append(" after agreement");
+            }
+        } else {  // unhandled policy
+            policyDetails.append("Unknown enforcement policy violated: ")
+                .append(enforcementPolicy.getClass().getName());
+        }
+
+        // pad with bullet points and newline if we have a message
+        if (!policyDetails.isEmpty()) {
+            policyDetails.insert(0, "\t- ");
+            policyDetails.append("\n");
+        }
+        return policyDetails;
     }
 }
