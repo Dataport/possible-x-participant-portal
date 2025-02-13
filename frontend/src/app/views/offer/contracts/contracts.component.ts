@@ -91,7 +91,7 @@ export class ContractsComponent implements OnInit {
     this.isTransferButtonDisabled = true;
     this.apiService.transferDataOfferAgain({
       contractAgreementId: contractAgreement.id,
-      counterPartyAddress: null,
+      counterPartyAddress: contractAgreement.assetDetails.providerUrl,
       edcOfferId: contractAgreement.assetId,
     }).then(response => {
       console.log(response.transferProcessState);

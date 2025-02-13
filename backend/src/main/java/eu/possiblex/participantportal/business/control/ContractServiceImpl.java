@@ -94,7 +94,7 @@ public class ContractServiceImpl implements ContractService {
         ParticipantDetailsSparqlQueryResult unknownParticipant = ParticipantDetailsSparqlQueryResult.builder()
             .name(UNKNOWN).build();
         OfferingDetailsSparqlQueryResult unknownOffering = OfferingDetailsSparqlQueryResult.builder().name(UNKNOWN)
-            .description(UNKNOWN).uri(UNKNOWN).build();
+            .description(UNKNOWN).uri(UNKNOWN).providerUrl(UNKNOWN).build();
 
         // convert contract agreements to contract agreement BEs
         contractAgreements.forEach(c -> contractAgreementBEs.add(ContractAgreementBE.builder().contractAgreement(c)
@@ -107,6 +107,7 @@ public class ContractServiceImpl implements ContractService {
                     .offeringId(offeringDetails.getOrDefault(c.getAssetId(), unknownOffering).getUri())
                     .name(offeringDetails.getOrDefault(c.getAssetId(), unknownOffering).getName())
                     .description(offeringDetails.getOrDefault(c.getAssetId(), unknownOffering).getDescription())
+                    .providerUrl(offeringDetails.getOrDefault(c.getAssetId(), unknownOffering).getProviderUrl())
                     .build()).consumerDetails(ParticipantWithDapsBE.builder().dapsId(c.getConsumerId())
                 .did(participantDidMap.getOrDefault(c.getConsumerId(), "")).name(
                     participantNames.getOrDefault(participantDidMap.getOrDefault(c.getConsumerId(), ""),
@@ -238,21 +239,6 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public TransferOfferResponseBE transferDataOfferAgain(TransferOfferRequestBE be) {
 
-        Map<String, OfferingDetailsSparqlQueryResult> offeringDetailsMap = fhCatalogClient.getOfferingDetailsByAssetIds(
-            List.of(be.getEdcOfferId()));
-
-        String providerUrl;
-        OfferingDetailsSparqlQueryResult offeringDetails = offeringDetailsMap.get(be.getEdcOfferId());
-        if (offeringDetails == null) {
-            throw new OfferNotFoundException(
-                "No Data Offering found in Sparql query result for assetId: " + be.getEdcOfferId());
-        }
-        providerUrl = offeringDetails.getProviderUrl();
-        if (providerUrl == null) {
-            throw new OfferNotFoundException(
-                "Provider URL not found in Sparql query result for assetId: " + be.getEdcOfferId());
-        }
-        be.setCounterPartyAddress(providerUrl);
         return consumerService.transferDataOffer(be);
     }
 }

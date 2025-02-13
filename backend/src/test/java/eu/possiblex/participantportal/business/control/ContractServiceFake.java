@@ -30,6 +30,8 @@ public class ContractServiceFake implements ContractService {
 
     public static final String FAKE_ID_OFFERING = "FAKE_ID_OFFERING";
 
+    public static final String FAKE_URL_PROVIDER = "FAKE_URL_PROVIDER";
+
     public static final String NAME = "NAME";
 
     public static final String DESCRIPTION = "DESCRIPTION";
@@ -87,7 +89,7 @@ public class ContractServiceFake implements ContractService {
 
         ContractAgreementBE contractAgreementBE = ContractAgreementBE.builder().contractAgreement(contractAgreement)
             .isProvider(false).isDataOffering(false)
-            .offeringDetails(new OfferingDetailsBE(NAME, DESCRIPTION, FAKE_ID_ASSET, FAKE_ID_OFFERING))
+            .offeringDetails(new OfferingDetailsBE(NAME, DESCRIPTION, FAKE_ID_ASSET, FAKE_ID_OFFERING, FAKE_URL_PROVIDER))
             .providerDetails(new ParticipantWithDapsBE()).consumerDetails(new ParticipantWithDapsBE()).build();
 
         return List.of(contractAgreementBE);
