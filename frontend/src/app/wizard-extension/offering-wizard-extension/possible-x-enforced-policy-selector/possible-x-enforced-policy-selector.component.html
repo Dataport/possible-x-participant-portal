@@ -10,7 +10,7 @@
                     [visible]="false">
     <ng-template cTemplateId="accordionHeaderTemplate">
       <div (click)="participantRestrictionPolicyAccItem.toggleItem()"
-           (keydown)="participantRestrictionPolicyAccItem.toggleItem()" class="accordion-header" tabindex="0">
+           (keydown)="participantRestrictionPolicyAccItem.toggleItem()" class="accordion-header">
 
         <div>Restrict the contractual booking to organization(s)</div>
         <form [formGroup]="checkboxFormGroup">
@@ -57,8 +57,7 @@
                     [visible]="false">
     <ng-template cTemplateId="accordionHeaderTemplate">
       <div (click)="startDatePolicyAccItem.toggleItem()" (keydown)="startDatePolicyAccItem.toggleItem()"
-           class="accordion-header"
-           tabindex="0">
+           class="accordion-header">
         <div>Restrict contract duration - set start date</div>
         <form [formGroup]="checkboxFormGroup">
 
@@ -103,8 +102,7 @@
                     [visible]="false">
     <ng-template cTemplateId="accordionHeaderTemplate">
       <div (click)="endDatePolicyAccItem.toggleItem()" (keydown)="endDatePolicyAccItem.toggleItem()"
-           class="accordion-header"
-           tabindex="0">
+           class="accordion-header">
         <div>Restrict contract duration - set end date</div>
         <form [formGroup]="checkboxFormGroup">
 
@@ -149,7 +147,7 @@
                     [visible]="false">
     <ng-template cTemplateId="accordionHeaderTemplate">
       <div (click)="endAgreementOffsetPolicyAccItem.toggleItem()"
-           (keydown)="endAgreementOffsetPolicyAccItem.toggleItem()" class="accordion-header" tabindex="0">
+           (keydown)="endAgreementOffsetPolicyAccItem.toggleItem()" class="accordion-header">
         <div>Restrict transfer period</div>
         <form [formGroup]="checkboxFormGroup">
 

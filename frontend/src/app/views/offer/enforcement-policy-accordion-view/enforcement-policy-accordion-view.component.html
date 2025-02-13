@@ -5,7 +5,7 @@
         <span *ngIf="showValidity && isAnyPolicyInvalid" class="text-error">&nbsp;(One or more policies are not in compliance.)</span>
       </mat-panel-title>
     </mat-expansion-panel-header>
-    <div (click)="$event.stopPropagation();" (keydown)="$event.stopPropagation();" tabindex="0">
+    <div (click)="$event.stopPropagation();" (keydown)="$event.stopPropagation();">
       <div *ngFor="let ep of enforcementPolicies" [ngClass]="{'text-error': showValidity && !ep.valid}">
         <app-enforcement-policy-content [enforcementPolicy]="ep"/>
         <div *ngIf="showValidity && !ep.valid">
