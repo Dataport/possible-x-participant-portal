@@ -1,6 +1,5 @@
-package eu.possiblex.participantportal.application.boundary;
+package eu.possiblex.participantportal.application.configuration;
 
-import eu.possiblex.participantportal.application.configuration.BoundaryExceptionHandler;
 import eu.possiblex.participantportal.application.entity.ErrorResponseTO;
 import eu.possiblex.participantportal.application.entity.policies.*;
 import eu.possiblex.participantportal.business.entity.exception.NegotiationFailedException;

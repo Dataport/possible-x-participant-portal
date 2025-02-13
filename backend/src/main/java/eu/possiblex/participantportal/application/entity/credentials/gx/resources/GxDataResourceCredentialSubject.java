@@ -12,6 +12,9 @@ import eu.possiblex.participantportal.business.entity.serialization.BooleanDeser
 import eu.possiblex.participantportal.business.entity.serialization.BooleanSerializer;
 import eu.possiblex.participantportal.business.entity.serialization.StringDeserializer;
 import eu.possiblex.participantportal.business.entity.serialization.StringSerializer;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -46,16 +49,17 @@ public class GxDataResourceCredentialSubject extends PojoCredentialSubject {
     @JsonProperty("gx:copyrightOwnedBy")
     @JsonSerialize(contentUsing = StringSerializer.class)
     @JsonDeserialize(contentUsing = StringDeserializer.class)
-    @NotNull
+    @NotEmpty(message = "At least one copyright owner is required")
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-    private List<String> copyrightOwnedBy;
+    private List<@NotBlank(message = "Copyright owner is required")String> copyrightOwnedBy;
 
+    @Valid
     @JsonProperty("gx:producedBy")
     @NotNull
     private NodeKindIRITypeId producedBy;
 
     @JsonProperty("gx:exposedThrough")
-    @NotNull
+    // no input validations as this will be set by the backend
     private NodeKindIRITypeId exposedThrough;
 
     // aggregationOf not yet mapped as it is optional
@@ -63,22 +67,23 @@ public class GxDataResourceCredentialSubject extends PojoCredentialSubject {
     @JsonProperty("gx:policy")
     @JsonSerialize(contentUsing = StringSerializer.class)
     @JsonDeserialize(contentUsing = StringDeserializer.class)
-    @NotNull
+    @NotEmpty(message = "At least one policy is required")
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-    private List<String> policy;
+    private List<@NotBlank(message = "Policy is required") String> policy;
 
     @JsonProperty("gx:license")
     @JsonSerialize(contentUsing = StringSerializer.class)
     @JsonDeserialize(contentUsing = StringDeserializer.class)
+    @NotEmpty(message = "At least one license is required")
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-    private List<String> license;
+    private List<@NotBlank(message = "License is required") String> license;
 
     @JsonProperty("gx:containsPII")
     @JsonSerialize(using = BooleanSerializer.class)
     @JsonDeserialize(using = BooleanDeserializer.class)
-    @NotNull
     private boolean containsPII;
 
+    @NotBlank(message = "Name is required")
     @JsonProperty("schema:name")
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)

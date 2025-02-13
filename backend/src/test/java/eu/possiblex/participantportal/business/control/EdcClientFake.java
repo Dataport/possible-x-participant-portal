@@ -54,15 +54,21 @@ public class EdcClientFake implements EdcClient {
 
     public static final String BAD_NEGOTIATION_ID = "badNegotiation";
 
+    public static final String TIMED_OUT_NEGOTIATION_ID = "timedOutNegotiation";
+
     public static final String VALID_AGREEMENT_ID = "validAgreement";
+
+    public static final String NOT_FOUND_AGREEMENT_ID = "notFoundAgreement";
 
     public static final String VALID_COUNTER_PARTY_ADDRESS = "validCounterPartyAddress";
 
-    public static final String VALID_CONTRACT_AGREEEMENT_ID = "validContractAgreementId";
+    public static final String VALID_CONTRACT_AGREEMENT_ID = "validContractAgreementId";
 
     public static final String BAD_TRANSFER_ID = "badTransfer";
 
-    public static final String BAD_GATEWAY_ASSET_ID = "edcerror";
+    public static final String TIMED_OUT_TRANSFER_ID = "timedOutTransfer";
+
+    public static final String BAD_GATEWAY_ASSET_ID = "edcError";
 
     public static final long FAKE_TIMESTAMP = 1234L;
 
@@ -108,6 +114,14 @@ public class EdcClientFake implements EdcClient {
             dataset.setHasPolicy(List.of(Policy.builder().id(id).build()));
             datasets.add(dataset);
         }
+
+        if (catalogRequest != null && catalogRequest.getQuerySpec() != null
+            && catalogRequest.getQuerySpec().getFilterExpression() != null && !catalogRequest.getQuerySpec()
+            .getFilterExpression().isEmpty()) {
+            datasets.removeIf(dataset -> !dataset.getAssetId()
+                .equals(catalogRequest.getQuerySpec().getFilterExpression().get(0).getOperandRight()));
+        }
+
         catalog.setDataset(datasets);
         return catalog;
     }
@@ -127,6 +141,8 @@ public class EdcClientFake implements EdcClient {
         negotiation.setContractAgreementId(FAKE_ID + ":" + FAKE_ID + ":" + FAKE_ID);
         if (negotiationId.equals(BAD_NEGOTIATION_ID)) {
             negotiation.setState(NegotiationState.TERMINATED);
+        } else if (negotiationId.equals(TIMED_OUT_NEGOTIATION_ID)) {
+            negotiation.setState(NegotiationState.INITIAL);
         } else {
             negotiation.setState(NegotiationState.FINALIZED);
         }
@@ -151,6 +167,8 @@ public class EdcClientFake implements EdcClient {
         process.setDataRequest(request);
         if (transferId.equals(BAD_TRANSFER_ID)) {
             process.setState(TransferProcessState.TERMINATED);
+        } else if (transferId.equals(TIMED_OUT_TRANSFER_ID)) {
+            process.setState(TransferProcessState.INITIAL);
         } else {
             process.setState(TransferProcessState.COMPLETED);
         }
@@ -180,7 +198,7 @@ public class EdcClientFake implements EdcClient {
 
         ContractAgreement contractAgreement = ContractAgreement.builder()
             .contractSigningDate(BigInteger.valueOf(1728549145)).id(FAKE_ID).assetId(FAKE_ID)
-            .consumerId(OmejdnConnectorApiClientFake.PARTICIPANT_ID)
+            .consumerId(OmejdnConnectorApiClientFake.OTHER_PARTICIPANT_ID)
             .providerId(OmejdnConnectorApiClientFake.PARTICIPANT_ID).policy(policy).build();
 
         return List.of(contractAgreement);
@@ -188,6 +206,11 @@ public class EdcClientFake implements EdcClient {
 
     @Override
     public ContractAgreement getContractAgreementById(String contractAgreementId) {
+
+        if (contractAgreementId.equals(NOT_FOUND_AGREEMENT_ID)) {
+            throw WebClientResponseException.create(
+                404, "Not Found", null, null, null);
+        }
 
         return queryContractAgreements(QuerySpec.builder().build()).get(0);
     }
@@ -202,9 +225,9 @@ public class EdcClientFake implements EdcClient {
 
         PossibleAssetProperties properties = PossibleAssetProperties.builder().termsAndConditions(List.of(assetTnC))
             .producedBy(new NodeKindIRITypeId(FAKE_ID)).providedBy(new NodeKindIRITypeId(FAKE_ID))
-            .license(List.of("MIT")).copyrightOwnedBy(List.of(FAKE_ID))
-            .exposedThrough(new NodeKindIRITypeId(FAKE_ID)).offerId(FAKE_ID).name("name").description("description")
-            .dataAccountExport(List.of(dataAccountExport)).build();
+            .license(List.of("MIT")).copyrightOwnedBy(List.of(FAKE_ID)).exposedThrough(new NodeKindIRITypeId(FAKE_ID))
+            .offerId(FAKE_ID).name("name").description("description").dataAccountExport(List.of(dataAccountExport))
+            .build();
 
         Map<String, String> context = Map.of("edc", "https://w3id.org/edc/v0.0.1/ns/", "odrl",
             "http://www.w3.org/ns/odrl/2/", "@vocab", "https://w3id.org/edc/v0.0.1/ns/");

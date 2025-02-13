@@ -1,5 +1,6 @@
 package eu.possiblex.participantportal.application.boundary;
 
+import eu.possiblex.participantportal.application.configuration.AppConfigurer;
 import eu.possiblex.participantportal.application.configuration.BoundaryExceptionHandler;
 import eu.possiblex.participantportal.application.control.ConsumerApiMapper;
 import eu.possiblex.participantportal.application.entity.ConsumeOfferRequestTO;
@@ -20,9 +21,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.reset;
@@ -33,7 +34,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ConsumerRestApiImpl.class)
-@ContextConfiguration(classes = { ConsumerRestApiTest.TestConfig.class, ConsumerRestApiImpl.class })
+@ContextConfiguration(classes = { ConsumerRestApiTest.TestConfig.class, ConsumerRestApiImpl.class,
+    BoundaryExceptionHandler.class, AppConfigurer.class })
 class ConsumerRestApiTest {
 
     @Autowired
@@ -45,15 +47,13 @@ class ConsumerRestApiTest {
     @BeforeEach
     void setup() {
 
-        this.mockMvc = MockMvcBuilders.standaloneSetup(
-                new ConsumerRestApiImpl(consumerService, Mappers.getMapper(ConsumerApiMapper.class)))
-            .setControllerAdvice(new BoundaryExceptionHandler()).build();
+        reset(consumerService);
     }
 
     @Test
-    void shouldSelectOfferValid() throws Exception {
+    @WithMockUser(username = "admin")
+    void selectOfferSuccess() throws Exception {
 
-        reset(consumerService);
         this.mockMvc.perform(post("/consumer/offer/select").content(RestApiHelper.asJsonString(
                     SelectOfferRequestTO.builder().fhCatalogOfferId(ConsumerServiceFake.VALID_FH_OFFER_ID).build()))
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk()).andExpect(
@@ -72,7 +72,8 @@ class ConsumerRestApiTest {
     }
 
     @Test
-    void shouldSelectOfferMissing() throws Exception {
+    @WithMockUser(username = "admin")
+    void selectOfferNotFound() throws Exception {
 
         this.mockMvc.perform(post("/consumer/offer/select").content(RestApiHelper.asJsonString(
                 SelectOfferRequestTO.builder().fhCatalogOfferId(ConsumerServiceFake.MISSING_OFFER_ID).build()))
@@ -80,11 +81,21 @@ class ConsumerRestApiTest {
     }
 
     @Test
-    void shouldAcceptOfferValid() throws Exception {
+    @WithMockUser(username = "admin")
+    void selectOfferParticipantNotFound() throws Exception {
 
-        reset(consumerService);
-        this.mockMvc.perform(post("/consumer/offer/accept").content(RestApiHelper.asJsonString(
-                ConsumeOfferRequestTO.builder().edcOfferId(ConsumerServiceFake.VALID_EDC_OFFER_ID).build()))
+        this.mockMvc.perform(post("/consumer/offer/select").content(RestApiHelper.asJsonString(
+                SelectOfferRequestTO.builder().fhCatalogOfferId(ConsumerServiceFake.MISSING_PARTICIPANT_ID).build()))
+            .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(username = "admin")
+    void acceptOfferSuccess() throws Exception {
+
+        ConsumeOfferRequestTO request = getValidConsumeOfferRequestTO();
+
+        this.mockMvc.perform(post("/consumer/offer/accept").content(RestApiHelper.asJsonString(request))
             .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk());
 
         ArgumentCaptor<ConsumeOfferRequestBE> requestCaptor = ArgumentCaptor.forClass(ConsumeOfferRequestBE.class);
@@ -95,44 +106,70 @@ class ConsumerRestApiTest {
     }
 
     @Test
-    void shouldAcceptOfferMissing() throws Exception {
+    @WithMockUser(username = "admin")
+    void acceptOfferNotFound() throws Exception {
 
-        this.mockMvc.perform(post("/consumer/offer/accept").content(RestApiHelper.asJsonString(
-                ConsumeOfferRequestTO.builder().edcOfferId(ConsumerServiceFake.MISSING_OFFER_ID).build()))
+        ConsumeOfferRequestTO request = getValidConsumeOfferRequestTO();
+        request.setEdcOfferId(ConsumerServiceFake.MISSING_OFFER_ID);
+
+        this.mockMvc.perform(post("/consumer/offer/accept").content(RestApiHelper.asJsonString(request))
             .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isNotFound());
     }
 
     @Test
-    void shouldAcceptOfferBadNegotiation() throws Exception {
+    @WithMockUser(username = "admin")
+    void acceptOfferNegotiationFailed() throws Exception {
 
-        this.mockMvc.perform(post("/consumer/offer/accept").content(RestApiHelper.asJsonString(
-                ConsumeOfferRequestTO.builder().edcOfferId(ConsumerServiceFake.BAD_EDC_OFFER_ID).build()))
+        ConsumeOfferRequestTO request = getValidConsumeOfferRequestTO();
+        request.setEdcOfferId(ConsumerServiceFake.BAD_EDC_OFFER_ID);
+
+        this.mockMvc.perform(post("/consumer/offer/accept").content(RestApiHelper.asJsonString(request))
             .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isUnprocessableEntity());
     }
 
     @Test
-    void shouldNotTransferOffer() throws Exception {
+    @WithMockUser(username = "admin")
+    void transferOfferTransferFailed() throws Exception {
 
-        this.mockMvc.perform(post("/consumer/offer/transfer").content(RestApiHelper.asJsonString(
-                TransferOfferRequestTO.builder().edcOfferId(ConsumerServiceFake.BAD_TRANSFER_OFFER_ID).build()))
+        TransferOfferRequestTO request = getValidTransferOfferRequestTO();
+        request.setEdcOfferId(ConsumerServiceFake.BAD_TRANSFER_OFFER_ID);
+
+        this.mockMvc.perform(post("/consumer/offer/transfer").content(RestApiHelper.asJsonString(request))
             .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isUnprocessableEntity());
     }
 
     @Test
-    void shouldTransferOffer() throws Exception {
+    @WithMockUser(username = "admin")
+    void transferOfferSuccess() throws Exception {
 
-        this.mockMvc.perform(post("/consumer/offer/transfer").content(RestApiHelper.asJsonString(
-                    TransferOfferRequestTO.builder().edcOfferId(ConsumerServiceFake.VALID_EDC_OFFER_ID).build()))
+        TransferOfferRequestTO request = getValidTransferOfferRequestTO();
+
+        this.mockMvc.perform(post("/consumer/offer/transfer").content(RestApiHelper.asJsonString(request))
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
             .andExpect(jsonPath("$.transferProcessState").value(TransferProcessState.COMPLETED.toString()));
     }
 
     @Test
-    void shouldTransferOfferMissing() throws Exception {
+    @WithMockUser(username = "admin")
+    void transferOfferNotFound() throws Exception {
 
-        this.mockMvc.perform(post("/consumer/offer/transfer").content(RestApiHelper.asJsonString(
-                TransferOfferRequestTO.builder().edcOfferId(ConsumerServiceFake.MISSING_OFFER_ID).build()))
+        TransferOfferRequestTO request = getValidTransferOfferRequestTO();
+        request.setEdcOfferId(ConsumerServiceFake.MISSING_OFFER_ID);
+
+        this.mockMvc.perform(post("/consumer/offer/transfer").content(RestApiHelper.asJsonString(request))
             .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isNotFound());
+    }
+
+    private ConsumeOfferRequestTO getValidConsumeOfferRequestTO() {
+
+        return ConsumeOfferRequestTO.builder().counterPartyAddress("counterPartyAddress")
+            .edcOfferId(ConsumerServiceFake.VALID_EDC_OFFER_ID).dataOffering(true).build();
+    }
+
+    private TransferOfferRequestTO getValidTransferOfferRequestTO() {
+
+        return TransferOfferRequestTO.builder().contractAgreementId("contractAgreementId")
+            .counterPartyAddress("counterPartyAddress").edcOfferId(ConsumerServiceFake.VALID_EDC_OFFER_ID).build();
     }
 
     @TestConfiguration

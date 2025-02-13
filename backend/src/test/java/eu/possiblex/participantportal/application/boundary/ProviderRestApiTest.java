@@ -1,7 +1,10 @@
 package eu.possiblex.participantportal.application.boundary;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import eu.possiblex.participantportal.application.configuration.AppConfigurer;
+import eu.possiblex.participantportal.application.configuration.BoundaryExceptionHandler;
 import eu.possiblex.participantportal.application.control.ProviderApiMapper;
 import eu.possiblex.participantportal.application.entity.CreateDataOfferingRequestTO;
 import eu.possiblex.participantportal.application.entity.CreateServiceOfferingRequestTO;
@@ -9,6 +12,7 @@ import eu.possiblex.participantportal.application.entity.credentials.gx.datatype
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.GxSOTermsAndConditions;
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
 import eu.possiblex.participantportal.application.entity.credentials.gx.resources.GxDataResourceCredentialSubject;
+import eu.possiblex.participantportal.application.entity.credentials.gx.resources.GxLegitimateInterest;
 import eu.possiblex.participantportal.application.entity.credentials.gx.serviceofferings.GxServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.application.entity.policies.EnforcementPolicy;
 import eu.possiblex.participantportal.application.entity.policies.EverythingAllowedPolicy;
@@ -16,6 +20,7 @@ import eu.possiblex.participantportal.business.control.ProviderService;
 import eu.possiblex.participantportal.business.control.ProviderServiceFake;
 import eu.possiblex.participantportal.business.entity.CreateDataOfferingRequestBE;
 import eu.possiblex.participantportal.business.entity.CreateServiceOfferingRequestBE;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import org.mockito.ArgumentCaptor;
@@ -28,13 +33,14 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.verify;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -42,8 +48,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ProviderRestApiImpl.class)
-@ContextConfiguration(classes = { ProviderRestApiTest.TestConfig.class, ProviderRestApiImpl.class, AppConfigurer.class })
-class ProviderRestApiTest extends ProviderTestParent {
+@ContextConfiguration(classes = { ProviderRestApiTest.TestConfig.class, ProviderRestApiImpl.class,
+    BoundaryExceptionHandler.class, AppConfigurer.class })
+class ProviderRestApiTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -54,13 +61,17 @@ class ProviderRestApiTest extends ProviderTestParent {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Test
-    @WithMockUser(username = "admin")
-    void shouldReturnMessageOnCreateServiceOffering() throws Exception {
-
-        // GIVEN
+    @BeforeEach
+    void setUp() {
 
         reset(providerService);
+    }
+
+    @Test
+    @WithMockUser(username = "admin")
+    void createServiceOfferingSuccess() throws Exception {
+
+        // GIVEN
 
         CreateServiceOfferingRequestTO request = objectMapper.readValue(getCreateServiceOfferingTOJsonString(),
             CreateServiceOfferingRequestTO.class);
@@ -100,11 +111,79 @@ class ProviderRestApiTest extends ProviderTestParent {
 
     @Test
     @WithMockUser(username = "admin")
-    void shouldReturnMessageOnCreateDataOffering() throws Exception {
+    void createServiceOfferingInvalidDataAccountExportFormatType() throws Exception {
 
         // GIVEN
 
-        reset(providerService);
+        CreateServiceOfferingRequestTO request = objectMapper.readValue(getCreateServiceOfferingTOJsonString(),
+            CreateServiceOfferingRequestTO.class);
+        request.getServiceOfferingCredentialSubject().getDataAccountExport().get(0).setFormatType("invalid");
+
+        // WHEN/THEN
+
+        MvcResult result = this.mockMvc.perform(post("/provider/offer/service").content(RestApiHelper.asJsonString(request))
+                .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isBadRequest()).andReturn();
+
+        String content = result.getResponse().getContentAsString();
+        assertTrue(content.contains("formatType"));
+    }
+
+    @Test
+    @WithMockUser(username = "admin")
+    void createServiceOfferingEdcOfferCreationFailed() throws Exception {
+
+        // GIVEN
+
+        CreateServiceOfferingRequestTO request = objectMapper.readValue(getCreateServiceOfferingTOJsonString(),
+            CreateServiceOfferingRequestTO.class);
+        request.getServiceOfferingCredentialSubject().setName(ProviderServiceFake.EDC_OFFER_CREATION_FAILED_NAME);
+
+        // WHEN/THEN
+
+        this.mockMvc.perform(post("/provider/offer/service").content(RestApiHelper.asJsonString(request))
+            .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isUnprocessableEntity());
+
+    }
+
+    @Test
+    @WithMockUser(username = "admin")
+    void createServiceOfferingCatalogOfferCreationFailed() throws Exception {
+
+        // GIVEN
+
+        CreateServiceOfferingRequestTO request = objectMapper.readValue(getCreateServiceOfferingTOJsonString(),
+            CreateServiceOfferingRequestTO.class);
+        request.getServiceOfferingCredentialSubject().setName(ProviderServiceFake.CATALOG_OFFER_CREATION_FAILED_NAME);
+
+        // WHEN/THEN
+
+        this.mockMvc.perform(post("/provider/offer/service").content(RestApiHelper.asJsonString(request))
+            .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isUnprocessableEntity());
+
+    }
+
+    @Test
+    @WithMockUser(username = "admin")
+    void createServiceOfferingNonCompliant() throws Exception {
+
+        // GIVEN
+
+        CreateServiceOfferingRequestTO request = objectMapper.readValue(getCreateServiceOfferingTOJsonString(),
+            CreateServiceOfferingRequestTO.class);
+        request.getServiceOfferingCredentialSubject().setName(ProviderServiceFake.COMPLIANCE_ERROR_NAME);
+
+        // WHEN/THEN
+
+        this.mockMvc.perform(post("/provider/offer/service").content(RestApiHelper.asJsonString(request))
+            .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isUnprocessableEntity());
+
+    }
+
+    @Test
+    @WithMockUser(username = "admin")
+    void createDataOfferingSuccess() throws Exception {
+
+        // GIVEN
 
         CreateDataOfferingRequestTO request = objectMapper.readValue(getCreateDataOfferingTOJsonString(),
             CreateDataOfferingRequestTO.class);
@@ -148,12 +227,88 @@ class ProviderRestApiTest extends ProviderTestParent {
 
     @Test
     @WithMockUser(username = "admin")
-    void shouldReturnMessageOnGetPrefillFields() throws Exception {
+    void createDataOfferingContainingPIISuccess() throws Exception {
+
+        // GIVEN
+
+        CreateDataOfferingRequestTO request = objectMapper.readValue(getCreateDataOfferingTOJsonString(),
+            CreateDataOfferingRequestTO.class);
+        request.getDataResourceCredentialSubject().setContainsPII(true);
+        request.setLegitimateInterest(
+            GxLegitimateInterest.builder().dataProtectionContact("contact").legalBasis("basis").build());
+
+        GxServiceOfferingCredentialSubject expectedServiceOfferingCS = getGxServiceOfferingCredentialSubject();
+        GxDataResourceCredentialSubject expectedDataResourceCS = getGxDataResourceCredentialSubject();
+        expectedDataResourceCS.setContainsPII(true);
+        GxLegitimateInterest expectedLegitimateInterest = GxLegitimateInterest.builder()
+            .dataProtectionContact("contact").legalBasis("basis").build();
+
+        // WHEN/THEN
+
+        this.mockMvc.perform(post("/provider/offer/data").content(RestApiHelper.asJsonString(request))
+                .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
+            .andExpect(jsonPath("$.edcResponseId").value(ProviderServiceFake.CREATE_OFFER_RESPONSE_ID))
+            .andExpect(jsonPath("$.fhResponseId").value(ProviderServiceFake.CREATE_OFFER_RESPONSE_ID));
+
+        ArgumentCaptor<CreateDataOfferingRequestBE> createDataOfferingRequestBEArgumentCaptor = ArgumentCaptor.forClass(
+            CreateDataOfferingRequestBE.class);
+
+        verify(providerService).createOffering(createDataOfferingRequestBEArgumentCaptor.capture());
+
+        CreateDataOfferingRequestBE createDataOfferingRequestBE = createDataOfferingRequestBEArgumentCaptor.getValue();
+        List<EnforcementPolicy> serviceOfferingPolicy = createDataOfferingRequestBE.getEnforcementPolicies();
+
+        //check if request is mapped correctly
+        assertThat(List.of(new EverythingAllowedPolicy())).usingRecursiveComparison().isEqualTo(serviceOfferingPolicy);
+        assertThat(expectedServiceOfferingCS.getProvidedBy()).usingRecursiveComparison()
+            .isEqualTo(createDataOfferingRequestBE.getProvidedBy());
+        assertThat(expectedServiceOfferingCS.getDataAccountExport()).usingRecursiveComparison()
+            .isEqualTo(createDataOfferingRequestBE.getDataAccountExport());
+        assertThat(expectedServiceOfferingCS.getDataProtectionRegime()).usingRecursiveComparison()
+            .isEqualTo(createDataOfferingRequestBE.getDataProtectionRegime());
+        assertThat(expectedServiceOfferingCS.getTermsAndConditions()).usingRecursiveComparison()
+            .isEqualTo(createDataOfferingRequestBE.getTermsAndConditions());
+        assertEquals(expectedServiceOfferingCS.getName(), createDataOfferingRequestBE.getName());
+        assertEquals(expectedServiceOfferingCS.getDescription(), createDataOfferingRequestBE.getDescription());
+        assertEquals(request.getFileName(), createDataOfferingRequestBE.getFileName());
+        assertEquals("dummyServiceOfferingPolicy", createDataOfferingRequestBE.getPolicy().get(0));
+
+        assertThat(expectedDataResourceCS).usingRecursiveComparison()
+            .isEqualTo(createDataOfferingRequestBE.getDataResource());
+
+        assertThat(expectedLegitimateInterest).usingRecursiveComparison()
+            .isEqualTo(createDataOfferingRequestBE.getLegitimateInterest());
+    }
+
+    @Test
+    @WithMockUser(username = "admin")
+    void createDataOfferingContainingPIIMissingLegitimateInterest() throws Exception {
+
+        // GIVEN
+
+        CreateDataOfferingRequestTO request = objectMapper.readValue(getCreateDataOfferingTOJsonString(),
+            CreateDataOfferingRequestTO.class);
+        request.getDataResourceCredentialSubject().setContainsPII(true);
+
+        // WHEN/THEN
+
+        MvcResult result = this.mockMvc.perform(
+            post("/provider/offer/data").content(RestApiHelper.asJsonString(request))
+                .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isBadRequest()).andReturn();
+
+        String content = result.getResponse().getContentAsString();
+        assertTrue(content.contains("legitimateInterest"));
+    }
+
+    @Test
+    @WithMockUser(username = "admin")
+    void getPrefillFields() throws Exception {
         // WHEN/THEN
         this.mockMvc.perform(get("/provider/prefillFields")).andDo(print()).andExpect(status().isOk())
-            .andExpect(jsonPath("$.participantId").value(ProviderServiceFake.PARTICIPANT_ID))
-            .andExpect(jsonPath("$.dataProductPrefillFields.serviceOfferingName").value(ProviderServiceFake.SERVICE_OFFERING_NAME))
-            .andExpect(jsonPath("$.dataProductPrefillFields.serviceOfferingDescription").value(ProviderServiceFake.SERVICE_OFFERING_DESCRIPTION));
+            .andExpect(jsonPath("$.participantId").value(ProviderServiceFake.PARTICIPANT_ID)).andExpect(
+                jsonPath("$.dataProductPrefillFields.serviceOfferingName").value(ProviderServiceFake.SERVICE_OFFERING_NAME))
+            .andExpect(jsonPath("$.dataProductPrefillFields.serviceOfferingDescription").value(
+                ProviderServiceFake.SERVICE_OFFERING_DESCRIPTION));
     }
 
     GxServiceOfferingCredentialSubject getGxServiceOfferingCredentialSubject() {
@@ -171,7 +326,7 @@ class ProviderRestApiTest extends ProviderTestParent {
     GxDataResourceCredentialSubject getGxDataResourceCredentialSubject() {
 
         return GxDataResourceCredentialSubject.builder().policy(List.of("dummyDataResourcePolicy")).name("Test Dataset")
-            .description("This is the data resource description.").license(List.of("AGPL-1.0-only")).containsPII(true)
+            .description("This is the data resource description.").license(List.of("AGPL-1.0-only")).containsPII(false)
             .copyrightOwnedBy(List.of("did:web:example-organization.eu"))
             .producedBy(new NodeKindIRITypeId("did:web:example-organization.eu"))
             .exposedThrough(new NodeKindIRITypeId("urn:uuid:GENERATED_SERVICE_OFFERING_ID"))
@@ -329,7 +484,7 @@ class ProviderRestApiTest extends ProviderTestParent {
                         "@value": "AGPL-1.0-only",
                         "@type": "xsd:string"
                     },
-                    "gx:containsPII": true,
+                    "gx:containsPII": false,
                     "gx:exposedThrough": {
                         "@id": "urn:uuid:GENERATED_SERVICE_OFFERING_ID"
                     },
@@ -362,8 +517,10 @@ class ProviderRestApiTest extends ProviderTestParent {
         @Bean
         public ObjectMapper objectMapper() {
 
-            return new ObjectMapper();
-            // Customize the ObjectMapper if needed
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
+            objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+            return objectMapper;
         }
     }
 }

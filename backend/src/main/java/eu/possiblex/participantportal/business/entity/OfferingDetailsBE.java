@@ -17,4 +17,6 @@ public class OfferingDetailsBE {
     private String assetId;
 
     private String offeringId;
+
+    private String providerUrl;
 }

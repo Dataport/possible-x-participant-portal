@@ -17,7 +17,7 @@ import static org.mockito.Mockito.reset;
 @ContextConfiguration(classes = {CommonPortalServiceTest.TestConfig.class, CommonPortalServiceImpl.class})
 class CommonPortalServiceTest {
     @Autowired
-    private CommonPortalService commonPortalService;
+    private CommonPortalService sut;
 
     @Autowired
     private FhCatalogClient fhCatalogClient;
@@ -28,7 +28,7 @@ class CommonPortalServiceTest {
 
         // WHEN
 
-        Map<String, String> response = commonPortalService.getNameMapping();
+        Map<String, String> response = sut.getNameMapping();
 
         // THEN
 
@@ -36,8 +36,8 @@ class CommonPortalServiceTest {
 
         assertNotNull(response);
         assertEquals(1, response.size());
-        assertNotNull(response.get(FhCatalogClientFake.FAKE_DID));
-        assertEquals(OmejdnConnectorApiClientFake.PARTICIPANT_NAME, response.get(FhCatalogClientFake.FAKE_DID));
+        assertNotNull(response.get(OmejdnConnectorApiClientFake.PARTICIPANT_ID));
+        assertEquals(OmejdnConnectorApiClientFake.PARTICIPANT_NAME, response.get(OmejdnConnectorApiClientFake.PARTICIPANT_ID));
     }
 
     // Test-specific configuration to provide mocks

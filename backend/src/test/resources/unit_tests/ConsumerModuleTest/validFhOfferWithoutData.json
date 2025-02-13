@@ -16,7 +16,7 @@
       "gx:providedBy": {
         "@id": "did:web:portal.dev.possible-x.de:participant:df15587a-0760-32b5-9c42-bb7be66e8076"
       },
-      "http://w3id.org/gaia-x/possible-x#assetId": "EXPECTED_ASSET_ID_VALUE",
+      "http://w3id.org/gaia-x/possible-x#assetId": "myId",
       "gx:description": "This is the service offering description.",
       "gx:termsAndConditions": {
         "@id": "_:b1"

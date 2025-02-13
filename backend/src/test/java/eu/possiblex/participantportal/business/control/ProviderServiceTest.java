@@ -1,5 +1,6 @@
 package eu.possiblex.participantportal.business.control;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.GxDataAccountExport;
@@ -10,7 +11,6 @@ import eu.possiblex.participantportal.application.entity.credentials.gx.serviceo
 import eu.possiblex.participantportal.application.entity.policies.EverythingAllowedPolicy;
 import eu.possiblex.participantportal.business.entity.CreateDataOfferingRequestBE;
 import eu.possiblex.participantportal.business.entity.CreateServiceOfferingRequestBE;
-import eu.possiblex.participantportal.business.entity.PrefillFieldsBE;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedDataResourceCredentialSubject;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.edc.asset.AssetCreateRequest;
@@ -20,6 +20,9 @@ import eu.possiblex.participantportal.business.entity.edc.contractdefinition.Con
 import eu.possiblex.participantportal.business.entity.edc.policy.OdrlPermission;
 import eu.possiblex.participantportal.business.entity.edc.policy.PolicyCreateRequest;
 import eu.possiblex.participantportal.business.entity.exception.EdcOfferCreationException;
+import eu.possiblex.participantportal.business.entity.exception.FhOfferCreationException;
+import eu.possiblex.participantportal.business.entity.exception.OfferingComplianceException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import org.mockito.ArgumentCaptor;
@@ -44,7 +47,7 @@ class ProviderServiceTest {
     private static final String FILE_NAME = "file.txt";
 
     @Autowired
-    ProviderService providerService;
+    ProviderService sut;
 
     @Autowired
     EdcClient edcClient;
@@ -52,14 +55,15 @@ class ProviderServiceTest {
     @Autowired
     FhCatalogClient fhCatalogClient;
 
-    @Autowired
-    ObjectMapper objectMapper;
-
-    @Test
-    void testCreateServiceOffering() {
+    @BeforeEach
+    void setUp() {
 
         reset(fhCatalogClient);
         reset(edcClient);
+    }
+
+    @Test
+    void testCreateServiceOffering() {
 
         //given
 
@@ -72,7 +76,7 @@ class ProviderServiceTest {
             .policy(offeringCs.getPolicy()).dataProtectionRegime(offeringCs.getDataProtectionRegime()).build();
 
         //when
-        var response = providerService.createOffering(be);
+        var response = sut.createOffering(be);
 
         //then
         ArgumentCaptor<AssetCreateRequest> assetCreateRequestCaptor = forClass(AssetCreateRequest.class);
@@ -146,9 +150,6 @@ class ProviderServiceTest {
     @Test
     void testCreateDataOffering() {
 
-        reset(fhCatalogClient);
-        reset(edcClient);
-
         //given
         GxServiceOfferingCredentialSubject offeringCs = getGxServiceOfferingCredentialSubject();
         GxDataResourceCredentialSubject resourceCs = getGxDataResourceCredentialSubject();
@@ -161,7 +162,7 @@ class ProviderServiceTest {
             .dataResource(resourceCs).build();
 
         //when
-        var response = providerService.createOffering(be);
+        var response = sut.createOffering(be);
 
         //then
         ArgumentCaptor<AssetCreateRequest> assetCreateRequestCaptor = forClass(AssetCreateRequest.class);
@@ -248,9 +249,6 @@ class ProviderServiceTest {
     @Test
     void testCreateServiceOfferingEdcError() {
 
-        reset(fhCatalogClient);
-        reset(edcClient);
-
         //given
         GxServiceOfferingCredentialSubject offeringCs = getGxServiceOfferingCredentialSubject();
 
@@ -261,23 +259,59 @@ class ProviderServiceTest {
             .policy(offeringCs.getPolicy()).dataProtectionRegime(offeringCs.getDataProtectionRegime()).build();
 
         //when
-        assertThrows(EdcOfferCreationException.class, () -> providerService.createOffering(be));
-        verify(fhCatalogClient).deleteServiceOfferingFromFhCatalog(any(), Mockito.anyBoolean());
+        assertThrows(EdcOfferCreationException.class, () -> sut.createOffering(be));
+        verify(fhCatalogClient).deleteServiceOfferingFromFhCatalog(any(), anyBoolean());
     }
 
     @Test
-    void testGetPrefillFields() {
-        //when
-        PrefillFieldsBE prefillFields = providerService.getPrefillFields();
+    void testCreateServiceOfferingComplianceError() {
 
-        //then
-        String expectedId = "did:web:test.eu";
-        String expectedServiceOfferingName = "Data Product Service for Data Resource <Data resource name>";
-        String expectedServiceOfferingDescription = "Data Product Service provides data (<Data resource name>).";
-        assertEquals(expectedId, prefillFields.getParticipantId());
-        assertEquals(expectedServiceOfferingName, prefillFields.getDataProductPrefillFields().getServiceOfferingName());
-        assertEquals(expectedServiceOfferingDescription,
-            prefillFields.getDataProductPrefillFields().getServiceOfferingDescription());
+        //given
+        GxServiceOfferingCredentialSubject offeringCs = getGxServiceOfferingCredentialSubject();
+
+        CreateServiceOfferingRequestBE be = CreateServiceOfferingRequestBE.builder()
+            .enforcementPolicies(List.of(new EverythingAllowedPolicy())).providedBy(offeringCs.getProvidedBy())
+            .name(FhCatalogClientFake.INVALID_OFFERING).description(offeringCs.getDescription())
+            .termsAndConditions(offeringCs.getTermsAndConditions()).dataAccountExport(offeringCs.getDataAccountExport())
+            .policy(offeringCs.getPolicy()).dataProtectionRegime(offeringCs.getDataProtectionRegime()).build();
+
+        //when
+        assertThrows(OfferingComplianceException.class, () -> sut.createOffering(be));
+        verifyNoInteractions(edcClient);
+    }
+
+    @Test
+    void testCreateServiceOfferingUnknownError() {
+
+        //given
+        GxServiceOfferingCredentialSubject offeringCs = getGxServiceOfferingCredentialSubject();
+
+        CreateServiceOfferingRequestBE be = CreateServiceOfferingRequestBE.builder()
+            .enforcementPolicies(List.of(new EverythingAllowedPolicy())).providedBy(offeringCs.getProvidedBy())
+            .name(FhCatalogClientFake.UNPROCESSABLE_OFFERING).description(offeringCs.getDescription())
+            .termsAndConditions(offeringCs.getTermsAndConditions()).dataAccountExport(offeringCs.getDataAccountExport())
+            .policy(offeringCs.getPolicy()).dataProtectionRegime(offeringCs.getDataProtectionRegime()).build();
+
+        //when
+        assertThrows(OfferingComplianceException.class, () -> sut.createOffering(be));
+        verifyNoInteractions(edcClient);
+    }
+
+    @Test
+    void testCreateServiceOfferingError() {
+
+        //given
+        GxServiceOfferingCredentialSubject offeringCs = getGxServiceOfferingCredentialSubject();
+
+        CreateServiceOfferingRequestBE be = CreateServiceOfferingRequestBE.builder()
+            .enforcementPolicies(List.of(new EverythingAllowedPolicy())).providedBy(offeringCs.getProvidedBy())
+            .name(FhCatalogClientFake.ERROR).description(offeringCs.getDescription())
+            .termsAndConditions(offeringCs.getTermsAndConditions()).dataAccountExport(offeringCs.getDataAccountExport())
+            .policy(offeringCs.getPolicy()).dataProtectionRegime(offeringCs.getDataProtectionRegime()).build();
+
+        //when
+        assertThrows(FhOfferCreationException.class, () -> sut.createOffering(be));
+        verifyNoInteractions(edcClient);
     }
 
     GxServiceOfferingCredentialSubject getGxServiceOfferingCredentialSubject() {
@@ -302,7 +336,7 @@ class ProviderServiceTest {
             .id("urn:uuid:GENERATED_DATA_RESOURCE_ID").build();
     }
 
-    // Test-specific configuration to provide a fake implementation of EdcClient and FhCatalogClient
+    // Test-specific configuration to provide mocks
     @TestConfiguration
     static class TestConfig {
         @Bean

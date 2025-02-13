@@ -1,24 +1,26 @@
 [versions]
-springBoot = "3.3.2"
-springDependencyManagement = "1.1.6"
+springBoot = "3.3.8"
+springDependencyManagement = "1.1.7"
 springSecurityTest = "6.4.2"
-lombok = "1.18.34"
+lombok = "1.18.36"
 lombokMapStructBinding = "0.2.0"
 openApi = "2.6.0"
 therApi = "0.15.0"
-reactorTest = "3.6.9"
-jUnit = "1.11.0"
+reactorTest = "3.7.3"
+jUnit = "1.11.4"
 typescriptGenerator = "3.2.1263"
-mapStruct = "1.6.0"
-titaniumJsonLd = "1.4.1"
+mapStruct = "1.6.3"
+titaniumJsonLd = "1.5.0"
 jakartaJson = "2.0.1"
-hibernateValidator = "8.0.1.Final"
+hibernateValidator = "8.0.2.Final"
+wiremock = "3.11.0"
 
 [libraries]
 springBootStarterActuator = { module = "org.springframework.boot:spring-boot-starter-actuator", version.ref = "springBoot" }
 springBootStarterWeb = { module = "org.springframework.boot:spring-boot-starter-web", version.ref = "springBoot" }
 springBootStarterWebflux = { module = "org.springframework.boot:spring-boot-starter-webflux", version.ref = "springBoot" }
 springBootStarterTest = { module = "org.springframework.boot:spring-boot-starter-test", version.ref = "springBoot" }
+springBootStarterValidation = { module = "org.springframework.boot:spring-boot-starter-validation", version.ref = "springBoot" }
 springBootDevtools = { module = "org.springframework.boot:spring-boot-devtools", version.ref = "springBoot" }
 springBootStarterSecurity = { module = "org.springframework.boot:spring-boot-starter-security", version.ref = "springBoot" }
 springSecurityTest = { module = "org.springframework.security:spring-security-test", version.ref = "springSecurityTest" }
@@ -34,6 +36,7 @@ jUnit = { module = "org.junit.platform:junit-platform-launcher", version.ref = "
 titaniumJsonLd = { module = "com.apicatalog:titanium-json-ld-jre8", version.ref = "titaniumJsonLd" }
 jakartaJson = { module = "org.glassfish:jakarta.json", version.ref = "jakartaJson" }
 hibernateValidator = { module = "org.hibernate:hibernate-validator", version.ref = "hibernateValidator" }
+wiremockStandalone = { module = "org.wiremock:wiremock-standalone", version.ref = "wiremock" }
 
 [plugins]
 springBoot = { id = "org.springframework.boot", version.ref = "springBoot" }

@@ -28,6 +28,9 @@ import eu.possiblex.participantportal.application.entity.credentials.gx.datatype
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
 import eu.possiblex.participantportal.business.entity.serialization.StringDeserializer;
 import eu.possiblex.participantportal.business.entity.serialization.StringSerializer;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -59,38 +62,43 @@ public class GxServiceOfferingCredentialSubject extends PojoCredentialSubject {
         "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#", "xsd",
         "http://www.w3.org/2001/XMLSchema#", "schema", "https://schema.org/");
 
+    @Valid
     @JsonProperty("gx:providedBy")
     @NotNull
     private NodeKindIRITypeId providedBy;
 
     @JsonProperty("gx:aggregationOf")
+    // no input validations as this will be set by the backend
     private List<NodeKindIRITypeId> aggregationOf;
 
     // dependsOn not yet mapped as it is optional
 
+    @Valid
     @JsonProperty("gx:termsAndConditions")
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-    @NotNull
+    @NotEmpty(message = "At least one terms and conditions is required")
     private List<GxSOTermsAndConditions> termsAndConditions;
 
     @JsonProperty("gx:policy")
     @JsonSerialize(contentUsing = StringSerializer.class)
     @JsonDeserialize(contentUsing = StringDeserializer.class)
-    @NotNull
+    @NotEmpty(message = "At least one policy is required")
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-    private List<String> policy;
+    private List<@NotBlank(message = "Policy is required") String> policy;
 
     @JsonProperty("gx:dataProtectionRegime")
     @JsonSerialize(contentUsing = StringSerializer.class)
     @JsonDeserialize(contentUsing = StringDeserializer.class)
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-    private List<String> dataProtectionRegime;
+    private List<@NotBlank(message = "Data protection regime is required") String> dataProtectionRegime;
 
+    @Valid
     @JsonProperty("gx:dataAccountExport")
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-    @NotNull
+    @NotEmpty(message = "At least one data account export is required")
     private List<GxDataAccountExport> dataAccountExport;
 
+    @NotBlank(message = "Name is required")
     @JsonProperty("schema:name")
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)

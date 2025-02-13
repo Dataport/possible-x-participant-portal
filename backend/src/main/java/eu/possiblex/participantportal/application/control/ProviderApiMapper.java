@@ -37,7 +37,7 @@ public interface ProviderApiMapper {
     @Named("enforcementPolicyMapper")
     default List<EnforcementPolicy> enforcementPolicyMapper(List<EnforcementPolicy> enforcementPolicies) {
 
-        if (enforcementPolicies.isEmpty()) {
+        if (enforcementPolicies == null || enforcementPolicies.isEmpty()) {
             return List.of(new EverythingAllowedPolicy());
         } else {
             return enforcementPolicies;

@@ -20,6 +20,7 @@ import eu.possiblex.participantportal.business.entity.exception.FhOfferCreationE
 import eu.possiblex.participantportal.business.entity.exception.OfferingComplianceException;
 import eu.possiblex.participantportal.business.entity.exception.PrefillFieldsProcessingException;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
+import eu.possiblex.participantportal.utilities.LogUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -211,18 +212,18 @@ public class ProviderServiceImpl implements ProviderService {
     /**
      * Creates an FH catalog offer by sending the service offering creation requests.
      *
-     * @param serviceOfferingCredentialSubject the service offering credential subject
+     * @param cs the service offering credential subject
      * @return the ID response from FH catalog
      */
     private FhCatalogIdResponse createFhCatalogOffer(
-        PxExtendedServiceOfferingCredentialSubject serviceOfferingCredentialSubject) {
+        PxExtendedServiceOfferingCredentialSubject cs) {
 
         try {
-            boolean isOfferWithData = isServiceOfferWithData(serviceOfferingCredentialSubject);
+            boolean isOfferWithData = isServiceOfferWithData(cs);
             log.info("Adding Service Offering to Fraunhofer Catalog {}, with data: {}",
-                serviceOfferingCredentialSubject, isOfferWithData);
+                LogUtils.serializeObjectToJson(cs), isOfferWithData);
 
-            return fhCatalogClient.addServiceOfferingToFhCatalog(serviceOfferingCredentialSubject, isOfferWithData);
+            return fhCatalogClient.addServiceOfferingToFhCatalog(cs, isOfferWithData);
         } catch (WebClientResponseException e) {
             throw buildComplianceException(e);
         } catch (Exception e) {
@@ -238,9 +239,7 @@ public class ProviderServiceImpl implements ProviderService {
      */
     private boolean isServiceOfferWithData(PxExtendedServiceOfferingCredentialSubject serviceOfferPayload) {
 
-        boolean serviceOfferContainsData = !serviceOfferPayload.getAggregationOf().isEmpty();
-
-        return serviceOfferContainsData;
+        return !serviceOfferPayload.getAggregationOf().isEmpty();
     }
 
     private OfferingComplianceException buildComplianceException(WebClientResponseException e) {

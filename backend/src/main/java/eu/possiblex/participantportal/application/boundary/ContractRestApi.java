@@ -26,9 +26,4 @@ public interface ContractRestApi {
         @Parameter(name = "contractAgreementId", description = "The contract agreement ID for which to get the related offer.", example = "a49549f6-fb07-4b9c-86bf-1d8af45b8068") })
     @GetMapping(value = "/details/{contractAgreementId}/offer", produces = MediaType.APPLICATION_JSON_VALUE)
     OfferWithTimestampTO getOfferWithTimestampByContractAgreementId(@PathVariable String contractAgreementId);
-
-    @Operation(summary = "Initiate a data transfer", tags = {
-        "Contract" }, description = "Initiate a data transfer for an offer with the given counter party, contract agreement and EDC offer ID.")
-    @PostMapping(value = "/transfer", produces = MediaType.APPLICATION_JSON_VALUE)
-    TransferOfferResponseTO transferDataOfferAgain(@RequestBody TransferOfferRequestTO request);
 }

@@ -9,9 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.possiblex.participantportal.business.entity.OfferRetrievalResponseBE;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedLegalParticipantCredentialSubjectSubset;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
-import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
-import eu.possiblex.participantportal.business.entity.exception.ParticipantNotFoundException;
-import eu.possiblex.participantportal.business.entity.exception.SparqlQueryException;
+import eu.possiblex.participantportal.business.entity.exception.*;
 import eu.possiblex.participantportal.business.entity.fh.FhCatalogIdResponse;
 import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsSparqlQueryResult;
 import eu.possiblex.participantportal.business.entity.fh.ParticipantDetailsSparqlQueryResult;
@@ -101,8 +99,8 @@ public class FhCatalogClientImpl implements FhCatalogClient {
             JsonDocument input = JsonDocument.of(new StringReader(jsonContent));
             JsonDocument frame = getFrameByType(type, context);
             return JsonLd.frame(input, frame).get();
-        } catch (JsonLdError e) {
-            throw new RuntimeException("Failed to parse fh catalog content json: " + jsonContent, e);
+        } catch (Exception e) {
+            throw new CatalogParsingException("Failed to parse fh catalog content json: " + jsonContent, e);
         }
     }
 
@@ -190,7 +188,7 @@ public class FhCatalogClientImpl implements FhCatalogClient {
             jsonContent = fetchFunction.apply(id);
         } catch (WebClientResponseException e) {
             if (e.getStatusCode().value() == 404) {
-                throw new RuntimeException("no FH Catalog content found with ID " + id);
+                throw new CatalogContentNotFoundException("no FH Catalog content found with ID " + id);
             }
             throw e;
         }
@@ -201,39 +199,47 @@ public class FhCatalogClientImpl implements FhCatalogClient {
     public OfferRetrievalResponseBE getFhCatalogOffer(String offeringId) {
 
         try {
-            String jsonContent;
-            OffsetDateTime currentDateTime;
-            // since the Piveau catalog now has two endpoints for fetching offerings (one for data offerings, one for service offerings)
-            // and we do not know what type of offering we have based on the ID, we currently have to try one endpoint and
-            // if the request fails, retry with the other endpoint.
-            // This is unfortunately unavoidable with the current Piveau API design.
-            try {
-                // capture the timestamp of retrieval
-                currentDateTime = OffsetDateTime.now();
-                // try to fetch offer as data offer
-                jsonContent = getFhCatalogContent(offeringId, technicalFhCatalogClient::getFhCatalogOfferWithData);
-            } catch (RuntimeException e) {
-                // capture the timestamp of retrieval
-                currentDateTime = OffsetDateTime.now();
-                // retry to fetch offer as service offer
-                jsonContent = getFhCatalogContent(offeringId, technicalFhCatalogClient::getFhCatalogOffer);
-            }
-            PxExtendedServiceOfferingCredentialSubject offer = getOfferingCredentialSubjectFromJsonString(jsonContent);
-            return new OfferRetrievalResponseBE(offer, currentDateTime);
-        } catch (RuntimeException e) {
+            return retrieveOfferWithTimestamp(offeringId);
+        } catch (CatalogContentNotFoundException e) {
             throw new OfferNotFoundException("Offer not found: " + e.getMessage());
+        } catch (Exception e) {
+            log.error("error when trying to fetch offer from catalog!", e);
+            throw e;
         }
     }
 
-    private PxExtendedServiceOfferingCredentialSubject getOfferingCredentialSubjectFromJsonString(String jsonContent) {
+    private OfferRetrievalResponseBE retrieveOfferWithTimestamp(String offeringId) {
+
+        String jsonContent;
+        OffsetDateTime currentDateTime;
+        // since the Piveau catalog now has two endpoints for fetching offerings (one for data offerings, one for service offerings)
+        // and we do not know what type of offering we have based on the ID, we currently have to try one endpoint and
+        // if the request fails, retry with the other endpoint.
+        // This is unfortunately unavoidable with the current Piveau API design.
+        try {
+            // capture the timestamp of retrieval
+            currentDateTime = OffsetDateTime.now();
+            // try to fetch offer as data offer
+            jsonContent = getFhCatalogContent(offeringId, technicalFhCatalogClient::getFhCatalogOfferWithData);
+        } catch (RuntimeException e) {
+            // capture the timestamp of retrieval
+            currentDateTime = OffsetDateTime.now();
+            // retry to fetch offer as service offer
+            jsonContent = getFhCatalogContent(offeringId, technicalFhCatalogClient::getFhCatalogOffer);
+        }
+        PxExtendedServiceOfferingCredentialSubject offer = getOfferingCredentialSubjectFromJsonContentString(jsonContent);
+        return new OfferRetrievalResponseBE(offer, currentDateTime);
+    }
+
+    private PxExtendedServiceOfferingCredentialSubject getOfferingCredentialSubjectFromJsonContentString(String jsonContent) {
 
         try {
             JsonObject parsedCatalogOffer = parseCatalogContent(jsonContent,
                 PxExtendedServiceOfferingCredentialSubject.TYPE, PxExtendedServiceOfferingCredentialSubject.CONTEXT);
             return objectMapper.readValue(parsedCatalogOffer.toString(),
                 PxExtendedServiceOfferingCredentialSubject.class);
-        } catch (JsonProcessingException e) {
-            throw new JsonException("failed to parse fh catalog offer json: " + jsonContent, e);
+        } catch (Exception e) {
+            throw new CatalogParsingException("failed to parse fh catalog offer json: " + jsonContent, e);
         }
     }
 
@@ -243,17 +249,26 @@ public class FhCatalogClientImpl implements FhCatalogClient {
         try {
             String jsonContent = getFhCatalogContent(participantId,
                 this.technicalFhCatalogClient::getFhCatalogParticipant);
-            try {
-                JsonObject parsedCatalogParticipant = parseCatalogContent(jsonContent,
-                    PxExtendedLegalParticipantCredentialSubjectSubset.TYPE,
-                    PxExtendedLegalParticipantCredentialSubjectSubset.CONTEXT);
-                return objectMapper.readValue(parsedCatalogParticipant.toString(),
-                    PxExtendedLegalParticipantCredentialSubjectSubset.class);
-            } catch (JsonProcessingException e) {
-                throw new JsonException("failed to parse fh catalog participant json: " + jsonContent, e);
-            }
-        } catch (RuntimeException e) {
+            return getPxExtendedLegalParticipantCSSubsetFromJsonContentString(jsonContent);
+        } catch (CatalogContentNotFoundException e) {
             throw new ParticipantNotFoundException("Participant not found: " + e.getMessage());
+        } catch (Exception e) {
+            log.error("error when trying to fetch participant from catalog!", e);
+            throw e;
+        }
+    }
+
+    private PxExtendedLegalParticipantCredentialSubjectSubset getPxExtendedLegalParticipantCSSubsetFromJsonContentString(
+        String jsonContent) {
+
+        try {
+            JsonObject parsedCatalogParticipant = parseCatalogContent(jsonContent,
+                PxExtendedLegalParticipantCredentialSubjectSubset.TYPE,
+                PxExtendedLegalParticipantCredentialSubjectSubset.CONTEXT);
+            return objectMapper.readValue(parsedCatalogParticipant.toString(),
+                PxExtendedLegalParticipantCredentialSubjectSubset.class);
+        } catch (Exception e) {
+            throw new CatalogParsingException("failed to parse fh catalog participant json: " + jsonContent, e);
         }
     }
 

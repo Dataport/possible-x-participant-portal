@@ -18,13 +18,6 @@ public class ErrorResponseTO {
 
     private String details;
 
-    public ErrorResponseTO(String message) {
-
-        this.timestamp = OffsetDateTime.now();
-        this.message = message;
-        this.details = "";
-    }
-
     public ErrorResponseTO(String message, String details) {
 
         this.timestamp = OffsetDateTime.now();

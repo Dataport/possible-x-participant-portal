@@ -93,11 +93,7 @@ public class ConsumerServiceImpl implements ConsumerService {
         log.info("got fh catalog offer {}", fhCatalogOffer);
 
         // get offer from EDC Catalog
-        DcatCatalog edcCatalog = queryEdcCatalog(
-            CatalogRequest.builder().counterPartyAddress(fhCatalogOffer.getProviderUrl()).querySpec(QuerySpec.builder()
-                .filterExpression(List.of(
-                    FilterExpression.builder().operandLeft("id").operator("=").operandRight(fhCatalogOffer.getAssetId())
-                        .build())).build()).build());
+        DcatCatalog edcCatalog = queryEdcCatalog(fhCatalogOffer.getProviderUrl(), fhCatalogOffer.getAssetId());
         log.info("got edc catalog: {}", edcCatalog);
         DcatDataset edcCatalogOffer = getDatasetById(edcCatalog, fhCatalogOffer.getAssetId());
 
@@ -130,11 +126,7 @@ public class ConsumerServiceImpl implements ConsumerService {
     public AcceptOfferResponseBE acceptContractOffer(ConsumeOfferRequestBE request) {
 
         // query edcOffer
-        DcatCatalog edcOffer = queryEdcCatalog(
-            CatalogRequest.builder().counterPartyAddress(request.getCounterPartyAddress()).querySpec(QuerySpec.builder()
-                .filterExpression(List.of(
-                    FilterExpression.builder().operandLeft("id").operator("=").operandRight(request.getEdcOfferId())
-                        .build())).build()).build());
+        DcatCatalog edcOffer = queryEdcCatalog(request.getCounterPartyAddress(), request.getEdcOfferId());
         DcatDataset dataset = getDatasetById(edcOffer, request.getEdcOfferId());
 
         // fetch corresponding enforcement policies to check if negotiation fails
@@ -157,11 +149,7 @@ public class ConsumerServiceImpl implements ConsumerService {
     public TransferOfferResponseBE transferDataOffer(TransferOfferRequestBE request) {
 
         // query edcOffer
-        DcatCatalog edcOffer = queryEdcCatalog(
-            CatalogRequest.builder().counterPartyAddress(request.getCounterPartyAddress()).querySpec(QuerySpec.builder()
-                .filterExpression(List.of(
-                    FilterExpression.builder().operandLeft("id").operator("=").operandRight(request.getEdcOfferId())
-                        .build())).build()).build());
+        DcatCatalog edcOffer = queryEdcCatalog(request.getCounterPartyAddress(), request.getEdcOfferId());
         DcatDataset dataset = getDatasetById(edcOffer, request.getEdcOfferId());
 
         // fetch corresponding enforcement policies to check if negotiation fails
@@ -170,7 +158,8 @@ public class ConsumerServiceImpl implements ConsumerService {
 
         // initiate transfer
         String timestamp = ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-        String bucketTargetPath = bucketTopLevelFolder + "/" + timestamp + "_" + request.getContractAgreementId() + "/";
+        String pathDelimiter = "/";
+        String bucketTargetPath = bucketTopLevelFolder + pathDelimiter + timestamp + "_" + request.getContractAgreementId() + pathDelimiter;
         DataAddress dataAddress = IonosS3DataDestination.builder().region(bucketStorageRegion).bucketName(bucketName)
             .path(bucketTargetPath).keyName("myKey").build();
         TransferRequest transferRequest = TransferRequest.builder().connectorId(edcOffer.getParticipantId())
@@ -180,7 +169,12 @@ public class ConsumerServiceImpl implements ConsumerService {
         return new TransferOfferResponseBE(transferProcessState);
     }
 
-    private DcatCatalog queryEdcCatalog(CatalogRequest catalogRequest) {
+    private DcatCatalog queryEdcCatalog(String counterPartyAddress, String edcOfferId) {
+
+        CatalogRequest catalogRequest = CatalogRequest.builder().counterPartyAddress(counterPartyAddress).querySpec(
+            QuerySpec.builder().filterExpression(
+                    List.of(FilterExpression.builder().operandLeft("id").operator("=").operandRight(edcOfferId).build()))
+                .build()).build();
 
         log.info("Query Catalog with Request {}", catalogRequest);
         return edcClient.queryCatalog(catalogRequest);

@@ -18,10 +18,10 @@ export interface IProviderRestApi {
 }
 
 export interface IResourceShapeRestApi {
-    gxPhysicalResourceShape: string;
     gxSoftwareResourceShape: string;
     gxVirtualResourceShape: string;
     gxLegitimateInterestShape: string;
+    gxPhysicalResourceShape: string;
     gxInstantiatedVirtualResourceShape: string;
     gxDataResourceShape: string;
 }
@@ -44,6 +44,7 @@ export interface IAssetDetailsTO {
     description: string;
     assetId: string;
     offeringId: string;
+    providerUrl: string;
 }
 
 export interface IAssetDetailsTOBuilder {
@@ -67,8 +68,8 @@ export interface IContractAgreementTO {
     contractSigningDate: Date;
     consumerDetails: IContractParticipantDetailsTO;
     providerDetails: IContractParticipantDetailsTO;
-    provider: boolean;
     dataOffering: boolean;
+    provider: boolean;
 }
 
 export interface IContractAgreementTOBuilder {
@@ -297,9 +298,9 @@ export interface IGxDataResourceCredentialSubjectBuilderImpl extends IGxDataReso
 }
 
 export interface IGxLegitimateInterest {
-    "@type": string;
     "gx:dataProtectionContact": string;
     "gx:legalBasis": string;
+    type: string;
 }
 
 export interface IGxLegitimateInterestBuilder<C, B> {
@@ -308,7 +309,6 @@ export interface IGxLegitimateInterestBuilder<C, B> {
 export interface IGxLegitimateInterestBuilderImpl extends IGxLegitimateInterestBuilder<IGxLegitimateInterest, IGxLegitimateInterestBuilderImpl> {
     "gx:dataProtectionContact": string;
     "gx:legalBasis": string;
-    "@type": string;
 }
 
 export interface IGxServiceOfferingCredentialSubject extends IPojoCredentialSubject {
@@ -425,6 +425,9 @@ export interface ITimeDatePolicy extends IEnforcementPolicy {
 export interface ITimeDatePolicyBuilder<C, B> extends IEnforcementPolicyBuilder<C, B> {
 }
 
+export interface ILegitimateInterestValidator extends IConstraintValidator<IValidLegitimateInterestForPII, ICreateDataOfferingRequestTO> {
+}
+
 export interface IPolicy {
     "@id": string;
     "odrl:permission": IOdrlPermission[];
@@ -476,11 +479,20 @@ export interface IPxExtendedDataResourceCredentialSubject {
     "@type": string[];
 }
 
+export interface IConstraintValidator<A, T> {
+}
+
+export interface IValidLegitimateInterestForPII extends IAnnotation {
+}
+
 export interface IOdrlConstraint {
     "odrl:leftOperand": string;
     "odrl:operator": IOdrlOperator;
     "odrl:rightOperand": string;
     "@type": string;
+}
+
+export interface IAnnotation {
 }
 
 export interface HttpClient {
@@ -555,14 +567,6 @@ export class RestApplicationClient {
      */
     getOfferWithTimestampByContractAgreementId(contractAgreementId: string): RestResponse<IOfferWithTimestampTO> {
         return this.httpClient.request({ method: "GET", url: uriEncoding`contract/details/${contractAgreementId}/offer` });
-    }
-
-    /**
-     * HTTP POST /contract/transfer
-     * Java method: eu.possiblex.participantportal.application.boundary.ContractRestApiImpl.transferDataOfferAgain
-     */
-    transferDataOfferAgain(request: ITransferOfferRequestTO): RestResponse<ITransferOfferResponseTO> {
-        return this.httpClient.request({ method: "POST", url: uriEncoding`contract/transfer`, data: request });
     }
 
     /**

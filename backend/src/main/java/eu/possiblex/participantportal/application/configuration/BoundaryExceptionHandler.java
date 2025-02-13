@@ -4,12 +4,20 @@ import eu.possiblex.participantportal.application.entity.ErrorResponseTO;
 import eu.possiblex.participantportal.application.entity.policies.*;
 import eu.possiblex.participantportal.business.entity.exception.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -52,6 +60,17 @@ public class BoundaryExceptionHandler extends ResponseEntityExceptionHandler {
         logError(e);
         return new ResponseEntity<>(new ErrorResponseTO("Offering with this id was not found", e.getMessage()),
             NOT_FOUND);
+    }
+
+    /**
+     * Handle exceptions that occur when a contract agreement is not found.
+     */
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponseTO> handleException(ContractAgreementNotFoundException e) {
+
+        logError(e);
+        return new ResponseEntity<>(
+            new ErrorResponseTO("Contract agreement with this id was not found", e.getMessage()), NOT_FOUND);
     }
 
     /**
@@ -106,7 +125,29 @@ public class BoundaryExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ErrorResponseTO> handleException(Exception e) {
 
         logError(e);
-        return new ResponseEntity<>(new ErrorResponseTO("An unknown error occurred"), INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(new ErrorResponseTO("An unknown error occurred", ""), INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * Handle Spring validation exceptions.
+     */
+    @Override
+    public ResponseEntity<Object> handleMethodArgumentNotValid(@NonNull MethodArgumentNotValidException ex,
+        @NonNull HttpHeaders headers, @NonNull HttpStatusCode status, @NonNull WebRequest request) {
+
+        logError(ex);
+
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach(error -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        StringBuilder message = new StringBuilder();
+        errors.forEach((key, value) -> message.append(key).append(": ").append(value).append("; "));
+
+        return new ResponseEntity<>(new ErrorResponseTO("Request contained errors.", message.toString().strip()),
+            BAD_REQUEST);
     }
 
     private void logError(Exception e) {

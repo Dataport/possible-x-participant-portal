@@ -42,12 +42,6 @@ public class ConsumerRestApiImpl implements ConsumerRestApi {
         ConsumeOfferRequestBE be = consumerApiMapper.consumeOfferRequestTOToBE(request);
 
         AcceptOfferResponseBE acceptOffer = consumerService.acceptContractOffer(be);
-
-        if (acceptOffer.isDataOffering()) {
-            log.info("DataResource found: Transfer has been initiated");
-        } else {
-            log.info("No dataResource found: Transfer is omitted");
-        }
         AcceptOfferResponseTO response = consumerApiMapper.acceptOfferResponseBEToAcceptOfferResponseTO(acceptOffer);
         log.info("Returning for accepting contract: {}", response);
         return response;

@@ -23,10 +23,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import eu.possiblex.participantportal.business.entity.serialization.StringDeserializer;
 import eu.possiblex.participantportal.business.entity.serialization.StringSerializer;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
-
-import java.util.Objects;
 
 @Getter
 @Setter
@@ -36,34 +34,18 @@ import java.util.Objects;
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
+@EqualsAndHashCode
 public class GxSOTermsAndConditions {
 
     @JsonProperty("gx:URL")
-    @NotNull
+    @NotBlank(message = "URL is required")
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)
     private String url;
 
     @JsonProperty("gx:hash")
-    @NotNull
+    @NotBlank(message = "Hash is required")
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)
     private String hash;
-
-    @Override
-    public boolean equals(Object o) {
-
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        GxSOTermsAndConditions that = (GxSOTermsAndConditions) o;
-        return Objects.equals(url, that.url) && Objects.equals(hash, that.hash);
-    }
-
-    @Override
-    public int hashCode() {
-
-        return Objects.hash(url, hash);
-    }
 }

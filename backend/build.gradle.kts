@@ -30,26 +30,27 @@ repositories {
 }
 
 dependencies {
+  testImplementation(libs.wiremockStandalone)
+  testImplementation(libs.springBootStarterTest)
+  testImplementation(libs.springSecurityTest)
+  testImplementation(libs.reactorTest)
   implementation(libs.springBootStarterActuator)
   implementation(libs.springBootStarterWeb)
   implementation(libs.springBootStarterWebflux)
   implementation(libs.springBootStarterSecurity)
+  implementation(libs.springBootStarterValidation)
   implementation(libs.openApi)
   implementation(libs.titaniumJsonLd)
   implementation(libs.jakartaJson)
+  implementation(libs.mapStruct)
   compileOnly(libs.lombok)
   annotationProcessor(libs.lombokMapStructBinding)
-  implementation(libs.mapStruct)
   annotationProcessor(libs.mapStructProcessor)
-  developmentOnly(libs.springBootDevtools)
-  runtimeOnly(libs.therApi)
   annotationProcessor(libs.lombok)
   annotationProcessor(libs.therApiScribe)
-  testImplementation(libs.springBootStarterTest)
-  testImplementation(libs.springSecurityTest)
-  testImplementation(libs.reactorTest)
+  developmentOnly(libs.springBootDevtools)
+  runtimeOnly(libs.therApi)
   testRuntimeOnly(libs.jUnit)
-  testImplementation("org.wiremock:wiremock-standalone:3.9.2")
 }
 
 tasks.withType<Test> {

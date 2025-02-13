@@ -16,13 +16,14 @@
 
 package eu.possiblex.participantportal.application.entity.credentials.gx.resources;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import eu.possiblex.participantportal.business.entity.serialization.StringDeserializer;
 import eu.possiblex.participantportal.business.entity.serialization.StringSerializer;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -33,24 +34,33 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true, value = { "type", "@context" }, allowGetters = true)
 public class GxLegitimateInterest {
 
-    @JsonProperty("@type")
-    @JsonSerialize(using = StringSerializer.class)
-    @JsonDeserialize(using = StringDeserializer.class)
-    @NotNull
-    @Builder.Default
-    private String type = "gx:LegitimateInterest";
+    @Getter(AccessLevel.NONE)
+    public static final String TYPE_NAMESPACE = "gx";
+
+    @Getter(AccessLevel.NONE)
+    public static final String TYPE_CLASS = "LegitimateInterest";
+
+    @Getter(AccessLevel.NONE)
+    public static final String TYPE = TYPE_NAMESPACE + ":" + TYPE_CLASS;
 
     @JsonProperty("gx:dataProtectionContact")
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)
-    @NotNull
+    @NotBlank(message = "Data protection contact is required")
     private String dataProtectionContact;
 
     @JsonProperty("gx:legalBasis")
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)
-    @NotNull
+    @NotBlank(message = "Legal basis is required")
     private String legalBasis;
+
+    @JsonProperty("type")
+    public String getType() {
+
+        return TYPE;
+    }
 }

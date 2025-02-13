@@ -1,11 +1,11 @@
 package eu.possiblex.participantportal.business.control;
 
-import eu.possiblex.participantportal.application.entity.policies.*;
 import eu.possiblex.participantportal.business.entity.*;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.daps.OmejdnConnectorDetailsBE;
 import eu.possiblex.participantportal.business.entity.edc.catalog.QuerySpec;
 import eu.possiblex.participantportal.business.entity.edc.contractagreement.ContractAgreement;
+import eu.possiblex.participantportal.business.entity.exception.ContractAgreementNotFoundException;
 import eu.possiblex.participantportal.business.entity.exception.OfferNotFoundException;
 import eu.possiblex.participantportal.business.entity.fh.OfferingDetailsSparqlQueryResult;
 import eu.possiblex.participantportal.business.entity.fh.ParticipantDetailsSparqlQueryResult;
@@ -13,6 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.time.OffsetDateTime;
 import java.util.*;
@@ -21,9 +24,10 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class ContractServiceImpl implements ContractService {
-    private final EdcClient edcClient;
 
-    private final ConsumerService consumerService;
+    public static final String UNKNOWN = "Unknown";
+
+    private final EdcClient edcClient;
 
     private final EnforcementPolicyParserService enforcementPolicyParserService;
 
@@ -37,14 +41,13 @@ public class ContractServiceImpl implements ContractService {
     private String fhCatalogUriResourceBase;
 
     public ContractServiceImpl(@Autowired EdcClient edcClient, @Autowired FhCatalogClient fhCatalogClient,
-        @Autowired OmejdnConnectorApiClient omejdnConnectorApiClient, @Autowired ConsumerService consumerService,
+        @Autowired OmejdnConnectorApiClient omejdnConnectorApiClient,
         @Autowired EnforcementPolicyParserService enforcementPolicyParserService,
         @Value("${participant-id}") String participantId) {
 
         this.edcClient = edcClient;
         this.fhCatalogClient = fhCatalogClient;
         this.omejdnConnectorApiClient = omejdnConnectorApiClient;
-        this.consumerService = consumerService;
         this.enforcementPolicyParserService = enforcementPolicyParserService;
         this.participantId = participantId;
     }
@@ -85,16 +88,15 @@ public class ContractServiceImpl implements ContractService {
         Map<String, OfferingDetailsSparqlQueryResult> offeringDetails = fhCatalogClient.getOfferingDetailsByAssetIds(
             referencedAssetIds);
         // prepare for if the did or asset ID is not found
-        String unknown = "Unknown";
         ParticipantDetailsSparqlQueryResult unknownParticipant = ParticipantDetailsSparqlQueryResult.builder()
-            .name(unknown).build();
-        OfferingDetailsSparqlQueryResult unknownOffering = OfferingDetailsSparqlQueryResult.builder().name(unknown)
-            .description(unknown).uri(unknown).build();
+            .name(UNKNOWN).build();
+        OfferingDetailsSparqlQueryResult unknownOffering = OfferingDetailsSparqlQueryResult.builder().name(UNKNOWN)
+            .description(UNKNOWN).uri(UNKNOWN).providerUrl(UNKNOWN).build();
 
         // convert contract agreements to contract agreement BEs
         contractAgreements.forEach(c -> contractAgreementBEs.add(ContractAgreementBE.builder().contractAgreement(c)
-            .isProvider(participantId.equals(participantDidMap.getOrDefault(c.getProviderId(), "")))
-            .isDataOffering(offeringDetails.getOrDefault(c.getAssetId(), unknownOffering).getAggregationOf() != null)
+            .isProvider(participantId.equals(participantDidMap.getOrDefault(c.getProviderId(), ""))).isDataOffering(
+                StringUtils.hasText(offeringDetails.getOrDefault(c.getAssetId(), unknownOffering).getAggregationOf()))
             .enforcementPolicies(
                 enforcementPolicyParserService.getEnforcementPoliciesWithValidity(List.of(c.getPolicy()),
                     c.getContractSigningDate(), participantDidMap.getOrDefault(c.getProviderId(), ""))).offeringDetails(
@@ -102,6 +104,7 @@ public class ContractServiceImpl implements ContractService {
                     .offeringId(offeringDetails.getOrDefault(c.getAssetId(), unknownOffering).getUri())
                     .name(offeringDetails.getOrDefault(c.getAssetId(), unknownOffering).getName())
                     .description(offeringDetails.getOrDefault(c.getAssetId(), unknownOffering).getDescription())
+                    .providerUrl(offeringDetails.getOrDefault(c.getAssetId(), unknownOffering).getProviderUrl())
                     .build()).consumerDetails(ParticipantWithDapsBE.builder().dapsId(c.getConsumerId())
                 .did(participantDidMap.getOrDefault(c.getConsumerId(), "")).name(
                     participantNames.getOrDefault(participantDidMap.getOrDefault(c.getConsumerId(), ""),
@@ -117,7 +120,7 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public ContractDetailsBE getContractDetailsByContractAgreementId(String contractAgreementId) {
 
-        ContractAgreement contractAgreement = edcClient.getContractAgreementById(contractAgreementId);
+        ContractAgreement contractAgreement = getContractAgreementById(contractAgreementId);
 
         // build a map of consumer and provider daps ids to dids
         Map<String, String> participantDidMap = getParticipantDids(
@@ -131,12 +134,11 @@ public class ContractServiceImpl implements ContractService {
         OfferRetrievalResponseBE offerRetrievalResponseBE = getOfferRetrievalResponseBE(contractAgreement);
 
         // prepare for if the did is not found in the map
-        String unknown = "Unknown";
         ParticipantDetailsSparqlQueryResult unknownParticipant = ParticipantDetailsSparqlQueryResult.builder()
-            .name(unknown).build();
+            .name(UNKNOWN).build();
 
         return ContractDetailsBE.builder().contractAgreement(contractAgreement)
-            .isDataOffering(offerRetrievalResponseBE.getCatalogOffering().getAggregationOf() != null)
+            .isDataOffering(!CollectionUtils.isEmpty(offerRetrievalResponseBE.getCatalogOffering().getAggregationOf()))
             .enforcementPolicies(enforcementPolicyParserService.getEnforcementPoliciesWithValidity(
                 List.of(contractAgreement.getPolicy()), contractAgreement.getContractSigningDate(),
                 participantDidMap.getOrDefault(contractAgreement.getProviderId(), "")))
@@ -155,7 +157,7 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public OfferRetrievalResponseBE getOfferDetailsByContractAgreementId(String contractAgreementId) {
 
-        ContractAgreement contractAgreement = edcClient.getContractAgreementById(contractAgreementId);
+        ContractAgreement contractAgreement = getContractAgreementById(contractAgreementId);
         return getOfferRetrievalResponseBE(contractAgreement);
     }
 
@@ -166,7 +168,7 @@ public class ContractServiceImpl implements ContractService {
 
         OfferRetrievalResponseBE offerRetrievalResponseBE;
         PxExtendedServiceOfferingCredentialSubject unknownCatalogOffering = PxExtendedServiceOfferingCredentialSubject.builder()
-            .id("Unknown").name("Unknown").description("Unknown").build();
+            .id(UNKNOWN).name(UNKNOWN).description(UNKNOWN).build();
 
         if (!offeringDetails.containsKey(contractAgreement.getAssetId())) {
             log.warn("No offer found in catalog with referenced assetId: {}", contractAgreement.getAssetId());
@@ -190,6 +192,22 @@ public class ContractServiceImpl implements ContractService {
         return offerRetrievalResponseBE;
     }
 
+    private ContractAgreement getContractAgreementById(String contractAgreementId) {
+
+        ContractAgreement contractAgreement;
+        try {
+            contractAgreement = edcClient.getContractAgreementById(contractAgreementId);
+        } catch (WebClientResponseException.NotFound e) {
+            log.error("Contract agreement with ID {} not found", contractAgreementId);
+            throw new ContractAgreementNotFoundException(
+                "Contract agreement with ID " + contractAgreementId + " not found");
+        } catch (Exception exception) {
+            log.error("Error while fetching contract agreement with ID {}", contractAgreementId, exception);
+            throw exception;
+        }
+        return contractAgreement;
+    }
+
     private Map<String, String> getParticipantDids(Collection<String> participantDapsIds) {
 
         Map<String, OmejdnConnectorDetailsBE> connectorDetails = Collections.emptyMap();
@@ -207,35 +225,5 @@ public class ContractServiceImpl implements ContractService {
         }
 
         return participantDids;
-    }
-
-    /**
-     * Repeat the transfer for a given EDC contract.
-     *
-     * @param be request referencing existing EDC contract.
-     * @return transfer result.
-     */
-    @Override
-    public TransferOfferResponseBE transferDataOfferAgain(TransferOfferRequestBE be) {
-
-        Map<String, OfferingDetailsSparqlQueryResult> offeringDetailsMap = fhCatalogClient.getOfferingDetailsByAssetIds(
-            List.of(be.getEdcOfferId()));
-        if (offeringDetailsMap.size() > 1) {
-            throw new OfferNotFoundException(
-                "Multiple offers found in Sparql query result for assetId: " + be.getEdcOfferId());
-        }
-        String providerUrl;
-        OfferingDetailsSparqlQueryResult offeringDetails = offeringDetailsMap.get(be.getEdcOfferId());
-        if (offeringDetails == null) {
-            throw new OfferNotFoundException(
-                "No Data Offering found in Sparql query result for assetId: " + be.getEdcOfferId());
-        }
-        providerUrl = offeringDetails.getProviderUrl();
-        if (providerUrl == null) {
-            throw new OfferNotFoundException(
-                "Provider URL not found in Sparql query result for assetId: " + be.getEdcOfferId());
-        }
-        be.setCounterPartyAddress(providerUrl);
-        return consumerService.transferDataOffer(be);
     }
 }
