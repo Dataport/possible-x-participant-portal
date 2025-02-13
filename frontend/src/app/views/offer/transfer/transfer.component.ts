@@ -35,7 +35,7 @@ export class TransferComponent implements OnChanges {
   @ViewChild('viewContainerRef', {read: ViewContainerRef, static: true}) viewContainerRef: ViewContainerRef;
   @ViewChild('contractDetails', {read: TemplateRef, static: true}) contractDetails: TemplateRef<any>;
 
-  constructor(private apiService: ApiService) {
+  constructor(private readonly apiService: ApiService) {
   }
 
   ngOnChanges(): void {

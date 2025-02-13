@@ -5,7 +5,7 @@ import {HttpClient, RestResponse} from './backend';
 
 export class AngularHttpClientImpl implements HttpClient {
 
-  constructor(private http: AngularHttpClient, private baseUrl: string | undefined = undefined) {
+  constructor(private readonly http: AngularHttpClient, private readonly baseUrl: string | undefined = undefined) {
     console.log(baseUrl);
   }
 

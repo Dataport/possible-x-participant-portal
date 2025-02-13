@@ -70,7 +70,7 @@ export class Utils {
     return result;
   }
 
-  static filterInPlace = (array, predicate) => {
+  static readonly filterInPlace = (array, predicate) => {
     let end = 0;
     array.forEach(obj => {
       if (predicate(obj)) {
@@ -85,10 +85,10 @@ export class Utils {
     return input;
   }
 
-  static hasRequiredField = (abstractControl: AbstractControl): boolean => {
+  static readonly hasRequiredField = (abstractControl: AbstractControl): boolean => {
     if (abstractControl.validator) {
       const validator = abstractControl.validator({} as AbstractControl);
-      if (validator && validator.required) {
+      if (validator?.required) {
         return true;
       }
     }

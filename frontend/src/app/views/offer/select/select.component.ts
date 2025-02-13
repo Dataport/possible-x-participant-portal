@@ -34,7 +34,7 @@ export class SelectComponent implements ControlValueAccessor {
   @Output() selectedOffer = new EventEmitter<IOfferDetailsTO>();
   @ViewChild('queryCatalogStatusMessage') queryCatalogStatusMessage!: StatusMessageComponent;
 
-  constructor(private apiService: ApiService, private fb: FormBuilder) {
+  constructor(private readonly apiService: ApiService, private readonly fb: FormBuilder) {
     this.selectionForm = this.fb.group({
       offerId: this.fb.nonNullable.control<string>('', [Validators.required, this.validateOfferId])
     });
@@ -89,7 +89,7 @@ export class SelectComponent implements ControlValueAccessor {
     };
   }
 
-  private onChange = (offerId: string) => {
+  private readonly onChange = (offerId: string) => {
   };
 
   private onTouched = () => {

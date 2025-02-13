@@ -1,8 +1,6 @@
 import {Component, Input} from '@angular/core';
 
-import {
-  IOfferDetailsTO
-} from "../../../services/mgmt/api/backend";
+import {IOfferDetailsTO} from "../../../services/mgmt/api/backend";
 import {DatePipe} from "@angular/common";
 
 
@@ -15,7 +13,8 @@ import {DatePipe} from "@angular/common";
 export class OfferPrintViewComponent {
   @Input() offer?: IOfferDetailsTO = undefined;
 
-  constructor(private datePipe: DatePipe) {}
+  constructor(private readonly datePipe: DatePipe) {
+  }
 
 
   getUrnUuid(id: string): string {

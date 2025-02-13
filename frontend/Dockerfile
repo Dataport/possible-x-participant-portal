@@ -4,10 +4,12 @@ ARG ACTIVEPROFILE
 # install chrome headless
 RUN apt-get update && \
   apt-get -y upgrade && \
-  apt-get install -yq curl libgconf-2-4 gnupg wget
+  apt-get install -yq curl gnupg libgconf-2-4 wget
 RUN curl https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
 RUN echo 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb stable main' >> /etc/apt/sources.list.d/google-chrome.list
-RUN apt-get update && apt-get install -y  --no-install-recommends google-chrome-stable fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst
+RUN apt-get update && apt-get install -y  --no-install-recommends  \
+    fonts-ipafont-gothic fonts-kacst fonts-thai-tlwg  \
+    fonts-wqy-zenhei google-chrome-stable
 
 WORKDIR /home/gradle/src
 COPY --chown=gradle:gradle . .

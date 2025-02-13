@@ -38,7 +38,7 @@ export class AcceptComponent implements OnChanges {
   isPoliciesAccepted = false;
   isTnCAccepted = false;
 
-  constructor(private apiService: ApiService, private readonly nameMappingService: NameMappingService) {
+  constructor(private readonly apiService: ApiService, private readonly nameMappingService: NameMappingService) {
   }
 
   getNameIdStringById(id: string): string {

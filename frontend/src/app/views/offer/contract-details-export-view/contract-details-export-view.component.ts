@@ -14,7 +14,8 @@ export class ContractDetailsExportViewComponent {
   @Input() contractDetails?: IContractDetailsTO = undefined;
   @ViewChild('informationRetrievalStatusMessage') public informationRetrievalStatusMessage!: StatusMessageComponent;
 
-  constructor(private datePipe: DatePipe) {}
+  constructor(private readonly datePipe: DatePipe) {
+  }
 
   getFormattedContractSigningTimestamp(): string {
     return this.datePipe.transform(this.contractDetails?.contractSigningDate, 'yyyyMMdd_HHmmss_z') || '';

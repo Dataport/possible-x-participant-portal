@@ -38,12 +38,12 @@ export class BaseWizardExtensionComponent {
   protected shaclFile: ShaclFile;
   protected filteredShapes: Shape[];
   protected wizardVisible: boolean = false;
-  @ViewChild("wizard") private wizard: DynamicFormComponent;
-  private shapeInitialized: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  private wizardMutex: Mutex = new Mutex();
+  @ViewChild("wizard") private readonly wizard: DynamicFormComponent;
+  private readonly shapeInitialized: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  private readonly wizardMutex: Mutex = new Mutex();
 
   private disabledFields: string[] = [];
-  private createDateTimer: NodeJS.Timeout = undefined;
+  private readonly createDateTimer: NodeJS.Timeout = undefined;
 
   constructor(protected formFieldService: FormfieldControlService,
               protected exportService: ExportService,
