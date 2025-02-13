@@ -12,15 +12,16 @@
       <div (click)="participantRestrictionPolicyAccItem.toggleItem()"
            (keydown)="participantRestrictionPolicyAccItem.toggleItem()" class="accordion-header" tabindex="0">
 
+        <div>Restrict the contractual booking to organization(s)</div>
         <form [formGroup]="checkboxFormGroup">
-          <label>Restrict the contractual booking to organization(s)
-            <mat-checkbox
-              (change)="handleCheckboxChange(participantRestrictionPolicyCB, participantRestrictionPolicyAccItem)"
-              (click)="$event.stopPropagation()"
-              (keydown)="$event.stopPropagation()" [formControlName]="participantRestrictionPolicyCB"
-              tabindex="0">
-            </mat-checkbox>
-          </label>
+
+          <mat-checkbox
+            (change)="handleCheckboxChange(participantRestrictionPolicyCB, participantRestrictionPolicyAccItem)"
+            (click)="$event.stopPropagation()"
+            (keydown)="$event.stopPropagation()"
+            [formControlName]="participantRestrictionPolicyCB"
+            tabindex="0">
+          </mat-checkbox>
         </form>
       </div>
     </ng-template>
@@ -55,16 +56,17 @@
                     [ngClass]="{'disabled-accordion-item': isStartDatePolicyDisabled}"
                     [visible]="false">
     <ng-template cTemplateId="accordionHeaderTemplate">
-      <div (click)="startDatePolicyAccItem.toggleItem()" (keydown)="startDatePolicyAccItem.toggleItem()" class="accordion-header"
+      <div (click)="startDatePolicyAccItem.toggleItem()" (keydown)="startDatePolicyAccItem.toggleItem()"
+           class="accordion-header"
            tabindex="0">
+        <div>Restrict contract duration - set start date</div>
         <form [formGroup]="checkboxFormGroup">
-          <label>Restrict contract duration - set start date
-            <mat-checkbox (change)="handleCheckboxChange(startDatePolicyCB, startDatePolicyAccItem)"
-                          (click)="$event.stopPropagation()"
-                          (keydown)="$event.stopPropagation()" [formControlName]="startDatePolicyCB"
-                          tabindex="0">
-            </mat-checkbox>
-          </label>
+
+          <mat-checkbox (change)="handleCheckboxChange(startDatePolicyCB, startDatePolicyAccItem)"
+                        (click)="$event.stopPropagation()"
+                        (keydown)="$event.stopPropagation()" [formControlName]="startDatePolicyCB"
+                        tabindex="0">
+          </mat-checkbox>
         </form>
       </div>
     </ng-template>
@@ -100,16 +102,17 @@
                     [ngClass]="{'disabled-accordion-item': isEndDatePolicyDisabled}"
                     [visible]="false">
     <ng-template cTemplateId="accordionHeaderTemplate">
-      <div (click)="endDatePolicyAccItem.toggleItem()" (keydown)="endDatePolicyAccItem.toggleItem()" class="accordion-header"
+      <div (click)="endDatePolicyAccItem.toggleItem()" (keydown)="endDatePolicyAccItem.toggleItem()"
+           class="accordion-header"
            tabindex="0">
+        <div>Restrict contract duration - set end date</div>
         <form [formGroup]="checkboxFormGroup">
-          <label>Restrict contract duration - set end date
-            <mat-checkbox (change)="handleCheckboxChange(endDatePolicyCB, endDatePolicyAccItem)"
-                          (click)="$event.stopPropagation()"
-                          (keydown)="$event.stopPropagation()" [formControlName]="endDatePolicyCB"
-                          tabindex="0">
-            </mat-checkbox>
-          </label>
+
+          <mat-checkbox (change)="handleCheckboxChange(endDatePolicyCB, endDatePolicyAccItem)"
+                        (click)="$event.stopPropagation()"
+                        (keydown)="$event.stopPropagation()" [formControlName]="endDatePolicyCB"
+                        tabindex="0">
+          </mat-checkbox>
         </form>
       </div>
     </ng-template>
@@ -147,14 +150,14 @@
     <ng-template cTemplateId="accordionHeaderTemplate">
       <div (click)="endAgreementOffsetPolicyAccItem.toggleItem()"
            (keydown)="endAgreementOffsetPolicyAccItem.toggleItem()" class="accordion-header" tabindex="0">
+        <div>Restrict transfer period</div>
         <form [formGroup]="checkboxFormGroup">
-          <label>Restrict transfer period
-            <mat-checkbox (change)="handleCheckboxChange(endAgreementOffsetPolicyCB, endAgreementOffsetPolicyAccItem)"
-                          (click)="$event.stopPropagation()"
-                          (keydown)="$event.stopPropagation()" [formControlName]="endAgreementOffsetPolicyCB"
-                          tabindex="0">
-            </mat-checkbox>
-          </label>
+
+          <mat-checkbox (change)="handleCheckboxChange(endAgreementOffsetPolicyCB, endAgreementOffsetPolicyAccItem)"
+                        (click)="$event.stopPropagation()"
+                        (keydown)="$event.stopPropagation()" [formControlName]="endAgreementOffsetPolicyCB"
+                        tabindex="0">
+          </mat-checkbox>
         </form>
       </div>
     </ng-template>
@@ -165,19 +168,19 @@
         </div>
         <div class="flex flex-col">
           <div class="flex items-center gap-4">
-            <label class="text-base flex-shrink-0 w-18">Quantity
-              <input [(ngModel)]="endAgreementOffset" class="form-control rounded-none flex-2" min="0"
-                     placeholder="e.g. 30"
-                     type="number">
-            </label>
-            <label class="text-base flex-shrink-0 w-18">Time Unit
-              <select [(ngModel)]="endAgreementOffsetUnit" class="form-select rounded-none flex-2" required>
-                <option [value]="'s'">second(s)</option>
-                <option [value]="'m'">minute(s)</option>
-                <option [value]="'h'">hour(s)</option>
-                <option [value]="'d'">day(s)</option>
-              </select>
-            </label>
+            <div class="text-base flex-shrink-0 w-18">Quantity</div>
+            <input [(ngModel)]="endAgreementOffset" class="form-control rounded-none flex-2" min="0"
+                   placeholder="e.g. 30"
+                   type="number">
+
+            <div class="text-base flex-shrink-0 w-18">Time Unit</div>
+            <select [(ngModel)]="endAgreementOffsetUnit" class="form-select rounded-none flex-2" required>
+              <option [value]="'s'">second(s)</option>
+              <option [value]="'m'">minute(s)</option>
+              <option [value]="'h'">hour(s)</option>
+              <option [value]="'d'">day(s)</option>
+            </select>
+
           </div>
           <div *ngIf="!isValidOffset(endAgreementOffset) || !isValidOffsetUnit(endAgreementOffsetUnit)"
                style="color: red">

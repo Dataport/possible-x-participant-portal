@@ -17,12 +17,13 @@
   <mat-stepper #stepper linear orientation="vertical">
     <mat-step>
       <ng-template matStepLabel>Define Offering Type</ng-template>
-      <label class="form-label">Offering Type Selection
+      <label class="form-label w-full">Offering Type Selection
         <select [(ngModel)]="offerType" class="form-select rounded-none w-full">
           <option value="service">Service Offering</option>
           <option selected value="data">Data Service Offering</option>
         </select>
       </label>
+
       <div class="py-4 text-sm">The "Data Service Offering" consists of both a "Service Offering" and a "Data
         Resource".
       </div>
@@ -36,7 +37,7 @@
     <mat-step *ngIf="isOfferingDataOffering()" [completed]="isDataResourceValid()" errorMessage="Missing fields">
       <ng-template matStepLabel>Define Data Resource</ng-template>
       <div>
-        <label class="form-label">File Name*
+        <label class="form-label w-full">File Name*
           <input [(ngModel)]="selectedFileName" class="form-control rounded-none w-full" placeholder="e.g. MyFile.json"
                  type="text">
         </label>
