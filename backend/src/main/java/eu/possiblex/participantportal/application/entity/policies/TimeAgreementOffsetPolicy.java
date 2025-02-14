@@ -18,6 +18,6 @@ public abstract class TimeAgreementOffsetPolicy extends EnforcementPolicy  {
     @Schema(description = "Offset number", example = "1")
     private int offsetNumber;
 
-    @Schema(description = "Offset unit", example = "DAY")
+    @Schema(description = "Offset unit", example = "d")
     private AgreementOffsetUnit offsetUnit;
 }

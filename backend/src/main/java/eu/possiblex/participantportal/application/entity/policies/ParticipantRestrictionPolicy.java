@@ -6,6 +6,12 @@ import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 
+@Schema(description = "Policy that restricts the contractual booking to specific participants", example = """
+{
+  "@type": "ParticipantRestrictionPolicy",
+  "allowedParticipants": ["did:web:example.com:participant:someorgltd"]
+}
+""")
 @Getter
 @Setter
 @SuperBuilder
