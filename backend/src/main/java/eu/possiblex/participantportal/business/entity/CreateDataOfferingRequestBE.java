@@ -1,6 +1,6 @@
 package eu.possiblex.participantportal.business.entity;
 
-import eu.possiblex.participantportal.application.entity.credentials.gx.resources.GxLegitimateInterest;
+import eu.possiblex.participantportal.application.entity.credentials.gx.resources.GxLegitimateInterestCredentialSubject;
 import eu.possiblex.participantportal.application.entity.credentials.gx.resources.GxDataResourceCredentialSubject;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -16,5 +16,5 @@ public class CreateDataOfferingRequestBE extends CreateServiceOfferingRequestBE 
 
     private String fileName;
 
-    private GxLegitimateInterest legitimateInterest;
+    private GxLegitimateInterestCredentialSubject legitimateInterestCredentialSubject;
 }

@@ -2,7 +2,7 @@ package eu.possiblex.participantportal.business.control;
 
 import eu.possiblex.participantportal.application.entity.CreateOfferResponseTO;
 import eu.possiblex.participantportal.business.entity.CreateServiceOfferingRequestBE;
-import eu.possiblex.participantportal.business.entity.DataProductPrefillFieldsBE;
+import eu.possiblex.participantportal.business.entity.DataServiceOfferingPrefillFieldsBE;
 import eu.possiblex.participantportal.business.entity.PrefillFieldsBE;
 import eu.possiblex.participantportal.business.entity.exception.EdcOfferCreationException;
 import eu.possiblex.participantportal.business.entity.exception.FhOfferCreationException;
@@ -41,6 +41,6 @@ public class ProviderServiceFake implements ProviderService {
     public PrefillFieldsBE getPrefillFields() {
 
         return new PrefillFieldsBE(PARTICIPANT_ID,
-            new DataProductPrefillFieldsBE(SERVICE_OFFERING_NAME, SERVICE_OFFERING_DESCRIPTION));
+            new DataServiceOfferingPrefillFieldsBE(SERVICE_OFFERING_NAME, SERVICE_OFFERING_DESCRIPTION));
     }
 }

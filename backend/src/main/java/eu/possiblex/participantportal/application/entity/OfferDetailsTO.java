@@ -20,7 +20,7 @@ public class OfferDetailsTO {
         example = "8d3c927a-9bb7-4bc8-a3e7-4f9c9a57d571")
     private String edcOfferId;
 
-    @Schema(description = "Offering as retrieved from the catalog")
+    @Schema(description = "Offering credential subject as retrieved from the catalog")
     private PxExtendedServiceOfferingCredentialSubject catalogOffering;
 
     @Schema(description = "Flag whether the offering contains data resources or not")

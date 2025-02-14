@@ -24,7 +24,7 @@ public class ContractDetailsTO {
     @Schema(description = "The ID which is used to identify the offering in the EDC catalog. Currently, this is the asset ID, because an asset will only be used in one offering.", example = "8d3c927a-9bb7-4bc8-a3e7-4f9c9a57d571")
     private String assetId;
 
-    @Schema(description = "Offering as retrieved from the catalog")
+    @Schema(description = "Offering credential subject as retrieved from the catalog")
     private PxExtendedServiceOfferingCredentialSubject catalogOffering;
 
     @Schema(description = "Date when the offering was retrieved")
@@ -45,6 +45,6 @@ public class ContractDetailsTO {
     @Schema(description = "Details of the offering provider")
     private ContractParticipantDetailsTO providerDetails;
 
-    @Schema(description = "Flag whether the contract agreement is related to an offering containing data")
+    @Schema(description = "Flag whether the contract agreement is related to an offering containing data resources")
     private boolean isDataOffering;
 }

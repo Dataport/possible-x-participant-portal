@@ -3,7 +3,7 @@ package eu.possiblex.participantportal.business.control;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.possiblex.participantportal.application.entity.credentials.gx.resources.GxDataResourceCredentialSubject;
-import eu.possiblex.participantportal.application.entity.credentials.gx.resources.GxLegitimateInterest;
+import eu.possiblex.participantportal.application.entity.credentials.gx.resources.GxLegitimateInterestCredentialSubject;
 import eu.possiblex.participantportal.business.entity.CreateDataOfferingRequestBE;
 import eu.possiblex.participantportal.business.entity.CreateServiceOfferingRequestBE;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedDataResourceCredentialSubject;
@@ -70,13 +70,13 @@ public interface ProviderServiceMapper {
     @Mapping(target = "context", ignore = true)
     @Mapping(target = "legitimateInterest", source = "legitimateInterest")
     PxExtendedDataResourceCredentialSubject gxDataResourceToPxDataResource(
-        GxDataResourceCredentialSubject dataResource, GxLegitimateInterest legitimateInterest);
+        GxDataResourceCredentialSubject dataResource, GxLegitimateInterestCredentialSubject legitimateInterest);
 
     @Named("gxDataResourceToPxDataResourceList")
     default List<PxExtendedDataResourceCredentialSubject> gxDataResourceToPxDataResourceList(
         CreateDataOfferingRequestBE request) {
         GxDataResourceCredentialSubject dataResource = request.getDataResource();
-        GxLegitimateInterest legitimateInterest = request.getLegitimateInterest();
+        GxLegitimateInterestCredentialSubject legitimateInterest = request.getLegitimateInterestCredentialSubject();
         return List.of(gxDataResourceToPxDataResource(dataResource, legitimateInterest));
     }
 

@@ -12,5 +12,5 @@ import lombok.NoArgsConstructor;
 public class PrefillFieldsBE {
     String participantId;
 
-    DataProductPrefillFieldsBE dataProductPrefillFields;
+    DataServiceOfferingPrefillFieldsBE dataServiceOfferingPrefillFields;
 }

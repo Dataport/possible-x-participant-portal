@@ -36,7 +36,7 @@ import lombok.experimental.SuperBuilder;
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true, value = { "type", "@context" }, allowGetters = true)
-public class GxLegitimateInterest {
+public class GxLegitimateInterestCredentialSubject {
 
     @Getter(AccessLevel.NONE)
     public static final String TYPE_NAMESPACE = "gx";

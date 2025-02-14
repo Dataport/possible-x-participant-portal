@@ -32,9 +32,9 @@ class PrefillFieldsTest {
         String expectedServiceOfferingName = "Data Product Service for Data Resource <Data resource name>";
         String expectedServiceOfferingDescription = "Data Product Service provides data (<Data resource name>).";
         assertEquals(expectedId, prefillFields.getParticipantId());
-        assertEquals(expectedServiceOfferingName, prefillFields.getDataProductPrefillFields().getServiceOfferingName());
+        assertEquals(expectedServiceOfferingName, prefillFields.getDataServiceOfferingPrefillFields().getServiceOfferingName());
         assertEquals(expectedServiceOfferingDescription,
-            prefillFields.getDataProductPrefillFields().getServiceOfferingDescription());
+            prefillFields.getDataServiceOfferingPrefillFields().getServiceOfferingDescription());
     }
 
     @Nested

@@ -22,8 +22,8 @@ public interface ProviderRestApi {
     @PostMapping(value = "/offer/data", produces = MediaType.APPLICATION_JSON_VALUE)
     CreateOfferResponseTO createDataOffering(@Valid @RequestBody CreateDataOfferingRequestTO createDataOfferingRequestTO);
 
-    @Operation(summary = "Get the prefill fields for providing offerings", tags = {
-        "ProvideOffer" }, description = "Get values to help prefill specific fields for providing offerings.")
+    @Operation(summary = "Get prefill values for providing offerings", tags = {
+        "ProvideOffer" }, description = "Get values to help prefill specific fields when providing offerings.")
     @GetMapping(value = "/prefillFields", produces = MediaType.APPLICATION_JSON_VALUE)
     PrefillFieldsTO getPrefillFields();
 }

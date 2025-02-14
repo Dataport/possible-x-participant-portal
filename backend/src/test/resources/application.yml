@@ -34,8 +34,8 @@ s3:
   bucket-top-level-folder: "something/"
 
 prefill-fields:
-  data-product:
-    json-file-path: "src/test/resources/prefillFieldsDataProduct.json"
+  data-service-offering:
+    json-file-path: "src/test/resources/prefillFieldsDataServiceOffering.json"
 
 version.no: "1.0.0"
 

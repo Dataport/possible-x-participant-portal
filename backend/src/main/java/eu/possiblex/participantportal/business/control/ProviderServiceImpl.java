@@ -6,7 +6,7 @@ import eu.possiblex.participantportal.application.entity.CreateOfferResponseTO;
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
 import eu.possiblex.participantportal.business.entity.CreateDataOfferingRequestBE;
 import eu.possiblex.participantportal.business.entity.CreateServiceOfferingRequestBE;
-import eu.possiblex.participantportal.business.entity.DataProductPrefillFieldsBE;
+import eu.possiblex.participantportal.business.entity.DataServiceOfferingPrefillFieldsBE;
 import eu.possiblex.participantportal.business.entity.PrefillFieldsBE;
 import eu.possiblex.participantportal.business.entity.credentials.px.PxExtendedServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.business.entity.edc.CreateEdcOfferBE;
@@ -73,7 +73,7 @@ public class ProviderServiceImpl implements ProviderService {
         @Autowired EnforcementPolicyParserService enforcementPolicyParserService,
         @Value("${edc.protocol-base-url}") String edcProtocolUrl, @Value("${participant-id}") String participantId,
         @Value("${s3.bucket-storage-region}") String bucketStorageRegion, @Value("${s3.bucket-name}") String bucketName,
-        @Value("${prefill-fields.data-product.json-file-path}") String prefillFieldsDataProductJsonFilePath,
+        @Value("${prefill-fields.data-service-offering.json-file-path}") String prefillFieldsDataServiceOfferingJsonFilePath,
         @Autowired ObjectMapper objectMapper) {
 
         this.edcClient = edcClient;
@@ -85,7 +85,7 @@ public class ProviderServiceImpl implements ProviderService {
         this.bucketName = bucketName;
         this.participantId = participantId;
         this.objectMapper = objectMapper;
-        this.prefillFields = getPrefillFields(participantId, prefillFieldsDataProductJsonFilePath);
+        this.prefillFields = getPrefillFields(participantId, prefillFieldsDataServiceOfferingJsonFilePath);
     }
 
     /**
@@ -134,42 +134,42 @@ public class ProviderServiceImpl implements ProviderService {
 
     private PrefillFieldsBE getPrefillFields(String participantId, String filePath) {
 
-        return new PrefillFieldsBE(participantId, readDataProductPrefillFieldsFromFile(filePath));
+        return new PrefillFieldsBE(participantId, readDataServiceOfferingPrefillFieldsFromFile(filePath));
     }
 
-    private DataProductPrefillFieldsBE readDataProductPrefillFieldsFromFile(String filePath) {
+    private DataServiceOfferingPrefillFieldsBE readDataServiceOfferingPrefillFieldsFromFile(String filePath) {
 
-        Resource resource = getDataResourcePrefillFieldsResource(filePath);
+        Resource resource = getDataServiceOfferingPrefillFieldsResource(filePath);
 
-        DataProductPrefillFieldsBE dataProductPrefillFields;
+        DataServiceOfferingPrefillFieldsBE dataServiceOfferingPrefillFields;
 
         try {
-            dataProductPrefillFields = objectMapper.readValue(resource.getInputStream(),
-                DataProductPrefillFieldsBE.class);
+            dataServiceOfferingPrefillFields = objectMapper.readValue(resource.getInputStream(),
+                DataServiceOfferingPrefillFieldsBE.class);
         } catch (IOException e) {
             throw new PrefillFieldsProcessingException(
-                "Failed to process data product prefill fields from file: " + e.getMessage());
+                "Failed to process data service offering prefill fields from file: " + e.getMessage());
         }
 
-        return dataProductPrefillFields;
+        return dataServiceOfferingPrefillFields;
     }
 
     /**
-     * Get the resource for data product prefill fields from given path.
+     * Get the resource for data service offering prefill fields from given path.
      *
      * @return the resource
      */
-    private Resource getDataResourcePrefillFieldsResource(String filePath) {
+    private Resource getDataServiceOfferingPrefillFieldsResource(String filePath) {
 
         Resource resource;
         if (filePath == null || filePath.isEmpty()) {
-            resource = new ClassPathResource("prefillFieldsDataProduct.json");
+            resource = new ClassPathResource("prefillFieldsDataServiceOffering.json");
         } else {
             File file = new File(filePath);
             if (file.exists()) {
                 resource = new FileSystemResource(file);
             } else {
-                resource = new ClassPathResource("prefillFieldsDataProduct.json");
+                resource = new ClassPathResource("prefillFieldsDataServiceOffering.json");
             }
         }
         return resource;

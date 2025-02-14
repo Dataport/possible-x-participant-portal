@@ -14,7 +14,7 @@ import java.time.OffsetDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OfferWithTimestampTO {
-    @Schema(description = "Offering as retrieved from the catalog")
+    @Schema(description = "Offering credential subject as retrieved from the catalog")
     private PxExtendedServiceOfferingCredentialSubject catalogOffering;
 
     @Schema(description = "Date when the offering was retrieved")

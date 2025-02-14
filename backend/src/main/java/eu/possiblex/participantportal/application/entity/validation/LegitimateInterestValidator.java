@@ -24,7 +24,7 @@ public class LegitimateInterestValidator
         }
 
         if (request.getDataResourceCredentialSubject() != null && request.getDataResourceCredentialSubject()
-            .isContainsPII() && request.getLegitimateInterest() == null) {
+            .isContainsPII() && request.getLegitimateInterestCredentialSubject() == null) {
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate(this.message).addPropertyNode("legitimateInterest")
                 .addConstraintViolation();

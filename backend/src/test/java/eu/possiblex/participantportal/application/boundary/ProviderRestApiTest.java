@@ -12,7 +12,7 @@ import eu.possiblex.participantportal.application.entity.credentials.gx.datatype
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.GxSOTermsAndConditions;
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
 import eu.possiblex.participantportal.application.entity.credentials.gx.resources.GxDataResourceCredentialSubject;
-import eu.possiblex.participantportal.application.entity.credentials.gx.resources.GxLegitimateInterest;
+import eu.possiblex.participantportal.application.entity.credentials.gx.resources.GxLegitimateInterestCredentialSubject;
 import eu.possiblex.participantportal.application.entity.credentials.gx.serviceofferings.GxServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.application.entity.policies.EnforcementPolicy;
 import eu.possiblex.participantportal.application.entity.policies.EverythingAllowedPolicy;
@@ -234,13 +234,13 @@ class ProviderRestApiTest {
         CreateDataOfferingRequestTO request = objectMapper.readValue(getCreateDataOfferingTOJsonString(),
             CreateDataOfferingRequestTO.class);
         request.getDataResourceCredentialSubject().setContainsPII(true);
-        request.setLegitimateInterest(
-            GxLegitimateInterest.builder().dataProtectionContact("contact").legalBasis("basis").build());
+        request.setLegitimateInterestCredentialSubject(
+            GxLegitimateInterestCredentialSubject.builder().dataProtectionContact("contact").legalBasis("basis").build());
 
         GxServiceOfferingCredentialSubject expectedServiceOfferingCS = getGxServiceOfferingCredentialSubject();
         GxDataResourceCredentialSubject expectedDataResourceCS = getGxDataResourceCredentialSubject();
         expectedDataResourceCS.setContainsPII(true);
-        GxLegitimateInterest expectedLegitimateInterest = GxLegitimateInterest.builder()
+        GxLegitimateInterestCredentialSubject expectedLegitimateInterest = GxLegitimateInterestCredentialSubject.builder()
             .dataProtectionContact("contact").legalBasis("basis").build();
 
         // WHEN/THEN
@@ -277,7 +277,7 @@ class ProviderRestApiTest {
             .isEqualTo(createDataOfferingRequestBE.getDataResource());
 
         assertThat(expectedLegitimateInterest).usingRecursiveComparison()
-            .isEqualTo(createDataOfferingRequestBE.getLegitimateInterest());
+            .isEqualTo(createDataOfferingRequestBE.getLegitimateInterestCredentialSubject());
     }
 
     @Test
@@ -306,8 +306,8 @@ class ProviderRestApiTest {
         // WHEN/THEN
         this.mockMvc.perform(get("/provider/prefillFields")).andDo(print()).andExpect(status().isOk())
             .andExpect(jsonPath("$.participantId").value(ProviderServiceFake.PARTICIPANT_ID)).andExpect(
-                jsonPath("$.dataProductPrefillFields.serviceOfferingName").value(ProviderServiceFake.SERVICE_OFFERING_NAME))
-            .andExpect(jsonPath("$.dataProductPrefillFields.serviceOfferingDescription").value(
+                jsonPath("$.dataServiceOfferingPrefillFields.serviceOfferingName").value(ProviderServiceFake.SERVICE_OFFERING_NAME))
+            .andExpect(jsonPath("$.dataServiceOfferingPrefillFields.serviceOfferingDescription").value(
                 ProviderServiceFake.SERVICE_OFFERING_DESCRIPTION));
     }
 

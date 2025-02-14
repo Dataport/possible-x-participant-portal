@@ -3,7 +3,7 @@ package eu.possiblex.participantportal.business.entity.credentials.px;
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import eu.possiblex.participantportal.application.entity.credentials.gx.resources.GxLegitimateInterest;
+import eu.possiblex.participantportal.application.entity.credentials.gx.resources.GxLegitimateInterestCredentialSubject;
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
 import eu.possiblex.participantportal.application.entity.credentials.gx.resources.GxDataResourceCredentialSubject;
 import eu.possiblex.participantportal.business.entity.serialization.BooleanDeserializer;
@@ -86,7 +86,7 @@ public class PxExtendedDataResourceCredentialSubject {
     @Schema(description = "Legitimate interest for processing data containing PII")
     @JsonProperty("gx:legitimateInterest")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private GxLegitimateInterest legitimateInterest;
+    private GxLegitimateInterestCredentialSubject legitimateInterest;
 
     @Schema(description = "Human readable name of the data resource", example = "Some Data")
     @JsonProperty("schema:name")

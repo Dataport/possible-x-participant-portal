@@ -50,8 +50,8 @@ s3:
   bucket-name: "dev-provider-edc-bucket-possible-31952746"
 
 prefill-fields:
-  data-product:
-    json-file-path: "src/main/resources/prefillFieldsDataProduct.json"
+  data-service-offering:
+    json-file-path: "src/main/resources/prefillFieldsDataServiceOffering.json"
 
 version.no: "1.0.0"
 

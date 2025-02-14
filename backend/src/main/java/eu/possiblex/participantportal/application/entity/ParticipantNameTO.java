@@ -11,7 +11,6 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ParticipantNameTO {
-
     @Schema(description = "ID of the participant", example = "did:web:example.com:participant:someorgltd")
     private String participantId;
 

@@ -46,7 +46,7 @@ public class PxExtendedServiceOfferingCredentialSubject {
     @NotNull
     private NodeKindIRITypeId providedBy;
 
-    @Schema(description = "List of data resources related to the offering")
+    @Schema(description = "List of data resource credential subjects related to the offering")
     @JsonProperty("gx:aggregationOf")
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     private List<PxExtendedDataResourceCredentialSubject> aggregationOf;
