@@ -1,9 +1,5 @@
 import {Component, ViewChild} from '@angular/core';
-import {
-  IAcceptOfferResponseTO, IContractDetailsTO,
-  IOfferDetailsTO,
-  IParticipantDetailsTO
-} from '../../../services/mgmt/api/backend';
+import {IAcceptOfferResponseTO, IOfferDetailsTO} from '../../../services/mgmt/api/backend';
 import {MatStepper} from "@angular/material/stepper";
 import {SelectComponent} from "../select/select.component";
 import {AcceptComponent} from "../accept/accept.component";

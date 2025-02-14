@@ -8,7 +8,7 @@ import java.util.List;
 @Getter
 public class NegotiationFailedException extends RuntimeException {
 
-    private final List<EnforcementPolicy> enforcementPolicyList;
+    private final transient List<EnforcementPolicy> enforcementPolicyList;
 
     public NegotiationFailedException(String message, List<EnforcementPolicy> enforcementPolicyList) {
 

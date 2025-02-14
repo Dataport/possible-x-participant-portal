@@ -1,9 +1,12 @@
 <form (submit)="selectOffer(selectionForm.controls.offerId.value)" [formGroup]="selectionForm">
   <div class="form-group row pb-6 justify-start">
     <div class="max-h-20">
-      <label class="form-label">Service Offering ID or Data Service Offering ID (taken from a specific entry in the POSSIBLE-X Catalogue):</label>
-      <input class="form-control rounded-none" formControlName="offerId" placeholder="e.g. urn:uuid:12ab34c-55dd-e67f"
+      <label class="form-label" for="offerId">Service Offering ID or Data Service Offering ID (taken from a specific
+        entry in the POSSIBLE-X Catalogue):</label>
+      <input class="form-control rounded-none" formControlName="offerId" id="offerId"
+             placeholder="e.g. urn:uuid:12ab34c-55dd-e67f"
              type="text">
+
     </div>
     <div *ngIf="isInvalidOfferId" class="text-warning pt-2">
       The Offering ID can not contain special characters other than - (hyphen).

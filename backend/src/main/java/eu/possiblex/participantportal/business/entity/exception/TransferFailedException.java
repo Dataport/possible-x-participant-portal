@@ -7,7 +7,7 @@ import java.util.List;
 
 @Getter
 public class TransferFailedException extends RuntimeException {
-    private final List<EnforcementPolicy> enforcementPolicyList;
+    private final transient List<EnforcementPolicy> enforcementPolicyList;
 
     public TransferFailedException(String message, List<EnforcementPolicy> enforcementPolicyList) {
 

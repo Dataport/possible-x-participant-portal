@@ -9,9 +9,9 @@ import {AngularHttpClientImpl} from './angular-http-client';
 })
 export class ApiService extends RestApplicationClient {
 
-  private baseUrl: string = environment.api_url;
+  private readonly baseUrl: string = environment.api_url;
 
-  constructor(private http: HttpClient) {
+  constructor(private readonly http: HttpClient) {
     super(new AngularHttpClientImpl(http, environment.api_url));
   }
 

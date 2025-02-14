@@ -11,25 +11,32 @@ import reactor.netty.transport.logging.AdvancedByteBufFormat;
 @Slf4j
 /*
  * Some util functions for logging.
- */
-public class LogUtils {
+ */ public class LogUtils {
+
+    private LogUtils() {
+        // Utility class
+    }
 
     /**
      * Creates a ClientHttpConnector for logging (outgoing) REST calls.
+     *
      * @return the logging ClientHttpConnector
      */
     public static ClientHttpConnector createHttpClient() {
-        HttpClient httpClient = HttpClient.create().wiretap("reactor.netty.http.client.HttpClient",
-                LogLevel.DEBUG, AdvancedByteBufFormat.TEXTUAL);
+
+        HttpClient httpClient = HttpClient.create()
+            .wiretap("reactor.netty.http.client.HttpClient", LogLevel.DEBUG, AdvancedByteBufFormat.TEXTUAL);
         return new ReactorClientHttpConnector(httpClient);
     }
 
     /**
      * Serialize an object to JSON.
+     *
      * @param o the object to serialize
      * @return the JSON
      */
     public static String serializeObjectToJson(Object o) {
+
         ObjectMapper om = new ObjectMapper();
 
         try {

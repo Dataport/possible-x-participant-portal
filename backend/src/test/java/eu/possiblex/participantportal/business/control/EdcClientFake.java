@@ -178,17 +178,17 @@ public class EdcClientFake implements EdcClient {
 
     @Override
     public void deprovisionTransfer(String transferId) {
-
+        // request worked
     }
 
     @Override
     public void terminateTransfer(String transferId, TerminateTransferRequest request) {
-
+        // request worked
     }
 
     @Override
     public void revokeContractDefinition(String contractDefinitionId) {
-
+        // request worked
     }
 
     @Override
@@ -208,8 +208,7 @@ public class EdcClientFake implements EdcClient {
     public ContractAgreement getContractAgreementById(String contractAgreementId) {
 
         if (contractAgreementId.equals(NOT_FOUND_AGREEMENT_ID)) {
-            throw WebClientResponseException.create(
-                404, "Not Found", null, null, null);
+            throw WebClientResponseException.create(404, "Not Found", null, null, null);
         }
 
         return queryContractAgreements(QuerySpec.builder().build()).get(0);

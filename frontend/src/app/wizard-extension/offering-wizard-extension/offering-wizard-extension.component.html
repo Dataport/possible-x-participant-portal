@@ -17,12 +17,16 @@
   <mat-stepper #stepper linear orientation="vertical">
     <mat-step>
       <ng-template matStepLabel>Define Offering Type</ng-template>
-      <label class="form-label">Offering Type Selection</label>
-      <select [(ngModel)]="offerType" class="form-select rounded-none w-full">
-        <option value="service">Service Offering</option>
-        <option selected value="data">Data Service Offering</option>
-      </select>
-      <div class="py-4 text-sm">The "Data Service Offering" consists of both a "Service Offering" and a "Data Resource".</div>
+      <label class="form-label w-full">Offering Type Selection
+        <select [(ngModel)]="offerType" class="form-select rounded-none w-full">
+          <option value="service">Service Offering</option>
+          <option selected value="data">Data Service Offering</option>
+        </select>
+      </label>
+
+      <div class="py-4 text-sm">The "Data Service Offering" consists of both a "Service Offering" and a "Data
+        Resource".
+      </div>
       <div class="flex justify-end">
         <button (click)="prefillWizardNewOffering()" cButton color="primary" matStepperNext shape="rounded-0"
                 type="submit">Next
@@ -33,9 +37,10 @@
     <mat-step *ngIf="isOfferingDataOffering()" [completed]="isDataResourceValid()" errorMessage="Missing fields">
       <ng-template matStepLabel>Define Data Resource</ng-template>
       <div>
-        <label class="form-label">File Name*</label>
-        <input [(ngModel)]="selectedFileName" class="form-control rounded-none w-full" placeholder="e.g. MyFile.json"
-               type="text">
+        <label class="form-label w-full">File Name*
+          <input [(ngModel)]="selectedFileName" class="form-control rounded-none w-full" placeholder="e.g. MyFile.json"
+                 type="text">
+        </label>
         <div cFormText style="color: #7f7f7f;">
           Please enter the file name of the file in the S3-Bucket.
         </div>
@@ -47,7 +52,9 @@
       <app-base-wizard-extension #gxDataResourceWizard></app-base-wizard-extension>
       <app-data-resource-policy-hints></app-data-resource-policy-hints>
       <div class="flex justify-between pt-4">
-        <button (click)="prepareStepBeforeDataResource()" cButton color="secondary" matStepperPrevious shape="rounded-0">Back</button>
+        <button (click)="prepareStepBeforeDataResource()" cButton color="secondary" matStepperPrevious
+                shape="rounded-0">Back
+        </button>
         <button (click)="prepareStepAfterDataResource()" [disabled]="!isDataResourceValid()" cButton
                 color="primary"
                 matStepperNext shape="rounded-0"
@@ -57,7 +64,9 @@
       </div>
     </mat-step>
 
-    <mat-step *ngIf="isContainingPII()" [completed]="isLegitimateInterestValid()" errorMessage="Missing fields" [ngClass]="{'hidden': !isContainingPII()}">
+    <mat-step *ngIf="isContainingPII()" [completed]="isLegitimateInterestValid()"
+              [ngClass]="{'hidden': !isContainingPII()}"
+              errorMessage="Missing fields">
       <ng-template matStepLabel>Define Legitimate Interest</ng-template>
       <div>
         In the previous step, it was indicated that the data contains personal identifiable information.
@@ -80,11 +89,14 @@
       <ng-template matStepLabel>Define Service Offering</ng-template>
       <app-base-wizard-extension #gxServiceOfferingWizard></app-base-wizard-extension>
       <br/>
-      <app-service-offering-policy-hints [isOfferingDataOffering]="isOfferingDataOffering()"></app-service-offering-policy-hints>
+      <app-service-offering-policy-hints
+        [isOfferingDataOffering]="isOfferingDataOffering()"></app-service-offering-policy-hints>
       <br/>
-      <app-possible-x-enforced-policy-selector #enforcedPolicySelector [isOfferingDataOffering]="isOfferingDataOffering()"></app-possible-x-enforced-policy-selector>
+      <app-possible-x-enforced-policy-selector #enforcedPolicySelector
+                                               [isOfferingDataOffering]="isOfferingDataOffering()"></app-possible-x-enforced-policy-selector>
       <br>
-      <app-possible-x-enforced-policy-hints [isOfferingDataOffering]="isOfferingDataOffering()"></app-possible-x-enforced-policy-hints>
+      <app-possible-x-enforced-policy-hints
+        [isOfferingDataOffering]="isOfferingDataOffering()"></app-possible-x-enforced-policy-hints>
       <div class="flex justify-between pt-4">
         <button cButton color="secondary" matStepperPrevious shape="rounded-0">Back</button>
         <button (click)="createOffer()" [disabled]="!isServiceOfferingValid()" cButton color="primary" matStepperNext

@@ -62,15 +62,3 @@ tasks {
     args.set(listOf("run", "test", "--", "--no-watch", "--no-progress", "--browsers=ChromeHeadlessNoSandbox"))
   }
 }
-
-// run npm test only with build task
-tasks.register("npmTestConditional") {
-  if(gradle.startParameter.getTaskNames().contains("build")) {
-    println("do npm tests")
-    dependsOn(tasks.getByName("npmFeTest"))
-  }
-  else {
-    println("skip npm tests")
-    dependsOn(tasks.getByName("npmBuild"))
-  }
-}
