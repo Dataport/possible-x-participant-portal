@@ -88,13 +88,13 @@ public class PxExtendedDataResourceCredentialSubject {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private GxLegitimateInterestCredentialSubject legitimateInterest;
 
-    @Schema(description = "Human readable name of the data resource", example = "Some Data")
+    @Schema(description = "Name of the data resource", example = "Some Data")
     @JsonProperty("schema:name")
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)
     private String name;
 
-    @Schema(description = "Human readable description of the data resource", example = "Some Data Description")
+    @Schema(description = "Description of the data resource", example = "Some Data Description")
     @JsonProperty("schema:description")
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)

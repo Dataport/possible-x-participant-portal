@@ -105,14 +105,14 @@ public class GxServiceOfferingCredentialSubject extends PojoCredentialSubject {
     @NotEmpty(message = "At least one data account export is required")
     private List<GxDataAccountExport> dataAccountExport;
 
-    @Schema(description = "Human readable name of the offering", example = "Some Service")
+    @Schema(description = "Name of the offering", example = "Some Service")
     @NotBlank(message = "Name is required")
     @JsonProperty("schema:name")
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)
     private String name;
 
-    @Schema(description = "Human readable description of the offering", example = "Some Service Description")
+    @Schema(description = "Description of the offering", example = "Some Service Description")
     @JsonProperty("schema:description")
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)

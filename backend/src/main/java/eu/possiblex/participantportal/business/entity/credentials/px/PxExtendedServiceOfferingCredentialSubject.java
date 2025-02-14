@@ -78,13 +78,13 @@ public class PxExtendedServiceOfferingCredentialSubject {
     @NotNull
     private List<GxDataAccountExport> dataAccountExport;
 
-    @Schema(description = "Human readable name of the offering", example = "Some Service")
+    @Schema(description = "Name of the offering", example = "Some Service")
     @JsonProperty("schema:name")
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)
     private String name;
 
-    @Schema(description = "Human readable description of the offering", example = "Some Service Description")
+    @Schema(description = "Description of the offering", example = "Some Service Description")
     @JsonProperty("schema:description")
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)

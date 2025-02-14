@@ -90,14 +90,14 @@ public class GxDataResourceCredentialSubject extends PojoCredentialSubject {
     @JsonDeserialize(using = BooleanDeserializer.class)
     private boolean containsPII;
 
-    @Schema(description = "Human readable name of the data resource", example = "Some Data")
+    @Schema(description = "Name of the data resource", example = "Some Data")
     @NotBlank(message = "Name is required")
     @JsonProperty("schema:name")
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)
     private String name;
 
-    @Schema(description = "Human readable description of the data resource", example = "Some Data Description")
+    @Schema(description = "Description of the data resource", example = "Some Data Description")
     @JsonProperty("schema:description")
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)
