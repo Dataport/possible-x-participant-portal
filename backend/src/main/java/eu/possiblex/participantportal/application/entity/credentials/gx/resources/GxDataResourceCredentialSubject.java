@@ -12,6 +12,7 @@ import eu.possiblex.participantportal.business.entity.serialization.BooleanDeser
 import eu.possiblex.participantportal.business.entity.serialization.BooleanSerializer;
 import eu.possiblex.participantportal.business.entity.serialization.StringDeserializer;
 import eu.possiblex.participantportal.business.entity.serialization.StringSerializer;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -46,24 +47,28 @@ public class GxDataResourceCredentialSubject extends PojoCredentialSubject {
         "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#", "xsd",
         "http://www.w3.org/2001/XMLSchema#", "schema", "https://schema.org/");
 
+    @Schema(description = "A list of copyright owners either as a free form string or as resolvable link to the participant self-description.", example = "[\"Some Org Ltd.\", \"did:web:example.com:participant:someorgltd\"]")
     @JsonProperty("gx:copyrightOwnedBy")
     @JsonSerialize(contentUsing = StringSerializer.class)
     @JsonDeserialize(contentUsing = StringDeserializer.class)
     @NotEmpty(message = "At least one copyright owner is required")
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-    private List<@NotBlank(message = "Copyright owner is required")String> copyrightOwnedBy;
+    private List<@NotBlank(message = "Copyright owner is required") String> copyrightOwnedBy;
 
+    @Schema(description = "Resolvable link to the participant self-description legally enabling the data usage")
     @Valid
     @JsonProperty("gx:producedBy")
     @NotNull
     private NodeKindIRITypeId producedBy;
 
+    @Schema(description = "Resolvable link to the data exchange component that exposes the data resource")
     @JsonProperty("gx:exposedThrough")
     // no input validations as this will be set by the backend
     private NodeKindIRITypeId exposedThrough;
 
     // aggregationOf not yet mapped as it is optional
 
+    @Schema(description = "List of policies expressed using a DSL (e.g., Rego or ODRL). A simple default is: allow intent.", example = "[\"allow intent\"]")
     @JsonProperty("gx:policy")
     @JsonSerialize(contentUsing = StringSerializer.class)
     @JsonDeserialize(contentUsing = StringDeserializer.class)
@@ -71,6 +76,7 @@ public class GxDataResourceCredentialSubject extends PojoCredentialSubject {
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     private List<@NotBlank(message = "Policy is required") String> policy;
 
+    @Schema(description = "A list of SPDX identifiers or URL to document. Find SPDX identifiers here: https://spdx.org/licenses/ .", example = "[\"CC-BY-SA-4.0\", \"https://www.apache.org/licenses/LICENSE-2.0\"]")
     @JsonProperty("gx:license")
     @JsonSerialize(contentUsing = StringSerializer.class)
     @JsonDeserialize(contentUsing = StringDeserializer.class)
@@ -78,17 +84,20 @@ public class GxDataResourceCredentialSubject extends PojoCredentialSubject {
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     private List<@NotBlank(message = "License is required") String> license;
 
+    @Schema(description = "Flag whether the data resource contains Personal Identifiable Information (PII) or not")
     @JsonProperty("gx:containsPII")
     @JsonSerialize(using = BooleanSerializer.class)
     @JsonDeserialize(using = BooleanDeserializer.class)
     private boolean containsPII;
 
+    @Schema(description = "Human readable name of the data resource", example = "Some Data")
     @NotBlank(message = "Name is required")
     @JsonProperty("schema:name")
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)
     private String name;
 
+    @Schema(description = "Human readable description of the data resource", example = "Some Data Description")
     @JsonProperty("schema:description")
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)

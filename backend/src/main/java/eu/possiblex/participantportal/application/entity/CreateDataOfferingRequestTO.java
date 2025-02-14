@@ -23,7 +23,7 @@ public class CreateDataOfferingRequestTO extends CreateServiceOfferingRequestTO 
     @NotNull(message = "Data resource credential subject is required")
     private GxDataResourceCredentialSubject dataResourceCredentialSubject;
 
-    @Schema(description = "File name of the data resource")
+    @Schema(description = "File name of the data resource", example = "data.csv")
     @NotBlank(message = "File name is required")
     private String fileName;
 
