@@ -7,7 +7,7 @@ the user has closed in the POSSIBLE-X Dataspace.
 
 The Participant Portal backend is supposed to be used in conjunction with
 an [EDC Connector](https://github.com/eclipse-edc/Connector) in the version `v0.4.1` and with
-the [IONOS S3 Extension](https://github.com/Digital-Ecosystems/edc-ionos-s3/) in version `v2.2.0`.
+the [IONOS S3 Extension](https://github.com/Digital-Ecosystems/edc-ionos-s3/) in version `v2.3.1`.
 
 ## Structure
 
