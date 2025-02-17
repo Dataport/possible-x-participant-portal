@@ -21,7 +21,7 @@ the [IONOS S3 Extension](https://github.com/Digital-Ecosystems/edc-ionos-s3/) in
 │   ├── business            # business logic layer
 │   │   ├── control         # business logic services
 │   │   └── entity          # business logic data models
-│   └── utilities           # shared static functionality
+│   ├── utilities           # shared static functionality
 ```
 
 ## Configuration
