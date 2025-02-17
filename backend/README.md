@@ -3,7 +3,7 @@
 The backend component of the POSSIBLE-X Participant Portal is a Spring Boot application that provides the REST API for
 the frontend. It manages interactions with the participant's EDC and the central Fraunhofer (FH) Catalog to consume and
 provide Service Offerings / Data Service Offerings. It also allows looking up the contracts that the user has closed in
-the POSSIBLE-X dataspace.
+the POSSIBLE-X Dataspace.
 
 The Participant Portal backend is supposed to be used in conjunction with
 an [EDC Connector](https://github.com/eclipse-edc/Connector) in the version `v0.4.1` and with

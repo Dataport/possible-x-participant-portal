@@ -1,8 +1,8 @@
 # POSSIBLE-X Participant Portal
 
 The POSSIBLE-X Participant Portal is the decentralized UI for the participants in the POSSIBLE-X dataspace who want to
-consume or provide Service Offerings / Data Service Offerings in the centralized catalogue. It allows the participants
-to look up the contracts they have closed in the POSSIBLE-X dataspace as well.
+consume or provide Service Offerings / Data Service Offerings in the central Fraunhofer (FH) Catalog. It allows the
+participants to look up the contracts they have closed in the POSSIBLE-X Dataspace as well.
 
 The POSSIBLE-X Participant Portal consists of an Angular frontend and a Spring Boot backend. The backend is supposed to
 be used in conjunction with an [EDC Connector](https://github.com/eclipse-edc/Connector) in the version v0.4.1 and with

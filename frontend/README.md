@@ -2,7 +2,7 @@
 
 The frontend component of the POSSIBLE-X Participant Portal is an Angular application that provides the GUI for the user to interact with the backend.
 It provides a mask for consuming Service Offerings / Data Service Offerings from the central catalog, another mask for providing such offerings to
-the catalog, and a view where the user can look up the contracts they have closed in the POSSIBLE-X dataspace.
+the catalog, and a view where the user can look up the contracts they have closed in the POSSIBLE-X Dataspace.
 
 The frontend itself does not contain major logic or data processing, it depends on the backend component for that.
 
