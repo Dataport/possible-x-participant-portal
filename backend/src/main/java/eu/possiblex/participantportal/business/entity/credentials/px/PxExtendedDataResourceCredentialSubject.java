@@ -25,10 +25,7 @@ import java.util.Map;
 @JsonIgnoreProperties(ignoreUnknown = true, value = { "@type", "@context" }, allowGetters = true)
 public class PxExtendedDataResourceCredentialSubject {
     @Getter(AccessLevel.NONE)
-    public static final List<String> TYPE = List.of(GxDataResourceCredentialSubject.TYPE/*,
-        "px:PossibleXDataResourceExtension"*/); // TODO re-add this once the catalog properly parses this
-    // currently this has no implications as we don't have custom fields on the resource, but if we did, this would
-    // be bad
+    public static final List<String> TYPE = List.of(GxDataResourceCredentialSubject.TYPE, "px:PossibleXDataResourceExtension");
 
     @Getter(AccessLevel.NONE)
     public static final Map<String, String> CONTEXT = Map.of("gx", "https://w3id.org/gaia-x/development#", "xsd",
