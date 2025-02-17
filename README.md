@@ -1,6 +1,6 @@
 # POSSIBLE-X Participant Portal
 
-The POSSIBLE-X Participant Portal is the decentralized UI for the participants in the POSSIBLE-X dataspace who want to
+The POSSIBLE-X Participant Portal is the decentralized UI for the participants in the POSSIBLE-X Dataspace who want to
 consume or provide Service Offerings / Data Service Offerings in the central Fraunhofer (FH) Catalog. It allows the
 participants to look up the contracts they have closed in the POSSIBLE-X Dataspace as well.
 

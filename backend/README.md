@@ -20,13 +20,13 @@ the [IONOS S3 Extension](https://github.com/Digital-Ecosystems/edc-ionos-s3/) in
 │   │   └── entity          # application data models
 │   ├── business            # business logic layer
 │   │   ├── control         # business logic services
-│   │   └── entity          # business data models
+│   │   └── entity          # business logic data models
 │   └── utilities           # shared static functionality
 ```
 
 ## Configuration
 
-For a full list of configuration options (including Spring/JPA options) please see the
+For a full list of configuration options (including Spring options) please see the
 [application.yml](src/main/resources/application.yml).
 
 | Key                                                 | Description                                                                                                                                | Default                                                    |
