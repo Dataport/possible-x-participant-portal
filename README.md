@@ -1,11 +1,12 @@
 # POSSIBLE-X Participant Portal
 
-This repository contains a graphical user interface that is supposed to be used in conjunction with
-an [EDC Connector](https://github.com/eclipse-edc/Connector) in the version v0.4.1 and with
-the [IONOS S3 Extension](https://github.com/Digital-Ecosystems/edc-ionos-s3/) in version v2.2.0.
+The POSSIBLE-X Participant Portal is the decentralized UI for the participants in the POSSIBLE-X dataspace who want to
+consume or provide Service Offerings / Data Service Offerings in the centralized catalogue. It allows the participants
+to look up the contracts they have closed in the POSSIBLE-X dataspace as well.
 
-It aims to provide business-centric functionality for creating and providing service offers as well as consuming
-existing service offers found in a catalogue.
+The POSSIBLE-X Participant Portal consists of an Angular frontend and a Spring Boot backend. The backend is supposed to
+be used in conjunction with an [EDC Connector](https://github.com/eclipse-edc/Connector) in the version v0.4.1 and with
+the [IONOS S3 Extension](https://github.com/Digital-Ecosystems/edc-ionos-s3/) in version v2.2.0.
 
 ## Repository structure
 
@@ -156,7 +157,7 @@ sudo fuser -k 8080/tcp
 
 where 8080 can be replaced with any other port.
 
-## Functional Docu
+## Functional Documentation
 
 The consumer should be able to just copy the offer ID from the FH Catalog offer which he chooses in the FH Catalog.
 For that to work, the provider will put infos into the FH Catalog offer when the provider publishes an offer. These
