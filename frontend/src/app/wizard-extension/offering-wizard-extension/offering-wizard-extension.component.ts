@@ -120,12 +120,9 @@ export class OfferingWizardExtensionComponent implements AfterViewInit, OnDestro
 
     let policyList: IEnforcementPolicyUnion[] = this.enforcedPolicySelector.getPolicies();
 
-    let gxLegitimateInterestJsonSd: IGxLegitimateInterestCredentialSubject;
-
     let createOfferTo: any = {
       serviceOfferingCredentialSubject: gxOfferingJsonSd,
       enforcementPolicies: policyList,
-      legitimateInterestCredentialSubject: gxLegitimateInterestJsonSd,
     };
 
     let createOfferMethod: (offer: any) => Promise<any>;
@@ -139,7 +136,7 @@ export class OfferingWizardExtensionComponent implements AfterViewInit, OnDestro
       createOfferTo.fileName = this.selectedFileName;
 
       if (this.isContainingPII()) {
-        createOfferTo.legitimateInterest = this.gxLegitimateInterestWizard.generateJsonCs();
+        createOfferTo.legitimateInterestCredentialSubject = this.gxLegitimateInterestWizard.generateJsonCs();
       }
 
       createOfferMethod = this.apiService.createDataOffering.bind(this.apiService);
