@@ -29,6 +29,7 @@ import eu.possiblex.participantportal.application.entity.credentials.gx.datatype
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
 import eu.possiblex.participantportal.business.entity.serialization.StringDeserializer;
 import eu.possiblex.participantportal.business.entity.serialization.StringSerializer;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -63,23 +64,27 @@ public class GxServiceOfferingCredentialSubject extends PojoCredentialSubject {
         "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#", "xsd",
         "http://www.w3.org/2001/XMLSchema#", "schema", "https://schema.org/");
 
+    @Schema(description = "Resolvable link to the participant self-description providing the service")
     @Valid
     @JsonProperty("gx:providedBy")
     @NotNull
     private NodeKindIRITypeId providedBy;
 
+    @Schema(description = "List of resolvable links to data resource credential subjects related to the offering")
     @JsonProperty("gx:aggregationOf")
     // no input validations as this will be set by the backend
     private List<NodeKindIRITypeId> aggregationOf;
 
     // dependsOn not yet mapped as it is optional
 
+    @Schema(description = "List of terms and conditions")
     @Valid
     @JsonProperty("gx:termsAndConditions")
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     @NotEmpty(message = "At least one terms and conditions is required")
     private List<GxSOTermsAndConditions> termsAndConditions;
 
+    @Schema(description = "List of policies expressed using a DSL (e.g., Rego or ODRL). A simple default is: allow intent.", example = "[\"allow intent\"]")
     @JsonProperty("gx:policy")
     @JsonSerialize(contentUsing = StringSerializer.class)
     @JsonDeserialize(contentUsing = StringDeserializer.class)
@@ -87,35 +92,41 @@ public class GxServiceOfferingCredentialSubject extends PojoCredentialSubject {
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     private List<@NotBlank(message = "Policy is required") String> policy;
 
+    @Schema(description = "List of data protection regime", example = "[\"GDPR2016\"]")
     @JsonProperty("gx:dataProtectionRegime")
     @JsonSerialize(contentUsing = StringSerializer.class)
     @JsonDeserialize(contentUsing = StringDeserializer.class)
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     private List<@NotBlank(message = "Data protection regime is required") String> dataProtectionRegime;
 
+    @Schema(description = "A list of methods to export user account data out of the service")
     @Valid
     @JsonProperty("gx:dataAccountExport")
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     @NotEmpty(message = "At least one data account export is required")
     private List<GxDataAccountExport> dataAccountExport;
 
+    @Schema(description = "Name of the offering", example = "Some Service")
     @NotBlank(message = "Name is required")
     @JsonProperty("schema:name")
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)
     private String name;
 
+    @Schema(description = "Description of the offering", example = "Some Service Description")
     @JsonProperty("schema:description")
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)
     private String description;
 
+    @Schema(description = "JSON-LD type", example = "gx:ServiceOffering")
     @JsonProperty("type")
     public String getType() {
 
         return TYPE;
     }
 
+    @Schema(description = "JSON-LD context", example = "{\"gx\": \"https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#\"}")
     @JsonProperty("@context")
     public Map<String, String> getContext() {
 

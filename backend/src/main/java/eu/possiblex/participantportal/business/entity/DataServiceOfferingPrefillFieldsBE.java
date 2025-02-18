@@ -25,7 +25,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DataProductPrefillFieldsBE {
+public class DataServiceOfferingPrefillFieldsBE {
     private String serviceOfferingName;
 
     private String serviceOfferingDescription;

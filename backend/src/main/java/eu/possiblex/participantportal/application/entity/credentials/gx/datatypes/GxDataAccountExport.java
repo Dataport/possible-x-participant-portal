@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import eu.possiblex.participantportal.business.entity.serialization.StringDeserializer;
 import eu.possiblex.participantportal.business.entity.serialization.StringSerializer;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
@@ -38,18 +39,21 @@ import lombok.*;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GxDataAccountExport {
 
+    @Schema(description = "Request type of the data account export, must be one of: API, email, webform, unregisteredLetter, registeredLetter, supportCenter", example = "email")
     @JsonProperty("gx:requestType")
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)
     @NotBlank(message = "Request type is required")
     private String requestType;
 
+    @Schema(description = "Type of data support, must be one of: digital, physical", example = "digital")
     @JsonProperty("gx:accessType")
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)
     @NotBlank(message = "Access type is required")
     private String accessType;
 
+    @Schema(description = "Type of Media Types (formerly known as MIME types) as defined by the IANA, see https://de.wikipedia.org/wiki/Internet_Media_Type .", example = "application/json")
     @JsonProperty("gx:formatType")
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)

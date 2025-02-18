@@ -17,6 +17,7 @@
 package eu.possiblex.participantportal.application.boundary;
 
 import eu.possiblex.participantportal.application.entity.*;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,28 +27,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @RequestMapping("/provider")
 public interface ProviderRestApi {
-    /**
-     * POST endpoint to create a service offering
-     *
-     * @return create offer response object
-     */
+    @Operation(summary = "Create an offering", tags = {
+        "ProvideOffer" }, description = "Create an offering based on the given input.")
     @PostMapping(value = "/offer/service", produces = MediaType.APPLICATION_JSON_VALUE)
     CreateOfferResponseTO createServiceOffering(
         @Valid @RequestBody CreateServiceOfferingRequestTO createServiceOfferingRequestTO);
 
-    /**
-     * POST endpoint to create a data offering
-     *
-     * @return create offer response object
-     */
+    @Operation(summary = "Create an offering with data", tags = {
+        "ProvideOffer" }, description = "Create an offering which contains data based on the given input.")
     @PostMapping(value = "/offer/data", produces = MediaType.APPLICATION_JSON_VALUE)
     CreateOfferResponseTO createDataOffering(@Valid @RequestBody CreateDataOfferingRequestTO createDataOfferingRequestTO);
 
-    /**
-     * GET endpoint to retrieve the prefill fields for providing offers.
-     *
-     * @return prefill fields
-     */
+    @Operation(summary = "Get prefill values for providing offerings", tags = {
+        "ProvideOffer" }, description = "Get values to help prefill specific fields when providing offerings.")
     @GetMapping(value = "/prefillFields", produces = MediaType.APPLICATION_JSON_VALUE)
     PrefillFieldsTO getPrefillFields();
 }

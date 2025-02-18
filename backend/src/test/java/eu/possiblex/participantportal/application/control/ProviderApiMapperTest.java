@@ -7,12 +7,12 @@ import eu.possiblex.participantportal.application.entity.credentials.gx.datatype
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.GxSOTermsAndConditions;
 import eu.possiblex.participantportal.application.entity.credentials.gx.datatypes.NodeKindIRITypeId;
 import eu.possiblex.participantportal.application.entity.credentials.gx.resources.GxDataResourceCredentialSubject;
-import eu.possiblex.participantportal.application.entity.credentials.gx.resources.GxLegitimateInterest;
+import eu.possiblex.participantportal.application.entity.credentials.gx.resources.GxLegitimateInterestCredentialSubject;
 import eu.possiblex.participantportal.application.entity.credentials.gx.serviceofferings.GxServiceOfferingCredentialSubject;
 import eu.possiblex.participantportal.application.entity.policies.*;
 import eu.possiblex.participantportal.business.entity.CreateDataOfferingRequestBE;
 import eu.possiblex.participantportal.business.entity.CreateServiceOfferingRequestBE;
-import eu.possiblex.participantportal.business.entity.DataProductPrefillFieldsBE;
+import eu.possiblex.participantportal.business.entity.DataServiceOfferingPrefillFieldsBE;
 import eu.possiblex.participantportal.business.entity.PrefillFieldsBE;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
@@ -106,10 +106,10 @@ class ProviderApiMapperTest {
             .exposedThrough(new NodeKindIRITypeId("urn:uuid:GENERATED_SERVICE_OFFERING_ID"))
             .id("urn:uuid:GENERATED_DATA_RESOURCE_ID").build();
 
-        GxLegitimateInterest legitimateInterestCs = GxLegitimateInterest.builder().dataProtectionContact("Test Contact")
+        GxLegitimateInterestCredentialSubject legitimateInterestCs = GxLegitimateInterestCredentialSubject.builder().dataProtectionContact("Test Contact")
             .legalBasis("Test Legal Basis").build();
 
-        CreateDataOfferingRequestTO to = CreateDataOfferingRequestTO.builder().legitimateInterest(legitimateInterestCs)
+        CreateDataOfferingRequestTO to = CreateDataOfferingRequestTO.builder().legitimateInterestCredentialSubject(legitimateInterestCs)
             .serviceOfferingCredentialSubject(serviceOfferingCs).fileName("text.txt").enforcementPolicies(List.of())
             .dataResourceCredentialSubject(dataResourceCs).build();
 
@@ -148,9 +148,9 @@ class ProviderApiMapperTest {
         assertEquals(to.getDataResourceCredentialSubject().isContainsPII(), be.getDataResource().isContainsPII());
         assertEquals(to.getDataResourceCredentialSubject().getId(), be.getDataResource().getId());
 
-        assertEquals(to.getLegitimateInterest().getDataProtectionContact(),
-            be.getLegitimateInterest().getDataProtectionContact());
-        assertEquals(to.getLegitimateInterest().getLegalBasis(), be.getLegitimateInterest().getLegalBasis());
+        assertEquals(to.getLegitimateInterestCredentialSubject().getDataProtectionContact(),
+            be.getLegitimateInterestCredentialSubject().getDataProtectionContact());
+        assertEquals(to.getLegitimateInterestCredentialSubject().getLegalBasis(), be.getLegitimateInterestCredentialSubject().getLegalBasis());
 
         assertIterableEquals(List.of(new EverythingAllowedPolicy()), beAdapted.getEnforcementPolicies());
 
@@ -160,18 +160,18 @@ class ProviderApiMapperTest {
     void mapGetPrefillFieldsTO() {
 
         // GIVEN
-        PrefillFieldsBE be = PrefillFieldsBE.builder().dataProductPrefillFields(
-            DataProductPrefillFieldsBE.builder().serviceOfferingDescription("Test Description")
+        PrefillFieldsBE be = PrefillFieldsBE.builder().dataServiceOfferingPrefillFields(
+            DataServiceOfferingPrefillFieldsBE.builder().serviceOfferingDescription("Test Description")
                 .serviceOfferingName("Test Name").build()).participantId("did:web:example-organization.eu").build();
 
         // WHEN
         PrefillFieldsTO to = providerApiMapper.getPrefillFieldsTO(be);
 
         // THEN
-        assertEquals(be.getDataProductPrefillFields().getServiceOfferingDescription(),
-            to.getDataProductPrefillFields().getServiceOfferingDescription());
-        assertEquals(be.getDataProductPrefillFields().getServiceOfferingName(),
-            to.getDataProductPrefillFields().getServiceOfferingName());
+        assertEquals(be.getDataServiceOfferingPrefillFields().getServiceOfferingDescription(),
+            to.getDataServiceOfferingPrefillFields().getServiceOfferingDescription());
+        assertEquals(be.getDataServiceOfferingPrefillFields().getServiceOfferingName(),
+            to.getDataServiceOfferingPrefillFields().getServiceOfferingName());
         assertEquals(be.getParticipantId(), to.getParticipantId());
 
     }

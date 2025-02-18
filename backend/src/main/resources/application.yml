@@ -48,7 +48,7 @@ fh:
     sparql:
       url: http://localhost:8890/sparql/
     uri-resource-base: http://localhost:5081/resources/
-    secret-key: yourRepoApiKey
+    secret-key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImV4YW1wbGVAZXhhbXBsZS5jb20ifQ.lIFGx3dAAwI3ck57PFUo2PdEUG7qGWFMPLu6-J_EaHM
 
 sd-creation-wizard-api:
   base-url: http://localhost:8085
@@ -64,8 +64,8 @@ s3:
   bucket-name: "dev-provider-edc-bucket-possible-31952746"
 
 prefill-fields:
-  data-product:
-    json-file-path: "src/main/resources/prefillFieldsDataProduct.json"
+  data-service-offering:
+    json-file-path: "src/main/resources/prefillFieldsDataServiceOffering.json"
 
 version.no: "1.0.0"
 
