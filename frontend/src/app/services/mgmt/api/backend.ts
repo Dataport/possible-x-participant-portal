@@ -34,12 +34,12 @@ export interface IProviderRestApi {
 }
 
 export interface IResourceShapeRestApi {
+    gxPhysicalResourceShape: string;
     gxSoftwareResourceShape: string;
     gxVirtualResourceShape: string;
     gxLegitimateInterestShape: string;
-    gxPhysicalResourceShape: string;
-    gxInstantiatedVirtualResourceShape: string;
     gxDataResourceShape: string;
+    gxInstantiatedVirtualResourceShape: string;
 }
 
 export interface IServiceOfferingShapeRestApi {
@@ -84,8 +84,8 @@ export interface IContractAgreementTO {
     contractSigningDate: Date;
     consumerDetails: IContractParticipantDetailsTO;
     providerDetails: IContractParticipantDetailsTO;
-    dataOffering: boolean;
     provider: boolean;
+    dataOffering: boolean;
 }
 
 export interface IContractAgreementTOBuilder {
@@ -119,7 +119,7 @@ export interface IContractParticipantDetailsTOBuilder {
 export interface ICreateDataOfferingRequestTO extends ICreateServiceOfferingRequestTO {
     dataResourceCredentialSubject: IGxDataResourceCredentialSubject;
     fileName: string;
-    legitimateInterest: IGxLegitimateInterest;
+    legitimateInterestCredentialSubject: IGxLegitimateInterestCredentialSubject;
 }
 
 export interface ICreateDataOfferingRequestTOBuilder<C, B> extends ICreateServiceOfferingRequestTOBuilder<C, B> {
@@ -147,12 +147,12 @@ export interface ICreateServiceOfferingRequestTOBuilder<C, B> {
 export interface ICreateServiceOfferingRequestTOBuilderImpl extends ICreateServiceOfferingRequestTOBuilder<ICreateServiceOfferingRequestTO, ICreateServiceOfferingRequestTOBuilderImpl> {
 }
 
-export interface IDataProductPrefillFieldsTO {
+export interface IDataServiceOfferingPrefillFieldsTO {
     serviceOfferingName: string;
     serviceOfferingDescription: string;
 }
 
-export interface IDataProductPrefillFieldsTOBuilder {
+export interface IDataServiceOfferingPrefillFieldsTOBuilder {
 }
 
 export interface IErrorResponseTO {
@@ -204,7 +204,7 @@ export interface IParticipantNameTOBuilderImpl extends IParticipantNameTOBuilder
 
 export interface IPrefillFieldsTO {
     participantId: string;
-    dataProductPrefillFields: IDataProductPrefillFieldsTO;
+    dataServiceOfferingPrefillFields: IDataServiceOfferingPrefillFieldsTO;
 }
 
 export interface IPrefillFieldsTOBuilder {
@@ -295,7 +295,13 @@ export interface IGxDataResourceCredentialSubject extends IPojoCredentialSubject
     "gx:containsPII": boolean;
     "schema:name": string;
     "schema:description": string;
+    /**
+     * JSON-LD context
+     */
     "@context": { [index: string]: string };
+    /**
+     * JSON-LD type
+     */
     type: string;
 }
 
@@ -313,16 +319,19 @@ export interface IGxDataResourceCredentialSubjectBuilderImpl extends IGxDataReso
     "schema:description": string;
 }
 
-export interface IGxLegitimateInterest {
+export interface IGxLegitimateInterestCredentialSubject {
     "gx:dataProtectionContact": string;
     "gx:legalBasis": string;
+    /**
+     * JSON-LD type
+     */
     type: string;
 }
 
-export interface IGxLegitimateInterestBuilder<C, B> {
+export interface IGxLegitimateInterestCredentialSubjectBuilder<C, B> {
 }
 
-export interface IGxLegitimateInterestBuilderImpl extends IGxLegitimateInterestBuilder<IGxLegitimateInterest, IGxLegitimateInterestBuilderImpl> {
+export interface IGxLegitimateInterestCredentialSubjectBuilderImpl extends IGxLegitimateInterestCredentialSubjectBuilder<IGxLegitimateInterestCredentialSubject, IGxLegitimateInterestCredentialSubjectBuilderImpl> {
     "gx:dataProtectionContact": string;
     "gx:legalBasis": string;
 }
@@ -337,7 +346,13 @@ export interface IGxServiceOfferingCredentialSubject extends IPojoCredentialSubj
     "gx:dataAccountExport": IGxDataAccountExport[];
     "schema:name": string;
     "schema:description": string;
+    /**
+     * JSON-LD context
+     */
     "@context": { [index: string]: string };
+    /**
+     * JSON-LD type
+     */
     type: string;
 }
 
@@ -355,6 +370,9 @@ export interface IGxServiceOfferingCredentialSubjectBuilderImpl extends IGxServi
     "schema:description": string;
 }
 
+/**
+ * Policy that restricts the transfer period
+ */
 export interface IEndAgreementOffsetPolicy extends ITimeAgreementOffsetPolicy {
     "@type": "EndAgreementOffsetPolicy";
 }
@@ -365,6 +383,9 @@ export interface IEndAgreementOffsetPolicyBuilder<C, B> extends ITimeAgreementOf
 export interface IEndAgreementOffsetPolicyBuilderImpl extends IEndAgreementOffsetPolicyBuilder<IEndAgreementOffsetPolicy, IEndAgreementOffsetPolicyBuilderImpl> {
 }
 
+/**
+ * Policy that restricts the contract duration to an end date
+ */
 export interface IEndDatePolicy extends ITimeDatePolicy {
     "@type": "EndDatePolicy";
 }
@@ -383,6 +404,9 @@ export interface IEnforcementPolicy {
 export interface IEnforcementPolicyBuilder<C, B> {
 }
 
+/**
+ * Policy that allows everything
+ */
 export interface IEverythingAllowedPolicy extends IEnforcementPolicy {
     "@type": "EverythingAllowedPolicy";
 }
@@ -393,6 +417,9 @@ export interface IEverythingAllowedPolicyBuilder<C, B> extends IEnforcementPolic
 export interface IEverythingAllowedPolicyBuilderImpl extends IEverythingAllowedPolicyBuilder<IEverythingAllowedPolicy, IEverythingAllowedPolicyBuilderImpl> {
 }
 
+/**
+ * Policy that restricts the contractual booking to specific participants
+ */
 export interface IParticipantRestrictionPolicy extends IEnforcementPolicy {
     "@type": "ParticipantRestrictionPolicy";
     allowedParticipants: string[];
@@ -414,6 +441,9 @@ export interface IStartAgreementOffsetPolicyBuilder<C, B> extends ITimeAgreement
 export interface IStartAgreementOffsetPolicyBuilderImpl extends IStartAgreementOffsetPolicyBuilder<IStartAgreementOffsetPolicy, IStartAgreementOffsetPolicyBuilderImpl> {
 }
 
+/**
+ * Policy that restricts the contract duration to a start date
+ */
 export interface IStartDatePolicy extends ITimeDatePolicy {
     "@type": "StartDatePolicy";
 }
@@ -450,7 +480,13 @@ export interface IPolicy {
     "odrl:prohibition": any[];
     "odrl:obligation": any[];
     "odrl:target": IPolicyTarget;
+    /**
+     * JSON-LD context
+     */
     "@context": string;
+    /**
+     * JSON-LD type
+     */
     "@type": string;
 }
 
@@ -466,7 +502,13 @@ export interface IPxExtendedServiceOfferingCredentialSubject {
     "schema:description": string;
     "px:assetId": string;
     "px:providerUrl": string;
+    /**
+     * JSON-LD context
+     */
     "@context": { [index: string]: string };
+    /**
+     * JSON-LD type
+     */
     "@type": string[];
 }
 
@@ -488,10 +530,16 @@ export interface IPxExtendedDataResourceCredentialSubject {
     "gx:policy": string[];
     "gx:license": string[];
     "gx:containsPII": boolean;
-    "gx:legitimateInterest": IGxLegitimateInterest;
+    "gx:legitimateInterest": IGxLegitimateInterestCredentialSubject;
     "schema:name": string;
     "schema:description": string;
+    /**
+     * JSON-LD context
+     */
     "@context": { [index: string]: string };
+    /**
+     * JSON-LD type
+     */
     "@type": string[];
 }
 
@@ -505,6 +553,9 @@ export interface IOdrlConstraint {
     "odrl:leftOperand": string;
     "odrl:operator": IOdrlOperator;
     "odrl:rightOperand": string;
+    /**
+     * JSON-LD type
+     */
     "@type": string;
 }
 

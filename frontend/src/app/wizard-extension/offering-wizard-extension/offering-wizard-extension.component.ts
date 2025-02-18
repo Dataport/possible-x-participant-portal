@@ -23,7 +23,7 @@ import {ApiService} from '../../services/mgmt/api/api.service';
 import {
   IEnforcementPolicyUnion,
   IGxDataResourceCredentialSubject,
-  IGxLegitimateInterest,
+  IGxLegitimateInterestCredentialSubject,
   IGxServiceOfferingCredentialSubject,
   INodeKindIRITypeId,
   IPojoCredentialSubject, IPrefillFieldsTO
@@ -120,12 +120,12 @@ export class OfferingWizardExtensionComponent implements AfterViewInit, OnDestro
 
     let policyList: IEnforcementPolicyUnion[] = this.enforcedPolicySelector.getPolicies();
 
-    let gxLegitimateInterestJsonSd: IGxLegitimateInterest;
+    let gxLegitimateInterestJsonSd: IGxLegitimateInterestCredentialSubject;
 
     let createOfferTo: any = {
       serviceOfferingCredentialSubject: gxOfferingJsonSd,
       enforcementPolicies: policyList,
-      legitimateInterest: gxLegitimateInterestJsonSd,
+      legitimateInterestCredentialSubject: gxLegitimateInterestJsonSd,
     };
 
     let createOfferMethod: (offer: any) => Promise<any>;
@@ -235,8 +235,8 @@ export class OfferingWizardExtensionComponent implements AfterViewInit, OnDestro
     if (this.isOfferingDataOffering()) {
       let gxDataResourceJsonSd: IGxDataResourceCredentialSubject = this.trimStringsInDataStructure(this.gxDataResourceWizard.generateJsonCs());
       let dataResourceName = gxDataResourceJsonSd["schema:name"] ? gxDataResourceJsonSd["schema:name"]["@value"] : "data resource name not available";
-      gxServiceOfferingCs["schema:name"] = this.prefillFields.dataProductPrefillFields.serviceOfferingName.replace("<Data resource name>", dataResourceName);
-      gxServiceOfferingCs["schema:description"] = this.prefillFields.dataProductPrefillFields.serviceOfferingDescription.replace("<Data resource name>", dataResourceName);
+      gxServiceOfferingCs["schema:name"] = this.prefillFields.dataServiceOfferingPrefillFields.serviceOfferingName.replace("<Data resource name>", dataResourceName);
+      gxServiceOfferingCs["schema:description"] = this.prefillFields.dataServiceOfferingPrefillFields.serviceOfferingDescription.replace("<Data resource name>", dataResourceName);
     }
 
     this.loadShape(this.gxServiceOfferingWizard, this.serviceOfferingShapeSource, TBR_SERVICE_OFFERING_ID).then(_ => {
