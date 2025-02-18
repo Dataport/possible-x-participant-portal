@@ -23,7 +23,6 @@ import {ApiService} from '../../services/mgmt/api/api.service';
 import {
   IEnforcementPolicyUnion,
   IGxDataResourceCredentialSubject,
-  IGxLegitimateInterestCredentialSubject,
   IGxServiceOfferingCredentialSubject,
   INodeKindIRITypeId,
   IPojoCredentialSubject, IPrefillFieldsTO
