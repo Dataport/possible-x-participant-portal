@@ -76,3 +76,5 @@ Execute the unit tests via [Karma](https://karma-runner.github.io) with npm:
 ```
 npm --prefix frontend/ test
 ```
+
+**Note:** On some systems, e.g. when you are using WSL for development, you might need to set the chrome binary to `CHROME_BIN=/bin/chromium-browser` to run the frontend tests individually.

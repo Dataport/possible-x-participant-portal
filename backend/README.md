@@ -101,10 +101,32 @@ Through gradle:
 ./gradlew startBackend
 ```
 
+Running a specific configuration:
+
+E.g. for local consumer:
+
+```
+./gradlew startBackend -PactiveProfile=consumer-local
+```
+
+E.g. for local provider:
+
+```
+./gradlew startBackend -PactiveProfile=provider-local
+```
+
 Alternatively running the jar directly (if built previously):
 
 ```
 java -jar backend/build/libs/backend-x.y.z.jar
 ```
 
-Once the service is running, you can access it at http://localhost:8080/ .
+Or running the jar with a specific configuration, e.g. for local provider:
+
+```
+java -jar backend/build/libs/backend-x.y.z.jar --spring.profiles.active=provider-local
+```
+
+Once the service is running, you can access it at e.g. http://localhost:8080/ (depending on the used configuration).
+
+The OpenAPI documentation can be found at http://localhost:8080/swagger-ui.html .
