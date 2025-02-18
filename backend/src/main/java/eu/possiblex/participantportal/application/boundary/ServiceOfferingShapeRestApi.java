@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public interface ServiceOfferingShapeRestApi {
     @Operation(summary = "Get the Gaia-X service offering shape", tags = {
         "Shapes" }, description = "Get the Gaia-X service offering shape.", responses = {
-        @ApiResponse(content = @Content(schema = @Schema(description = "Gaia-X service offering shape as JSON string"))) })
+        @ApiResponse(content = @Content(schema = @Schema(description = "Gaia-X service offering shape as JSON string", example = "{ \"prefixList\": [], \"shapes\": [] }"))) })
     @GetMapping("/gx/serviceoffering")
     String getGxServiceOfferingShape();
 }

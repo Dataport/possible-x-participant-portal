@@ -23,6 +23,6 @@ import lombok.experimental.SuperBuilder;
 })
 @EqualsAndHashCode
 public abstract class EnforcementPolicy {
-    @Schema(description = "Flag whether the policy is valid or not")
+    @Schema(description = "Flag whether the policy is valid or not", example = "true")
     private boolean isValid;
 }

@@ -20,7 +20,7 @@ public class ConsumeOfferRequestTO {
     @NotBlank(message = "EDC offer ID is required")
     private String edcOfferId;
 
-    @Schema(description = "Flag whether the offering contains data resources or not")
+    @Schema(description = "Flag whether the offering contains data resources or not", example = "true")
     private boolean dataOffering;
 
 }

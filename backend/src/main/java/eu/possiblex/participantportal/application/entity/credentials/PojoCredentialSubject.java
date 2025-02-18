@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import eu.possiblex.participantportal.application.entity.credentials.gx.resources.GxDataResourceCredentialSubject;
 import eu.possiblex.participantportal.application.entity.credentials.gx.serviceofferings.GxServiceOfferingCredentialSubject;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -38,6 +39,7 @@ import lombok.experimental.SuperBuilder;
 public abstract class PojoCredentialSubject {
     // base fields
     // no input validations as this will be set by the backend
+    @Schema(description = "ID of the credential subject", example = "urn:uuid:0107cfac-ba6c-4d1b-9b90-899aa4b56da1")
     private String id;
 }
 

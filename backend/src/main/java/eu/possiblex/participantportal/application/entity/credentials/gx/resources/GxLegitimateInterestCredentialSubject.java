@@ -47,20 +47,21 @@ public class GxLegitimateInterestCredentialSubject {
     @Getter(AccessLevel.NONE)
     public static final String TYPE = TYPE_NAMESPACE + ":" + TYPE_CLASS;
 
-    @Schema(description = "An URL pointing to a contact form or an email address")
+    @Schema(description = "An URL pointing to a contact form or an email address", example = "https://someorg.com/contact")
     @JsonProperty("gx:dataProtectionContact")
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)
     @NotBlank(message = "Data protection contact is required")
     private String dataProtectionContact;
 
-    @Schema(description = "Reasons to process PII as detailed in the data protection regime")
+    @Schema(description = "Reasons to process PII as detailed in the data protection regime", example = "Contractual Necessity")
     @JsonProperty("gx:legalBasis")
     @JsonSerialize(using = StringSerializer.class)
     @JsonDeserialize(using = StringDeserializer.class)
     @NotBlank(message = "Legal basis is required")
     private String legalBasis;
 
+    @Schema(description = "JSON-LD type", example = "gx:LegitimateInterest")
     @JsonProperty("type")
     public String getType() {
 

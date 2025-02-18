@@ -46,7 +46,7 @@ public class Policy {
 
     private static final String CONTEXT = JsonLdConstants.POLICY_CONTEXT;
 
-    @Schema(description = "Policy ID")
+    @Schema(description = "Policy ID", example = "9ca628fb-515a-44ff-90e3-39c34ef4e912")
     @JsonProperty("@id")
     private String id;
 
@@ -56,13 +56,13 @@ public class Policy {
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     private List<OdrlPermission> permission = new ArrayList<>();
 
-    @Schema(description = "List of ODRL prohibitions as retrieved from the EDC")
+    @Schema(description = "List of ODRL prohibitions as retrieved from the EDC", example = "[]")
     @Builder.Default
     @JsonProperty(JsonLdConstants.ODRL_PREFIX + "prohibition")
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     private List<JsonNode> prohibition = new ArrayList<>(); // replace this with proper classes once needed
 
-    @Schema(description = "List of ODRL obligations as retrieved from the EDC")
+    @Schema(description = "List of ODRL obligations as retrieved from the EDC", example = "[]")
     @Builder.Default
     @JsonProperty(JsonLdConstants.ODRL_PREFIX + "obligation")
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
@@ -72,12 +72,14 @@ public class Policy {
     @JsonProperty(JsonLdConstants.ODRL_PREFIX + "target")
     private PolicyTarget target;
 
+    @Schema(description = "JSON-LD type", example = "odrl:Set")
     @JsonProperty("@type")
     public String getType() {
 
         return TYPE;
     }
 
+    @Schema(description = "JSON-LD context", example = "http://www.w3.org/ns/odrl.jsonld")
     @JsonProperty("@context")
     public String getContext() {
 

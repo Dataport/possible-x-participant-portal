@@ -76,7 +76,7 @@ public class PxExtendedDataResourceCredentialSubject {
     @JsonDeserialize(contentUsing = StringDeserializer.class)
     private List<String> license;
 
-    @Schema(description = "Flag whether the data resource contains Personal Identifiable Information (PII) or not")
+    @Schema(description = "Flag whether the data resource contains Personal Identifiable Information (PII) or not", example = "true")
     @JsonProperty("gx:containsPII")
     @NotNull
     @JsonSerialize(using = BooleanSerializer.class)
@@ -102,12 +102,14 @@ public class PxExtendedDataResourceCredentialSubject {
 
     // obsoleteDateTime and expirationDateTime not yet mapped as they are optional
 
+    @Schema(description = "JSON-LD type", example = "[\"gx:DataResource\", \"px:PossibleXDataResourceExtension\"]")
     @JsonProperty("@type")
     public List<String> getType() {
 
         return TYPE;
     }
 
+    @Schema(description = "JSON-LD context", example = "{\"gx\": \"https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#\"}")
     @JsonProperty("@context")
     public Map<String, String> getContext() {
 

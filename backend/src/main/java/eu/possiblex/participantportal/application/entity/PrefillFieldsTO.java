@@ -12,8 +12,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PrefillFieldsTO {
     @Schema(description = "ID of the participant", example = "did:web:example.com:participant:someorgltd")
-    String participantId;
+    private String participantId;
 
     @Schema(description = "Values to help prefill specific fields when providing offerings containing data resources")
-    DataServiceOfferingPrefillFieldsTO dataServiceOfferingPrefillFields;
+    private DataServiceOfferingPrefillFieldsTO dataServiceOfferingPrefillFields;
 }

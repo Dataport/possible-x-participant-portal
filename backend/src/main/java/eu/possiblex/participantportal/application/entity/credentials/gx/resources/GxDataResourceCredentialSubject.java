@@ -84,7 +84,7 @@ public class GxDataResourceCredentialSubject extends PojoCredentialSubject {
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     private List<@NotBlank(message = "License is required") String> license;
 
-    @Schema(description = "Flag whether the data resource contains Personal Identifiable Information (PII) or not")
+    @Schema(description = "Flag whether the data resource contains Personal Identifiable Information (PII) or not", example = "true")
     @JsonProperty("gx:containsPII")
     @JsonSerialize(using = BooleanSerializer.class)
     @JsonDeserialize(using = BooleanDeserializer.class)
@@ -105,12 +105,14 @@ public class GxDataResourceCredentialSubject extends PojoCredentialSubject {
 
     // obsoleteDateTime and expirationDateTime not yet mapped as they are optional
 
+    @Schema(description = "JSON-LD type", example = "gx:DataResource")
     @JsonProperty("type")
     public String getType() {
 
         return TYPE;
     }
 
+    @Schema(description = "JSON-LD context", example = "{\"gx\": \"https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#\"}")
     @JsonProperty("@context")
     public Map<String, String> getContext() {
 

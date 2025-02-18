@@ -40,9 +40,9 @@ public class ContractAgreementTO {
     @Schema(description = "Details of the offering provider")
     private ContractParticipantDetailsTO providerDetails;
 
-    @Schema(description = "Flag whether the contract agreement is related to an offering containing data resources")
+    @Schema(description = "Flag whether the contract agreement is related to an offering containing data resources", example = "true")
     private boolean isDataOffering;
 
-    @Schema(description = "Flag whether the party at hand is the provider of the offering")
+    @Schema(description = "Flag whether the party at hand is the provider of the offering", example = "true")
     private boolean isProvider;
 }

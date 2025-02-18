@@ -102,12 +102,14 @@ public class PxExtendedServiceOfferingCredentialSubject {
     @JsonDeserialize(using = StringDeserializer.class)
     private String providerUrl;
 
+    @Schema(description = "JSON-LD type", example = "[\"gx:ServiceOffering\", \"px:PossibleXServiceOfferingExtension\"]")
     @JsonProperty("@type")
     public List<String> getType() {
 
         return TYPE;
     }
 
+    @Schema(description = "JSON-LD context", example = "{\"gx\": \"https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#\"}")
     @JsonProperty("@context")
     public Map<String, String> getContext() {
 

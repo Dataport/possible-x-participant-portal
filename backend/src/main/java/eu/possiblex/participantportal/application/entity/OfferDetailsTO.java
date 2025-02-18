@@ -23,7 +23,7 @@ public class OfferDetailsTO {
     @Schema(description = "Offering credential subject as retrieved from the catalog")
     private PxExtendedServiceOfferingCredentialSubject catalogOffering;
 
-    @Schema(description = "Flag whether the offering contains data resources or not")
+    @Schema(description = "Flag whether the offering contains data resources or not", example = "true")
     private boolean dataOffering;
 
     @Schema(description = "List of enforcement policies for this offering")

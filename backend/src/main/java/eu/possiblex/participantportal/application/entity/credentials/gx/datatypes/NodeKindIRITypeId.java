@@ -33,8 +33,7 @@ import lombok.*;
 @ToString
 public class NodeKindIRITypeId {
 
-    @Schema(description = "Internationalized Resource Identifier (IRI) reference ID", examples = {
-        "urn:uuid:0107cfac-ba6c-4d1b-9b90-899aa4b56da1", "did:web:example.com:participant:someorgltd" })
+    @Schema(description = "Internationalized Resource Identifier (IRI) reference ID", example = "urn:uuid:0107cfac-ba6c-4d1b-9b90-899aa4b56da1")
     @NotBlank(message = "IRI ID reference is required")
     @JsonAlias("@id")
     private String id;

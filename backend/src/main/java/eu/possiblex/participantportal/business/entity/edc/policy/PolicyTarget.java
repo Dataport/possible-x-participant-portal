@@ -20,6 +20,7 @@
 package eu.possiblex.participantportal.business.entity.edc.policy;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 @Getter
@@ -29,6 +30,7 @@ import lombok.*;
 @ToString
 @Builder
 public class PolicyTarget {
+    @Schema(description = "ID of the policy target", example = "b9c37d9f-4777-43af-82d0-6a37bf905cf5")
     @JsonProperty("@id")
     private String id;
 }
