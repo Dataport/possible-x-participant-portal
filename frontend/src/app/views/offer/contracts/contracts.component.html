@@ -104,6 +104,7 @@
         </ng-container>
         </tbody>
       </table>
+      <app-loading-animation *ngIf="waitingForContractAgreements"></app-loading-animation>
       <mat-paginator [length]="contractAgreements.length"
                      [pageSize]="pageSize"
                      [pageIndex]="pageIndex"

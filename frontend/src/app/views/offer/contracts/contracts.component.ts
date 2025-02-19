@@ -46,6 +46,7 @@ export class ContractsComponent implements OnInit {
   expandedItemId: string | null = null;
   isTransferButtonDisabled = false;
   contractDetailsToExport?: IContractDetailsTO = undefined;
+  waitingForContractAgreements: boolean = false;
 
   constructor(private readonly apiService: ApiService, private readonly popUpMessage: MatSnackBar) {
   }
@@ -201,9 +202,14 @@ export class ContractsComponent implements OnInit {
   }
 
   private handleGetContractAgreements() {
-    this.getContractAgreements().catch((e: HttpErrorResponse) => {
+    this.waitingForContractAgreements = true;
+    this.getContractAgreements().then(() => {
+      this.waitingForContractAgreements = false;
+    }).catch((e: HttpErrorResponse) => {
+      this.waitingForContractAgreements = false;
       this.requestContractAgreementsStatusMessage.showErrorMessage(e.error.detail);
     }).catch(_ => {
+      this.waitingForContractAgreements = false;
       this.requestContractAgreementsStatusMessage.showErrorMessage("Unknown error occurred");
     });
   }

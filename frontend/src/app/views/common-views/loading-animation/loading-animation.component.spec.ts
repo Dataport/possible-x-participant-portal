@@ -14,18 +14,24 @@
  *  limitations under the License.
  */
 
-import {NgModule} from '@angular/core';
-import {CommonModule} from '@angular/common';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import {StatusMessageComponent} from './status-message/status-message.component';
-import {LoadingAnimationComponent} from './loading-animation/loading-animation.component';
-import {SpinnerModule} from '@coreui/angular';
+import { LoadingAnimationComponent } from './loading-animation.component';
 
-@NgModule({
-  declarations: [StatusMessageComponent, LoadingAnimationComponent],
-  imports: [CommonModule, SpinnerModule],
-  exports: [StatusMessageComponent, LoadingAnimationComponent],
-})
+describe('LoadingAnimationComponent', () => {
+  let component: LoadingAnimationComponent;
+  let fixture: ComponentFixture<LoadingAnimationComponent>;
 
-export class CommonViewsModule {
-}
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      declarations: [LoadingAnimationComponent]
+    });
+    fixture = TestBed.createComponent(LoadingAnimationComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});

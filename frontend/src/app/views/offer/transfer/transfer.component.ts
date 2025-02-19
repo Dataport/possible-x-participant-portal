@@ -75,7 +75,7 @@ export class TransferComponent implements OnChanges {
       edcOfferId: this.offer.edcOfferId,
     }).then(response => {
       console.log(response);
-      this.dataTransferStatusMessage.showSuccessMessage("Data Transfer successful: " + response.transferProcessState);
+      this.dataTransferStatusMessage.showSuccessMessage(response.transferProcessState);
     }).catch((e: HttpErrorResponse) => {
       console.log(e);
       if (e.status === 500) {
