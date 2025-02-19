@@ -17,6 +17,7 @@
 import {Component} from '@angular/core';
 import {Router} from "@angular/router";
 import {AuthService} from "../../services/mgmt/auth/auth.service";
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 
 @Component({
   selector: 'app-login',
@@ -24,18 +25,22 @@ import {AuthService} from "../../services/mgmt/auth/auth.service";
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
-  username: string = '';
-  password: string = '';
+  loginForm: FormGroup;
 
-  constructor(private readonly router: Router, private readonly auth: AuthService) {
+  constructor(private readonly router: Router, private readonly auth: AuthService, private readonly fb: FormBuilder) {
+    this.loginForm = this.fb.group({
+      username: ['', Validators.required],
+      password: ['', Validators.required]
+    });
   }
 
-  login(username: string, password: string) {
-    this.auth.login(username, password);
-    this.username = '';
-    this.password = '';
-    this.router.navigate(['/offer/provide']).then(() => {
-      window.location.reload();
-    });
+  login() {
+    if (this.loginForm.valid) {
+      this.auth.login(this.loginForm.value.username, this.loginForm.value.password);
+      this.loginForm.reset();
+      this.router.navigate(['/offer/provide']).then(() => {
+        window.location.reload();
+      });
+    }
   }
 }

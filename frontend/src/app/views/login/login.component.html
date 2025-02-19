@@ -22,17 +22,19 @@
   <div class="text">
     Please enter your username and password to use the participant portal.
   </div>
-  <div class="input">
-    <label cLabel class="text" for="username">Username:</label>
-    <input [(ngModel)]="username" class="form-control rounded-none" id="username" type="text">
-
-  </div>
-  <div class="input">
-    <label cLabel class="text" for="password">Password:</label>
-    <input [(ngModel)]="password" class="form-control rounded-none" id="password" type="password">
-
-  </div>
-  <button (click)="login(username, password)" cButton class="custom-button" shape="rounded-0">
-    Login
-  </button>
+  <form [formGroup]="loginForm" (ngSubmit)="login()">
+    <div class="input">
+      <label cLabel for="username" class="text">Username:</label>
+      <input class="form-control rounded-none" type="text" id="username" formControlName="username"
+             (keydown.enter)="passwordField.focus()">
+    </div>
+    <div class="input">
+      <label cLabel for="password" class="text">Password:</label>
+      <input class="form-control rounded-none" type="password" id="password" #passwordField formControlName="password"
+             (keydown.enter)="login()">
+    </div>
+    <button shape="rounded-0" type="submit" cButton class="custom-button" [disabled]="loginForm.invalid">
+      Login
+    </button>
+  </form>
 </div>

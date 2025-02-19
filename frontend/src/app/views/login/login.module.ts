@@ -53,7 +53,7 @@ import {MaterialModule} from "../../sdwizard/material.module";
     AvatarModule,
     TableModule,
     RouterModule.forChild([
-      { path: '', component: LoginComponent }
+      {path: '', component: LoginComponent}
     ]),
     MaterialModule
   ],
