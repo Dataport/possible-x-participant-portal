@@ -30,13 +30,13 @@
 
 @keyframes fadeInOut {
   0% {
-    opacity: 0;
-  }
-  50% {
     opacity: 1;
   }
-  100% {
+  50% {
     opacity: 0;
+  }
+  100% {
+    opacity: 1;
   }
 }
 
@@ -64,5 +64,5 @@ c-spinner[size="sm"] {
 }
 
 .slow-spinner .img-fade-in {
-  animation-delay: 0.25s;
+  animation-delay: 1s;
 }
