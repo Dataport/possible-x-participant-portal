@@ -33,6 +33,7 @@ import {
   ModalModule,
   NavModule,
   ProgressModule,
+  SpinnerModule,
   TableModule,
   TabsModule,
   TemplateIdDirective,
@@ -111,7 +112,8 @@ import {MatPaginatorModule} from "@angular/material/paginator";
     ModalModule,
     NgxPrintModule,
     MatSortModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    SpinnerModule
   ],
   declarations: [ProvideComponent, ConsumeComponent, AcceptComponent, SelectComponent, ContractsComponent, TransferComponent, OfferPrintViewComponent, EnforcementPolicyAccordionViewComponent, ContractDetailsExportViewComponent, OfferDetailsViewComponent, ServiceOfferDetailsViewComponent, DataOfferDetailsViewComponent, EnforcementPolicyContentComponent],
   exports: [

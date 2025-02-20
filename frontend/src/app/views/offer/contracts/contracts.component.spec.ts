@@ -28,8 +28,9 @@ import {
   IEnforcementPolicyUnion,
   IParticipantRestrictionPolicy
 } from "../../../services/mgmt/api/backend";
-import {ModalModule} from "@coreui/angular";
+import {ModalModule, SpinnerModule} from "@coreui/angular";
 import {MatPaginatorModule} from "@angular/material/paginator";
+import {LoadingAnimationComponent} from "../../common-views/loading-animation/loading-animation.component";
 
 describe('ContractsComponent', () => {
   let component: ContractsComponent;
@@ -40,8 +41,8 @@ describe('ContractsComponent', () => {
     const apiServiceSpy = jasmine.createSpyObj('ApiService', ['getContractAgreements', 'transferDataOfferAgain', 'getOfferWithTimestampByContractAgreementId']);
 
     await TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, MatSnackBarModule, ModalModule, BrowserAnimationsModule, MatPaginatorModule],
-      declarations: [ContractsComponent, StatusMessageComponent, ContractDetailsExportViewComponent],
+      imports: [HttpClientTestingModule, MatSnackBarModule, ModalModule, BrowserAnimationsModule, MatPaginatorModule, SpinnerModule],
+      declarations: [ContractsComponent, StatusMessageComponent, ContractDetailsExportViewComponent, LoadingAnimationComponent],
       providers: [{ provide: ApiService, useValue: apiServiceSpy }]
     }).compileComponents();
 
@@ -107,7 +108,7 @@ describe('ContractsComponent', () => {
       ]
     } as any;
 
-    component.isTransferButtonDisabled = false;
+    component.transferring = false;
 
     expect(component.shouldTransferButtonBeDisabled(contractAgreement)).toBeTrue();
   });
@@ -124,7 +125,7 @@ describe('ContractsComponent', () => {
       ]
     } as any;
 
-    component.isTransferButtonDisabled = false;
+    component.transferring = false;
 
     expect(component.shouldTransferButtonBeDisabled(contractAgreement)).toBeFalse();
   });

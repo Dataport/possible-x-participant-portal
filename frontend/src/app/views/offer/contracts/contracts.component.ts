@@ -18,7 +18,7 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {
   IContractAgreementTO,
   IContractDetailsTO,
-  IEnforcementPolicyUnion, IPolicy,
+  IEnforcementPolicyUnion,
 } from '../../../services/mgmt/api/backend';
 import {HttpErrorResponse} from "@angular/common/http";
 import {StatusMessageComponent} from "../../common-views/status-message/status-message.component";
@@ -44,9 +44,10 @@ export class ContractsComponent implements OnInit {
   pageSize = 10;
   pageIndex = 0;
   expandedItemId: string | null = null;
-  isTransferButtonDisabled = false;
+  transferring = false;
   contractDetailsToExport?: IContractDetailsTO = undefined;
   waitingForContractAgreements: boolean = false;
+  transferContractAgreementId: string | null = null;
 
   constructor(private readonly apiService: ApiService, private readonly popUpMessage: MatSnackBar) {
   }
@@ -105,7 +106,8 @@ export class ContractsComponent implements OnInit {
   }
 
   async transferAgain(contractAgreement: IContractAgreementTO) {
-    this.isTransferButtonDisabled = true;
+    this.transferring = true;
+    this.transferContractAgreementId = contractAgreement.id;
     this.apiService.transferDataOffer({
       contractAgreementId: contractAgreement.id,
       counterPartyAddress: contractAgreement.assetDetails.providerUrl,
@@ -115,7 +117,8 @@ export class ContractsComponent implements OnInit {
       this.popUpMessage.open("Data Transfer successful: " + response.transferProcessState, 'Close', {
         duration: undefined,
       });
-      this.isTransferButtonDisabled = false;
+      this.transferring = false;
+      this.transferContractAgreementId = null;
     }).catch((e: HttpErrorResponse) => {
       console.log(e);
       let errorMessage = "";
@@ -127,18 +130,16 @@ export class ContractsComponent implements OnInit {
       this.popUpMessage.open("Data Transfer failed: " + errorMessage, 'Close', {
         duration: undefined,
       });
-      this.isTransferButtonDisabled = false;
+      this.transferring = false;
+      this.transferContractAgreementId = null;
     }).catch(e => {
       console.log(e);
       this.popUpMessage.open("Data Transfer failed: " + commonMessages.general_error, 'Close', {
         duration: undefined,
       });
-      this.isTransferButtonDisabled = false;
+      this.transferring = false;
+      this.transferContractAgreementId = null;
     });
-  }
-
-  getPolicyAsString(policy: IPolicy): string {
-    return JSON.stringify(policy, null, 2);
   }
 
   isDataOffering(item: IContractAgreementTO) {
@@ -186,7 +187,7 @@ export class ContractsComponent implements OnInit {
   }
 
   shouldTransferButtonBeDisabled(item: IContractAgreementTO): boolean {
-    return this.isTransferButtonDisabled || this.isAnyPolicyInvalid(item.enforcementPolicies);
+    return this.transferring || this.isAnyPolicyInvalid(item.enforcementPolicies);
   }
 
   onPageChange(event: any): void {

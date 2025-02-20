@@ -17,3 +17,34 @@
 .custom-paginator {
   @apply bg-brand-50;
 }
+
+@keyframes mirror {
+  0% {
+    transform: scaleX(1);
+  }
+  50% {
+    transform: scaleX(-1);
+  }
+  100% {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.icon-fade-in {
+  animation: fadeInOut 1.5s ease-in-out infinite, spin 1.5s ease-in-out infinite;
+}
+
+.mirror-icon {
+  animation: mirror 1s linear infinite;
+}

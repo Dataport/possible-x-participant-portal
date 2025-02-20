@@ -72,7 +72,8 @@
               <button (click)="transferAgain(item)" *ngIf="isDataOffering(item) && !isProvider(item)"
                       [cTooltip]="'Transfer'" [disabled]="shouldTransferButtonBeDisabled(item)" cButton
                       class="rounded-none">
-                <mat-icon>swap_horiz</mat-icon>
+                <mat-icon *ngIf="transferContractAgreementId !== item.id">swap_horiz</mat-icon>
+                <mat-icon *ngIf="transferContractAgreementId === item.id" class="icon-fade-in">swap_horiz</mat-icon>
               </button>
             </td>
           </tr>
