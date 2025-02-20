@@ -14,11 +14,6 @@
  *  limitations under the License.
  */
 
-c-spinner {
-  background-image: url('../../../../assets/images/brand/x-blue.svg');
-  background-size: contain;
-}
-
 .slow-spinner c-spinner {
   animation-duration: 1.5s;
   margin: 0 0.25rem;
